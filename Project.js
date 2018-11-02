@@ -92,18 +92,3 @@ class Project {
 				this.object_index = object_index;
 			}
 		}
-
-class Instance {
-
-	constructor (x, y, object, game) {
-
-		this.x = x;
-		this.y = y;
-		this.object_index = object;
-
-		//var obj = game.project.objects[this.object_index];
-
-
-	}
-
-}

@@ -17,7 +17,7 @@
 }
 
 .menu, .resources, .windows, .game {
-	border: 1px solid black;
+	border: 1px solid #444;
 	padding: 8px;
 }
 
@@ -39,11 +39,11 @@
 }
 
 .window {
-	border: 1px solid #ddd;
+	border: 1px solid #aaa;
 }
 
 .titlebar {
-	background-color: #eee;
+	background-color: #aaa;
 	overflow: auto;
 }
 
@@ -52,6 +52,16 @@
 }
 
 .client {
+	padding: 8px;
+}
+
+.grid-sprite {
+	display: grid;
+	grid-template-columns: 300px auto;
+	grid-gap: 4px
+}
+.grid-sprite > div {
+	border: 1px solid #ccc;
 	padding: 8px;
 }
 

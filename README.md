@@ -34,6 +34,11 @@ First, keep in mind these points:
 
 ### Features to implement:
 
+* Make object editor, with events and actions in it.
+* Make "library" system, for drag and drop.
+* Add Global Game Configurations
+* Make string system, so this can be translated easily.
+* Make windows be actual windows that float around and can be moved
 * Everything else lol (this is will be updated with whatever I think should be added next.)
 
 ### Live version

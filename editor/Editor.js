@@ -193,6 +193,7 @@ class Editor {
 
 		if (this.game) {
 			this.game.gameEnd();
+			this.game = null;
 		}
 
 		// Haxs for cleaning canvas

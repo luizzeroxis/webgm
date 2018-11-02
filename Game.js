@@ -2,18 +2,19 @@ class Game {
 
 	constructor (project, canvas, input, extensions) {
 
+		//Store arguments
 		this.project = project;
 		this.canvas = canvas;
+		this.input = input;
+		this.extensions = extensions;
+
 		this.ctx = this.canvas.getContext('2d');
 
-		this.instances = [];
-
+		//Promises to load before starting
 		var promises = [];
 
-		//load sprites
-
+		//Load sprites into this.images
 		this.images = [];
-
 		for (var i = 0; i < this.project.sprites.length; i++) {
 			promises.push(new Promise((resolve, reject) => {
 
@@ -34,70 +35,87 @@ class Game {
 			}));
 		}
 
-		//load room
+		//Load first room
+		this.instances = [];
 		this.room = this.project.rooms[0];
-		var insts = this.room.instances;
+		this.loadRoom(this.room);
 
-		for (var i = 0; i < insts.length; i++) {
-			this.instanceCreate(insts[i].x, insts[i].y, insts[i].object_index);
-		}
-
-		//actually start
-
-		this.extensions = extensions;
-
+		//Only start when all async processes finished.
 		Promise.all(promises).then(() => {
-			console.log('all promises resolved.');
-			this.timeout = setTimeout(() => this.mainLoop(), this.room.roomSpeed);
+			console.log('All async processes resolved. Starting game');
+			this.timeout = setTimeout(() => this.mainLoop(), 1000 / this.room.roomSpeed);
 		});
 
 	}
 
 	mainLoop () {
 
-		//console.log(this);
-
-		// first, draw the background of the room.
+		// First, draw the background of the room.
 
 		this.ctx.fillStyle = this.room.background_color;
-		this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height)
+		this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
 		this.ctx.fillStyle = "black";
 
+		// Loop though all current instances
 		for (var i = 0; i < this.instances.length; i++) {
-
-			// loop though all instances
-
-			// look at events, actions, ...
 
 			var inst = this.instances[i];
 			var obj = this.project.objects[inst.object_index];
 
+			// Execute all events
+
+			// Step events are executed every frame.
 			var step = obj.events.find((x) => x.type == 'step');
 			if (step) {
-				doActions(step.actions);
+				this.doActions(step.actions);
 			}
 
+			// Draw events are executed every frame, if object is visible.
 			var draw = obj.events.find((x) => x.type == 'draw');
-			if (draw) {
-				doActions(draw.actions);
+			if (draw && obj.visible) {
+				this.doActions(draw.actions);
 			} else {
-				//var spr = this.project.sprites.find((x) => x.id==obj.sprite_index).sprite;
+				// In case there's no draw event, draw the sprite of object, if there's one.
 				if (obj.sprite_index >= 0) {
-					this.ctx.drawImage(this.images[obj.sprite_index], inst.x, inst.y);
+					if (this.images[obj.sprite_index]) {
+						this.ctx.drawImage(this.images[obj.sprite_index], inst.x, inst.y);
+					}
 				}
 			}
 
 		}
 
-		//yEs
-		this.timeout = setTimeout(() => this.mainLoop(), this.room.roomSpeed);
+		// Run main loop again, after a frame of time has passed.
+		// This means the game will slow down if a loop takes too much time.
+		// TODO: check if gm still runs fine if frame takes less than frame of time
+		this.timeout = setTimeout(() => this.mainLoop(), 1000 / this.room.roomSpeed);
+	}
+
+	loadRoom(room) {
+
+		//Empty room
+		//TODO: save persistent?
+		this.instances = [];
+
+		var insts = room.instances;
+		for (var i = 0; i < insts.length; i++) {
+			this.instanceCreate(insts[i].x, insts[i].y, insts[i].object_index);
+		}
+
 	}
 
 	doActions(actions) {
+
+		// Execute all actions.
+
 		for (var k = 0; k < actions.length; k++) {
 
 			var act = actions[k];
-			//console.log(act);
+
+			// Here's all the types of actions we can take. This probably should be separated into something else.
+			// Currently I'm adding only drag and drop functions, but soon we will parse GML.
+			// TODO: reorganize this in the way that the old Library Maker worked.
+
 			switch (act.type) {
 				case "show_message":
 					alert(act.arg0);
@@ -124,24 +142,44 @@ class Game {
 	}
 
 	instanceCreate (x, y, object) {
+
+		// Adds instance into room.
+
 		var instance = new Instance(x, y, object, this);
 		this.instances.push(instance);
 
 		var obj = this.project.objects[instance.object_index];
 		var create = obj.events.find((x) => x.type == 'create');
 		if (create) {
-			doActions(create.actions);
+			this.doActions(create.actions);
 		}
 
 		return instance;
 	}
 
 	gameEnd () {
+
+		console.log('Stopping game.')
+
 		clearTimeout(this.timeout);
 		delete this; //delet tis
 
 		//TODO: add event system so that editor can know when game ends
 		//wait i did that wtf?
+	}
+
+}
+
+class Instance {
+
+	constructor (x, y, object, game) {
+
+		this.x = x;
+		this.y = y;
+		this.object_index = object;
+
+		//var obj = game.project.objects[this.object_index];
+
 	}
 
 }

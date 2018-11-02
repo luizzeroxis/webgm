@@ -7,39 +7,68 @@ class SpriteWindow extends Window {
 
 	makeClient() {
 
-		this.inputName = add( newTextBox(null, 'Name:') ).$('input');
-		this.inputName.addEventListener('input', (e) => {
-			this.isModified = true;
-			this.changes.name = e.target.value;
-		});
+		parent( add( newElem('grid-sprite', 'div') ) )
+			parent( add( newElem(null, 'div') ) )
 
-		add( newButton(null, 'Load Sprite', () => {
-			vfs.openDialog('image/*', (file) => {
-				if (file) {
+				this.inputName = add( newTextBox(null, 'Name:') ).$('input');
+				this.inputName.addEventListener('input', (e) => {
 					this.isModified = true;
-					this.changes.sprite = file;
-					this.imgSprite.src = URL.createObjectURL(file);
-				}
-			});
-		}) )
+					this.changes.name = e.target.value;
+				});
 
-		parent( add( html('div') ) )
-			this.imgSprite = add( html('img') )
+				add( newButton(null, 'Load Sprite', () => {
+					vfs.openDialog('image/*', (file) => {
+						if (file) {
+							this.isModified = true;
+							this.changes.sprite = file;
+							this.imgSprite.src = URL.createObjectURL(file);
+						}
+					});
+				}) )
+
+				// TODO: This is a workaround, will be replaced by Edit Sprite, where you can remove individual subsprites.
+				add( newButton(null, 'Remove Sprite', () => {
+					this.changes.sprite = null;
+					this.imgSprite.src = '';
+				}) );
+
+				parent( add( newElem(null, 'div', 'Width: ')) )
+					this.divWidth = add( newElem(null, 'span', '32') )
+					endparent()
+
+				parent( add( newElem(null, 'div', 'Height: ')) )
+					this.divHeight = add( newElem(null, 'span', '32') )
+					endparent()
+
+				parent( add( newElem(null, 'fieldset') ) )
+
+					add( newElem(null, 'legend', 'Origin') )
+
+					this.inputOriginX = add( newNumberBox(null, 'X:', 1, 0) ).$('input');
+					this.inputOriginX.addEventListener('input', (e) => {
+						this.isModified = true;
+						this.changes.originx = e.target.value;
+					});
+
+					this.inputOriginY = add( newNumberBox(null, 'Y:', 1, 0) ).$('input');
+					this.inputOriginY.addEventListener('input', (e) => {
+						this.isModified = true;
+						this.changes.originy = e.target.value;
+					});
+
+					endparent()
+
+				endparent()
+
+			parent( add( newElem(null, 'div') ) )
+				this.imgSprite = add( html('img') )
+				this.imgSprite.addEventListener('load', () => {
+					this.divWidth.innerText = this.imgSprite.width;
+					this.divHeight.innerText = this.imgSprite.height;
+				})
+				endparent()
+
 			endparent()
-
-
-
-		this.inputOriginX = add( newNumberBox(null, 'X:', 1, 0) ).$('input');
-		this.inputOriginX.addEventListener('input', (e) => {
-			this.isModified = true;
-			this.changes.originx = e.target.value;
-		});
-
-		this.inputOriginY = add( newNumberBox(null, 'Y:', 1, 0) ).$('input');
-		this.inputOriginY.addEventListener('input', (e) => {
-			this.isModified = true;
-			this.changes.originy = e.target.value;
-		});
 
 	}
 

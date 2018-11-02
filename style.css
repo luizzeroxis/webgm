@@ -1,0 +1,67 @@
+.grid {
+	display: grid;
+	grid-template-columns: 300px auto;
+	grid-gap: 4px
+}
+.grid .menu {
+	grid-column: 1/span 2;
+}
+.grid .resources {
+	grid-column: 1;
+}
+.grid .windows {
+	grid-column: 2;
+}
+.grid .game {
+	grid-column: 1/span 2;
+}
+
+.menu, .resources, .windows, .game {
+	border: 1px solid black;
+	padding: 8px;
+}
+
+.resources > ul > li {
+	padding-top: 4px;
+}
+
+.resources ul {
+	padding: 0;
+	list-style: none;
+
+}
+.resources li ul {
+	padding-left: 1em;
+}
+
+.resources li {
+	clear: both;
+}
+
+.window {
+	border: 1px solid #ddd;
+}
+
+.titlebar {
+	background-color: #eee;
+	overflow: auto;
+}
+
+.right {
+	float: right;
+}
+
+.client {
+	padding: 8px;
+}
+
+.hidden {
+	display: none;
+}
+
+.game canvas {
+	display: block;
+	border: 1px solid #888;
+	margin: 0 auto;
+}
+

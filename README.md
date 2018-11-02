@@ -10,6 +10,10 @@ Game Maker 8 is an old program where you could make Windows games in a simple bu
 
 Mainly nostalgia. But for me, personally, is to create a JavaScript game engine that's simple enough, not overcomplicated like the ones that are out there. However, making it the "right" way became too complicated. So a decided to replicate Game Maker, which I know a lot about, since it's much simpler and fundamentally flawed because of it.
 
+## How to run
+
+Download .zip or clone. Run index.html. Done.
+
 ## How can I contribute???
 
 First, keep in mind these points:

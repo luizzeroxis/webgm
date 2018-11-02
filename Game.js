@@ -25,7 +25,7 @@ class Game {
 						resolve();
 					})
 					img.src = URL.createObjectURL(this.project.sprites[i].sprite);
-					this.images.push(img);
+					this.images[this.project.sprites[i].id] = img;
 
 				} else {
 					resolve();

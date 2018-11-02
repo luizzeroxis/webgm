@@ -1,14 +1,9 @@
 class ImageLoader {
-
 	constructor(editor) {
 
 		this.editor = editor;
 
 		this.images = [];
-
-		this.loadedImages = 0;
-
-		this.funcsWhenLoaded = [];
 
 		this.editor.dispNewProject.addListener(() => this.onNewProject());
 		this.editor.dispOpenProject.addListener(() => this.onOpenProject());
@@ -16,16 +11,38 @@ class ImageLoader {
 		this.editor.dispChangeResource.addListener((...a) => this.onChangeResource(...a));
 		this.editor.dispDeleteResource.addListener((...a) => this.onDeleteResource(...a));
 
+		this.images["-1"] = {};
 		var img = new Image();
 		img.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAFfKj/FAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAPUExURQAAAAAAewAA/wAAAP8AAG0J5z8AAAABdFJOUwBA5thmAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAYklEQVQYV2WOUQ7AMAhCpXj/Mw+wW5rVD4UXpS3XSlNf0xBa7EEsDmJM2KhMGBWZ8dW76522MmgoUaIBBUpoOjnzipE+rO9Xt/tsWqlMcrtB/AHksYEI/Lif27lkHH6/T1U9xzIBZkTuVAMAAAAASUVORK5CYII=';
-		this.images["-1"] = img;
+		this.images["-1"].image = img;
 
 	}
 
+	getPromiseAllLoaded() {
+		return Promise.all(this.images.map((i) => i.promise));
+	}
+
+	addImage(resource) {
+
+		this.images[resource.id] = {};
+		this.images[resource.id].promise = new Promise((resolve, reject) => {
+
+			if (resource.sprite == null) {
+				resolve();
+			} else {
+				this.images[resource.id].image = new Image();
+				this.images[resource.id].image.addEventListener('load', () => {
+					resolve();
+				})
+				this.images[resource.id].image.src = URL.createObjectURL(resource.sprite);
+			}
+
+		})
+	}
+
 	onNewProject() {
-		for (var i = 0; i < this.images.length; i++) {
-			this.images[i] = null;
-		}
+		this.promisesToLoadImages = []
+		this.images = [];
 	}
 	onOpenProject() {
 		for (var i = 0; i < this.editor.project.sprites.length; i++) {
@@ -39,53 +56,15 @@ class ImageLoader {
 	}
 	onChangeResource(type, resource, changes) {
 		if (type == 'sprite') {
-			console.log(changes);
 			if (changes.sprite) {
-
-				if (this.images[resource.id] && this.images[resource.id].complete) {
-					this.loadedImages--;
-				}
+				//this.images[resource.id] = {};
 				this.addImage(resource);
 			}
 		}
 	}
 	onDeleteResource(type, resource) {
-		this.images[resource.id] = null;
-	}
-
-	addImage(resource) {
-		if (resource.sprite !== null) {
-			console.log('image load will happen')
-			var img = new Image();
-			img.addEventListener('load', () => {
-				console.log('image loaded');
-				this.imageLoaded(resource);
-			})
-			img.src = URL.createObjectURL(resource.sprite);
-			this.images[resource.id] = img;
-		}		
-	}
-
-	imageLoaded(resource) {
-		console.log('imageLoaded')
-		//if (this.images[resource.id]) {
-			this.loadedImages += 1;
-			if (this.images.length == this.loadedImages) {
-				for (var i = 0; i < this.funcsWhenLoaded.length; i++) {
-					this.funcsWhenLoaded[i]();
-				}
-				this.funcsWhenLoaded = [];
-			}
-		//}
-	}
-
-	runWhenAllLoaded(func) {
-		if (this.images.length == this.loadedImages) {
-			console.log(this.images, this.loadedImages);
-			func();
-		} else {
-			this.funcsWhenLoaded.push(func);
+		if (type == 'sprite') {
+			this.images[resource.id] = {};
 		}
 	}
-
 }

@@ -65,7 +65,7 @@ class RoomWindow extends Window {
 
 	redrawCanvas() {
 
-		this.editor.imageLoader.runWhenAllLoaded(() => {
+		this.editor.imageLoader.getPromiseAllLoaded().then(() => {
 
 			console.log('drawing canvas');
 
@@ -87,7 +87,7 @@ class RoomWindow extends Window {
 				if (sprite_index < 0) {
 
 					console.log('sprite is ', sprite_index);
-					ctx.drawImage(this.editor.imageLoader.images[-1], inst.x, inst.y);
+					ctx.drawImage(this.editor.imageLoader.images[-1].image, inst.x, inst.y);
 
 				} else {
 
@@ -95,7 +95,7 @@ class RoomWindow extends Window {
 
 					if (!(sprite.sprite == null)) {
 						//console.log(sprite.sprite, this.editor.imageLoader.images[sprite.id]);
-						ctx.drawImage(this.editor.imageLoader.images[sprite.id], inst.x, inst.y);
+						ctx.drawImage(this.editor.imageLoader.images[sprite.id].image, inst.x, inst.y);
 					} else {
 						console.log('sprite exists but theres no image.');
 					}

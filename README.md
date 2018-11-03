@@ -1,6 +1,8 @@
 # WebGM
 
-Web based version of Game Maker 8
+Web based version of Game Maker 8.
+
+Live version: https://luizeldorado.github.io/webgm/index.html
 
 ## What's this?
 
@@ -39,8 +41,7 @@ First, keep in mind these points:
 * Add Global Game Configurations
 * Make string system, so this can be translated easily.
 * Make windows be actual windows that float around and can be moved
+* Make origin of sprite show in sprite window, and add click to select point of origin
+* Show sprite of object as you hold the mouse button
+* Make room editor update with sprite changes
 * Everything else lol (this is will be updated with whatever I think should be added next.)
-
-### Live version
-
-You can see an outdated and ad filled live version at https://luizpontes.000webhostapp.com/w/unlisted/webgm

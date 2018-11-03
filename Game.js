@@ -78,7 +78,16 @@ class Game {
 				// In case there's no draw event, draw the sprite of object, if there's one.
 				if (obj.sprite_index >= 0) {
 					if (this.images[obj.sprite_index]) {
+
+						var sprite = this.project.sprites.find((x) => x.id = obj.sprite_index);
+
+						this.ctx.save();
+						this.ctx.translate(-sprite.originx, -sprite.originy);
+
 						this.ctx.drawImage(this.images[obj.sprite_index], inst.x, inst.y);
+
+						this.ctx.restore();
+
 					}
 				}
 			}

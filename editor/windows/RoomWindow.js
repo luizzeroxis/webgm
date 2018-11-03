@@ -46,8 +46,8 @@ class RoomWindow extends Window {
 			if (this.selectObject.value == "" || this.selectObject.value == null) {
 				console.log('no');
 			} else {
-				var x = e.offsetX;
-				var y = e.offsetY;
+				var x = Math.floor(e.offsetX / this.inputSnapX.value) * this.inputSnapX.value;
+				var y = Math.floor(e.offsetY / this.inputSnapY.value) * this.inputSnapY.value;
 				var object_index = this.selectObject.value;
 
 				var instance = new ProjectInstance(x, y, object_index);
@@ -94,8 +94,14 @@ class RoomWindow extends Window {
 					var sprite = this.editor.project.sprites.find((x) => x.id == sprite_index);
 
 					if (!(sprite.sprite == null)) {
-						//console.log(sprite.sprite, this.editor.imageLoader.images[sprite.id]);
+						
+						ctx.save();
+						ctx.translate(-sprite.originx, -sprite.originy);
+
 						ctx.drawImage(this.editor.imageLoader.images[sprite.id].image, inst.x, inst.y);
+
+						ctx.restore();
+
 					} else {
 						console.log('sprite exists but theres no image.');
 					}

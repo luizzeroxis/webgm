@@ -38,6 +38,10 @@
 	clear: both;
 }
 
+.windows {
+	display: grid;
+}
+
 .window {
 	border: 1px solid #aaa;
 }
@@ -52,6 +56,7 @@
 }
 
 .client {
+	background-color: white;
 	padding: 8px;
 }
 
@@ -65,6 +70,20 @@
 	padding: 8px;
 }
 
+.grid-object {
+	display: grid;
+	grid-template-columns: 200px 200px auto 200px;
+	grid-gap: 4px
+}
+.grid-object > div {
+	border: 1px solid #ccc;
+	padding: 8px;
+}
+
+.events {
+	width: 100%;
+}
+
 .hidden {
 	display: none;
 }
@@ -74,4 +93,3 @@
 	border: 1px solid #888;
 	margin: 0 auto;
 }
-

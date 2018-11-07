@@ -40,7 +40,7 @@ First, keep in mind these points:
 * Make "library" system, for drag and drop.
 * Add Global Game Configurations
 * Make string system, so this can be translated easily.
-* Make windows be actual windows that float around and can be moved
+* Make windows be actual windows that float around and can be moved (maybe not?)
 * Make origin of sprite show in sprite window, and add click to select point of origin
 * Show sprite of object as you hold the mouse button
 * Make room editor update with sprite changes

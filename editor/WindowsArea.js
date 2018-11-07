@@ -5,6 +5,8 @@ class WindowsArea {
 
 		this.editor = editor;
 
+		this.windowOrder = 1;
+
 		add( html('div', {class: "windows"}) )
 
 		this.editor.dispNewProject.addListener(() => this.onNewProject());
@@ -21,6 +23,7 @@ class WindowsArea {
 
 		//Delete all windows
 		$(".windows").innerText = '';
+		this.windowOrder = 1;
 
 	}
 
@@ -41,22 +44,48 @@ class WindowsArea {
 
 		//TODO Create window for editing
 		parent( $('.windows') )
-			parent( add( newElem('window type-'+type+' id-'+resource.id + (showwindow ? '' : ' hidden'), 'div') ) )
+			var w = new this.editor.types[type].windowCreator(this.editor, type, resource);
 
-				new this.editor.types[type].windowCreator(this.editor, type, resource);
+			w.window.style.order = this.windowOrder;
+			this.windowOrder++;
 
-				endparent()
+			w.window.classList.remove('hidden');
+
+			this.moveWindowToTop(w.window);
+
 			endparent()
+
 	}
 
 	onNewResource(type, resource, showwindow) {
 
 		this.createUI(type, resource, showwindow);
+
 	}
 
 	openWindow(type, id) {
+		var win = $('.windows .type-'+type+'.id-'+id);
+
 		//Make window visible
-		$('.windows .type-'+type+'.id-'+id).classList.remove('hidden');
+		win.classList.remove('hidden');
+
+		this.moveWindowToTop(win);
+	}
+
+	moveWindowToTop(win) {
+		// Change all window orders
+		var wins = document.querySelectorAll('.window');
+
+		for (var i = 0; i < wins.length; i++) {
+			//In case this item is above the item to move up, make it lower
+			//console.log(wins[i].style.order, win.style.order);
+			if (parseInt(wins[i].style.order) < parseInt(win.style.order)) {
+				wins[i].style.order++;
+			}
+		}
+		
+		//Make it first
+		win.style.order = 1;
 	}
 
 	onDeleteResource(type, resource) {

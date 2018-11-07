@@ -1,11 +1,11 @@
 //
-class RoomWindow extends Window {
+class RoomWindow extends ResourceWindow {
 
 	constructor(/**/) {
 		super(...arguments);
 	}
 
-	makeClient() {
+	makeResourceClient() {
 
 		this.inputName = add( newTextBox(null, 'Name:') ).$('input');
 		this.inputName.addEventListener('input', (e) => {
@@ -40,6 +40,8 @@ class RoomWindow extends Window {
 			this.redrawCanvas();
 		})
 
+		this.addingInstance = false;
+
 		this.canvasRoom = add( newCanvas(null, 0, 0) )
 		this.canvasRoom.addEventListener('click', (e) => {
 
@@ -60,6 +62,29 @@ class RoomWindow extends Window {
 			}
 
 		});
+		this.canvasRoom.addEventListener('mousedown', (e) => {
+			if (e.buttons==1) {
+				if (this.addingInstance == false) {
+					this.addingInstance = true;
+					this.redrawCanvas();
+				}
+				this.instancePreviewX = Math.floor(e.offsetX / this.inputSnapX.value) * this.inputSnapX.value;
+				this.instancePreviewY = Math.floor(e.offsetY / this.inputSnapY.value) * this.inputSnapY.value;
+				this.instancePreviewObjectIndex = this.selectObject.value;
+				// TODO
+			}
+		})
+		this.canvasRoom.addEventListener('mousemove', (e) => {
+			if (e.buttons==1) {
+				if (this.addingInstance) {
+					this.redrawCanvas();
+				}
+			} else {
+				this.addingInstance = false;
+			}
+		})
+
+		this.makeApplyOkButtons();
 
 	}
 
@@ -108,6 +133,12 @@ class RoomWindow extends Window {
 				}
 			}
 
+			//draw adding instance
+			if (this.addingInstance) {
+
+			}
+
+			//draw grid
 			if (this.inputShowGrid.checked) {
 
 				ctx.globalCompositeOperation = 'difference';

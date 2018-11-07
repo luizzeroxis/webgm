@@ -1,11 +1,11 @@
 //
-class SpriteWindow extends Window {
+class SpriteWindow extends ResourceWindow {
 
 	constructor(/**/) {
 		super(...arguments);
 	}
 
-	makeClient() {
+	makeResourceClient() {
 
 		parent( add( newElem('grid-sprite', 'div') ) )
 			parent( add( newElem(null, 'div') ) )
@@ -69,6 +69,8 @@ class SpriteWindow extends Window {
 				endparent()
 
 			endparent()
+
+		this.makeApplyOkButtons();
 
 	}
 

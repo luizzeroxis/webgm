@@ -56,19 +56,15 @@ class Game {
 		this.ctx.fillRect(0,0,this.canvas.width,this.canvas.height);
 		this.ctx.fillStyle = "black";
 
-		// Loop though all current instances
-		for (var i = 0; i < this.instances.length; i++) {
+		// Draw instances by depth.
+		var instances_by_depth = [...this.instances].sort(
+			(a, b) => a.depth - b.depth
+		);
 
-			var inst = this.instances[i];
+		for (var i = 0; i < instances_by_depth.length; i++) {
+
+			var inst = instances_by_depth[i];
 			var obj = this.project.objects[inst.object_index];
-
-			// Execute all events
-
-			// Step events are executed every frame.
-			var step = obj.events.find((x) => x.type == 'step');
-			if (step) {
-				this.doActions(step.actions);
-			}
 
 			// Draw events are executed every frame, if object is visible.
 			var draw = obj.events.find((x) => x.type == 'draw');
@@ -83,13 +79,26 @@ class Game {
 
 						this.ctx.save();
 						this.ctx.translate(-sprite.originx, -sprite.originy);
-
 						this.ctx.drawImage(this.images[obj.sprite_index], inst.x, inst.y);
-
 						this.ctx.restore();
 
 					}
 				}
+			}
+		}
+
+		// Loop though all current instances, in order of creation
+		for (var i = 0; i < this.instances.length; i++) {
+
+			var inst = this.instances[i];
+			var obj = this.project.objects[inst.object_index];
+
+			// Execute all events
+
+			// Step events are executed every frame.
+			var step = obj.events.find((x) => x.type == 'step');
+			if (step) {
+				this.doActions(step.actions);
 			}
 
 		}
@@ -187,7 +196,9 @@ class Instance {
 		this.y = y;
 		this.object_index = object;
 
-		//var obj = game.project.objects[this.object_index];
+		var obj = game.project.objects[this.object_index];
+
+		this.depth = obj.depth;
 
 	}
 

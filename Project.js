@@ -40,6 +40,8 @@ class Project {
 			this.name = null;
 			this.font = 'Arial';
 			this.size = 12;
+			this.bold = false;
+			this.italic = false;
 		}
 	}
 
@@ -49,6 +51,11 @@ class Project {
 			this.name = null;
 			this.sprite_index = -1;
 			this.visible = true;
+			this.solid = false;
+			this.depth = 0;
+			this.persistent = false
+			this.parent = null;
+			this.mask = null;
 			this.events = [];
 		}
 	}

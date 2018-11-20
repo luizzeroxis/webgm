@@ -10,6 +10,15 @@ class Game {
 
 		this.ctx = this.canvas.getContext('2d');
 
+		this.key = {};
+		this.keyPressed = {};
+		this.keyReleased = {};
+
+		this.input.addEventListener('keydown', (e) => {
+			
+			this.key[e.code] = true;
+		})
+
 		//Promises to load before starting
 		var promises = [];
 
@@ -95,6 +104,9 @@ class Game {
 
 			// Execute all events
 
+			// Keyboard
+
+
 			// Step events are executed every frame.
 			var step = obj.events.find((x) => x.type == 'step');
 			if (step) {
@@ -128,35 +140,41 @@ class Game {
 
 		for (var k = 0; k < actions.length; k++) {
 
-			var act = actions[k];
-
-			// Here's all the types of actions we can take. This probably should be separated into something else.
-			// Currently I'm adding only drag and drop functions, but soon we will parse GML.
-			// TODO: reorganize this in the way that the old Library Maker worked.
-
-			switch (act.type) {
-				case "show_message":
-					alert(act.arg0);
-					break;
-				case "draw_set_color":
-					this.ctx.fillStyle = act.arg0;
-					break;
-				case "draw_rectangle":
-					this.ctx.fillRect(act.arg0, act.arg1, act.arg2 - act.arg0, act.arg3 - act.arg1);
-					break;
-				case "draw_text":
-					this.ctx.fillText(act.arg2, (act.relative ? inst.x : 0) + act.arg0, (act.relative ? inst.y : 0) + act.arg1);
-					break;
-				case "action_move_to_position":
-					inst.x = (act.relative ? inst.x : 0) + act.arg0;
-					inst.y = (act.relative ? inst.y : 0) + act.arg1;
-					break;
-				case "ext":
-					this.extensions[act.arg0]();
-					break;
-			}
+			doAction(actions[k]);
 
 		}
+	}
+
+	doAction(action) {
+
+		var act = action;
+
+		// Here's all the types of actions we can take. This probably should be separated into something else.
+		// Currently I'm adding only drag and drop functions, but soon we will parse GML.
+		// TODO: reorganize this in the way that the old Library Maker worked.
+
+		switch (act.type) {
+			case "show_message":
+				alert(act.arg0);
+				break;
+			case "draw_set_color":
+				this.ctx.fillStyle = act.arg0;
+				break;
+			case "draw_rectangle":
+				this.ctx.fillRect(act.arg0, act.arg1, act.arg2 - act.arg0, act.arg3 - act.arg1);
+				break;
+			case "draw_text":
+				this.ctx.fillText(act.arg2, (act.relative ? inst.x : 0) + act.arg0, (act.relative ? inst.y : 0) + act.arg1);
+				break;
+			case "action_move_to_position":
+				inst.x = (act.relative ? inst.x : 0) + act.arg0;
+				inst.y = (act.relative ? inst.y : 0) + act.arg1;
+				break;
+			case "ext":
+				this.extensions[act.arg0]();
+				break;
+		}
+
 	}
 
 	instanceCreate (x, y, object) {

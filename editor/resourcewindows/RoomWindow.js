@@ -3,13 +3,15 @@ class RoomWindow extends ResourceWindow {
 
 	constructor(/**/) {
 		super(...arguments);
+
+		this.addingInstance = false;
+
 	}
 
 	makeResourceClient() {
 
 		this.inputName = add( newTextBox(null, 'Name:') ).$('input');
-		this.inputName.addEventListener('input', (e) => {
-			this.isModified = true;
+		this.inputName.addEventListener('input', (e) => { this.isModified = true;
 			this.changes.name = e.target.value;
 		});
 
@@ -29,18 +31,15 @@ class RoomWindow extends ResourceWindow {
 		});
 
 		this.selectObject = add( newResourceSelect(null, 'Object:', 'object', this.editor) ).$('select')
-		this.selectObject.addEventListener('input', (e) => { this.isModified = true;
+		this.selectObject.addEventListener('input', (e) => {
 			this.objecttoinsert = e.target.value;
 		});
 
 		this.inputBackgroundColor = add( newColorBox(null, 'Background color:') ).$('input');
-		this.inputBackgroundColor.addEventListener('input', (e) => {
-			this.isModified = true;
+		this.inputBackgroundColor.addEventListener('input', (e) => { this.isModified = true;
 			this.changes.background_color = e.target.value;
 			this.redrawCanvas();
 		})
-
-		this.addingInstance = false;
 
 		this.canvasRoom = add( newCanvas(null, 0, 0) )
 		this.canvasRoom.addEventListener('click', (e) => {
@@ -48,6 +47,8 @@ class RoomWindow extends ResourceWindow {
 			if (this.selectObject.value == "" || this.selectObject.value == null) {
 				console.log('no');
 			} else {
+				this.isModified = true;
+
 				var x = Math.floor(e.offsetX / this.inputSnapX.value) * this.inputSnapX.value;
 				var y = Math.floor(e.offsetY / this.inputSnapY.value) * this.inputSnapY.value;
 				var object_index = this.selectObject.value;
@@ -59,6 +60,8 @@ class RoomWindow extends ResourceWindow {
 				this.changes.instances = this.instances;
 
 				this.redrawCanvas();
+
+				this.addingInstance = false;
 			}
 
 		});
@@ -71,17 +74,24 @@ class RoomWindow extends ResourceWindow {
 				this.instancePreviewX = Math.floor(e.offsetX / this.inputSnapX.value) * this.inputSnapX.value;
 				this.instancePreviewY = Math.floor(e.offsetY / this.inputSnapY.value) * this.inputSnapY.value;
 				this.instancePreviewObjectIndex = this.selectObject.value;
-				// TODO
+
 			}
 		})
 		this.canvasRoom.addEventListener('mousemove', (e) => {
 			if (e.buttons==1) {
 				if (this.addingInstance) {
+					this.instancePreviewX = Math.floor(e.offsetX / this.inputSnapX.value) * this.inputSnapX.value;
+					this.instancePreviewY = Math.floor(e.offsetY / this.inputSnapY.value) * this.inputSnapY.value;
 					this.redrawCanvas();
 				}
 			} else {
 				this.addingInstance = false;
+				this.redrawCanvas();
 			}
+		})
+		document.addEventListener('mouseup', (e) => {
+			this.addingInstance = false;
+			this.redrawCanvas();
 		})
 
 		this.makeApplyOkButtons();
@@ -135,7 +145,22 @@ class RoomWindow extends ResourceWindow {
 
 			//draw adding instance
 			if (this.addingInstance) {
+				var object_index = this.instancePreviewObjectIndex;
+				var object = this.editor.project.objects.find((x) => x.id == object_index);
+				var sprite_index = object.sprite_index;
 
+				if (sprite_index < 0) {
+					ctx.drawImage(this.editor.imageLoader.images[-1].image, this.instancePreviewX, this.instancePreviewY);
+				} else {
+					var sprite = this.editor.project.sprites.find((x) => x.id == sprite_index);
+
+					if (!(sprite.sprite == null)) {
+						ctx.save();
+						ctx.translate(-sprite.originx, -sprite.originy);
+						ctx.drawImage(this.editor.imageLoader.images[sprite.id].image, this.instancePreviewX, this.instancePreviewY);
+						ctx.restore();
+					}
+				}
 			}
 
 			//draw grid

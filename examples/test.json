@@ -1,0 +1,71 @@
+{
+	"sprites": [
+		{
+			"id": 0,
+			"name": "sprite0",
+			"sprite": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAxSURBVEhL7c2hEQAgDAAxNsN2+A7FCFG4v4vPubNfFVABFVABFVABFVABFVABfQ5mH3nETEyjdaKxAAAAAElFTkSuQmCC",
+			"originx": 0,
+			"originy": 0
+		}
+	],
+	"sounds": [],
+	"fonts": [],
+	"objects": [
+		{
+			"id": 0,
+			"name": "object0",
+			"sprite_index": "0",
+			"visible": true,
+			"solid": false,
+			"depth": 0,
+			"persistent": false,
+			"parent": null,
+			"mask": null,
+			"events": [
+				{
+					"type": "create",
+					"actions": [
+						{
+							"type": "execute_string",
+							"arg0": "show_message(\"EaE mEn\");"
+						}
+					]
+				},
+				{
+					"type": "step",
+					"actions": [
+						{
+							"type": "execute_string",
+							"arg0": "action_move_to_position(1, 1);"
+						}
+					]
+				}
+			]
+		}
+	],
+	"rooms": [
+		{
+			"id": 0,
+			"name": "room0",
+			"instances": [
+				{
+					"x": 0,
+					"y": 0,
+					"object_index": "0"
+				}
+			],
+			"caption": "",
+			"width": 640,
+			"height": 480,
+			"roomSpeed": 30,
+			"background_color": "#c0c0c0"
+		}
+	],
+	"counter": {
+		"sprite": 1,
+		"sound": 0,
+		"font": 0,
+		"object": 1,
+		"room": 1
+	}
+}

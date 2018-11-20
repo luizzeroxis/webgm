@@ -56,7 +56,9 @@ class RoomWindow extends ResourceWindow {
 				var instance = new ProjectInstance(x, y, object_index);
 								
 				//if (this.changes.instances == null) {this.changes.instances = [];}
+				console.log(this.resource.instances)
 				this.instances.push(instance);
+				console.log(this.resource.instances)
 				this.changes.instances = this.instances;
 
 				this.redrawCanvas();
@@ -67,13 +69,15 @@ class RoomWindow extends ResourceWindow {
 		});
 		this.canvasRoom.addEventListener('mousedown', (e) => {
 			if (e.buttons==1) {
-				if (this.addingInstance == false) {
-					this.addingInstance = true;
-					this.redrawCanvas();
+				if (!(this.selectObject.value == "" || this.selectObject.value == null)) {
+					if (this.addingInstance == false) {
+						this.addingInstance = true;
+						this.redrawCanvas();
+					}
+					this.instancePreviewX = Math.floor(e.offsetX / this.inputSnapX.value) * this.inputSnapX.value;
+					this.instancePreviewY = Math.floor(e.offsetY / this.inputSnapY.value) * this.inputSnapY.value;
+					this.instancePreviewObjectIndex = this.selectObject.value;
 				}
-				this.instancePreviewX = Math.floor(e.offsetX / this.inputSnapX.value) * this.inputSnapX.value;
-				this.instancePreviewY = Math.floor(e.offsetY / this.inputSnapY.value) * this.inputSnapY.value;
-				this.instancePreviewObjectIndex = this.selectObject.value;
 
 			}
 		})
@@ -86,12 +90,13 @@ class RoomWindow extends ResourceWindow {
 				}
 			} else {
 				this.addingInstance = false;
-				this.redrawCanvas();
 			}
 		})
 		document.addEventListener('mouseup', (e) => {
-			this.addingInstance = false;
-			this.redrawCanvas();
+			if (this.addingInstance == true) {
+				this.addingInstance = false;
+				this.redrawCanvas();
+			}
 		})
 
 		this.makeApplyOkButtons();
@@ -150,7 +155,7 @@ class RoomWindow extends ResourceWindow {
 				var sprite_index = object.sprite_index;
 
 				if (sprite_index < 0) {
-					ctx.drawImage(this.editor.imageLoader.images[-1].image, this.instancePreviewX, this.instancePreviewY);
+					ctx.drawImage(this.editor.imageLoader.images["-1"].image, this.instancePreviewX, this.instancePreviewY);
 				} else {
 					var sprite = this.editor.project.sprites.find((x) => x.id == sprite_index);
 

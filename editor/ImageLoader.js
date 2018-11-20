@@ -11,11 +11,15 @@ class ImageLoader {
 		this.editor.dispChangeResource.addListener((...a) => this.onChangeResource(...a));
 		this.editor.dispDeleteResource.addListener((...a) => this.onDeleteResource(...a));
 
+		this.loadDefaultSprite();
+
+	}
+
+	loadDefaultSprite() {
 		this.images["-1"] = {};
 		var img = new Image();
 		img.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAFfKj/FAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAPUExURQAAAAAAewAA/wAAAP8AAG0J5z8AAAABdFJOUwBA5thmAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAYklEQVQYV2WOUQ7AMAhCpXj/Mw+wW5rVD4UXpS3XSlNf0xBa7EEsDmJM2KhMGBWZ8dW76522MmgoUaIBBUpoOjnzipE+rO9Xt/tsWqlMcrtB/AHksYEI/Lif27lkHH6/T1U9xzIBZkTuVAMAAAAASUVORK5CYII=';
 		this.images["-1"].image = img;
-
 	}
 
 	getPromiseAllLoaded() {
@@ -41,8 +45,8 @@ class ImageLoader {
 	}
 
 	onNewProject() {
-		this.promisesToLoadImages = []
 		this.images = [];
+		this.loadDefaultSprite();
 	}
 	onOpenProject() {
 		for (var i = 0; i < this.editor.project.sprites.length; i++) {

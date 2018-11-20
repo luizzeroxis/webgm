@@ -33,7 +33,7 @@ class WindowsArea {
 
 			//Loop through the array of that resource in the project
 			for (var resource of this.editor.project[(this.editor.types[type].array)] ) {
-				this.createUI(type, resource);
+				this.createUI(type, resource, false);
 			}
 
 		});
@@ -49,9 +49,10 @@ class WindowsArea {
 			w.window.style.order = this.windowOrder;
 			this.windowOrder++;
 
-			w.window.classList.remove('hidden');
-
-			this.moveWindowToTop(w.window);
+			if (showwindow) {
+				w.window.classList.remove('hidden');
+				this.moveWindowToTop(w.window);
+			}
 
 			endparent()
 

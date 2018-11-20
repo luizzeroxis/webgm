@@ -8,6 +8,8 @@ class Game {
 		this.input = input;
 		this.extensions = extensions;
 
+		this.gml = new GML();
+
 		this.ctx = this.canvas.getContext('2d');
 
 		this.key = {};
@@ -110,7 +112,7 @@ class Game {
 			// Step events are executed every frame.
 			var step = obj.events.find((x) => x.type == 'step');
 			if (step) {
-				this.doActions(step.actions);
+				this.doActions(step.actions, inst);
 			}
 
 		}
@@ -134,18 +136,13 @@ class Game {
 
 	}
 
-	doActions(actions) {
-
-		// Execute all actions.
-
+	doActions(actions, instance) {
 		for (var k = 0; k < actions.length; k++) {
-
-			doAction(actions[k]);
-
+			this.doAction(actions[k], instance);
 		}
 	}
 
-	doAction(action) {
+	doAction(action, instance) {
 
 		var act = action;
 
@@ -154,6 +151,9 @@ class Game {
 		// TODO: reorganize this in the way that the old Library Maker worked.
 
 		switch (act.type) {
+			case "execute_string":
+				this.gml.execute(act.arg0, instance);
+				break;
 			case "show_message":
 				alert(act.arg0);
 				break;
@@ -187,7 +187,7 @@ class Game {
 		var obj = this.project.objects[instance.object_index];
 		var create = obj.events.find((x) => x.type == 'create');
 		if (create) {
-			this.doActions(create.actions);
+			this.doActions(create.actions, instance);
 		}
 
 		return instance;

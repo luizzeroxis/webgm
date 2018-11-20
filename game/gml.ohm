@@ -1,0 +1,19 @@
+GameMakerLanguage {
+
+	Code
+		= Statement*
+
+	Statement
+		= comment
+		| Function
+
+	comment
+		= space* "//" (~("\n") ~("\r") any)* ("\n"|"\r")
+
+	Function
+		= Name "(" ")"
+
+	Name
+		= (alnum) (alnum | "_")*
+
+}

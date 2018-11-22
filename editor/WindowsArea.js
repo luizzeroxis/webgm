@@ -50,8 +50,9 @@ class WindowsArea {
 			this.windowOrder++;
 
 			if (showwindow) {
-				w.window.classList.remove('hidden');
 				this.moveWindowToTop(w.window);
+			} else {
+				w.window.classList.add('hidden');
 			}
 
 			endparent()

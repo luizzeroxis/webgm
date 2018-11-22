@@ -15,6 +15,7 @@ GameMakerLanguage {
 	Statement
 		= Comment
 		| Function
+		| Assignment
 		| Semicolon
 
 	Comment
@@ -31,9 +32,34 @@ GameMakerLanguage {
 		= (alnum) (alnum | "_")*
 
 	Expression
-		= Function
+		= Add
+		| Subtract
+		| ExpressionMultiplyOrDivide
+
+	ExpressionMultiplyOrDivide
+		= Multiply
+		| Divide
+		| OtherExpression
+
+	OtherExpression
+		= Parentheses
+		| Function
 		| Number
 		| String
+		| Variable
+
+	Parentheses
+		= "(" Expression ")"
+
+	Add
+		= Expression "+" ExpressionMultiplyOrDivide
+	Subtract
+		= Expression "-" ExpressionMultiplyOrDivide
+
+	Multiply
+		= ExpressionMultiplyOrDivide "*" OtherExpression
+	Divide
+		= ExpressionMultiplyOrDivide "/" OtherExpression
 
 	Number
 		= digit+ "."? digit*
@@ -41,6 +67,12 @@ GameMakerLanguage {
 	String
 		= "\"" #(~"\"" any)* "\""
 		| "'" #(~"'" any)* "'"
+
+	Variable
+		= Name
+
+	Assignment
+		= Name "=" Expression
 
 	Semicolon
 		= ";"

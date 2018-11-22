@@ -79,18 +79,18 @@ class Game {
 
 			// Draw events are executed every frame, if object is visible.
 			var draw = obj.events.find((x) => x.type == 'draw');
-			if (draw && obj.visible) {
+			if (draw && inst.variables.visible) {
 				this.doActions(draw.actions);
 			} else {
 				// In case there's no draw event, draw the sprite of object, if there's one.
-				if (obj.sprite_index >= 0) {
-					if (this.images[obj.sprite_index]) {
+				if (inst.variables.sprite_index >= 0) {
+					if (this.images[inst.variables.sprite_index]) {
 
-						var sprite = this.project.sprites.find((x) => x.id = obj.sprite_index);
+						var sprite = this.project.sprites.find((x) => x.id = inst.variables.sprite_index);
 
 						this.ctx.save();
 						this.ctx.translate(-sprite.originx, -sprite.originy);
-						this.ctx.drawImage(this.images[obj.sprite_index], inst.x, inst.y);
+						this.ctx.drawImage(this.images[inst.variables.sprite_index], inst.variables.x, inst.variables.y);
 						this.ctx.restore();
 
 					}
@@ -164,11 +164,11 @@ class Game {
 				this.ctx.fillRect(act.arg0, act.arg1, act.arg2 - act.arg0, act.arg3 - act.arg1);
 				break;
 			case "draw_text":
-				this.ctx.fillText(act.arg2, (act.relative ? inst.x : 0) + act.arg0, (act.relative ? inst.y : 0) + act.arg1);
+				this.ctx.fillText(act.arg2, (act.relative ? inst.variables.x : 0) + act.arg0, (act.relative ? inst.variables.y : 0) + act.arg1);
 				break;
 			case "action_move_to_position":
-				inst.x = (act.relative ? inst.x : 0) + act.arg0;
-				inst.y = (act.relative ? inst.y : 0) + act.arg1;
+				inst.variables.x = (act.relative ? inst.variables.x : 0) + act.arg0;
+				inst.variables.y = (act.relative ? inst.variables.y : 0) + act.arg1;
 				break;
 			case "ext":
 				this.extensions[act.arg0]();
@@ -210,13 +210,22 @@ class Instance {
 
 	constructor (x, y, object, game) {
 
-		this.x = x;
-		this.y = y;
 		this.object_index = object;
 
 		var obj = game.project.objects[this.object_index];
 
-		this.depth = obj.depth;
+		this.events = [];
+		this.variables = {
+			x: x,
+			y: y,
+			sprite_index: obj.sprite_index,
+			visible: obj.visible,
+			solid: obj.solid,
+			depth: obj.depth,
+			persistent: obj.persistent,
+			parent: obj.parent,
+			mask: obj.mask,
+		};
 
 	}
 

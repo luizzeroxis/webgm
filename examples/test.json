@@ -27,17 +27,13 @@
 					"actions": [
 						{
 							"type": "execute_string",
-							"arg0": "show_message(\"EaE mEn\");"
+							"arg0": "message = 2 * 3 + 5;\nshow_message(message);"
 						}
 					]
 				},
 				{
 					"type": "step",
 					"actions": [
-						{
-							"type": "execute_string",
-							"arg0": "action_move_to_position(1, 1);"
-						}
 					]
 				}
 			]
@@ -57,7 +53,7 @@
 			"caption": "",
 			"width": 640,
 			"height": 480,
-			"roomSpeed": 30,
+			"roomSpeed": 60,
 			"background_color": "#c0c0c0"
 		}
 	],

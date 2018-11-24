@@ -27,21 +27,10 @@ First, keep in mind these points:
 * Mainly support desktop use. Mobile is an afterthought.
 * This is mainly supposed to be used as an *offline* HTML program. Make sure that, if you right click and save this thing, it can still run, without internet, in a local enviroment with no server whatsoever. That means not using XHR, unless you can provide an alternative.
 
-### Implemented features:
+With that in mind, just send a pull request! Or an issue. I don't know, just learn how to GitHub, noob.
 
-* Open and save projects
-* Load projects into the runner
-* Load sprites into sprite resource
-* Add instances to room editor
+## Structure of the project
 
-### Features to implement:
+There's a Game class that can run a game. It takes a project object and some HTML elements. You have to create these elements, as well as loading the project in whatever means. This means you can easily insert a game (or even multiple games) in a page without trouble.
 
-* Make object editor, with events and actions in it.
-* Make "library" system, for drag and drop.
-* Add Global Game Configurations
-* Make string system, so this can be translated easily.
-* Make windows be actual windows that float around and can be moved (maybe not?)
-* Make origin of sprite show in sprite window, and add click to select point of origin
-* Show sprite of object as you hold the mouse button
-* Make room editor update with sprite changes
-* Everything else lol (this is will be updated with whatever I think should be added next.)
+There's an Editor class, that is the main interface for creating and running games. Here you can load and save projects, manage the resources, change the configurations, and of course, running a project as a Game class.

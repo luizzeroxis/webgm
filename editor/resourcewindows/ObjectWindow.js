@@ -41,7 +41,27 @@ class ObjectWindow extends ResourceWindow {
 					endparent()
 
 				parent( add( newElem(null, 'div') ) )
-					add( newButton(null, 'Add Event', () => {}) )
+					add( newButton(null, 'Add Event', () => {
+
+						var m = new Modal();
+						parent( m.client )
+							add( newButton(null, 'Create', () => {this.addEvent('create'); m.close();}) )
+							add( newButton(null, 'Step', () => {
+
+								var c = new ContextMenu([
+									{id: 'beginstep', text: 'Begin Step',
+										click: () => { this.addEvent('step', 'beginstep'); m.close(); }},
+									{id: 'step', text: 'Step',
+										click: () => { this.addEvent('step', 'step'); m.close(); }},
+									{id: 'endstep', text: 'End Step',
+										click: () => { this.addEvent('step', 'endstep'); m.close(); }},
+								]);
+
+							}) )
+							add( newButton(null, 'Draw', () => {this.addEvent('draw'); m.close();}) )
+							endparent()
+
+					}) )
 					endparent()
 
 				parent( add( newElem(null, 'div') ) )
@@ -81,6 +101,12 @@ class ObjectWindow extends ResourceWindow {
 		this.inputDepth.value = this.resource.depth;
 
 		this.events = this.resource.events;
+	}
+
+	addEvent(type, subtype) {
+		parent(this.selectEvents)
+			add( html('option', {value: type+''+subtype }, null, 'Create') )
+			endparent()
 	}
 
 }

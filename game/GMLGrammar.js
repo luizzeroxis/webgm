@@ -9,37 +9,113 @@ class GMLGrammar {
 
 GameMakerLanguage {
 
+	Start
+		= CurlyBrackets
+		| Code
+
+	CurlyBrackets
+		= "{" Code "}"
+
 	Code
 		= Statement*
 
 	Statement
 		= Comment
+		| MultiComment
+		| If
+		| While
+		| Exit
 		| Function
 		| Assignment
+		| AssignmentVar
+		| AssignmentGlobalVar
 		| Semicolon
 
 	Comment
 		= "//" #(~eol any)*
+	MultiComment
+		= "/*" #(~"*/" any)* "*/"
 
 	eol
 		= "\n"
 		| "\r"
 
+	If
+		= "if" Expression (CurlyBrackets|Statement) Else?
+	Else
+		= "else" (CurlyBrackets|Statement)
+
+	While
+		= "while" Expression (CurlyBrackets|Statement)
+
+	Exit
+		= "exit"
+
 	Function
 		= Name "(" ListOf<Expression,","> ")"
 
 	Name
-		= (alnum) (alnum | "_")*
+		= (letter) (alnum | "_")*
 
 	Expression
+		= ExpressionBooleanComparison
+
+	ExpressionBooleanComparison
+		= And
+		| Or
+		| Xor
+		| ExpressionComparison
+
+	And
+		= Expression "&&" ExpressionComparison
+	Or
+		= Expression "||" ExpressionComparison	
+	Xor
+		= Expression "^^" ExpressionComparison
+
+	ExpressionComparison
+		= Less
+		| LessOrEqual
+		| Equal
+		| Different
+		| Greater
+		| GreaterOrEqual
+		| ExpressionAddOrSubtract
+
+	Less
+		= Expression "<" ExpressionAddOrSubtract
+	LessOrEqual
+		= Expression "<=" ExpressionAddOrSubtract
+	Equal
+		= Expression equalSymbol ExpressionAddOrSubtract
+	equalSymbol
+		= "=" "="?
+	Different
+		= Expression "!=" ExpressionAddOrSubtract
+	Greater
+		= Expression ">" ExpressionAddOrSubtract
+	GreaterOrEqual
+		= Expression ">=" ExpressionAddOrSubtract	
+
+	ExpressionAddOrSubtract
 		= Add
 		| Subtract
 		| ExpressionMultiplyOrDivide
+
+	Add
+		= Expression "+" ExpressionMultiplyOrDivide
+	Subtract
+		= Expression? "-" ExpressionMultiplyOrDivide
 
 	ExpressionMultiplyOrDivide
 		= Multiply
 		| Divide
 		| OtherExpression
+
+	Multiply
+		= ExpressionMultiplyOrDivide "*" OtherExpression
+	Divide
+		= ExpressionMultiplyOrDivide "/" OtherExpression
 
 	OtherExpression
 		= Parentheses
@@ -50,16 +126,6 @@ GameMakerLanguage {
 
 	Parentheses
 		= "(" Expression ")"
-
-	Add
-		= Expression "+" ExpressionMultiplyOrDivide
-	Subtract
-		= Expression "-" ExpressionMultiplyOrDivide
-
-	Multiply
-		= ExpressionMultiplyOrDivide "*" OtherExpression
-	Divide
-		= ExpressionMultiplyOrDivide "/" OtherExpression
 
 	Number
 		= digit+ "."? digit*
@@ -73,6 +139,12 @@ GameMakerLanguage {
 
 	Assignment
 		= Name "=" Expression
+
+	AssignmentVar
+		= "var" Assignment+
+
+	AssignmentGlobalVar
+		= "globalvar" Assignment+
 
 	Semicolon
 		= ";"

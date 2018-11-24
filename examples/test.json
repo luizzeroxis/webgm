@@ -6,6 +6,13 @@
 			"sprite": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAxSURBVEhL7c2hEQAgDAAxNsN2+A7FCFG4v4vPubNfFVABFVABFVABFVABFVABfQ5mH3nETEyjdaKxAAAAAElFTkSuQmCC",
 			"originx": 0,
 			"originy": 0
+		},
+		{
+			"id": 1,
+			"name": "sprite1",
+			"sprite": "iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAySURBVEhL7c0xEQAgDAAxhHSsf2d4QMJPbLnLnnNnvxIkQRIkQRIkQRIkQRIkQfoczD4cGLQ9QOmZGwAAAABJRU5ErkJggg==",
+			"originx": 0,
+			"originy": 0
 		}
 	],
 	"sounds": [],
@@ -27,16 +34,41 @@
 					"actions": [
 						{
 							"type": "execute_string",
-							"arg0": "message = 2 * 3 + 5;\nshow_message(message);"
+							"arg0": "show_message(instance_create(x,y,1))"
 						}
 					]
 				},
 				{
 					"type": "step",
 					"actions": [
+						{
+							"type": "execute_string",
+							"arg0": "x = x + (keyboard_check(vk_right) - keyboard_check(vk_left)) * 8; y = y + (keyboard_check(vk_down) - keyboard_check(vk_up)) * 8;"
+						}
+					]
+				},
+				{
+					"type": "draw",
+					"actions": [
+						{
+							"type": "execute_string",
+							"arg0": "draw_sprite(sprite_index, image_index, x, y); draw_rectangle(0,room_height-32,room_width,room_height);"
+						}
 					]
 				}
 			]
+		},
+		{
+			"id": 1,
+			"name": "object1",
+			"sprite_index": "1",
+			"visible": true,
+			"solid": false,
+			"depth": 0,
+			"persistent": false,
+			"parent": null,
+			"mask": null,
+			"events": []
 		}
 	],
 	"rooms": [
@@ -58,10 +90,10 @@
 		}
 	],
 	"counter": {
-		"sprite": 1,
+		"sprite": 2,
 		"sound": 0,
 		"font": 0,
-		"object": 1,
+		"object": 2,
 		"room": 1
 	}
 }

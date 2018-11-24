@@ -9,6 +9,7 @@ class Game {
 		this.extensions = extensions;
 
 		this.gml = new GML();
+		this.gml.game = this;
 
 		this.ctx = this.canvas.getContext('2d');
 
@@ -17,9 +18,27 @@ class Game {
 		this.keyReleased = {};
 
 		this.input.addEventListener('keydown', (e) => {
-			
-			this.key[e.code] = true;
+			this.key[e.which] = true;
+			this.keyPressed[e.which] = true;
+			e.preventDefault();
+		});
+		this.input.addEventListener('keyup', (e) => {
+			this.key[e.which] = false;
+			this.keyReleased[e.which] = true;
+			e.preventDefault();
 		})
+
+		this.globalVariables = {
+			room_width: null,
+			room_height: null,
+		}
+
+		this.constants = {
+			vk_right: 39,
+			vk_left: 37,
+			vk_down: 40,
+			vk_up: 38,
+		}
 
 		//Promises to load before starting
 		var promises = [];
@@ -45,6 +64,22 @@ class Game {
 
 			}));
 		}
+
+		//Prepare all GML codes
+
+		this.project.objects.forEach((object) => {
+			object.events.forEach((event) => {
+				event.actions.forEach((action) => {
+					if (action.type == 'execute_string') {
+						action.arg0 = this.gml.prepare(action.arg0);
+						if (!action.arg0.succeeded()) {
+							console.log(action.arg0.message)
+							throw "Some error was found in the GML!!!"
+						}
+					}
+				})
+			})
+		})
 
 		//Load first room
 		this.instances = [];
@@ -80,7 +115,7 @@ class Game {
 			// Draw events are executed every frame, if object is visible.
 			var draw = obj.events.find((x) => x.type == 'draw');
 			if (draw && inst.variables.visible) {
-				this.doActions(draw.actions);
+				this.doActions(draw.actions, inst);
 			} else {
 				// In case there's no draw event, draw the sprite of object, if there's one.
 				if (inst.variables.sprite_index >= 0) {
@@ -106,14 +141,15 @@ class Game {
 
 			// Execute all events
 
-			// Keyboard
-
-
 			// Step events are executed every frame.
 			var step = obj.events.find((x) => x.type == 'step');
 			if (step) {
 				this.doActions(step.actions, inst);
 			}
+
+			// Reset keyboard states
+			this.keyPressed = {};
+			this.keyReleased = {};
 
 		}
 
@@ -128,6 +164,9 @@ class Game {
 		//Empty room
 		//TODO: save persistent?
 		this.instances = [];
+
+		this.globalVariables.room_width = room.width;
+		this.globalVariables.room_height = room.height;
 
 		var insts = room.instances;
 		for (var i = 0; i < insts.length; i++) {
@@ -190,7 +229,28 @@ class Game {
 			this.doActions(create.actions, instance);
 		}
 
-		return instance;
+		return instance.variables.id;
+	}
+
+	drawSprite(sprite_index, image_index, x, y) {
+
+		if (sprite_index >= 0) {
+			if (this.images[sprite_index]) {
+
+				var sprite = this.project.sprites.find((x) => x.id = sprite_index);
+				if (!sprite) {throw 'No such sprite with index '+sprite_index+'.';}
+
+				this.ctx.save();
+				this.ctx.translate(-sprite.originx, -sprite.originy);
+				this.ctx.drawImage(this.images[sprite_index], x, y);
+				this.ctx.restore();
+
+			} else {
+				alert('this should not happen')
+			}
+		} else {
+			throw sprite_index+' can not be less than 0';
+		}
 	}
 
 	gameEnd () {
@@ -201,7 +261,6 @@ class Game {
 		delete this; //delet tis
 
 		//TODO: add event system so that editor can know when game ends
-		//wait i did that wtf?
 	}
 
 }
@@ -216,9 +275,11 @@ class Instance {
 
 		this.events = [];
 		this.variables = {
+			id: 100001,
 			x: x,
 			y: y,
 			sprite_index: obj.sprite_index,
+			image_index: -1,
 			visible: obj.visible,
 			solid: obj.solid,
 			depth: obj.depth,

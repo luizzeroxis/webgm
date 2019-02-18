@@ -13,25 +13,28 @@ class GML {
 		this.semantics = this.grammar.createSemantics();
 
 		this.built_in_functions = [
+			{name: 'action_move_to', args: [], func: (args, relative) => {
+				this.currentInstance.variables.x = (relative ? this.currentInstance.variables.x : 0) + args[0];
+				this.currentInstance.variables.y = (relative ? this.currentInstance.variables.y : 0) + args[1];
+				return 0;
+			}},
 			{name: 'draw_rectangle', args: [], func: (args) => {
-				if (!this.game) throw 'No game! I don\'t see any canvases around here.';
 				this.game.ctx.fillRect(args[0], args[1], args[2] - args[0], args[3] - args[1]);
 			}},
+			{name: 'draw_set_color', args: [], func: (args) => {
+				this.ctx.fillStyle = args[0];
+			}},
 			{name: 'draw_sprite', args: [], func: (args) => {
-				if (!this.game) throw 'No game! I don\'t see any canvases around here.';
 				this.game.drawSprite(args[0], args[1], args[2], args[3]);
+			}},
+			{name: 'draw_text', args: [], func: (args) => {
+				this.ctx.fillText(act.arg[2], act.arg[0], act.arg[1]);
 			}},
 			{name: 'instance_create', args: [], func: (args) => {
 				return this.game.instanceCreate(args[0], args[1], args[2]);
 			}},
 			{name: 'keyboard_check', args: [], func: (args) => {
-				if (!this.game) throw 'No game! I don\'t see any keyboards around here.';
 				return this.game.key[args[0]] ? 1 : 0;
-			}},
-			{name: 'action_move_to_position', args: [], func: (args) => {
-				this.currentInstance.variables.x += args[0];
-				this.currentInstance.variables.y += args[1];
-				return 0;
 			}},
 			{name: 'string', args: [], func: (args) => {
 				return args[0].toString();
@@ -101,13 +104,25 @@ class GML {
 				var args = c.asIteration().interpret();
 				//console.log('Running function '+name+' with arguments', args);
 
-				var func = _this.built_in_functions.find((x) => x.name == name);
+				var script = _this.game.project.scripts.find(x => x.name == name);
+				if (script) {
+					var currentVars = _this.vars;
+					_this.vars = {
+						arguments: args,
+						argument_relative: 0,
+					};
+					for (var i = 0; i < 16; i++) {
+						_this.vars['argument'+i] = (args[i] == null) ? 0 : args[i];
+					}
 
-				if (func) {
-					return func.func(args);
+					var r = _this.execute(_this.game.preparedCodes.get(script), _this.currentInstance);
+					_this.vars = currentVars;
+
+					return r;
 				} else {
-					throw 'No such function called "'+name+'".';
+					return _this.builtInFunction(name, args, _this.currentInstance);
 				}
+
 			},
 			Name (a, b) {
 				//
@@ -163,13 +178,17 @@ class GML {
 				return string.sourceString;
 			},
 			Variable(name) {
-				var v = _this.currentInstance.variables[name.sourceString];
+				var v;
+				v = _this.vars[name.sourceString];
 				if (v == undefined) {
-					var v = _this.game.globalVariables[name.sourceString];
+					v = _this.currentInstance.variables[name.sourceString];
 					if (v == undefined) {
-						var v = _this.game.constants[name.sourceString];
+						v = _this.game.globalVariables[name.sourceString];
 						if (v == undefined) {
-							throw "No variable or constant called "+name.sourceString;
+							v = _this.game.constants[name.sourceString];
+							if (v == undefined) {
+								throw "No variable or constant called "+name.sourceString;
+							}
 						}
 					}
 				}
@@ -197,7 +216,7 @@ class GML {
 
 	prepare(code) {
 		var trace = this.grammar.trace(code).toString();
-		console.log(trace);
+		//console.log(trace);
 
 		var match = this.grammar.match(code);
 		//console.log(match);
@@ -219,6 +238,16 @@ class GML {
 		} else {
 			console.log(preparedcode.message)
 			console.log("Some error was found in the GML!");
+		}
+	}
+
+	builtInFunction(name, args, inst, relative) {
+		var func = this.built_in_functions.find(x => x.name == name);
+		if (func) {
+			this.currentInstance = inst;
+			return func.func(args, relative);
+		} else {
+			throw 'No such function called "'+name+'".';
 		}
 	}
 

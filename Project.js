@@ -2,6 +2,7 @@ class Project {
 	constructor (json) {
 		this.sprites = [];
 		this.sounds = [];
+		this.scripts = [];
 		this.fonts = [];
 		this.objects = [];
 		this.rooms = [];
@@ -9,6 +10,7 @@ class Project {
 		this.counter = {};
 		this.counter['sprite'] = 0;
 		this.counter['sound'] = 0;
+		this.counter['scripts'] = 0;
 		this.counter['font'] = 0;
 		this.counter['object'] = 0;
 		this.counter['room'] = 0;
@@ -19,7 +21,7 @@ class Project {
 		constructor () {
 			this.id = null;
 			this.name = null;
-			this.sprite = null;
+			this.images = [];
 			this.originx = 0;
 			this.originy = 0;
 		}
@@ -31,6 +33,14 @@ class Project {
 			this.name = null;
 			this.sound = null;
 			this.volume = 1;
+		}
+	}
+
+	class ProjectScript {
+		constructor() {
+			this.id = null;
+			this.name = null;
+			this.code = "";
 		}
 	}
 
@@ -62,7 +72,7 @@ class Project {
 
 		class ProjectEvent {
 			constructor () {
-				this.type = "create";
+				this.type = null;
 				this.subtype = null;
 				this.actions = [];
 			}
@@ -70,8 +80,11 @@ class Project {
 
 			class ProjectAction {
 				constructor () {
-					this.type = "show_message";
-					this.arg0 = "";
+					this.type = null;
+					this.appliesTo = 0;
+					this.args = [];
+					this.relative = false;
+					this.not = false;
 				}
 			}
 

@@ -45,6 +45,14 @@ class Editor {
 			windowCreator: RoomWindow
 		}
 
+		//Libraries
+		this.libraries = [
+			{name: 'main', types: [
+				{id: 1, kind: 'code'},
+				{id: 2, kind: 'normal', execution: () => {}},
+			]}
+		];
+
 		//Dispatchers
 		this.dispNewProject = new Dispatcher();
 		this.dispOpenProject = new Dispatcher();
@@ -86,37 +94,54 @@ class Editor {
 
 	}
 
+	unserialize(json) {
+
+		var jsonObject;
+
+		try {
+			jsonObject = JSON.parse(json);
+		} catch (e) {
+			return null;
+		}
+
+		//convert sprites, from base64 to blobs
+		jsonObject.sprites.forEach(sprite => {
+			sprite.images.forEach((image, i) => {
+				//
+				sprite.images[i] = new AbstractImage( URL.createObjectURL( base64ToBlob(image, 'image/png') ) );
+			})
+		})
+
+		//convert action ids to action type objects
+		jsonObject.objects.forEach(object => {
+			object.events.forEach(events => {
+				events.actions.forEach(action => {
+					//action.type = this.libraries.find(x => );
+				})
+			})
+		})
+
+		var project = Object.assign(new Project(), jsonObject);
+		return project;
+
+	}
+
 	openProject () {
 
 		vfs.openDialog('application/json', (file) => {
 			if (file) {
 
-				console.log('Loading...');
-
 				vfs.readEntireFile(file, (json) => {
 
-					try {
-						var parsed = JSON.parse(json);
-					} catch (e) {
+					this.newProject();
+					var project = this.unserialize(json);
+
+					if (project == null) {
 						alert('This is not a project file.');
 						return;
 					}
 
-					//convert sprites, from base64 to blobs
-					for (var i = 0; i < parsed.sprites.length; i++) {
-						
-						//console.log('OPEN, base64 = ', parsed.sprites[i].sprite)
-						if (!(parsed.sprites[i].sprite == null)) {
-							parsed.sprites[i].sprite = base64ToBlob(parsed.sprites[i].sprite, 'image/png');
-						}
-						//console.log('blob = ', parsed.sprites[i].sprite)
-
-					}
-
-					this.newProject();
-
-					this.project = Object.assign(new Project(), parsed);
-					console.log(this.project);
+					this.project = project;
 
 					this.dispOpenProject.dispatch();
 
@@ -127,50 +152,40 @@ class Editor {
 
 	}
 
+	serialize(project) {
+
+		var projectObject = Object.assign({}, project);
+
+		var promises = [];
+
+		projectObject.sprites.forEach(sprite => {
+			sprite.images.forEach((image, i) => {
+
+				promises.push(
+					blobToBase64(image).then(base64 => {
+						sprite.images[i] = base64;
+					})
+				)
+
+			})
+		})
+
+		return Promise.all(promises).then(() => {
+			var json = JSON.stringify(projectObject, null, '\t');
+			return json;
+		})
+
+	}
+
 	saveProject () {
 
 		vfs.saveDialog(this.projectName, (file) => {
 
-			var deparsed = Object.assign({}, this.project);
-			console.log(deparsed);
-
-			//convert images into sprites?
-
-			var convertToBase64 = (i) => {
-
-				console.log(i);
-
-				if (i<deparsed.sprites.length) {
-
-					//console.log('SAVE, blob = ', deparsed.sprites[i].sprite)
-
-					if (deparsed.sprites[i].sprite instanceof Blob) {
-						blobToBase64(deparsed.sprites[i].sprite, (r) => {
-
-							deparsed.sprites[i].sprite = r;
-							convertToBase64(i+1);
-
-						});
-					} else {
-						//deparsed.sprites[i].sprite = null;
-						convertToBase64(i+1);
-					}
-
-				} else {
-
-					//console.log('terminou',i);
-
-					var data = JSON.stringify(deparsed, null, '\t');
-					vfs.writeEntireFile(file, data);
-					this.projectName = file.name;
-
-					this.dispSaveProject.dispatch();
-
-				}
-
-			}
-
-			convertToBase64(0);
+			this.serialize(this.project).then(json => {
+				vfs.writeEntireFile(file, json);
+				this.projectName = file.name;
+				this.dispSaveProject.dispatch();
+			});			
 
 		});
 

@@ -1,0 +1,29 @@
+<!doctype html>
+
+<meta charset="utf-8" />
+
+<script src='lib/ohm.js'></script>
+<script src='game/GML.js'></script>
+<script src='game/GMLGrammar.js'></script>
+
+<style>
+	textarea, button {
+		display: block;
+		box-sizing: border-box;
+		width: 100%;
+	}
+</style>
+
+<div>
+	<textarea id='code' cols=80 rows=15></textarea>
+	<button onclick='run()' style=''>Run</button>
+</div>
+
+<script>
+
+	var gml = new GML();
+
+	run = () => {
+		gml.execute(gml.prepare(document.getElementById('code').value), {});
+	}
+</script>

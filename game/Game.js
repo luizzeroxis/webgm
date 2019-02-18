@@ -137,12 +137,12 @@ class Game {
 		}
 
 		// Add resources names as global variables
-		this.project.sprites	.forEach(x => {this.globalVariables[x.name] = x.id});
-		this.project.sounds		.forEach(x => {this.globalVariables[x.name] = x.id});
-		this.project.scripts	.forEach(x => {this.globalVariables[x.name] = x.id});
-		this.project.fonts		.forEach(x => {this.globalVariables[x.name] = x.id});
-		this.project.objects	.forEach(x => {this.globalVariables[x.name] = x.id});
-		this.project.rooms		.forEach(x => {this.globalVariables[x.name] = x.id});
+		this.project.resources.ProjectSprite .forEach(x => {this.globalVariables[x.name] = x.id});
+		this.project.resources.ProjectSound  .forEach(x => {this.globalVariables[x.name] = x.id});
+		this.project.resources.ProjectScript .forEach(x => {this.globalVariables[x.name] = x.id});
+		this.project.resources.ProjectFont   .forEach(x => {this.globalVariables[x.name] = x.id});
+		this.project.resources.ProjectObject .forEach(x => {this.globalVariables[x.name] = x.id});
+		this.project.resources.ProjectRoom   .forEach(x => {this.globalVariables[x.name] = x.id});
 
 		console.log(this.globalVariables);
 
@@ -481,32 +481,21 @@ class Game {
 
 		}
 
-		this.functions = [
-			{
-				name: 'action_move_to',
-				func: (a, i, r) => { //arguments, instance, relative
-					i.variables.x = (r ? i.variables.x : 0) + a[0];
-					i.variables.y = (r ? i.variables.y : 0) + a[1];
-					return 0;
-				}
-			},
-		];
-
 		// Loading system
 
 		//Promises to load before starting
 		var promises = [];
 
 		//Check all sprite images are loaded
-		for (var i = 0; i < this.project.sprites.length; i++) {
-			for (var j = 0; j < this.project.sprites[i].images.length; j++) {
-				promises.push(this.project.sprites[i].images[j].promise);
+		for (var i = 0; i < this.project.resources.ProjectSprite.length; i++) {
+			for (var j = 0; j < this.project.resources.ProjectSprite[i].images.length; j++) {
+				promises.push(this.project.resources.ProjectSprite[i].images[j].promise);
 			};
 		}
 
 		//Check all sounds are loaded
-		for (var i = 0; i < this.project.sounds.length; i++) {
-			promises.push(this.project.sounds[i].sound.promise);
+		for (var i = 0; i < this.project.resources.ProjectSound.length; i++) {
+			promises.push(this.project.resources.ProjectSound[i].sound.promise);
 		}
 
 		//Prepare all GML codes
@@ -516,7 +505,7 @@ class Game {
 
 		this.preparedCodes = new Map();
 
-		this.project.scripts.forEach(script => {
+		this.project.resources.ProjectScript.forEach(script => {
 			var preparedCode = this.gml.prepare(script.code);
 			if (preparedCode.succeeded()) {
 				this.preparedCodes.set(script, preparedCode);
@@ -525,11 +514,11 @@ class Game {
 			}
 		})
 
-		this.project.objects.forEach(object => {
+		this.project.resources.ProjectObject.forEach(object => {
 			object.events.forEach(event => {
 				event.actions.forEach(action => {
 
-					if (action.type == 'execute_string') {
+					if (action.type == 'code') {
 						var preparedCode = this.gml.prepare(action.args[0]);
 
 						if (preparedCode.succeeded()) {
@@ -545,7 +534,7 @@ class Game {
 
 		//Load first room
 		this.instances = [];
-		this.room = this.project.rooms[0];
+		this.room = this.project.resources.ProjectRoom[0];
 		this.loadRoom(this.room);
 
 		//Only start when all async processes finished.
@@ -575,7 +564,7 @@ class Game {
 		for (var i = 0; i < instances_by_depth.length; i++) {
 
 			var inst = instances_by_depth[i];
-			var obj = this.project.objects[inst.object_index];
+			var obj = this.project.resources.ProjectObject[inst.object_index];
 
 			// Draw events are executed every frame, if object is visible.
 			var draw = obj.events.find((x) => x.type == 'draw');
@@ -587,7 +576,7 @@ class Game {
 				// In case there's no draw event, draw the sprite of object, if there's one.
 				if (inst.variables.sprite_index >= 0) {
 
-					var sprite = this.project.sprites.find((x) => x.id == inst.variables.sprite_index);
+					var sprite = this.project.resources.ProjectSprite.find((x) => x.id == inst.variables.sprite_index);
 					if (sprite) {
 						var image = sprite.images[inst.variables.image_index];
 						if (image) {
@@ -606,9 +595,7 @@ class Game {
 		var eventsToRun = {};
 
 		this.instances.forEach(instance => {
-			 var object = this.project.objects.find(x => x.id == instance.variables.object_index);
-
-			 // Determine which events should happen
+			 var object = this.project.resources.ProjectObject.find(x => x.id == instance.variables.object_index);
 
 			 object.events.forEach(event => {
 
@@ -744,28 +731,17 @@ Draw events // LIE!!!!!!!!1111111
 
 	doAction(action, instance) {
 
-		var act = action;
-
-		// Here's all the types of actions we can take. This probably should be separated into something else.
-		// Currently I'm adding only drag and drop functions, but soon we will parse GML.
-		// TODO: reorganize this in the way that the old Library Maker worked.
-
 		//var object = this.project.objects.find(x => x.id == instance.variables.object_index);
 
 		switch (action.type.kind) {
 			case 'code':
 				this.gml.execute(this.preparedCodes.get(action), instance);
 				break;
-			case 'normal':
-				action.type.execution(action);
-				break;
-
-			case "execute_string":
-				this.gml.execute(this.preparedCodes.get(action), instance);
-				break;
-
 			default:
-				this.gml.builtInFunction(act.type, act.args, instance, act.relative);
+			//case 'gmfunction':
+				//action.appliesTo
+				//action.not
+				this.gml.builtInFunction(action.type.gmfunction, action.args, instance, action.relative);
 				break;
 		}
 
@@ -778,7 +754,7 @@ Draw events // LIE!!!!!!!!1111111
 		var instance = new Instance(x, y, object, this);
 		this.instances.push(instance);
 
-		var obj = this.project.objects[instance.object_index];
+		var obj = this.project.resources.ProjectObject[instance.object_index];
 		var create = obj.events.find((x) => x.type == 'create');
 		if (create) {
 			this.doActions(create.actions, instance);
@@ -790,7 +766,7 @@ Draw events // LIE!!!!!!!!1111111
 	drawSprite(sprite_index, image_index, x, y) {
 
 		if (sprite_index >= 0) {
-			var sprite = this.project.sprites.find(x => x.id == sprite_index)
+			var sprite = this.project.resources.ProjectSprite.find(x => x.id == sprite_index)
 			if (sprite) {
 				if (sprite.images[image_index]) {
 					this.ctx.save();
@@ -827,7 +803,7 @@ class Instance {
 
 		this.object_index = object;
 
-		var obj = game.project.objects[this.object_index];
+		var obj = game.project.resources.ProjectObject[this.object_index];
 
 		this.variables = {
 			id: 100001,

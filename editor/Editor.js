@@ -3,205 +3,176 @@ class Editor {
 
 	constructor() {
 
+		//this.editor = this;
 		this.project = new Project();
 		this.game = null;
-		this.projectName = '.json';
+		this.projectName = 'game.json';
 
-		// Types of resources
-		this.types = {};
-		this.types['sprite'] = {
-			name: 'Sprite',
-			plural: 'Sprites',
-			class: ProjectSprite,
-			array: 'sprites',
-			windowCreator: SpriteWindow
-		};
-		this.types['sound'] = {
-			name: 'Sound',
-			plural: 'Sounds',
-			class: ProjectSound,
-			array: 'sounds',
-			windowCreator: SoundWindow
-		}
-		this.types['font'] = {
-			name: 'Font',
-			plural: 'Fonts',
-			class: ProjectFont,
-			array: 'fonts',
-			windowCreator: FontWindow
-		}
-		this.types['object'] = {
-			name: 'Object',
-			plural: 'Objects',
-			class: ProjectObject,
-			array: 'objects',
-			windowCreator: ObjectWindow
-		}
-		this.types['room'] = {
-			name: 'Room',
-			plural: 'Rooms',
-			class: ProjectRoom,
-			array: 'rooms',
-			windowCreator: RoomWindow
-		}
+		this.dispatcher = new Dispatcher();
 
 		//Libraries
+		// TODO: i guess these must be like... ids? im not sure help
+
 		this.libraries = [
-			{name: 'main', types: [
-				{id: 1, kind: 'code'},
-				{id: 2, kind: 'normal', execution: () => {}},
-			]}
+			//Library
+			{
+				name: 'main',
+				items: [
+					{
+						name: 'Execute Code',
+						kind: 'code'
+					},
+					{
+						name: 'Show message',
+						kind: 'gmfunction',
+						gmfunction: 'show_message',
+					}
+				]
+			}
 		];
-
-		//Dispatchers
-		this.dispNewProject = new Dispatcher();
-		this.dispOpenProject = new Dispatcher();
-		this.dispSaveProject = new Dispatcher();
-		this.dispRunGame = new Dispatcher();
-		this.dispStopGame = new Dispatcher();
-
-		this.dispNewResource = new Dispatcher();
-		//this.dispNewResource.dispatch(type, res, showwindow);
-
-		this.dispDeleteResource = new Dispatcher();
-		//this.dispDeleteResource.dispatch(type, id);
-
-		this.dispChangeResource = new Dispatcher();
-		//this.dispChangeResource.dispatch(type, resource, changes);
-
-		this.imageLoader = new ImageLoader(this);
 
 		//Areas
 		parent( add( html('div', {class: 'grid'}) ) )
 
-			this.menuArea = new MenuArea(this);
-
-			this.resourcesArea = new ResourcesArea(this);
-			this.windowsArea = new WindowsArea(this);
-
-			this.gameArea = new GameArea(this);
+			this.makeMenuArea();
+			this.makeResourcesArea();
+			this.makeWindowsArea();
+			this.makeGameArea();
 
 			endparent()
 
+		//
+		this.dispatcher.listen({
+			createResource: i => this.addResourceToResourcesArea(i),
+			deleteResource: i => {
+				this.deleteResourceFromResourcesArea(i);
+				this.deleteResourceWindow(i)
+			},
+		});
+
+	}
+
+	// Resource management
+
+	createResource (type) {
+
+		var resource = new type();
+		resource.id = this.project.counter[type.name];
+		resource.name = type.getName() + this.project.counter[type.name];
+
+		this.project.counter[type.name]++;
+		this.project.resources[type.name].push( resource );
+
+		this.dispatcher.speak('createResource', resource);
+
+		return resource;
+
+	}
+
+	deleteResource (resource) {
+
+		if (confirm('You are about to delete '+resource.name+'. This will be permanent. Continue?')) {
+			var index = this.project.resources[resource.classname].findIndex(x => x == resource);
+			this.project.resources[resource.classname].splice(index, 1);
+
+			this.dispatcher.speak('deleteResource', resource);
+		}
+
+	}
+
+	changeResourceName(resource, name) {
+		resource.name = name;
+		this.dispatcher.speak('changeResourceName', resource);
+	}
+	changeSpriteImages(sprite, images) {
+		sprite.images = images;
+		this.dispatcher.speak('changeSpriteImages', sprite);
+	}
+	changeSpriteOrigin(sprite, originx, originy) {
+		sprite.originx = originx;
+		sprite.originy = originy;
+		// TODO update room sprites
+	}
+	changeObjectSprite(object, sprite) {
+		object.sprite_index = sprite;
+		this.dispatcher.speak('changeObjectSprite', object);
+	}
+
+	// Menu area
+	makeMenuArea() {
+		parent( add( newElem('menu', 'div') ) )
+
+			add( newButton(null, 'New', () => {
+				editor.newProject();
+			}) )
+
+			add( newButton(null, 'Open', () => {
+				editor.openProject();
+			}) )
+
+			add( newButton(null, 'Save', () => {
+				editor.saveProject();
+			}) )
+
+			add( newButton(null, 'Run', () => {
+				editor.runGame();
+			}) )
+
+			add( newButton(null, 'Stop', () => {
+				editor.stopGame();
+			}) )
+
+			endparent()
 	}
 
 	newProject () {
-
-		//Delete project itself (TODO can it be null?)
 		this.project = new Project();
 
-		this.dispNewProject.dispatch();
-
-	}
-
-	unserialize(json) {
-
-		var jsonObject;
-
-		try {
-			jsonObject = JSON.parse(json);
-		} catch (e) {
-			return null;
-		}
-
-		//convert sprites, from base64 to blobs
-		jsonObject.sprites.forEach(sprite => {
-			sprite.images.forEach((image, i) => {
-				//
-				sprite.images[i] = new AbstractImage( URL.createObjectURL( base64ToBlob(image, 'image/png') ) );
-			})
-		})
-
-		//convert action ids to action type objects
-		jsonObject.objects.forEach(object => {
-			object.events.forEach(events => {
-				events.actions.forEach(action => {
-					//action.type = this.libraries.find(x => );
-				})
-			})
-		})
-
-		var project = Object.assign(new Project(), jsonObject);
-		return project;
-
+		this.updateResourcesArea();
+		this.updateWindowsArea();
 	}
 
 	openProject () {
 
-		vfs.openDialog('application/json', (file) => {
-			if (file) {
+		VirtualFileSystem.openDialog('application/json')
+		.then(file => VirtualFileSystem.readEntireFile(file))
+		.then(json => {
 
-				vfs.readEntireFile(file, (json) => {
+			var project = ProjectSerializer.unserialize(json);
+			if (project) {
 
-					this.newProject();
-					var project = this.unserialize(json);
+				delete this.project;
+				this.project = project;
 
-					if (project == null) {
-						alert('This is not a project file.');
-						return;
-					}
+				this.updateResourcesArea();
+				this.updateWindowsArea();
 
-					this.project = project;
-
-					this.dispOpenProject.dispatch();
-
-				});
-
+			} else {
+				alert('This is not a project file.');
+				return;
 			}
-		});
 
-	}
-
-	serialize(project) {
-
-		var projectObject = Object.assign({}, project);
-
-		var promises = [];
-
-		projectObject.sprites.forEach(sprite => {
-			sprite.images.forEach((image, i) => {
-
-				promises.push(
-					blobToBase64(image).then(base64 => {
-						sprite.images[i] = base64;
-					})
-				)
-
-			})
 		})
-
-		return Promise.all(promises).then(() => {
-			var json = JSON.stringify(projectObject, null, '\t');
-			return json;
-		})
-
 	}
 
 	saveProject () {
 
-		vfs.saveDialog(this.projectName, (file) => {
-
-			this.serialize(this.project).then(json => {
-				vfs.writeEntireFile(file, json);
-				this.projectName = file.name;
-				this.dispSaveProject.dispatch();
-			});			
-
+		ProjectSerializer.serialize(this.project)
+		.then(json => {
+			var blob = new Blob([json], {type: 'text/json'});
+			VirtualFileSystem.save(blob, this.projectName);
 		});
-
 	}
 
 	runGame () {
 
-		if (this.project.rooms.length <= 0) {
+		if (this.project.resources.ProjectRoom.length <= 0) {
 			alert('A game must have at least one room to run.');
 			return;
 		}
 
 		this.stopGame();
-		this.game = new Game(this.project, $('.canvas'), $('.canvas'), extensions);
-
-		this.dispRunGame.dispatch();
+		this.game = new Game(this.project, $('.canvas'), $('.canvas'));
 	}
 
 	stopGame () {
@@ -212,46 +183,141 @@ class Editor {
 		}
 
 		// Haxs for cleaning canvas
-		var h = $('.canvas').height;
-		$('.canvas').height = 0;
-		$('.canvas').height = h;
+		var h = this.gameCanvas.height;
+		this.gameCanvas.height = 0;
+		this.gameCanvas.height = h;
+	}
 
-		this.dispStopGame.dispatch();
+	// Resources area
+	makeResourcesArea() {
+
+		this.htmlResources = [];
+		this.htmlResourceTypes = {};
+
+		this.resourcesArea = parent( add( html('div', {class: "resources"}) ) )
+			parent( add ( newElem(null, 'ul') ) )
+
+				Project.getTypes().forEach(type => {
+
+					parent( add( newElem(null, 'li') ) )
+						add ( newElem(null, 'span', type.getScreenGroupName()) )
+						add ( newButton('right', 'Create', () => {
+							this.createResource(type);
+						}) )
+						this.htmlResourceTypes[type.name] = add ( newElem("resource", 'ul') )
+						endparent()
+
+				})
+
+				endparent()
+			endparent()
+	}
+
+	updateResourcesArea() {
+
+		Project.getTypes().forEach(type => {
+
+			this.htmlResourceTypes[type.name].textContent = '';
+			this.project.resources[type.name].forEach(resource => {
+				this.addResourceToResourcesArea(resource);
+			})
+
+		})
 
 	}
 
-	createResource (type) {
+	addResourceToResourcesArea(resource) {
 
-		//Make new resource and add it to project
-		var res = new this.types[type].class();
-		res.id = this.project.counter[type];
-		res.name = type + this.project.counter[type];
-		this.project.counter[type]++;
-		this.project[this.types[type].array].push(res);
+		parent(this.htmlResourceTypes[resource.classname]);
+			var r = new HTMLResource(resource, editor);
 
-		this.dispNewResource.dispatch(type, res, true);
+			r.htmlEditButton.onclick = () => this.openResourceWindow(resource)
+			r.htmlDeleteButton.onclick = () => this.deleteResource(resource)
+
+			this.htmlResources.push(r);
+			endparent();
 
 	}
 
-	changeResource(type, resource, changes) {
+	deleteResourceFromResourcesArea(resource) {
 
-		var thearray = this.project[this.types[type].array];
-		var i = thearray.findIndex((x) => x.id == resource.id);
+		var index = this.htmlResources.findIndex(x => x.id == resource);
+		if (index>=0) {
+			this.htmlResources[index].remove();
+			this.htmlResources.splice(index, 1);
+		}
 
-		thearray[i] = Object.assign(resource, changes);
-
-		this.dispChangeResource.dispatch(type, resource, changes);
 	}
 
-	deleteResource (type, resource) {
+	getResourceIconSrc(resource) {
+		if (resource.classname == "ProjectSprite") {
+			if (resource.images.length > 0) {
+				return resource.images[0].image.src;
+			}
+		} else
+		if (resource.classname == "ProjectObject") {
+			if (resource.sprite_index >= 0) {
+				var sprite = this.project.resources.ProjectSprite.find(x => x.id == resource.sprite_index);
+				if (sprite) {
+					if (sprite.images.length > 0) {
+						return sprite.images[0].image.src;
+					}
+				}
+			}
+		} else {
+			return 'img/default-'+resource.classname+'-icon.png'; //LOL
+		}
+		return null;
+	}
 
-		//Call before deleting
-		this.dispDeleteResource.dispatch(type, resource);
+	setImageSrcRemovable(image, src) { //delet this
+		setAttributeExceptNull(image, 'src', src);
+	}
 
-		//Remove from project
-		var thearray = this.project[this.types[type].array];
-		thearray.splice(thearray.findIndex((x) => x.id == resource.id), 1);
+	// Windows area
+	makeWindowsArea() {
+		this.htmlWindows = [];
+		this.htmlWindowsArea = add( html('div', {class: "windows"}) )
+	}
 
+	updateWindowsArea() {
+		this.htmlWindowsArea.textContent = '';
+		delete this.htmlWindows;
+		this.htmlWindows = [];
+	}
+
+	makeWindow(id) {
+		parent(this.htmlWindowsArea)
+			var w = new HTMLWindow(id);
+			endparent()
+
+		this.htmlWindows.push(w);
+		return w;
+	}
+
+	openResourceWindow(resource) {
+		if (this.htmlWindows.find(x => x.id == resource)) {
+			//
+		} else {
+			var w = this.makeWindow(resource);
+			w.makeClientResource(resource, this);			
+		}
+	}
+
+	deleteResourceWindow(resource) {
+		var index = this.htmlWindows.findIndex(x => x.id == resource);
+		if (index>=0) {
+			this.htmlWindows[index].remove();
+			this.htmlWindows.splice(index, 1);
+		}
+	}
+
+	// Game area
+	makeGameArea() {
+		parent( add( html('div', {class: 'game'}) ) )
+			this.gameCanvas = add( newCanvas("canvas", 640, 480) )
+			this.gameCanvas.setAttribute('tabindex', 0);
+			endparent()
 	}
 
 }

@@ -1,78 +1,52 @@
 //
 class WindowsArea {
 
-	constructor(editor) {
+	openWindow(resource) {
 
-		this.editor = editor;
+		// if window is already open, bring to front
+		if (this.windowListItems[resource]) {
 
-		this.windowOrder = 1;
-
-		add( html('div', {class: "windows"}) )
-
-		this.editor.dispNewProject.addListener(() => this.onNewProject());
-		this.editor.dispOpenProject.addListener(() => this.onOpenProject());
-
-		this.editor.dispNewResource.addListener((...a) => this.onNewResource(...a));
-		this.editor.dispDeleteResource.addListener((...a) => this.onDeleteResource(...a));
-
-		this.editor.dispChangeResource.addListener((...a) => this.onChangeResource(...a));
-
-	}
-
-	onNewProject() {
-
-		//Delete all windows
-		$(".windows").innerText = '';
-		this.windowOrder = 1;
-
-	}
-
-	onOpenProject() {
-		//For every type of resource...
-		Object.keys(this.editor.types).forEach((type, index) => {
-
-			//Loop through the array of that resource in the project
-			for (var resource of this.editor.project[(this.editor.types[type].array)] ) {
-				this.createUI(type, resource, false);
+		} else {
+			parent(this.windowList)
+				switch(resource.constructor) {
+					case ProjectSprite:
+						this.windowListItems[resource] = new SpriteWindow(this.editor, resource);
+						break;
+					case ProjectSound:
+						this.windowListItems[resource] = new SoundWindow(this.editor, resource);
+						break;
+					case ProjectScript:
+						this.windowListItems[resource] = new ScriptWindow(this.editor, resource);
+						break;
+					case ProjectFont:
+						this.windowListItems[resource] = new FontWindow(this.editor, resource);
+						break;
+					case ProjectObject:
+						this.windowListItems[resource] = new ObjectWindow(this.editor, resource);
+						break;
+					case ProjectRoom:
+						this.windowListItems[resource] = new RoomWindow(this.editor, resource);
+						break;
+				}
+				
+				endparent()
 			}
 
-		});
+	}
+
+	closeWindow(resource) {
+
+		if (this.windowListItems[resource]) {
+			remove(this.windowListItems[resource]);
+			this.windowListItems[resource] = null;
+		}
 
 	}
 
-	createUI(type, resource, showwindow) {
-
-		//TODO Create window for editing
-		parent( $('.windows') )
-			var w = new this.editor.types[type].windowCreator(this.editor, type, resource);
-
-			w.window.style.order = this.windowOrder;
-			this.windowOrder++;
-
-			if (showwindow) {
-				this.moveWindowToTop(w.window);
-			} else {
-				w.window.classList.add('hidden');
-			}
-
-			endparent()
-
+	onDeleteResource(resource) {
+		this.closeWindow(resource);
 	}
-
-	onNewResource(type, resource, showwindow) {
-
-		this.createUI(type, resource, showwindow);
-
-	}
-
-	openWindow(type, id) {
-		var win = $('.windows .type-'+type+'.id-'+id);
-
-		//Make window visible
-		win.classList.remove('hidden');
-
-		this.moveWindowToTop(win);
-	}
+	
 
 	moveWindowToTop(win) {
 		// Change all window orders
@@ -88,17 +62,6 @@ class WindowsArea {
 		
 		//Make it first
 		win.style.order = 1;
-	}
-
-	onDeleteResource(type, resource) {
-		//Delete window
-		var thewindow = $('.windows .type-'+type+'.id-'+resource.id);
-		thewindow.parentElement.removeChild(thewindow);
-
-	}
-
-	onChangeResource(type, resource, changes) {
-		$('.windows .window.type-'+type+'.id-'+resource.id+' .title').innerText = resource.name;
 	}
 
 }

@@ -26,6 +26,12 @@ class Editor {
 						name: 'Show message',
 						kind: 'gmfunction',
 						gmfunction: 'show_message',
+						args: [
+							{
+								name: 'Text:',
+								type: 'string'
+							}
+						]
 					}
 				]
 			}
@@ -286,25 +292,58 @@ class Editor {
 		this.htmlWindows = [];
 	}
 
-	makeWindow(id) {
+	openWindow(windowclass, id, ...clientargs) {
 		parent(this.htmlWindowsArea)
-			var w = new HTMLWindow(id);
+			var w = new windowclass(id, this);
+			w.makeClient(...clientargs);
 			endparent()
 
-		this.htmlWindows.push(w);
+		this.htmlWindows.unshift(w);
+		this.organizeWindows();
 		return w;
 	}
 
 	openResourceWindow(resource) {
 		if (this.htmlWindows.find(x => x.id == resource)) {
-			//
+			this.focusResourceWindow(resource);
 		} else {
-			var w = this.makeWindow(resource);
-			w.makeClientResource(resource, this);			
+			var windowMakers = {};
+			windowMakers[ProjectSprite.name] = HTMLWindowSprite;
+			windowMakers[ProjectSound.name]  = HTMLWindowSound;
+			windowMakers[ProjectScript.name] = HTMLWindowScript;
+			windowMakers[ProjectFont.name]   = HTMLWindowFont;
+			windowMakers[ProjectObject.name] = HTMLWindowObject;
+			windowMakers[ProjectRoom.name]   = HTMLWindowRoom;
+
+			this.openWindow(windowMakers[resource.classname], resource, resource);
+		}
+	}
+
+	focusResourceWindow(resource) {
+		var index = this.htmlWindows.findIndex(x => x.id == resource);
+
+		// splice returns a array of removed elements
+		this.htmlWindows.unshift(this.htmlWindows.splice(index, 1)[0]);
+
+		this.organizeWindows();
+	}
+
+	organizeWindows() {
+		this.htmlWindows.forEach((window, i) => {
+			window.html.style.order = i;
+		})
+	}
+
+	deleteWindow(w) {
+		var index = this.htmlWindows.findIndex(x => x == w);
+		if (index>=0) {
+			this.htmlWindows[index].remove();
+			this.htmlWindows.splice(index, 1);
 		}
 	}
 
 	deleteResourceWindow(resource) {
+		console.log('del')
 		var index = this.htmlWindows.findIndex(x => x.id == resource);
 		if (index>=0) {
 			this.htmlWindows[index].remove();

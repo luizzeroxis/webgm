@@ -99,7 +99,7 @@
 .grid-resource.resource-room {
 	grid-template-columns: 300px 1fr;
 }
-.grid-resource.resource-sprite .canvasarea {
+.grid-resource.resource-sprite .preview {
 	overflow: auto;
 	max-height: 80vh;
 }

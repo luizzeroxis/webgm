@@ -511,6 +511,7 @@ class Game {
 				this.preparedCodes.set(script, preparedCode);
 			} else {
 				console.log(preparedCode.message);
+				alert("FATAL ERROR in script "+script.name+'\n'+preparedCode.message);
 			}
 		})
 
@@ -518,19 +519,22 @@ class Game {
 			object.events.forEach(event => {
 				event.actions.forEach(action => {
 
-					if (action.type == 'code') {
+					if (action.type.kind == 'code') {
 						var preparedCode = this.gml.prepare(action.args[0]);
 
 						if (preparedCode.succeeded()) {
 							this.preparedCodes.set(action, preparedCode);
 						} else {
 							console.log(preparedCode.message);
+							alert("FATAL ERROR in action "+action.getName()+" in event "+event.getName()+" in object "+object.name+'\n'+preparedCode.message);
 						}
 					}
 
 				})
 			})
 		});
+
+		console.log(this.preparedCodes)
 
 		//Load first room
 		this.instances = [];
@@ -713,6 +717,9 @@ Draw events // LIE!!!!!!!!1111111
 		//TODO: save persistent?
 		this.instances = [];
 
+		this.canvas.width = room.width;
+		this.canvas.height = room.height;
+
 		this.globalVariables.room_width = room.width;
 		this.globalVariables.room_height = room.height;
 
@@ -735,6 +742,7 @@ Draw events // LIE!!!!!!!!1111111
 
 		switch (action.type.kind) {
 			case 'code':
+				console.log(this.preparedCodes);
 				this.gml.execute(this.preparedCodes.get(action), instance);
 				break;
 			default:

@@ -104,7 +104,7 @@ class GML {
 				var args = c.asIteration().interpret();
 				//console.log('Running function '+name+' with arguments', args);
 
-				var script = _this.game.project.scripts.find(x => x.name == name);
+				var script = _this.game.project.resources['ProjectScript'].find(x => x.name == name);
 				if (script) {
 					var currentVars = _this.vars;
 					_this.vars = {
@@ -215,7 +215,7 @@ class GML {
 	}
 
 	prepare(code) {
-		var trace = this.grammar.trace(code).toString();
+		//var trace = this.grammar.trace(code).toString();
 		//console.log(trace);
 
 		var match = this.grammar.match(code);

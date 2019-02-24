@@ -18,16 +18,42 @@ class HTMLWindowRoom extends HTMLWindow {
 					this.inputName = add( newTextBox(null, 'Name:', room.name) ).$('input');
 					this.inputWidth = add( newNumberBox(null, 'Width:', room.width, 1, 1) ).$('input');
 					this.inputHeight = add( newNumberBox(null, 'Height:', room.height, 1, 1) ).$('input');
+					this.inputSpeed = add( newNumberBox(null, 'Speed:', room.speed, 1, 1) ).$('input');
 					this.inputBackgroundColor = add( newColorBox(null, 'Background color:', room.background_color) ).$('input');
 					
-					this.selectObject = this.makeResourceSelect(null, 'Object:', 'ProjectObject').$('select');
+					parent( add( newElem(null, 'fieldset') ) )
 
-					// view options
+						add( newElem(null, 'legend', 'Instances') )
+
+						this.selectObject = this.makeResourceSelect(null, 'Object:', 'ProjectObject').$('select');
+
+						var toolGroup = '_radio_'+uniqueID();
+						this.radioAdd = add( newRadioBox(null, 'Add instance', toolGroup, true) ).$('input')
+						this.radioMultiple = add( newRadioBox(null, 'Add multiple instances', toolGroup) ).$('input')
+						this.radioMove = add( newRadioBox(null, 'Move instance', toolGroup) ).$('input')
+						this.radioDelete = add( newRadioBox(null, 'Delete instance', toolGroup) ).$('input')
+
+						this.inputSnapToGrid = add( newCheckBox(null, 'Snap to grid', true) ).$('input');
+						this.inputDeleteUnderlying = add( newCheckBox(null, 'Delete underlying', false) ).$('input');
+
+						endparent()
+
 					this.inputSnapX = add( newNumberBox(null, 'Snap X:', 16, 1, 1) ).$('input');
 					this.inputSnapY = add( newNumberBox(null, 'Snap Y:', 16, 1, 1) ).$('input');
-					this.inputShowGrid = add( newCheckBox(null, 'Enable grid', true) ).$('input');
+					this.inputShowGrid = add( newCheckBox(null, 'Show grid', true) ).$('input');
 
-					this.inputDeleteUnderlying = add( newCheckBox(null, 'Delete underlying', false) ).$('input');
+					parent( add( newElem(null, 'div', 'X: ') ) )
+						this.spanX = add( newElem(null, 'span', '0') );
+						endparent()
+					parent( add( newElem(null, 'div', 'Y: ') ) )
+						this.spanY = add( newElem(null, 'span', '0') );
+						endparent()
+					parent( add( newElem(null, 'div', 'Object: ') ) )
+						this.spanObject = add( newElem(null, 'span', '') );
+						endparent()
+					parent( add( newElem(null, 'div', 'Id: ') ) )
+						this.spanId = add( newElem(null, 'span', '') );
+						endparent()
 
 					// updates
 					this.inputWidth.onchange = () => this.updateCanvasPreview();
@@ -45,34 +71,116 @@ class HTMLWindowRoom extends HTMLWindow {
 
 					this.canvasPreview = add( newCanvas(null, room.width, room.height) );
 					this.ctx = this.canvasPreview.getContext('2d');
+					this.ctx.imageSmoothingEnabled = false;
 
-					this.canvasPreview.onclick = (e) => {
-						// add instance to room
+					// TODO: account for sprite size when moving and deleting
 
-						if (this.selectObject.value < 0) return;
-						var x = e.offsetX;
-						var y = e.offsetY;
+					this.canvasPreview.onmousedown = (e) => {
 
-						if (this.inputShowGrid.checked) {
-							x = Math.floor(x / this.inputSnapX.value) * this.inputSnapX.value;
-							y = Math.floor(y / this.inputSnapY.value) * this.inputSnapY.value;
-						}
+						this.mouseIsDown = true;
+						this.currentPos = this.getMousePositionSnapped(e);
+						var pos = this.currentPos;
 
-						if (this.inputDeleteUnderlying.checked) {
-							this.paramInstances = this.paramInstances.filter(instance => {
-								if (instance.x == x && instance.y == y) {
-									console.log(instance, 'removed!!!');
-									return false;
+						if (this.radioAdd.checked) {
+							this.movingInstance = this.addInstance(e);
+						} else
+
+						if (this.radioMultiple.checked) {
+							this.addInstance(e);
+							this.deleteUnderlying(e);
+						} else
+
+						if (this.radioMove.checked) {
+							for (var i = this.paramInstances.length - 1; i >= 0; i--) {
+								if (this.paramInstances[i].x == pos.x
+								 && this.paramInstances[i].y == pos.y) {
+									this.movingInstance = this.paramInstances[i];
+									break;
 								}
-								return true;
-							})
-						}
+							}
+						} else
 
-						this.paramInstances.push(new ProjectInstance(x, y, this.selectObject.value));
-						console.log(this.paramInstances);
+						if (this.radioDelete.checked) {
+							for (var i = this.paramInstances.length - 1; i >= 0; i--) {
+								if (this.paramInstances[i].x == pos.x
+								 && this.paramInstances[i].y == pos.y) {
+
+									this.paramInstances.splice(i, 1);
+									break;
+								}
+							}
+						}
 
 						this.updateCanvasPreview();
 
+					}
+
+					this.canvasPreview.onmousemove = (e) => {
+						var pos = this.getMousePositionSnapped(e);
+
+						if (this.mouseIsDown) {
+
+							if (this.movingInstance) {
+								this.movingInstance.x = pos.x;
+								this.movingInstance.y = pos.y;
+							}
+
+							if (!(pos.x == this.currentPos.x && pos.y == this.currentPos.y)) {
+								if (this.radioMultiple.checked) {
+									this.addInstance(e);
+									this.currentPos = pos;
+								} else
+
+								if (this.radioDelete.checked) {
+									for (var i = this.paramInstances.length - 1; i >= 0; i--) {
+										if (this.paramInstances[i].x == pos.x
+										 && this.paramInstances[i].y == pos.y) {
+
+											this.paramInstances.splice(i, 1);
+											break;
+										}
+									}
+									this.currentPos = pos;
+								}
+							}
+							
+						}
+
+						this.spanX.textContent = pos.x;
+						this.spanY.textContent = pos.y;
+						this.spanObject.textContent = '';
+						this.spanId.textContent = '';
+
+						for (var i = this.paramInstances.length - 1; i >= 0; i--) {
+							if (this.paramInstances[i].x == pos.x
+							 && this.paramInstances[i].y == pos.y) {
+
+								this.spanObject.textContent = this.editor.project.resources['ProjectObject']
+									.find(x => x.id == this.paramInstances[i].object_index).name;
+
+								// fuck FUCK how do i solve this
+								//this.spanId.textContent = this.paramInstances[i].id;
+
+								break;
+							}
+						}
+
+						this.updateCanvasPreview();
+					}
+
+					// is this... right?
+					document.onmouseup = (e) => {
+						this.mouseIsDown = false;
+
+						if (this.movingInstance) {
+							if (this.radioAdd.checked) {
+								this.deleteUnderlying(e);
+							}
+						}
+
+						this.movingInstance = null;
+
+						this.updateCanvasPreview();
 					}
 
 					endparent();
@@ -86,6 +194,7 @@ class HTMLWindowRoom extends HTMLWindow {
 					this.editor.changeResourceName(room, this.inputName.value);
 					room.width = this.inputWidth.value;
 					room.height = this.inputHeight.value;
+					room.speed = this.inputSpeed.value;
 
 					room.background_color = this.inputBackgroundColor.value;
 					room.instances = this.paramInstances;
@@ -95,7 +204,54 @@ class HTMLWindowRoom extends HTMLWindow {
 				}
 			);
 			endparent();
+
+		this.editor.dispatcher.listen({
+			changeObjectSprite: i => {
+				this.updateCanvasPreview();
+			}
+		})
+
 	}
+
+	getMousePositionSnapped(e) {
+		var x = e.offsetX;
+		var y = e.offsetY;
+
+		if (this.inputSnapToGrid.checked) {
+			x = Math.floor(x / this.inputSnapX.value) * this.inputSnapX.value;
+			y = Math.floor(y / this.inputSnapY.value) * this.inputSnapY.value;
+		}
+
+		return {x: x, y: y};
+	}
+
+	addInstance(e) {
+		if (this.selectObject.value < 0) return;
+
+		var pos = this.getMousePositionSnapped(e);
+
+		var i = new ProjectInstance(pos.x, pos.y, this.selectObject.value);
+		this.paramInstances.push(i);
+		return i;
+	}
+
+	deleteUnderlying(e) {
+		var pos = this.getMousePositionSnapped(e);
+
+		if (this.inputDeleteUnderlying.checked) {
+			this.paramInstances = this.paramInstances.filter(instance => {
+				if (instance == this.movingInstance) {
+					return true;
+				}
+				if (instance.x == pos.x && instance.y == pos.y) {
+					//console.log(instance, 'removed!!!');
+					return false;
+				}
+				return true;
+			})
+		}
+	}
+
 	updateCanvasPreview() {
 
 		this.canvasPreview.width = this.inputWidth.value;
@@ -156,18 +312,16 @@ class HTMLWindowRoom extends HTMLWindow {
 
 	drawLine(x1, y1, x2, y2) {
 
-		console.log(x1, y1, x2, y2)
 		this.ctx.save();
 		this.ctx.translate(0.5, 0.5)
 
 		this.ctx.beginPath();
 		this.ctx.moveTo(x1,y1);
 		this.ctx.lineTo(x2,y2);
-		this.ctx.closePath();
+		//this.ctx.closePath();
 		this.ctx.stroke();
 
 		this.ctx.restore();
-
-		debugger;
+		
 	}
 }

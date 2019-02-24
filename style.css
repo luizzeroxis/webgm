@@ -99,7 +99,7 @@
 .grid-resource.resource-room {
 	grid-template-columns: 300px 1fr;
 }
-.grid-resource.resource-sprite .preview {
+.grid-resource.resource-room .preview {
 	overflow: auto;
 	max-height: 80vh;
 }
@@ -145,4 +145,8 @@
 }
 .icon[src] {
 	visibility: visible;
+}
+
+canvas {
+	image-rendering: pixelated;
 }

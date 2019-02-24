@@ -18,7 +18,9 @@ class HTMLWindowObject extends HTMLWindow {
 					selectSprite.value = object.sprite_index;
 
 					var inputVisible = add( newCheckBox(null, 'Visible', object.visible) ).$('input');
+					var inputSolid = add( newCheckBox(null, 'Solid', object.solid) ).$('input');
 					var inputDepth = add( newNumberBox(null, 'Depth:', object.depth, 1) ).$('input');
+					var inputPersistent = add( newCheckBox(null, 'Persistent', object.persistent) ).$('input');
 
 					var paramEvents = object.events.map(event => {
 						var newevent = new ProjectEvent(event.type, event.subtype);
@@ -199,7 +201,9 @@ class HTMLWindowObject extends HTMLWindow {
 					this.editor.changeResourceName(object, inputName.value);
 					this.editor.changeObjectSprite(object, selectSprite.value);
 					object.visible = inputVisible.checked;
+					object.solid = inputSolid.checked;
 					object.depth = inputDepth.value;
+					object.persistent = inputPersistent.checked;
 					this.htmlActionWindows.forEach(w => {
 						w.apply();
 					})

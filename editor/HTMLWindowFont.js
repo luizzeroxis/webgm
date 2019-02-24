@@ -43,6 +43,7 @@ class HTMLWindowFont extends HTMLWindow {
 	}
 
 	updatePreview() {
+		//this.divPreview.style.font = makeCSSFont(this.inputFont.value, this.inputSize.value, this.inputBold.checked, this.inputItalic.checked);
 		this.divPreview.style.fontFamily = this.inputFont.value;
 		this.divPreview.style.fontSize = this.inputSize.value + 'pt';
 		this.divPreview.style.fontWeight = (this.inputBold.checked ? 'bold' : null);

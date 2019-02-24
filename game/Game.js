@@ -9,6 +9,7 @@ class Game {
 
 		// Draws
 		this.ctx = this.canvas.getContext('2d');
+		this.ctx.imageSmoothingEnabled = false;
 
 		// Input system
 		this.key = {};
@@ -144,7 +145,12 @@ class Game {
 		this.project.resources.ProjectObject .forEach(x => {this.globalVariables[x.name] = x.id});
 		this.project.resources.ProjectRoom   .forEach(x => {this.globalVariables[x.name] = x.id});
 
-		console.log(this.globalVariables);
+		// Initialize game vars
+		this.drawColor = 0;
+		this.drawAlpha = 1;
+		this.drawFont = -1;
+		this.drawHAlign = 0;
+		this.drawVAlign = 0;
 
 		this.constants = {
 
@@ -545,6 +551,7 @@ class Game {
 		Promise.all(promises).then(() => {
 
 			this.timeout = setTimeout(() => this.mainLoop(), 1000 / this.room.roomSpeed);
+			this.timeoutPreviousTime = performance.now();
 
 		});
 
@@ -708,7 +715,14 @@ Draw events // LIE!!!!!!!!1111111
 		// Run main loop again, after a frame of time has passed.
 		// This means the game will slow down if a loop takes too much time.
 		// TODO: check if gm still runs fine if frame takes less than frame of time
-		this.timeout = setTimeout(() => this.mainLoop(), 1000 / this.room.roomSpeed);
+		// It seems like so
+
+		var currentTime = performance.now()
+		var deltaTime = currentTime - this.timeoutPreviousTime;
+		var waitTime = Math.max(0, (1000 / this.globalVariables.room_speed) - deltaTime);
+		this.timeoutPreviousTime = currentTime;
+
+		this.timeout = setTimeout(() => this.mainLoop(), waitTime);
 	}
  
 	loadRoom(room) {
@@ -722,6 +736,7 @@ Draw events // LIE!!!!!!!!1111111
 
 		this.globalVariables.room_width = room.width;
 		this.globalVariables.room_height = room.height;
+		this.globalVariables.room_speed = room.speed;
 
 		var insts = room.instances;
 		for (var i = 0; i < insts.length; i++) {
@@ -742,13 +757,13 @@ Draw events // LIE!!!!!!!!1111111
 
 		switch (action.type.kind) {
 			case 'code':
-				console.log(this.preparedCodes);
 				this.gml.execute(this.preparedCodes.get(action), instance);
 				break;
 			default:
 			//case 'gmfunction':
 				//action.appliesTo
 				//action.not
+				console.log(action);
 				this.gml.builtInFunction(action.type.gmfunction, action.args, instance, action.relative);
 				break;
 		}
@@ -762,35 +777,13 @@ Draw events // LIE!!!!!!!!1111111
 		var instance = new Instance(x, y, object, this);
 		this.instances.push(instance);
 
-		var obj = this.project.resources.ProjectObject[instance.object_index];
+		var obj = this.project.resources.ProjectObject.find(x => x.id == instance.object_index);
 		var create = obj.events.find((x) => x.type == 'create');
 		if (create) {
 			this.doActions(create.actions, instance);
 		}
 
 		return instance.variables.id;
-	}
-
-	drawSprite(sprite_index, image_index, x, y) {
-
-		if (sprite_index >= 0) {
-			var sprite = this.project.resources.ProjectSprite.find(x => x.id == sprite_index)
-			if (sprite) {
-				if (sprite.images[image_index]) {
-					this.ctx.save();
-					this.ctx.translate(-sprite.originx, -sprite.originy);
-					this.ctx.drawImage(sprite.images[image_index].image, x, y);
-					this.ctx.restore();
-				} else {
-					throw 'No subimage with index '+image_index+' on sprite '+sprite.name;
-				}
-			} else {
-				throw 'No sprite with index '+sprite_index;
-			}
-		} else {
-			throw sprite_index+' cannot be less than 0';
-		}
-
 	}
 
 	gameEnd () {

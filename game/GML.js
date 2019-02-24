@@ -12,38 +12,6 @@ class GML {
 		this.grammar = ohm.grammar(GMLGrammar.getText());
 		this.semantics = this.grammar.createSemantics();
 
-		this.built_in_functions = [
-			{name: 'action_move_to', args: [], func: (args, relative) => {
-				this.currentInstance.variables.x = (relative ? this.currentInstance.variables.x : 0) + args[0];
-				this.currentInstance.variables.y = (relative ? this.currentInstance.variables.y : 0) + args[1];
-				return 0;
-			}},
-			{name: 'draw_rectangle', args: [], func: (args) => {
-				this.game.ctx.fillRect(args[0], args[1], args[2] - args[0], args[3] - args[1]);
-			}},
-			{name: 'draw_set_color', args: [], func: (args) => {
-				this.ctx.fillStyle = args[0];
-			}},
-			{name: 'draw_sprite', args: [], func: (args) => {
-				this.game.drawSprite(args[0], args[1], args[2], args[3]);
-			}},
-			{name: 'draw_text', args: [], func: (args) => {
-				this.ctx.fillText(act.arg[2], act.arg[0], act.arg[1]);
-			}},
-			{name: 'instance_create', args: [], func: (args) => {
-				return this.game.instanceCreate(args[0], args[1], args[2]);
-			}},
-			{name: 'keyboard_check', args: [], func: (args) => {
-				return this.game.key[args[0]] ? 1 : 0;
-			}},
-			{name: 'string', args: [], func: (args) => {
-				return args[0].toString();
-			}},
-			{name: 'show_message', args: [], func: (args) => {
-				alert(args[0]); return 0;
-			}},
-		];
-
 		this.semantics.addOperation('interpret', {
 
 			Code (a) {
@@ -215,8 +183,8 @@ class GML {
 	}
 
 	prepare(code) {
-		//var trace = this.grammar.trace(code).toString();
-		//console.log(trace);
+		var trace = this.grammar.trace(code).toString();
+		console.log(trace);
 
 		var match = this.grammar.match(code);
 		//console.log(match);
@@ -242,10 +210,12 @@ class GML {
 	}
 
 	builtInFunction(name, args, inst, relative) {
-		var func = this.built_in_functions.find(x => x.name == name);
+
+		var func = BuiltInFunctions[name];
+
 		if (func) {
 			this.currentInstance = inst;
-			return func.func(args, relative);
+			return func.call(this, args, relative);
 		} else {
 			throw 'No such function called "'+name+'".';
 		}

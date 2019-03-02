@@ -152,6 +152,8 @@ class Game {
 		this.drawHAlign = 0;
 		this.drawVAlign = 0;
 
+		this.shouldDestroyInstances = [];
+
 		this.constants = {
 
 			// Basic
@@ -517,7 +519,7 @@ class Game {
 				this.preparedCodes.set(script, preparedCode);
 			} else {
 				console.log(preparedCode.message);
-				alert("FATAL ERROR in script "+script.name+'\n'+preparedCode.message);
+				this.showError("FATAL COMPILATION ERROR in script "+script.name+'\n'+preparedCode.message);
 			}
 		})
 
@@ -532,7 +534,7 @@ class Game {
 							this.preparedCodes.set(action, preparedCode);
 						} else {
 							console.log(preparedCode.message);
-							alert("FATAL ERROR in action "+action.getName()+" in event "+event.getName()+" in object "+object.name+'\n'+preparedCode.message);
+							this.showError("FATAL COMPILATION ERROR in action "+action.getName()+" in event "+event.getName()+" in object "+object.name+'\n'+preparedCode.message);
 						}
 					}
 
@@ -575,7 +577,7 @@ class Game {
 		for (var i = 0; i < instances_by_depth.length; i++) {
 
 			var inst = instances_by_depth[i];
-			var obj = this.project.resources.ProjectObject[inst.object_index];
+			var obj = this.project.resources.ProjectObject.find(x => x.id == inst.object_index);
 
 			// Draw events are executed every frame, if object is visible.
 			var draw = obj.events.find((x) => x.type == 'draw');
@@ -585,9 +587,10 @@ class Game {
 				}
 			} else {
 				// In case there's no draw event, draw the sprite of object, if there's one.
-				if (inst.variables.sprite_index >= 0) {
+				var index = inst.variables.sprite_index;
+				if (index >= 0) {
 
-					var sprite = this.project.resources.ProjectSprite.find((x) => x.id == inst.variables.sprite_index);
+					var sprite = this.project.resources.ProjectSprite.find(x => x.id == index);
 					if (sprite) {
 						var image = sprite.images[inst.variables.image_index];
 						if (image) {
@@ -596,6 +599,8 @@ class Game {
 							this.ctx.drawImage(image.image, inst.variables.x, inst.variables.y);
 							this.ctx.restore();
 						}
+					} else {
+						console.log('Project corruption: no such sprite of index' + index)
 					}
 
 				}
@@ -606,7 +611,7 @@ class Game {
 		var eventsToRun = {};
 
 		this.instances.forEach(instance => {
-			 var object = this.project.resources.ProjectObject.find(x => x.id == instance.variables.object_index);
+			 var object = this.project.resources.ProjectObject.find(x => x.id == instance.object_index);
 
 			 object.events.forEach(event => {
 
@@ -622,34 +627,35 @@ class Game {
 		})
 
 		/*
-Begin step events 
-Alarm events 
-Keyboard, Key press, and Key release events 
-Mouse events 
-Normal step events 
-(now all instances are set to their new positions) 
-Collision events 
-End step events 
-Draw events // LIE!!!!!!!!1111111
-
+			Begin step events 
+			Alarm events 
+			Keyboard, Key press, and Key release events 
+			Mouse events 
+			Normal step events 
+			(now all instances are set to their new positions) 
+			Collision events 
+			End step events 
+			Draw events // LIE!!!!!!!!1111111
 		*/
 
 		// Run all events, in order
 
 		// Begin step
 		if (eventsToRun['step'] && eventsToRun['step']['begin']) {
-			eventsToRun['step']['begin'].forEach(event => {
-				this.doActions(event.event.actions, event.instance);
+			eventsToRun['step']['begin'].some(event => {
+				return this.doActions(event.event.actions, event.instance);
 			})
 		}
 
 		// Alarms
 		if (eventsToRun['alarm']) {
-			Object.entries(eventsToRun['alarm']).forEach(([subtype, listevents]) => {
-				listevents.forEach(event => {
-					// TODO should i update alarm here?
+			Object.entries(eventsToRun['alarm']).some(([subtype, listevents]) => {
+				return listevents.some(event => {
+
+					// should i update alarm here? well yes, but actually no
+
 					if (event.instance.variables.alarm[subtype] == 0) {
-						this.doActions(event.event.actions, event.instance);
+						return this.doActions(event.event.actions, event.instance);
 					}
 				})
 			})
@@ -657,30 +663,30 @@ Draw events // LIE!!!!!!!!1111111
 
 		// Keyboard
 		if (eventsToRun['keyboard']) {
-			Object.entries(eventsToRun['keyboard']).forEach(([subtype, listevents]) => {
-				listevents.forEach(event => {
+			Object.entries(eventsToRun['keyboard']).some(([subtype, listevents]) => {
+				return listevents.some(event => {
 					if (this.key[subtype]) {
-						this.doActions(event.event.actions, event.instance);
+						return this.doActions(event.event.actions, event.instance);
 					}
 				})
 			})
 		}
 
 		if (eventsToRun['keypress']) {
-			Object.entries(eventsToRun['keypress']).forEach(([subtype, listevents]) => {
-				listevents.forEach(event => {
+			Object.entries(eventsToRun['keypress']).some(([subtype, listevents]) => {
+				return listevents.some(event => {
 					if (this.keyPressed[subtype]) {
-						this.doActions(event.event.actions, event.instance);
+						return this.doActions(event.event.actions, event.instance);
 					}
 				})
 			})
 		}
 
 		if (eventsToRun['keyrelease']) {
-			Object.entries(eventsToRun['keyrelease']).forEach(([subtype, listevents]) => {
-				listevents.forEach(event => {
+			Object.entries(eventsToRun['keyrelease']).some(([subtype, listevents]) => {
+				return listevents.some(event => {
 					if (this.keyReleased[subtype]) {
-						this.doActions(event.event.actions, event.instance);
+						return this.doActions(event.event.actions, event.instance);
 					}
 				})
 			})
@@ -691,26 +697,88 @@ Draw events // LIE!!!!!!!!1111111
 
 		// Step
 		if (eventsToRun['step'] && eventsToRun['step']['normal']) {
-			eventsToRun['step']['normal'].forEach(event => {
-				this.doActions(event.event.actions, event.instance);
+			eventsToRun['step']['normal'].some(event => {
+				return this.doActions(event.event.actions, event.instance);
 			})
 		}
 
 		/* UPDATE INSTANCE POSITIONS */
 
+		this.instances.forEach(instance => {
+			
+			// instance.variables.x += Math.cos(instance.variables.direction
+			// 	* this.constants.pi / 180) * instance.variables.speed;
+			// instance.variables.y += Math.sin(instance.variables.direction
+			// 	* this.constants.pi / 180) * instance.variables.speed;
+
+			instance.variables.speed -= instance.variables.friction;
+
+		});
+
 		// Collisions
-		// TODO
+		if (eventsToRun['collision']) {
+			Object.entries(eventsToRun['collision']).some(([subtype, listevents]) => {
+				return listevents.some(event => {
+
+					// TODO this whole thing should probably be somewhere else
+
+					var selfInstance = event.instance;
+
+					var otherInstances = this.instances.filter(x => x.object_index == subtype);
+
+					otherInstances.forEach(otherInstance => {
+						// TODO masks
+
+						var selfSprite  = this.project.resources.ProjectSprite
+							.find(x => x.id == selfInstance.variables.sprite_index);
+						var selfImage = selfSprite.images[selfInstance.variables.image_index];
+
+						var otherSprite = this.project.resources.ProjectSprite
+							.find(x => x.id == otherInstance.variables.sprite_index);
+						var otherImage = otherSprite.images[otherInstance.variables.image_index];
+
+						// TODO collision masks, will assume rectangle now
+						// selfSprite.boundingbox == 'fullimage';
+						// selfSprite.shape = 'rectangle';
+
+						var c = collision2Rectangles({
+							x1: selfInstance.variables.x - selfSprite.originx,
+							y1: selfInstance.variables.y - selfSprite.originy,
+							x2: selfInstance.variables.x - selfSprite.originx + selfImage.image.width,
+							y2: selfInstance.variables.y - selfSprite.originy + selfImage.image.height
+						}, {
+							x1: otherInstance.variables.x - otherSprite.originx,
+							y1: otherInstance.variables.y - otherSprite.originy,
+							x2: otherInstance.variables.x - otherSprite.originx + otherImage.image.width,
+							y2: otherInstance.variables.y - otherSprite.originy + otherImage.image.height
+						})
+
+						if (c) {
+							return this.doActions(event.event.actions, event.instance);
+						}
+
+					})
+
+				})
+			})
+		}
 
 		// End step
 		if (eventsToRun['step'] && eventsToRun['step']['end']) {
-			eventsToRun['step']['end'].forEach(event => {
-				this.doActions(event.event.actions, event.instance);
+			eventsToRun['step']['end'].some(event => {
+				return this.doActions(event.event.actions, event.instance);
 			})
 		}
 
 		// Reset keyboard states
 		this.keyPressed = {};
 		this.keyReleased = {};
+
+		// Delete instances
+		this.shouldDestroyInstances.forEach(x => {
+			this.instanceDestroy(x);
+		})
+		this.shouldDestroyInstances = [];
 
 		// Run main loop again, after a frame of time has passed.
 		// This means the game will slow down if a loop takes too much time.
@@ -746,9 +814,15 @@ Draw events // LIE!!!!!!!!1111111
 	}
 
 	doActions(actions, instance) {
-		for (var k = 0; k < actions.length; k++) {
-			this.doAction(actions[k], instance);
-		}
+		return actions.some(action => {
+
+			this.doAction(action, instance);
+
+			if (this.shouldEnd) {
+				return true;
+			}
+
+		})
 	}
 
 	doAction(action, instance) {
@@ -763,11 +837,24 @@ Draw events // LIE!!!!!!!!1111111
 			//case 'gmfunction':
 				//action.appliesTo
 				//action.not
-				console.log(action);
 				this.gml.builtInFunction(action.type.gmfunction, action.args, instance, action.relative);
 				break;
 		}
 
+	}
+
+	throwError(message) {
+		this.showError(message);
+	}
+
+	throwFatalError(message) {
+		this.showError(message);
+		this.gameEnd();
+		throw message;
+	}
+
+	showError(message) {
+		alert(message);
 	}
 
 	instanceCreate (x, y, object) {
@@ -784,6 +871,13 @@ Draw events // LIE!!!!!!!!1111111
 		}
 
 		return instance.variables.id;
+	}
+
+	instanceDestroy (instance) {
+
+		var index = this.instances.findIndex(x => x == instance);
+		this.instances.splice(index, 1);
+
 	}
 
 	gameEnd () {
@@ -804,11 +898,11 @@ class Instance {
 
 		this.object_index = object;
 
-		var obj = game.project.resources.ProjectObject[this.object_index];
+		var obj = game.project.resources.ProjectObject.find(x => x.id == this.object_index);
 
 		this.variables = {
 			id: 100001,
-			object_index: object,
+			//object_index: object,
 			x: x,
 			y: y,
 			sprite_index: obj.sprite_index,
@@ -819,6 +913,8 @@ class Instance {
 			persistent: obj.persistent,
 			parent: obj.parent,
 			mask: obj.mask,
+			direction: 0,
+			speed: 0
 		};
 
 	}

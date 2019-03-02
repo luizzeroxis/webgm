@@ -4,8 +4,10 @@ class GML {
 
 		let _this = this; //fuck javascript
 
+		this.vars = {};
 		this.currentInstance = null;
 		this.game = null;
+		this.gameShouldEnd = false;
 
 		//ohm is a global variable created by ohm.js.
 
@@ -35,7 +37,7 @@ class GML {
 				//console.log('If: '+condition.sourceString);
 				var _condition = condition.interpret();
 				if (typeof _condition !== typeof 1) {
-					throw 'Condition is not a number!';
+					_this.game.throwFatalError('Condition is not a number!');
 				}
 				if (_condition > 0) {
 					code.interpret();
@@ -50,13 +52,13 @@ class GML {
 			While(_, condition, code) {
 				var _condition = condition.interpret();
 				if (typeof _condition !== typeof 1) {
-					throw 'Condition is not a number!';
+					_this.game.throwFatalError('Condition is not a number!');
 				}
 				while (_condition) {
 					code.interpret();
 					_condition = condition.interpret();
 					if (typeof _condition !== typeof 1) {
-						throw 'Condition is not a number!';
+						_this.game.throwFatalError('Condition is not a number!');
 						break;
 					}
 				}
@@ -93,12 +95,20 @@ class GML {
 
 			},
 			Name (a, b) {
-				//
+				return this.sourceString;
 			},
 			Expression(a) {
 				//console.log('Expression: ', a.sourceString);
 				return a.interpret();
 			},
+
+			Less(a, _, b) {
+				var ia = a.interpret();
+				var ib = b.interpret();
+
+				return (ia < ib) ? 1 : 0;
+			},
+
 			Parentheses(lp, expression, rp) {
 				//console.log('Parentheses: ', '('+expression.sourceString+')');
 				return expression.interpret();
@@ -155,7 +165,7 @@ class GML {
 						if (v == undefined) {
 							v = _this.game.constants[name.sourceString];
 							if (v == undefined) {
-								throw "No variable or constant called "+name.sourceString;
+								_this.game.throwFatalError("No variable or constant called "+name.sourceString);
 							}
 						}
 					}
@@ -164,14 +174,47 @@ class GML {
 				return v;
 			},
 			Assignment(name, equal, expression) {
-				if (!(_this.game.constants[name.sourceString] == undefined)) {
-					throw name.sourceString+" is a constant, can't change the value to "+expression.sourceString;
-				} else
-				if (!(_this.game.globalVariables[name.sourceString] == undefined)) {
-					_this.game.globalVariables[name.sourceString] = expression.interpret();
-				} else {
+				var success = _this.setVariable(name.sourceString, value => expression.interpret());
+				if (!success) {
+					// new variable
 					_this.currentInstance.variables[name.sourceString] = expression.interpret();
 				}
+				
+			},
+			AssignmentAdd(name, equal, expression) {
+				var success = _this.setVariable(name.sourceString, value => value + expression.interpret());
+				if (!success) {
+					_this.game.throwFatalError("No variable called "+name.sourceString);
+				}
+			},
+			AssignmentSubtract(name, equal, expression) {
+				var success = _this.setVariable(name.sourceString, value => value - expression.interpret());
+				if (!success) {
+					_this.game.throwFatalError("No variable called "+name.sourceString);
+				}
+			},
+			AssignmentMultiply(name, equal, expression) {
+				var success = _this.setVariable(name.sourceString, value => value * expression.interpret());
+				if (!success) {
+					_this.game.throwFatalError("No variable called "+name.sourceString);
+				}
+			},
+			AssignmentDivide(name, equal, expression) {
+				var success = _this.setVariable(name.sourceString, value => value / expression.interpret());
+				if (!success) {
+					_this.game.throwFatalError("No variable called "+name.sourceString);
+				}
+			},
+
+			AssignmentVar(_, names) {
+				names.asIteration().interpret().forEach(name => {
+					_this.vars[name] = {};
+				});
+			},
+			AssignmentGlobalVar(_, names) {
+				names.asIteration().interpret().forEach(name => {
+					_this.game.globalVariables[name] = {};
+				});
 			},
 
 			Semicolon(a) {
@@ -182,9 +225,26 @@ class GML {
 
 	}
 
+	setVariable(name, funcExpression) {
+		if (name in this.vars) {
+			this.vars[name] = funcExpression(this.vars[name]);
+		} else
+		// local vars
+		if (name in this.currentInstance.variables) {
+			this.currentInstance.variables[name] = funcExpression(this.currentInstance.variables[name]);
+		} else
+		// global vars
+		if (name in this.game.globalVariables) {
+			this.game.globalVariables[name] = funcExpression(this.game.globalVariables[name]);
+		} else {
+			return false;
+		}
+		return true;
+	}
+
 	prepare(code) {
 		var trace = this.grammar.trace(code).toString();
-		console.log(trace);
+		//console.log(trace);
 
 		var match = this.grammar.match(code);
 		//console.log(match);
@@ -199,8 +259,15 @@ class GML {
 		if (preparedcode.succeeded()) {
 			//console.log('Executing...');
 			this.currentInstance = inst;
+			var currentVars = this.vars;
 			this.vars = {};
 			this.semantics(preparedcode).interpret();
+			this.vars = currentVars;
+
+			if (this.game.shouldEnd) {
+				this.game.gameEnd();
+			}
+
 			//console.log('Done.');
 
 		} else {
@@ -217,7 +284,7 @@ class GML {
 			this.currentInstance = inst;
 			return func.call(this, args, relative);
 		} else {
-			throw 'No such function called "'+name+'".';
+			this.game.throwFatalError('No such function called "'+name+'".');
 		}
 	}
 

@@ -19,16 +19,16 @@ class Editor {
 				name: 'main',
 				items: [
 					{
-						name: 'Execute Code',
+						name: 'Execute a piece of code',
 						kind: 'code'
 					},
 					{
-						name: 'Show message',
+						name: 'Display a message',
 						kind: 'gmfunction',
 						gmfunction: 'show_message',
 						args: [
 							{
-								name: 'Text:',
+								name: 'message:',
 								type: 'string'
 							}
 						]
@@ -293,34 +293,36 @@ class Editor {
 	}
 
 	openWindow(windowclass, id, ...clientargs) {
-		parent(this.htmlWindowsArea)
-			var w = new windowclass(id, this);
-			w.makeClient(...clientargs);
-			endparent()
-
-		this.htmlWindows.unshift(w);
-		this.organizeWindows();
-		return w;
-	}
-
-	openResourceWindow(resource) {
-		if (this.htmlWindows.find(x => x.id == resource)) {
-			this.focusResourceWindow(resource);
+		if (this.htmlWindows.find(x => x.id == id)) {
+			this.focusWindow(id);
+			return null;
 		} else {
-			var windowMakers = {};
-			windowMakers[ProjectSprite.name] = HTMLWindowSprite;
-			windowMakers[ProjectSound.name]  = HTMLWindowSound;
-			windowMakers[ProjectScript.name] = HTMLWindowScript;
-			windowMakers[ProjectFont.name]   = HTMLWindowFont;
-			windowMakers[ProjectObject.name] = HTMLWindowObject;
-			windowMakers[ProjectRoom.name]   = HTMLWindowRoom;
 
-			this.openWindow(windowMakers[resource.classname], resource, resource);
+			parent(this.htmlWindowsArea)
+				var w = new windowclass(id, this);
+				w.makeClient(...clientargs);
+				endparent()
+
+			this.htmlWindows.unshift(w);
+			this.organizeWindows();
+			return w;
 		}
 	}
 
-	focusResourceWindow(resource) {
-		var index = this.htmlWindows.findIndex(x => x.id == resource);
+	openResourceWindow(resource) {
+		var windowMakers = {};
+		windowMakers[ProjectSprite.name] = HTMLWindowSprite;
+		windowMakers[ProjectSound.name]  = HTMLWindowSound;
+		windowMakers[ProjectScript.name] = HTMLWindowScript;
+		windowMakers[ProjectFont.name]   = HTMLWindowFont;
+		windowMakers[ProjectObject.name] = HTMLWindowObject;
+		windowMakers[ProjectRoom.name]   = HTMLWindowRoom;
+
+		this.openWindow(windowMakers[resource.classname], resource, resource);
+	}
+
+	focusWindow(id) {
+		var index = this.htmlWindows.findIndex(x => x.id == id);
 
 		// splice returns a array of removed elements
 		this.htmlWindows.unshift(this.htmlWindows.splice(index, 1)[0]);
@@ -339,7 +341,9 @@ class Editor {
 		if (index>=0) {
 			this.htmlWindows[index].remove();
 			this.htmlWindows.splice(index, 1);
+			return true;
 		}
+		return false;
 	}
 
 	deleteResourceWindow(resource) {

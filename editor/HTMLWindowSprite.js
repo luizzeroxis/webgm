@@ -24,8 +24,6 @@ class HTMLWindowSprite extends HTMLWindow {
 						VirtualFileSystem.openDialog('image/*')
 						.then(file => {
 
-							console.log(file);
-
 							paramImages[0] = new AbstractImage(file);
 							// TODO check if there is errors or something
 
@@ -39,10 +37,6 @@ class HTMLWindowSprite extends HTMLWindow {
 						});
 
 					}) )
-
-					add( newButton(null, 'Edit Sprite', () => {
-						// TODO open sprite subimage editor
-					}) );
 
 					parent( add( newElem(null, 'div', 'Width: ')) )
 						var divWidth = add( newElem(null, 'span', '32') )

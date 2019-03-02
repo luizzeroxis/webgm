@@ -33,7 +33,92 @@ class BuiltInFunctions {
 		return Math.cos(x);
 	}
 	static degtorad ([x]) {
-		return x * this.globalVariables.pi / 180;
+		return x * this.constants.pi / 180;
+	}
+	static exp ([x]) {
+		return Math.exp(x);
+	}
+	static floor ([x]) {
+		return Math.floor(x);
+	}
+	static frac ([x]) {
+		return x % 1;
+	}
+	static irandom ([x]) {
+		return Math.floor(Math.random() * (Math.floor(x) + 1));
+	}
+	static irandom_range ([x1, x2]) {
+		return Math.floor(Math.random() * (Math.floor(x1) - Math.floor(x2) + 1)) + Math.floor(x2);
+	}
+	static is_real ([x]) {
+		return (typeof x == 'number');
+	}
+	static is_string ([x]) {
+		return (typeof x == 'string');
+	}
+	static lengthdir_x ([len, dir]) {
+		return Math.cos(dir * this.constants.pi / 180) * len;
+	}
+	static lengthdir_y ([len, dir]) {
+		return Math.sin(dir * this.constants.pi / 180) * len;
+	}
+	static ln ([x]) {
+		return Math.log(x);
+	}
+	static log10 ([x]) {
+		return Math.log10(x);
+	}
+	static log2 ([x]) {
+		return Math.log2(x);
+	}
+	static logn ([x, n]) {
+		return Math.log(x) / Math.log(n);
+	}
+	static max ([...vals]) {
+		return Math.max(...vals);
+	}
+	static mean ([...vals]) {
+		if (vals.length == 0) return 0;
+		return vals.reduce((a, b) => a+b) / vals.length;
+	}
+	static min ([...vals]) {
+		return Math.min(...vals);
+	}
+	static point_direction ([x1, y1, x2, y2]) {
+		return Math.atan2(y2 - y1, x2 - x1) * 180 / this.constants.pi;
+	}
+	static point_distance ([x1, y1, x2, y2]) {
+		return Math.hypot(x2 - x1, y2 - y1);
+	}
+	static power ([x, n]) {
+		return Math.pow(x, n);
+	}
+	static radtodeg ([x]) {
+		return x * 180 / this.constants.pi;
+	}
+	static random ([x]) {
+		return Math.random() * x;
+	}
+	static random_range ([x1, x2]) {
+		return (Math.random() * (x2-x1)) + x1;
+	}
+	static round ([x]) {
+		return Math.round(x);
+	}
+	static sign ([x]) {
+		return Math.sign(x);
+	}
+	static sin ([x]) {
+		return Math.sin(x);
+	}
+	static sqr ([x]) {
+		return x*x;
+	}
+	static sqrt ([x]) {
+		return Math.sqrt(x);
+	}
+	static tan ([x]) {
+		return Math.tan(x);
 	}
 
 	// ## String handling functions
@@ -43,13 +128,74 @@ class BuiltInFunctions {
 	static string ([val]) {
 		return val.toString();
 	}
+	static ord ([str]) {
+		return str.charCodeAt(0);
+	}
+	static real ([str]) {
+		return parseDouble(str);
+	}
 
 	// # Game play
+
+	// ## Moving around
+
+	static move_snap ([hsnap, vsnap]) {
+		this.currentInstance.variables.x = Math.floor(this.currentInstance.variables.x / hsnap) * hsnap;
+		this.currentInstance.variables.y = Math.floor(this.currentInstance.variables.y / vsnap) * vsnap;
+		return 0;
+	}
+	static move_towards_point ([x, y, sp]) {
+		this.currentInstance.variables.speed = sp;
+		this.currentInstance.variables.direction = Math.atan2(x, y) * 180 / this.constants.pi;
+		return 0;
+	}
+	static place_snapped ([hsnap, vsnap]) {
+		return (this.currentInstance.variables.x % hsnap == 0) && (this.currentInstance.variables.y % vsnap == 0)
+	}
 
 	// ## Instances
 
 	static instance_create ([x, y, obj]) {
 		return this.game.instanceCreate(x, y, obj);
+	}
+	static instance_destroy ([]) {
+		this.game.shouldDestroyInstances.push(this.currentInstance);
+		return 0;
+	}
+	static instance_exists ([obj]) {
+
+		var instancesWithoutDeleted = this.game.instances.filter(x =>
+				!this.game.shouldDestroyInstances.includes(x));
+
+		var i;
+		if (obj < 0) { // is keyword
+			if (obj == -1) {
+				i = instancesWithoutDeleted.find(x => x == this.currentInstance);
+			} else
+			//other: -2,
+			if (obj == -3) {
+				i = (instancesWithoutDeleted.length > 0);
+			} else {
+				i = false;
+			}
+		} else if (obj < 100000) { // is object
+			i = instancesWithoutDeleted.find(x => x.object_index == obj);
+		} else { // is id
+			i = instancesWithoutDeleted.find(x => x.id == obj);
+		}
+
+		return (i ? 1 : 0);
+	}
+
+	// ## Rooms
+
+	static room_goto ([numb]) {
+		loadRoom(this.game.project.ProjectRoom.find(x => x.id == numb));
+		return 0;
+	}
+	static game_end ([]) {
+		this.game.shouldEnd = true;
+		return 0;
 	}
 
 	// # User interaction
@@ -58,6 +204,12 @@ class BuiltInFunctions {
 
 	static keyboard_check ([key]) {
 		return this.game.key[key] ? 1 : 0;
+	}
+	static keyboard_check_pressed ([key]) {
+		return this.game.keyPressed[key] ? 1 : 0;
+	}
+	static keyboard_check_released ([key]) {
+		return this.game.keyReleased[key] ? 1 : 0;
 	}
 
 	// # Game graphics
@@ -167,7 +319,9 @@ class BuiltInFunctions {
 		this.game.drawColor = color;
 		return 0;
 	}
-
+	static make_color_rgb ([red, green, blue]) {
+		return red*256 + green*256*256 + blue*256*256*256;
+	}
 
 	// ## Fonts and text
 	static draw_set_font ([font]) {
@@ -223,8 +377,25 @@ class BuiltInFunctions {
 
 	// ## Pop-up messages and questions
 
+	static get_integer ([str, def]) {
+		var p = prompt(str, def);
+		return parseInt(p, 10) !== NaN ? p : '';
+	}
+	static get_string ([str, def]) {
+		var p = prompt(str, def);
+		return p ? p : '';
+	}
 	static show_message ([message]) {
 		alert(message);
+		return 0;
+	}
+
+	// # Changing resources
+
+	// ## Scripts
+
+	static execute_string ([str]) {
+		this.execute(this.prepare(str), this.currentInstance);
 		return 0;
 	}
 
@@ -2217,10 +2388,6 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-	static event_inherited ([_]) {
-
-		return 0;
-	}
 	static event_perform ([_]) {
 
 		return 0;
@@ -2242,14 +2409,6 @@ class BuiltInFunctions {
 		return 0;
 	}
 	static execute_shell ([_]) {
-
-		return 0;
-	}
-	static execute_string ([_]) {
-
-		return 0;
-	}
-	static exp ([_]) {
 
 		return 0;
 	}
@@ -2529,10 +2688,7 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-	static floor ([_]) {
-
-		return 0;
-	}
+	
 	static font_add ([_]) {
 
 		return 0;
@@ -2589,14 +2745,7 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-	static frac ([_]) {
 
-		return 0;
-	}
-	static game_end ([_]) {
-
-		return 0;
-	}
 	static game_load ([_]) {
 
 		return 0;
@@ -2621,10 +2770,7 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-	static get_integer ([_]) {
-
-		return 0;
-	}
+	
 	static get_open_filename ([_]) {
 
 		return 0;
@@ -2633,10 +2779,7 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-	static get_string ([_]) {
-
-		return 0;
-	}
+	
 	static highscore_add ([_]) {
 
 		return 0;
@@ -2745,7 +2888,6 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-
 	static instance_deactivate_all ([_]) {
 
 		return 0;
@@ -2755,14 +2897,6 @@ class BuiltInFunctions {
 		return 0;
 	}
 	static instance_deactivate_region ([_]) {
-
-		return 0;
-	}
-	static instance_destroy ([_]) {
-
-		return 0;
-	}
-	static instance_exists ([_]) {
 
 		return 0;
 	}
@@ -2799,22 +2933,6 @@ class BuiltInFunctions {
 		return 0;
 	}
 	static io_handle ([_]) {
-
-		return 0;
-	}
-	static irandom ([_]) {
-
-		return 0;
-	}
-	static irandom_range ([_]) {
-
-		return 0;
-	}
-	static is_real ([_]) {
-
-		return 0;
-	}
-	static is_string ([_]) {
 
 		return 0;
 	}
@@ -2878,14 +2996,6 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-	static keyboard_check_pressed ([_]) {
-
-		return 0;
-	}
-	static keyboard_check_released ([_]) {
-
-		return 0;
-	}
 	static keyboard_clear ([_]) {
 
 		return 0;
@@ -2922,34 +3032,13 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-	static lengthdir_x ([_]) {
-
-		return 0;
-	}
-	static lengthdir_y ([_]) {
-
-		return 0;
-	}
-	static ln ([_]) {
-
-		return 0;
-	}
+	
+	
 	static load_info ([_]) {
 
 		return 0;
 	}
-	static log10 ([_]) {
-
-		return 0;
-	}
-	static log2 ([_]) {
-
-		return 0;
-	}
-	static logn ([_]) {
-
-		return 0;
-	}
+	
 	static make_color ([_]) {
 
 		return 0;
@@ -2958,22 +3047,12 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-	static make_color_rgb ([_]) {
-
-		return 0;
-	}
-	static max ([_]) {
-
-		return 0;
-	}
+	
 	static max3 ([_]) {
 
 		return 0;
 	}
-	static mean ([_]) {
 
-		return 0;
-	}
 	static median ([_]) {
 
 		return 0;
@@ -3023,10 +3102,6 @@ class BuiltInFunctions {
 		return 0;
 	}
 	static message_text_font ([_]) {
-
-		return 0;
-	}
-	static min ([_]) {
 
 		return 0;
 	}
@@ -3107,14 +3182,6 @@ class BuiltInFunctions {
 		return 0;
 	}
 	static move_random ([_]) {
-
-		return 0;
-	}
-	static move_snap ([_]) {
-
-		return 0;
-	}
-	static move_towards_point ([_]) {
 
 		return 0;
 	}
@@ -3399,10 +3466,6 @@ class BuiltInFunctions {
 		return 0;
 	}
 	static object_set_visible ([_]) {
-
-		return 0;
-	}
-	static ord ([_]) {
 
 		return 0;
 	}
@@ -3882,18 +3945,6 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-	static place_snapped ([_]) {
-
-		return 0;
-	}
-	static point_direction ([_]) {
-
-		return 0;
-	}
-	static point_distance ([_]) {
-
-		return 0;
-	}
 	static position_change ([_]) {
 
 		return 0;
@@ -3910,26 +3961,12 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-	static power ([_]) {
-
-		return 0;
-	}
-	static radtodeg ([_]) {
-
-		return 0;
-	}
-	static random ([_]) {
-
-		return 0;
-	}
+	
 	static random_get_seed ([_]) {
 
 		return 0;
 	}
-	static random_range ([_]) {
-
-		return 0;
-	}
+	
 	static random_set_seed ([_]) {
 
 		return 0;
@@ -3938,10 +3975,7 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-	static real ([_]) {
-
-		return 0;
-	}
+	
 	static registry_exists ([_]) {
 
 		return 0;
@@ -4003,10 +4037,6 @@ class BuiltInFunctions {
 		return 0;
 	}
 	static room_get_name ([_]) {
-
-		return 0;
-	}
-	static room_goto ([_]) {
 
 		return 0;
 	}
@@ -4087,10 +4117,6 @@ class BuiltInFunctions {
 		return 0;
 	}
 	static room_tile_clear ([_]) {
-
-		return 0;
-	}
-	static round ([_]) {
 
 		return 0;
 	}
@@ -4187,14 +4213,6 @@ class BuiltInFunctions {
 		return 0;
 	}
 	static show_video ([_]) {
-
-		return 0;
-	}
-	static sign ([_]) {
-
-		return 0;
-	}
-	static sin ([_]) {
 
 		return 0;
 	}
@@ -4530,14 +4548,6 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-	static sqr ([_]) {
-
-		return 0;
-	}
-	static sqrt ([_]) {
-
-		return 0;
-	}
 	static string_char_at ([_]) {
 
 		return 0;
@@ -4667,10 +4677,6 @@ class BuiltInFunctions {
 		return 0;
 	}
 	static surface_set_target ([_]) {
-
-		return 0;
-	}
-	static tan ([_]) {
 
 		return 0;
 	}

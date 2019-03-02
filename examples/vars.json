@@ -1,0 +1,110 @@
+{
+	"resources": {
+		"ProjectSprite": [],
+		"ProjectSound": [],
+		"ProjectScript": [],
+		"ProjectFont": [],
+		"ProjectObject": [
+			{
+				"classname": "ProjectObject",
+				"id": 0,
+				"name": "object0",
+				"sprite_index": "-1",
+				"visible": true,
+				"solid": false,
+				"depth": "0",
+				"persistent": false,
+				"parent": null,
+				"mask": null,
+				"events": [
+					{
+						"classname": "ProjectEvent",
+						"type": "create",
+						"subtype": 0,
+						"actions": [
+							{
+								"classname": "ProjectAction",
+								"type": {
+									"name": "Execute a piece of code",
+									"kind": "code"
+								},
+								"appliesTo": -1,
+								"args": [
+									"// local variables\n\ntext = 'General Kenobi!';\n\n// global variables\n\nglobalvar amount_of_text;\namount_of_text = 0;\n\n// script variables\nvar text; // temporarily overrides local var\ntext = \"Hello there\";\n\nshow_message(text);"
+								],
+								"not": false
+							}
+						]
+					},
+					{
+						"classname": "ProjectEvent",
+						"type": "draw",
+						"subtype": 0,
+						"actions": [
+							{
+								"classname": "ProjectAction",
+								"type": {
+									"name": "Execute a piece of code",
+									"kind": "code"
+								},
+								"appliesTo": -1,
+								"args": [
+									"var i;\ni = 0;\n\nwhile(i < amount_of_text) {\n  draw_text(16,16+i*i, text);\n  i+=1;\n}"
+								],
+								"not": false
+							}
+						]
+					},
+					{
+						"classname": "ProjectEvent",
+						"type": "step",
+						"subtype": "normal",
+						"actions": [
+							{
+								"classname": "ProjectAction",
+								"type": {
+									"name": "Execute a piece of code",
+									"kind": "code"
+								},
+								"appliesTo": -1,
+								"args": [
+									"amount_of_text += 1;"
+								],
+								"not": false
+							}
+						]
+					}
+				]
+			}
+		],
+		"ProjectRoom": [
+			{
+				"classname": "ProjectRoom",
+				"id": 0,
+				"name": "room0",
+				"instances": [
+					{
+						"classname": "ProjectInstance",
+						"x": 48,
+						"y": 112,
+						"object_index": "0"
+					}
+				],
+				"caption": "",
+				"width": "640",
+				"height": "480",
+				"speed": "30",
+				"background_color": "#c0c0c0"
+			}
+		]
+	},
+	"counter": {
+		"ProjectSprite": 0,
+		"ProjectSound": 0,
+		"ProjectScript": 0,
+		"ProjectFont": 0,
+		"ProjectObject": 1,
+		"ProjectRoom": 1
+	},
+	"lastId": 100000
+}

@@ -10,6 +10,17 @@ class HTMLWindowSound extends HTMLWindow {
 				parent( add( newElem(null, 'div') ) )
 
 					var inputName = add( newTextBox(null, 'Name:', sound.name) ).$('input');
+					var paramSound;
+
+					add( newButton(null, 'Load Sound', () => {
+						VirtualFileSystem.openDialog('audio/*')
+						.then(file => {
+							//paramSound = new AbstractSound();
+						})
+					}) )
+
+					// slider?
+					var inputVolume = add( newNumberBox(null, 'Volume:', sound.volume, 'any', 0, 1) ).$('input');
 
 					endparent()
 				endparent();
@@ -17,6 +28,8 @@ class HTMLWindowSound extends HTMLWindow {
 			this.makeApplyOkButtons(
 				() => {
 					this.editor.changeResourceName(sound, inputName.value);
+					sound.sound = paramSound;
+					sound.volume = inputVolume.value;
 					//
 				},
 				() => {

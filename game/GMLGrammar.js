@@ -26,9 +26,13 @@ GameMakerLanguage {
 		| While
 		| Exit
 		| Function
-		| Assignment
 		| AssignmentVar
 		| AssignmentGlobalVar
+		| Assignment
+		| AssignmentAdd
+		| AssignmentSubtract
+		| AssignmentMultiply
+		| AssignmentDivide
 		| Semicolon
 
 	Comment
@@ -140,11 +144,20 @@ GameMakerLanguage {
 	Assignment
 		= Name "=" Expression
 
+	AssignmentAdd
+		= Name "+=" Expression
+	AssignmentSubtract
+		= Name "-=" Expression
+	AssignmentMultiply
+		= Name "*=" Expression
+	AssignmentDivide
+		= Name "/=" Expression
+
 	AssignmentVar
-		= "var" Assignment+
+		= "var" NonemptyListOf<Name, ",">
 
 	AssignmentGlobalVar
-		= "globalvar" Assignment+
+		= "globalvar" NonemptyListOf<Name, ",">
 
 	Semicolon
 		= ";"

@@ -11,16 +11,18 @@ class HTMLWindowScript extends HTMLWindow {
 
 					var inputName = add( newTextBox(null, 'Name:', script.name) ).$('input');
 
+					this.textareaCode = add( newElem('code', 'textarea', script.code) )
+
 					endparent()
 				endparent();
 
 			this.makeApplyOkButtons(
 				() => {
 					this.editor.changeResourceName(script, inputName.value);
-					// changes here
+					this.script.code = this.textareaCode.value;
 				},
 				() => {
-					this.editor.deleteResourceWindow(script);
+					this.editor.deleteWindow(this);
 				}
 			);
 			endparent();

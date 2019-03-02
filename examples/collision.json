@@ -1,0 +1,157 @@
+{
+	"resources": {
+		"ProjectSprite": [
+			{
+				"classname": "ProjectSprite",
+				"id": 0,
+				"name": "sprite0",
+				"images": [
+					"iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAySURBVEhL7c0xEQAgDAAxhHSsf2d4QMJPbLnLnnNnvxIkQRIkQRIkQRIkQRIkQfoczD4cGLQ9QOmZGwAAAABJRU5ErkJggg=="
+				],
+				"originx": "0",
+				"originy": "0"
+			},
+			{
+				"classname": "ProjectSprite",
+				"id": 1,
+				"name": "sprite1",
+				"images": [
+					"iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAA2SURBVEhL7c2hAQAwDITAb/afotN1jJp41DvOIDm5L02zrXGAHCAHyAFygBwgB8gBcoAcgOQDNpABymWUfqAAAAAASUVORK5CYII="
+				],
+				"originx": "0",
+				"originy": "0"
+			}
+		],
+		"ProjectSound": [],
+		"ProjectScript": [],
+		"ProjectFont": [],
+		"ProjectObject": [
+			{
+				"classname": "ProjectObject",
+				"id": 0,
+				"name": "object0",
+				"sprite_index": "0",
+				"visible": true,
+				"solid": false,
+				"depth": "0",
+				"persistent": false,
+				"parent": null,
+				"mask": null,
+				"events": [
+					{
+						"classname": "ProjectEvent",
+						"type": "step",
+						"subtype": "normal",
+						"actions": [
+							{
+								"classname": "ProjectAction",
+								"type": {
+									"name": "Execute a piece of code",
+									"kind": "code"
+								},
+								"appliesTo": -1,
+								"args": [
+									"x += (keyboard_check(vk_right) - keyboard_check(vk_left))*2;\ny += (keyboard_check(vk_down) - keyboard_check(vk_up))*2;"
+								],
+								"not": false
+							}
+						]
+					}
+				]
+			},
+			{
+				"classname": "ProjectObject",
+				"id": 1,
+				"name": "object1",
+				"sprite_index": "1",
+				"visible": true,
+				"solid": false,
+				"depth": "0",
+				"persistent": false,
+				"parent": null,
+				"mask": null,
+				"events": [
+					{
+						"classname": "ProjectEvent",
+						"type": "collision",
+						"subtype": "0",
+						"actions": [
+							{
+								"classname": "ProjectAction",
+								"type": {
+									"name": "Execute a piece of code",
+									"kind": "code"
+								},
+								"appliesTo": -1,
+								"args": [
+									"instance_destroy();"
+								],
+								"relative": false,
+								"not": false
+							}
+						]
+					}
+				]
+			}
+		],
+		"ProjectRoom": [
+			{
+				"classname": "ProjectRoom",
+				"id": 0,
+				"name": "room0",
+				"instances": [
+					{
+						"classname": "ProjectInstance",
+						"x": 16,
+						"y": 192,
+						"object_index": "0"
+					},
+					{
+						"classname": "ProjectInstance",
+						"x": 96,
+						"y": 208,
+						"object_index": "1"
+					},
+					{
+						"classname": "ProjectInstance",
+						"x": 176,
+						"y": 176,
+						"object_index": "1"
+					},
+					{
+						"classname": "ProjectInstance",
+						"x": 272,
+						"y": 192,
+						"object_index": "1"
+					},
+					{
+						"classname": "ProjectInstance",
+						"x": 384,
+						"y": 176,
+						"object_index": "1"
+					},
+					{
+						"classname": "ProjectInstance",
+						"x": 480,
+						"y": 192,
+						"object_index": "1"
+					}
+				],
+				"caption": "",
+				"width": "640",
+				"height": "480",
+				"speed": "30",
+				"background_color": "#c0c0c0"
+			}
+		]
+	},
+	"counter": {
+		"ProjectSprite": 2,
+		"ProjectSound": 0,
+		"ProjectScript": 0,
+		"ProjectFont": 0,
+		"ProjectObject": 2,
+		"ProjectRoom": 1
+	},
+	"lastId": 100000
+}

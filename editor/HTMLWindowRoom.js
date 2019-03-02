@@ -51,9 +51,13 @@ class HTMLWindowRoom extends HTMLWindow {
 					parent( add( newElem(null, 'div', 'Object: ') ) )
 						this.spanObject = add( newElem(null, 'span', '') );
 						endparent()
-					parent( add( newElem(null, 'div', 'Id: ') ) )
-						this.spanId = add( newElem(null, 'span', '') );
-						endparent()
+					// parent( add( newElem(null, 'div', 'Id: ') ) )
+					// 	this.spanId = add( newElem(null, 'span', '') );
+					// 	endparent()
+					/* Having ids in the room editor would mean saving the counter imediately,
+					 * since you can have multiple rooms at the same time. This violates a
+					 * principle of this project, which is that you have to press 'ok' or 'apply'
+					 * to save the changes. Sorry GM, but this is where I draw the line. */
 
 					// updates
 					this.inputWidth.onchange = () => this.updateCanvasPreview();
@@ -149,7 +153,7 @@ class HTMLWindowRoom extends HTMLWindow {
 						this.spanX.textContent = pos.x;
 						this.spanY.textContent = pos.y;
 						this.spanObject.textContent = '';
-						this.spanId.textContent = '';
+						//this.spanId.textContent = '';
 
 						for (var i = this.paramInstances.length - 1; i >= 0; i--) {
 							if (this.paramInstances[i].x == pos.x
@@ -157,9 +161,6 @@ class HTMLWindowRoom extends HTMLWindow {
 
 								this.spanObject.textContent = this.editor.project.resources['ProjectObject']
 									.find(x => x.id == this.paramInstances[i].object_index).name;
-
-								// fuck FUCK how do i solve this
-								//this.spanId.textContent = this.paramInstances[i].id;
 
 								break;
 							}

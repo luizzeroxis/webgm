@@ -19,14 +19,16 @@ class HTMLWindow {
 
 	makeClient(resource) {}
 
-	makeResourceSelect (classes, labelcontent, resourcetype) {
+	makeResourceSelect (classes, labelcontent, resourcetype, nonone) {
 
 		var e = add( newSelect(classes, labelcontent) );
 
 		var selectOptions = {};
 		var select = parent(e.$('select'))
 
-			add( html('option', {value: -1}, null, '<none>') )
+			if (!nonone) {
+				add( html('option', {value: -1}, null, '<none>') );
+			}
 			this.editor.project.resources[resourcetype].forEach(resource => {
 				selectOptions[resource.id] = add( html('option', {value: resource.id}, null, resource.name) )
 			})

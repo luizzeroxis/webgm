@@ -340,8 +340,8 @@ class BuiltInFunctions {
 
 		this.game.ctx.fillStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 
-		var f = this.game.drawFont;
-		if (f>=0) {
+		var f = this.game.project.resources.ProjectFont.find(x => x.id == this.game.drawFont);
+		if (f) {
 			this.game.ctx.font = makeCSSFont(f.font, f.size, f.bold, f.italic);
 		} else {
 			this.game.ctx.font = makeCSSFont('Arial', 12, false, false);

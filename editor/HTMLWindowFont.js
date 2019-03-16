@@ -15,7 +15,7 @@ class HTMLWindowFont extends HTMLWindow {
 					this.inputFont = add( newTextBox(null, 'Font:', font.font) ).$('input');
 					this.inputSize = add( newNumberBox(null, 'Size', font.size, 1, 1) ).$('input');
 					this.inputBold = add( newCheckBox(null, 'Bold', font.bold) ).$('input');
-					this.inputItalic = add( newCheckBox(null, 'Italic:', font.italic) ).$('input');
+					this.inputItalic = add( newCheckBox(null, 'Italic', font.italic) ).$('input');
 
 					this.divPreview = add( newElem('preview', 'div', 'AaBbCcDd') );
 					this.inputFont.oninput = () => this.updatePreview();

@@ -72,6 +72,8 @@ class HTMLWindowSprite extends HTMLWindow {
 					}
 					endparent()
 
+				endparent()
+
 			this.makeApplyOkButtons(
 				() => {
 					this.editor.changeResourceName(sprite, inputName.value);
@@ -79,9 +81,10 @@ class HTMLWindowSprite extends HTMLWindow {
 					this.editor.changeSpriteOrigin(sprite, inputOriginX.value, inputOriginY.value);
 				},
 				() => {
-					this.editor.deleteResourceWindow(sprite);
+					this.editor.deleteWindow(this);
 				}
 			);
+
 			endparent();
 
 	}

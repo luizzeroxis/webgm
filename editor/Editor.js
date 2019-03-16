@@ -99,6 +99,10 @@ class Editor {
 		sprite.originy = originy;
 		// TODO update room sprites
 	}
+	changeBackgroundImage(background, image) {
+		background.image = image;
+		this.dispatcher.speak('changeBackgroundImage', background);
+	}
 	changeObjectSprite(object, sprite) {
 		object.sprite_index = sprite;
 		this.dispatcher.speak('changeObjectSprite', object);
@@ -215,8 +219,43 @@ class Editor {
 
 				})
 
+				parent( add( newElem(null, 'li') ) );
+					add( newImage('icon', 'img/game-information-icon.png') );
+					add( newElem('name', 'span', 'Game Information') )
+
+					parent( add( newElem('right', 'div') ) )
+						add( newButton(null, 'Edit', () => this.openWindow(HTMLWindowGameInformation,
+							'game-information', this.project.gameInformation)) )
+						endparent();
+
+					endparent();
+
+				parent( add( newElem(null, 'li') ) );
+					add( newImage('icon', 'img/global-game-settings-icon.png') );
+					add( newElem('name', 'span', 'Global Game Settings') )
+
+					parent( add( newElem('right', 'div') ) )
+						add( newButton(null, 'Edit', () => this.openWindow(HTMLWindowGlobalGameSettings,
+							'global-game-settings', this.project.globalGameSettings )) )
+						endparent();
+
+					endparent();
+
+				parent( add( newElem(null, 'li') ) );
+					add( newImage('icon', 'img/extension-packages-icon.png') );
+					add( newElem('name', 'span', 'Extension packages') )
+
+					parent( add( newElem('right', 'div') ) )
+						add( newButton(null, 'Edit', () => this.openWindow(HTMLWindowExtensionPackages,
+							'extension-packages', this.project.extensionPackages)) )
+						endparent();
+
+					endparent();
+
 				endparent()
+
 			endparent()
+
 	}
 
 	updateResourcesArea() {
@@ -259,6 +298,11 @@ class Editor {
 		if (resource.classname == "ProjectSprite") {
 			if (resource.images.length > 0) {
 				return resource.images[0].image.src;
+			}
+		} else
+		if (resource.classname == "ProjectBackground") {
+			if (resource.image) {
+				return resource.image.image.src;
 			}
 		} else
 		if (resource.classname == "ProjectObject") {
@@ -313,8 +357,11 @@ class Editor {
 		var windowMakers = {};
 		windowMakers[ProjectSprite.name] = HTMLWindowSprite;
 		windowMakers[ProjectSound.name]  = HTMLWindowSound;
+		windowMakers[ProjectBackground.name] = HTMLWindowBackground;
+		windowMakers[ProjectPath.name] = HTMLWindowPath;
 		windowMakers[ProjectScript.name] = HTMLWindowScript;
 		windowMakers[ProjectFont.name]   = HTMLWindowFont;
+		windowMakers[ProjectTimeline.name]   = HTMLWindowTimeline;
 		windowMakers[ProjectObject.name] = HTMLWindowObject;
 		windowMakers[ProjectRoom.name]   = HTMLWindowRoom;
 

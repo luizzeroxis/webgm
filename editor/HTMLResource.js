@@ -32,11 +32,14 @@ class HTMLResource {
 			},
 			changeSpriteImages: i => {
 				if (resource.classname == "ProjectObject") {
-					console.log('===== ', resource, i)
 					if (i.id != resource.sprite_index) return;
 				} else {
 					if (i != this.resource) return;
 				}
+				this.editor.setImageSrcRemovable(this.htmlIcon, this.editor.getResourceIconSrc(this.resource))
+			},
+			changeBackgroundImage: i => {
+				if (i != this.resource) return;
 				this.editor.setImageSrcRemovable(this.htmlIcon, this.editor.getResourceIconSrc(this.resource))
 			},
 			changeObjectSprite: i => {

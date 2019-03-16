@@ -19,7 +19,7 @@ class HTMLWindowScript extends HTMLWindow {
 			this.makeApplyOkButtons(
 				() => {
 					this.editor.changeResourceName(script, inputName.value);
-					this.script.code = this.textareaCode.value;
+					script.code = this.textareaCode.value;
 				},
 				() => {
 					this.editor.deleteWindow(this);

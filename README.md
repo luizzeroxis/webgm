@@ -21,7 +21,7 @@ Download .zip or clone. Run index.html. Done.
 First, keep in mind these points:
 
 * It has to be similar to the original Game Maker. It should not expand to further capabilities, within reason.
-* Although it should follow the questionable design of Game Maker, it should still be using modern JavaScript standarts and coding conventions - only *simulate* how bad it is, don't actually make the code bad.
+* Although it should follow the questionable design of Game Maker, it should still be using modern JavaScript standards and coding conventions - only *simulate* how bad it is, don't actually make the code bad.
 * This is very object oriented, so you can make classes even if they are not currently used in the project.
 * Don't support old browsers, use new technology.
 * Mainly support desktop use. Mobile is an afterthought.

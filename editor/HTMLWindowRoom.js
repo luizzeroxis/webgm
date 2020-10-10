@@ -147,6 +147,8 @@ class HTMLWindowRoom extends HTMLWindow {
 									this.currentPos = pos;
 								}
 							}
+
+							this.updateCanvasPreview();
 							
 						}
 
@@ -166,7 +168,6 @@ class HTMLWindowRoom extends HTMLWindow {
 							}
 						}
 
-						this.updateCanvasPreview();
 					}
 
 					// is this... right?
@@ -209,8 +210,10 @@ class HTMLWindowRoom extends HTMLWindow {
 		this.editor.dispatcher.listen({
 			changeObjectSprite: i => {
 				this.updateCanvasPreview();
-			}
-			//changeSpriteOrigin
+			},
+			changeSpriteOrigin: i => {
+				this.updateCanvasPreview();
+			},
 		})
 
 	}

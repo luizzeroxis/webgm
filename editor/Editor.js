@@ -99,7 +99,7 @@ class Editor {
 	changeSpriteOrigin(sprite, originx, originy) {
 		sprite.originx = originx;
 		sprite.originy = originy;
-		// TODO update room sprites
+		this.dispatcher.speak('changeSpriteOrigin', sprite);
 	}
 	changeBackgroundImage(background, image) {
 		background.image = image;

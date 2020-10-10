@@ -210,6 +210,7 @@ class HTMLWindowRoom extends HTMLWindow {
 			changeObjectSprite: i => {
 				this.updateCanvasPreview();
 			}
+			//changeSpriteOrigin
 		})
 
 	}

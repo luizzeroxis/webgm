@@ -19,17 +19,19 @@ class Editor {
 				name: 'main',
 				items: [
 					{
+						id: 603,
 						name: 'Execute a piece of code',
-						kind: 'code'
+						kind: 'code',
 					},
 					{
+						id: 321,
 						name: 'Display a message',
 						kind: 'gmfunction',
 						gmfunction: 'show_message',
 						args: [
 							{
 								name: 'message:',
-								type: 'string'
+								type: 'string',
 							}
 						]
 					}
@@ -241,16 +243,16 @@ class Editor {
 
 					endparent();
 
-				parent( add( newElem(null, 'li') ) );
-					add( newImage('icon', 'img/extension-packages-icon.png') );
-					add( newElem('name', 'span', 'Extension packages') )
+				// parent( add( newElem(null, 'li') ) );
+				// 	add( newImage('icon', 'img/extension-packages-icon.png') );
+				// 	add( newElem('name', 'span', 'Extension packages') )
 
-					parent( add( newElem('right', 'div') ) )
-						add( newButton(null, 'Edit', () => this.openWindow(HTMLWindowExtensionPackages,
-							'extension-packages', this.project.extensionPackages)) )
-						endparent();
+				// 	parent( add( newElem('right', 'div') ) )
+				// 		add( newButton(null, 'Edit', () => this.openWindow(HTMLWindowExtensionPackages,
+				// 			'extension-packages', this.project.extensionPackages)) )
+				// 		endparent();
 
-					endparent();
+				// 	endparent();
 
 				endparent()
 

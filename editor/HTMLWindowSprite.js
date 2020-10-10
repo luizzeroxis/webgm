@@ -1,14 +1,13 @@
 class HTMLWindowSprite extends HTMLWindow {
+
 	constructor(...args) {
 		super(...args);
 	}
 
 	makeClient(sprite) {
-
 		this.htmlTitle.textContent = 'Edit Sprite '+sprite.name;
 
 		parent(this.htmlClient)
-
 			parent( add( newElem('grid-resource resource-sprite', 'div') ) )
 				parent( add( newElem(null, 'div') ) )
 

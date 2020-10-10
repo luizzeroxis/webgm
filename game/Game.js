@@ -138,12 +138,9 @@ class Game {
 		}
 
 		// Add resources names as global variables
-		this.project.resources.ProjectSprite .forEach(x => {this.globalVariables[x.name] = x.id});
-		this.project.resources.ProjectSound  .forEach(x => {this.globalVariables[x.name] = x.id});
-		this.project.resources.ProjectScript .forEach(x => {this.globalVariables[x.name] = x.id});
-		this.project.resources.ProjectFont   .forEach(x => {this.globalVariables[x.name] = x.id});
-		this.project.resources.ProjectObject .forEach(x => {this.globalVariables[x.name] = x.id});
-		this.project.resources.ProjectRoom   .forEach(x => {this.globalVariables[x.name] = x.id});
+		Project.getTypes().forEach(type => {
+			this.project.resources[type.name].forEach(x => {this.globalVariables[x.name] = x.id});
+		})
 
 		// Initialize game vars
 		this.drawColor = 0;
@@ -494,6 +491,8 @@ class Game {
 		//Promises to load before starting
 		var promises = [];
 
+		// TODO maybe somehow find which things have to be loaded instead of checking each type
+
 		//Check all sprite images are loaded
 		for (var i = 0; i < this.project.resources.ProjectSprite.length; i++) {
 			for (var j = 0; j < this.project.resources.ProjectSprite[i].images.length; j++) {
@@ -501,10 +500,12 @@ class Game {
 			};
 		}
 
+		// TODO Check all backgrounds are loaded
+
 		//Check all sounds are loaded
-		for (var i = 0; i < this.project.resources.ProjectSound.length; i++) {
-			promises.push(this.project.resources.ProjectSound[i].sound.promise);
-		}
+		// for (var i = 0; i < this.project.resources.ProjectSound.length; i++) {
+		// 	promises.push(this.project.resources.ProjectSound[i].sound.promise);
+		// }
 
 		//Prepare all GML codes
 
@@ -522,6 +523,8 @@ class Game {
 				this.showError("FATAL COMPILATION ERROR in script "+script.name+'\n'+preparedCode.message);
 			}
 		})
+
+		// TODO prepare timeline codes
 
 		this.project.resources.ProjectObject.forEach(object => {
 			object.events.forEach(event => {
@@ -796,7 +799,8 @@ class Game {
 	loadRoom(room) {
 
 		//Empty room
-		//TODO: save persistent?
+		//TODO: keep persistent objects
+		//TODO: save current room if it's persistent
 		this.instances = [];
 
 		this.canvas.width = room.width;

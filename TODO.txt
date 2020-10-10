@@ -1,0 +1,55 @@
+WEBGM PROGRESS
+
+Things to do:
+
+- Change project file format to a ZIP file so files like images can be properly stored.
+- Compile to HTML
+- Maybe make some more realistic windows like elements, like context menus and floating windows.
+- More global game settings
+- Expansion packages (wtf?)
+
+SPRITE
+- Allow multiple subimages for sprites
+	- New HTMLWindowSpriteImages
+- Configure collision masks for sprites
+- Image editor (really?)
+
+SOUND
+- Load and store sound files, select kind, preview audio, apply effects, pan. (probably not preload)
+
+BACKGROUND
+- Use as tileset, tileset settings
+
+PATH
+- Entire path editor
+
+FONT
+- Character range doesn't make sense in the web, however loading a custom font might make sense.
+
+TIMELINE
+- Entire timeline editor
+
+OBJECT
+- Parent, mask, object information
+- Event key selection menu
+- Make buttons disabled when unable to do anything
+- Add icons to events, action types, and actions
+- Make tabs for libraries
+- Add more actions!!!
+
+ROOM
+- Make tabs probably
+- Add preview for instances' sprite
+- 8 backgrounds, set background image and other things
+- Caption, creation code, tiles, views
+- Sort, shift, clear, lock, isometric grid, view options
+
+- Libraries: to refer to an action type, you use the name of the library (in GM, you use random ids, but that's garbage come on) and an id for each action type. Currently we just send a reference to the action type object. (also that should be formalized into a class!)
+
+- changeSpriteOrigin: update positions of sprites inside a room.
+
+- HTMLWindowRoom: Check sprite's bounding box to move or delete them. Currently going by position rounded by grid size.
+
+- Implement mouse events in Game.js!
+
+- Somehow deal with all the collision stuff

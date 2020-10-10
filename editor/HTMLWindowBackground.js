@@ -1,5 +1,5 @@
 class HTMLWindowBackground extends HTMLWindow {
-
+	
 	constructor(...args) {
 		super(...args);
 	}

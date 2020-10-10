@@ -13,8 +13,8 @@ class HTMLWindowObject extends HTMLWindow {
 		var paramEvents = object.events.map(event => {
 			var newevent = new ProjectEvent(event.type, event.subtype);
 			newevent.actions = event.actions.map(action => {
-				var newaction = new ProjectAction(action.type, action.appliesTo, action.elative, action.not);
-				newaction.args = action.args.slice(); // TODO will work?
+				var newaction = new ProjectAction(action.type, action.appliesTo, action.relative, action.not);
+				newaction.args = action.args.slice(); // TODO actually copy each type of argument properly
 				return newaction;
 			})
 			return newevent;
@@ -217,6 +217,7 @@ class HTMLWindowObject extends HTMLWindow {
 									return;
 								}
 
+								// var action = new ProjectAction(library.name, item.id, -1, false, false);
 								var action = new ProjectAction(item, -1, false, false);
 
 								this.openActionWindow(action);

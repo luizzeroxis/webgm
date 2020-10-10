@@ -78,6 +78,14 @@
 	max-height: 80vh;
 }
 
+.grid-resource.resource-background {
+	grid-template-columns: 300px 1fr;
+}
+.grid-resource.resource-background .preview {
+	overflow: auto;
+	max-height: 80vh;
+}
+
 .grid-resource.resource-object {
 	grid-template-columns: 300px 200px 1fr 200px;
 }

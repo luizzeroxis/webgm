@@ -82,36 +82,32 @@ class HTMLWindowRoom extends HTMLWindow {
 					this.canvasPreview.onmousedown = (e) => {
 
 						this.mouseIsDown = true;
-						this.currentPos = this.getMousePositionSnapped(e);
-						var pos = this.currentPos;
+						var pos = this.getMousePosition(e);
+						var snappedPos = this.snapMousePosition(pos);
+
+						this.currentPos = snappedPos;
 
 						if (this.radioAdd.checked) {
 							this.movingInstance = this.addInstance(e);
 						} else
 
 						if (this.radioMultiple.checked) {
-							this.addInstance(e);
+							this.movingInstance = this.addInstance(e);
 							this.deleteUnderlying(e);
 						} else
 
 						if (this.radioMove.checked) {
-							for (var i = this.paramInstances.length - 1; i >= 0; i--) {
-								if (this.paramInstances[i].x == pos.x
-								 && this.paramInstances[i].y == pos.y) {
-									this.movingInstance = this.paramInstances[i];
-									break;
-								}
+							var hover = this.getInstanceAtPosition(pos);
+							if (hover) {
+								this.movingInstance = hover;
 							}
+
 						} else
 
 						if (this.radioDelete.checked) {
-							for (var i = this.paramInstances.length - 1; i >= 0; i--) {
-								if (this.paramInstances[i].x == pos.x
-								 && this.paramInstances[i].y == pos.y) {
-
-									this.paramInstances.splice(i, 1);
-									break;
-								}
+							var hover = this.getInstanceAtPosition(pos);
+							if (hover) {
+								this.paramInstances = this.paramInstances.filter(i => i != hover);
 							}
 						}
 
@@ -120,31 +116,31 @@ class HTMLWindowRoom extends HTMLWindow {
 					}
 
 					this.canvasPreview.onmousemove = (e) => {
-						var pos = this.getMousePositionSnapped(e);
+						var pos = this.getMousePosition(e);
+						var snappedPos = this.snapMousePosition(pos);
 
 						if (this.mouseIsDown) {
 
-							if (this.movingInstance) {
-								this.movingInstance.x = pos.x;
-								this.movingInstance.y = pos.y;
-							}
+							if (this.radioAdd.checked || this.radioMove.checked) {
+								if (this.movingInstance) {
+									this.movingInstance.x = snappedPos.x;
+									this.movingInstance.y = snappedPos.y;
+								}
+							} else
 
-							if (!(pos.x == this.currentPos.x && pos.y == this.currentPos.y)) {
-								if (this.radioMultiple.checked) {
-									this.addInstance(e);
-									this.currentPos = pos;
-								} else
+							if (this.radioMultiple.checked) {
+								var hover = this.getInstanceAtPosition(pos);
+								if (hover != this.movingInstance) {
+									this.currentPos = snappedPos;
+									this.movingInstance = this.addInstance(e);
+									this.deleteUnderlying(e);
+								}
+							} else
 
-								if (this.radioDelete.checked) {
-									for (var i = this.paramInstances.length - 1; i >= 0; i--) {
-										if (this.paramInstances[i].x == pos.x
-										 && this.paramInstances[i].y == pos.y) {
-
-											this.paramInstances.splice(i, 1);
-											break;
-										}
-									}
-									this.currentPos = pos;
+							if (this.radioDelete.checked) {
+								var hover = this.getInstanceAtPosition(pos);
+								if (hover) {
+									this.paramInstances = this.paramInstances.filter(i => i != hover);
 								}
 							}
 
@@ -157,15 +153,10 @@ class HTMLWindowRoom extends HTMLWindow {
 						this.spanObject.textContent = '';
 						//this.spanId.textContent = '';
 
-						for (var i = this.paramInstances.length - 1; i >= 0; i--) {
-							if (this.paramInstances[i].x == pos.x
-							 && this.paramInstances[i].y == pos.y) {
-
-								this.spanObject.textContent = this.editor.project.resources['ProjectObject']
-									.find(x => x.id == this.paramInstances[i].object_index).name;
-
-								break;
-							}
+						var hover = this.getInstanceAtPosition(pos);
+						if (hover) {
+							this.spanObject.textContent = this.editor.project.resources['ProjectObject']
+								.find(x => x.id == hover.object_index).name;
 						}
 
 					}
@@ -218,9 +209,15 @@ class HTMLWindowRoom extends HTMLWindow {
 
 	}
 
-	getMousePositionSnapped(e) {
+	getMousePosition(e) {
 		var x = e.offsetX;
 		var y = e.offsetY;
+		return {x: x, y: y};
+	}
+
+	snapMousePosition(pos) {
+		var x = pos.x;
+		var y = pos.y;
 
 		if (this.inputSnapToGrid.checked) {
 			x = Math.floor(x / this.inputSnapX.value) * this.inputSnapX.value;
@@ -233,27 +230,62 @@ class HTMLWindowRoom extends HTMLWindow {
 	addInstance(e) {
 		if (this.selectObject.value < 0) return;
 
-		var pos = this.getMousePositionSnapped(e);
-
-		var i = new ProjectInstance(pos.x, pos.y, this.selectObject.value);
+		var i = new ProjectInstance(this.currentPos.x, this.currentPos.y, this.selectObject.value);
 		this.paramInstances.push(i);
 		return i;
 	}
 
 	deleteUnderlying(e) {
-		var pos = this.getMousePositionSnapped(e);
-
 		if (this.inputDeleteUnderlying.checked) {
-			this.paramInstances = this.paramInstances.filter(instance => {
-				if (instance == this.movingInstance) {
-					return true;
+			for (var i = this.paramInstances.length - 1; i >= 0; i--) {
+				var instance = this.paramInstances[i];
+				if (instance != this.movingInstance && this.isInstanceAtPosition(instance, this.currentPos)) {
+					this.paramInstances.splice(i, 1);
 				}
-				if (instance.x == pos.x && instance.y == pos.y) {
-					//console.log(instance, 'removed!!!');
-					return false;
-				}
-				return true;
-			})
+			}
+		}
+	}
+
+	getInstanceAtPosition(pos) {
+		for (var i = this.paramInstances.length - 1; i >= 0; i--) {
+			var instance = this.paramInstances[i];
+			if (this.isInstanceAtPosition(instance, pos)) {
+				return instance;
+			}
+		}
+
+		return null;
+	}
+
+	isInstanceAtPosition(instance, pos) {
+		var object = this.editor.project.resources.ProjectObject.find(x => x.id == instance.object_index);
+		var sprite = this.editor.project.resources.ProjectSprite.find(x => x.id == object.sprite_index);
+
+		var image, w=32, h=32, ox=0, oy=0;
+
+		if (sprite) {
+			ox = sprite.originx;
+			oy = sprite.originy;
+			if (sprite.images.length > 0) {
+				w = sprite.images[0].image.width;
+				h = sprite.images[0].image.height;
+			} else {
+				// On GM, if there's no images, it just defaults to 32x32. A possible improviment would be to either simply show the default image anyway, or use the grid size. Right now I'll just use 32x32 anyway.
+			}
+		} else {
+			w = this.defaultInstanceImage.image.width;
+			h = this.defaultInstanceImage.image.height;
+		}
+
+		var x1 = instance.x - ox;
+		var y1 = instance.y - oy;
+		var x2 = x1 + w;
+		var y2 = y1 + h;
+
+		if (pos.x >= x1 && pos.x < x2 && pos.y >= y1 && pos.y < y2) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
@@ -285,10 +317,10 @@ class HTMLWindowRoom extends HTMLWindow {
 			}
 			image.promise.then(() => {
 
-				this.ctx.save()
-				this.ctx.translate(ox, oy)
+				this.ctx.save();
+				this.ctx.translate(-ox, -oy);
 				this.ctx.drawImage(image.image, instance.x, instance.y);
-				this.ctx.restore()
+				this.ctx.restore();
 
 			})
 		})

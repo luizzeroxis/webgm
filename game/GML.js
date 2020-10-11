@@ -242,12 +242,17 @@ class GML {
 
 			AssignmentVar(_, names) {
 				names.asIteration().interpret().forEach(name => {
-					_this.vars[name] = {};
+					if (_this.vars[name] == undefined) {
+						_this.vars[name] = null;
+					}
+
 				});
 			},
 			AssignmentGlobalVar(_, names) {
 				names.asIteration().interpret().forEach(name => {
-					_this.game.globalVariables[name] = {};
+					if (_this.game.globalVariables[name] == undefined) {
+						_this.game.globalVariables[name] = 0;
+					}
 				});
 			},
 

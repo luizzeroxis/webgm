@@ -72,12 +72,19 @@ class GML {
 				//console.log('Function: ', nameString);
 
 				var argsArray = args.asIteration().interpret();
-				console.log('Running function', nameString, 'with arguments', argsArray);
 
 				var script = _this.game.project.resources['ProjectScript'].find(x => x.name == nameString);
 				if (script) {
-					console.log('Script:', script);
 
+					// Store arguments
+					var prevGlobalVariables = {};
+					prevGlobalVariables.argument = _this.game.globalVariables.argument;
+					prevGlobalVariables.argument_relative = _this.game.globalVariables.argument_relative;
+					for (var i = 0; i < 16; i++) {
+						prevGlobalVariables['argument' + i] = _this.game.globalVariables['argument' + i];
+					}
+
+					// Change arguments
 					_this.game.globalVariables.argument = argsArray;
 					_this.game.globalVariables.argument_relative = 0;
 					for (var i = 0; i < 16; i++) {
@@ -85,6 +92,10 @@ class GML {
 					}
 
 					var r = _this.execute(_this.game.preparedCodes.get(script), _this.currentInstance);
+
+					// Restore arguments
+					Object.assign(_this.game.globalVariables, prevGlobalVariables);
+
 
 					return r;
 				} else {
@@ -120,8 +131,8 @@ class GML {
 				return (l === r) ? 1 : 0;
 			},
 			Different(a, _, b) {
-				var ia = le.interpret();
-				var ib = re.interpret();
+				var ia = a.interpret();
+				var ib = b.interpret();
 
 				return (ia !== ib) ? 1 : 0;
 			},

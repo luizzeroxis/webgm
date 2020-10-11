@@ -188,6 +188,8 @@ class Editor {
 
 		this.stopGame();
 		this.game = new Game(this.project, $('.canvas'), $('.canvas'));
+
+		this.gameArea.scrollIntoView();
 	}
 
 	stopGame () {
@@ -409,7 +411,7 @@ class Editor {
 
 	// Game area
 	makeGameArea() {
-		parent( add( html('div', {class: 'game'}) ) )
+		this.gameArea = parent( add( html('div', {class: 'game'}) ) )
 			this.gameCanvas = add( newCanvas("canvas", 640, 480) )
 			this.gameCanvas.setAttribute('tabindex', 0);
 			endparent()

@@ -46,8 +46,6 @@ ROOM
 
 - Libraries: to refer to an action type, you use the name of the library (in GM, you use random ids, but that's garbage come on) and an id for each action type. Currently we just send a reference to the action type object. (also that should be formalized into a class!)
 
-- HTMLWindowRoom: Check sprite's bounding box to move or delete them. Currently going by position rounded by grid size.
-
 - Implement mouse events in Game.js!
 
 - Somehow deal with all the collision stuff

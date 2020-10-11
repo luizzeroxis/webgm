@@ -205,33 +205,37 @@ class HTMLWindowObject extends HTMLWindow {
 
 					this.editor.libraries.forEach(library => {
 						
-						add( newElem(null, 'div', library.name) )
+						parent( add( newElem(null, 'fieldset') ) )
 
-						library.items.forEach(item => {
+							add( newElem(null, 'legend', library.name) )
 
-							add( newButton(null, item.name, () => {
+							library.items.forEach(item => {
 
-								var event = paramEvents.find(event => selectEvents.value == event.getNameId());
-								if (!event) {
-									alert("You need to select or add an event before you can add actions.");
-									return;
-								}
+								add( newButton(null, item.name, () => {
 
-								// var action = new ProjectAction(library.name, item.id, -1, false, false);
-								var action = new ProjectAction(item, -1, false, false);
+									var event = paramEvents.find(event => selectEvents.value == event.getNameId());
+									if (!event) {
+										alert("You need to select or add an event before you can add actions.");
+										return;
+									}
 
-								this.openActionWindow(action);
+									// var action = new ProjectAction(library.name, item.id, -1, false, false);
+									var action = new ProjectAction(item, -1, false, false);
 
-								event.actions.push(action);
+									this.openActionWindow(action);
 
-								parent(selectActions);
-									selectActionsOptions[event.actions.length -1]
-										= add( html('option', {/*value: action.getNameId()*/}, null, action.getName()) )
-									endparent();
+									event.actions.push(action);
 
-							}) )
+									parent(selectActions);
+										selectActionsOptions[event.actions.length -1]
+											= add( html('option', {/*value: action.getNameId()*/}, null, action.getName()) )
+										endparent();
 
-						})
+								}) )
+
+							})
+
+							endparent()
 
 					})
 

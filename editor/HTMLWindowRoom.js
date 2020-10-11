@@ -148,8 +148,8 @@ class HTMLWindowRoom extends HTMLWindow {
 							
 						}
 
-						this.spanX.textContent = pos.x;
-						this.spanY.textContent = pos.y;
+						this.spanX.textContent = snappedPos.x;
+						this.spanY.textContent = snappedPos.y;
 						this.spanObject.textContent = '';
 						//this.spanId.textContent = '';
 

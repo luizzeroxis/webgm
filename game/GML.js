@@ -27,17 +27,11 @@ class GML {
 				//console.log('Statement: '+(a.sourceString).replace(/(\r\n|\n|\r)/gm, "↵"));
 				a.interpret();
 			},
-			Comment (a, b) {
-				//console.log('Comment: ' + b.sourceString);
-			},
-			MultiComment(a, b, c) {
-				//
-			},
 			If(_, condition, code, notcode) {
 				//console.log('If: '+condition.sourceString);
 				var _condition = condition.interpret();
-				if (typeof _condition !== typeof 1) {
-					_this.game.throwFatalError('Condition is not a number!');
+				if (typeof _condition !== "number") {
+					_this.game.throwFatalError('Expression expected (condition "' + _condition.toString() + '" is not a number)');
 				}
 				if (_condition > 0) {
 					code.interpret();

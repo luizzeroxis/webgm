@@ -13,16 +13,21 @@ GameMakerLanguage {
 		= CurlyBrackets
 		| Code
 
+	space += comment | multiComment
+
+	comment
+		= "//" #(~eol any)*
+	multiComment
+		= "/*" #(~"*/" any)* "*/"
+
 	CurlyBrackets
 		= "{" Code "}"
 
 	Code
-		= Statement*
+		= (Statement|Semicolon)*
 
 	Statement
-		= Comment
-		| MultiComment
-		| If
+		= If
 		| While
 		| Exit
 		| Function
@@ -33,12 +38,6 @@ GameMakerLanguage {
 		| AssignmentSubtract
 		| AssignmentMultiply
 		| AssignmentDivide
-		| Semicolon
-
-	Comment
-		= "//" #(~eol any)*
-	MultiComment
-		= "/*" #(~"*/" any)* "*/"
 
 	eol
 		= "\n"

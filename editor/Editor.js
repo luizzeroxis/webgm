@@ -163,7 +163,7 @@ class Editor {
 				this.updateWindowsArea();
 
 			} else {
-				alert('This is not a project file.');
+				alert('Error Loading: File seems to be corrupt.');
 				return;
 			}
 

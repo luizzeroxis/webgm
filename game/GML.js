@@ -66,31 +66,29 @@ class GML {
 			Exit(_) {
 
 			},
-			Function (a, b, c, d) {
+			Function (name, _1, args, _3) {
 
-				var name = a.sourceString;
-				//console.log('Function: ', name);
+				var nameString = name.sourceString;
+				//console.log('Function: ', nameString);
 
-				var args = c.asIteration().interpret();
-				//console.log('Running function '+name+' with arguments', args);
+				var argsArray = args.asIteration().interpret();
+				console.log('Running function', nameString, 'with arguments', argsArray);
 
-				var script = _this.game.project.resources['ProjectScript'].find(x => x.name == name);
+				var script = _this.game.project.resources['ProjectScript'].find(x => x.name == nameString);
 				if (script) {
-					var currentVars = _this.vars;
-					_this.vars = {
-						arguments: args,
-						argument_relative: 0,
-					};
+					console.log('Script:', script);
+
+					_this.game.globalVariables.argument = argsArray;
+					_this.game.globalVariables.argument_relative = 0;
 					for (var i = 0; i < 16; i++) {
-						_this.vars['argument'+i] = (args[i] == null) ? 0 : args[i];
+						_this.game.globalVariables['argument'+i] = (argsArray[i] == null) ? 0 : argsArray[i];
 					}
 
 					var r = _this.execute(_this.game.preparedCodes.get(script), _this.currentInstance);
-					_this.vars = currentVars;
 
 					return r;
 				} else {
-					return _this.builtInFunction(name, args, _this.currentInstance);
+					return _this.builtInFunction(nameString, argsArray, _this.currentInstance);
 				}
 
 			},

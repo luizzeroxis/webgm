@@ -11,33 +11,7 @@ class Editor {
 		this.dispatcher = new Dispatcher();
 
 		//Libraries
-		// TODO: i guess these must be like... ids? im not sure help
-
-		this.libraries = [
-			//Library
-			{
-				name: 'main',
-				items: [
-					{
-						id: 603,
-						name: 'Execute a piece of code',
-						kind: 'code',
-					},
-					{
-						id: 321,
-						name: 'Display a message',
-						kind: 'gmfunction',
-						gmfunction: 'show_message',
-						args: [
-							{
-								name: 'message:',
-								type: 'string',
-							}
-						]
-					}
-				]
-			}
-		];
+		this.libraries = BuiltInLibraries.getList();
 
 		//Areas
 		parent( add( html('div', {class: 'grid'}) ) )

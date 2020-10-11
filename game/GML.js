@@ -108,10 +108,11 @@ class GML {
 
 				return (ia < ib) ? 1 : 0;
 			},
+			LessOrEqual(a, _, b) {
+				var ia = a.interpret();
+				var ib = b.interpret();
 
-			Parentheses(lp, expression, rp) {
-				//console.log('Parentheses: ', '('+expression.sourceString+')');
-				return expression.interpret();
+				return (ia <= ib) ? 1 : 0;
 			},
 			Equal(le, op, re) {
 				//console.log('Equaling: ', le.sourceString, '>', op.sourceString, '<', re.sourceString);
@@ -120,6 +121,30 @@ class GML {
 				//console.log('Equaling (result): ', l, op.sourceString, r, '=', (l === r) ? 1 : 0);
 				return (l === r) ? 1 : 0;
 			},
+			Different(a, _, b) {
+				var ia = le.interpret();
+				var ib = re.interpret();
+
+				return (ia !== ib) ? 1 : 0;
+			},
+			Greater(a, _, b) {
+				var ia = a.interpret();
+				var ib = b.interpret();
+
+				return (ia > ib) ? 1 : 0;
+			},
+			GreaterOrEqual(a, _, b) {
+				var ia = a.interpret();
+				var ib = b.interpret();
+
+				return (ia >= ib) ? 1 : 0;
+			},
+
+			Parentheses(lp, expression, rp) {
+				//console.log('Parentheses: ', '('+expression.sourceString+')');
+				return expression.interpret();
+			},
+			
 			Add(le, op, re) {
 				//console.log('Adding: ', le.sourceString, '>', op.sourceString, '<', re.sourceString);
 				var l = le.interpret();

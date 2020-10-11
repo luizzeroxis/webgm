@@ -9,18 +9,16 @@ class HTMLWindowRoom extends HTMLWindow {
 			parent( add( newElem('grid-resource resource-room', 'div') ) )
 				parent( add( newElem(null, 'div') ) )
 
-					// left area
-
 					this.paramInstances = room.instances.map(instance => {
 						return new ProjectInstance(instance.x, instance.y, instance.object_index);
 					});
 
-					this.inputName = add( newTextBox(null, 'Name:', room.name) ).$('input');
-					this.inputWidth = add( newNumberBox(null, 'Width:', room.width, 1, 1) ).$('input');
-					this.inputHeight = add( newNumberBox(null, 'Height:', room.height, 1, 1) ).$('input');
-					this.inputSpeed = add( newNumberBox(null, 'Speed:', room.speed, 1, 1) ).$('input');
-					this.inputBackgroundColor = add( newColorBox(null, 'Background color:', room.background_color) ).$('input');
-					
+					// left area
+
+					this.inputSnapX = add( newNumberBox(null, 'Snap X:', 16, 1, 1) ).$('input');
+					this.inputSnapY = add( newNumberBox(null, 'Snap Y:', 16, 1, 1) ).$('input');
+					this.inputShowGrid = add( newCheckBox(null, 'Show grid', true) ).$('input');
+
 					parent( add( newElem(null, 'fieldset') ) )
 
 						add( newElem(null, 'legend', 'Instances') )
@@ -38,9 +36,24 @@ class HTMLWindowRoom extends HTMLWindow {
 
 						endparent()
 
-					this.inputSnapX = add( newNumberBox(null, 'Snap X:', 16, 1, 1) ).$('input');
-					this.inputSnapY = add( newNumberBox(null, 'Snap Y:', 16, 1, 1) ).$('input');
-					this.inputShowGrid = add( newCheckBox(null, 'Show grid', true) ).$('input');
+					parent( add( newElem(null, 'fieldset') ) )
+
+						add( newElem(null, 'legend', 'Settings') )
+
+						this.inputName = add( newTextBox(null, 'Name:', room.name) ).$('input');
+						this.inputWidth = add( newNumberBox(null, 'Width:', room.width, 1, 1) ).$('input');
+						this.inputHeight = add( newNumberBox(null, 'Height:', room.height, 1, 1) ).$('input');
+						this.inputSpeed = add( newNumberBox(null, 'Speed:', room.speed, 1, 1) ).$('input');
+
+						endparent()
+					
+					parent( add( newElem(null, 'fieldset') ) )
+
+						add( newElem(null, 'legend', 'Backgrounds') )
+
+						this.inputBackgroundColor = add( newColorBox(null, 'Background color:', room.background_color) ).$('input');
+
+						endparent()
 
 					parent( add( newElem(null, 'div', 'X: ') ) )
 						this.spanX = add( newElem(null, 'span', '0') );

@@ -51,7 +51,10 @@ class Editor {
 
 		//
 		this.dispatcher.listen({
-			createResource: i => this.addResourceToResourcesArea(i),
+			createResource: i => {
+				this.addResourceToResourcesArea(i);
+				this.openResourceWindow(i);
+			},
 			deleteResource: i => {
 				this.deleteResourceFromResourcesArea(i);
 				this.deleteResourceWindow(i)

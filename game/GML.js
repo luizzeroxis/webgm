@@ -16,58 +16,50 @@ class GML {
 
 		this.semantics.addOperation('interpret', {
 
-			Code (a) {
-				return a.interpret();
+			Block(_0, _listOfStatements, _2) {
+				return _listOfStatements.interpret();
 			},
-			CurlyBrackets(lb, code, rb) {
-				//console.log('Curly bracket');
-				return code.interpret();
+			Statement (_statementNoSemicolon, _1) {
+				return _statementNoSemicolon.interpret();
 			},
-			Statement (a) {
-				//console.log('Statement: '+(a.sourceString).replace(/(\r\n|\n|\r)/gm, "↵"));
-				a.interpret();
-			},
-			If(_, condition, code, notcode) {
-				//console.log('If: '+condition.sourceString);
-				var _condition = condition.interpret();
-				if (typeof _condition !== "number") {
-					_this.game.throwFatalError('Expression expected (condition "' + _condition.toString() + '" is not a number)');
+			If(_0, _conditionExpression, _code, _elseStatement) {
+				var condition = _conditionExpression.interpret();
+				if (typeof condition !== "number") {
+					_this.game.throwFatalError('Expression expected (condition "' + condition.toString() + '" is not a number)');
 				}
-				if (_condition > 0) {
-					code.interpret();
+				if (condition > 0) {
+					_code.interpret();
 				} else {
-					notcode.interpret();
+					_elseStatement.interpret();
 				}
 			},
-			Else(_, code) {
-				//console.log('Else');
-				return code.interpret();
+			Else(_0, _code) {
+				return _code.interpret();
 			},
-			While(_, condition, code) {
-				var _condition = condition.interpret();
-				if (typeof _condition !== typeof 1) {
-					_this.game.throwFatalError('Condition is not a number!');
+			While(_0, _conditionExpression, _code) {
+				var condition = _conditionExpression.interpret();
+				if (typeof condition !== typeof 1) {
+					_this.game.throwFatalError('Expression expected (condition "' + condition.toString() + '" is not a number)');
 				}
-				while (_condition) {
-					code.interpret();
-					_condition = condition.interpret();
-					if (typeof _condition !== typeof 1) {
-						_this.game.throwFatalError('Condition is not a number!');
+				while (condition) {
+					_code.interpret();
+					condition = _conditionExpression.interpret();
+					if (typeof condition !== typeof 1) {
+						_this.game.throwFatalError('Expression expected (condition "' + condition.toString() + '" is not a number)');
 						break;
 					}
 				}
 			},
-			Exit(_) {
-
+			Exit(_0) {
+				// TODO
 			},
-			Function (name, _1, args, _3) {
+			Function (_name, _1, _args, _3) {
 
-				var nameString = name.sourceString;
-				//console.log('Function: ', nameString);
+				var name = _name.sourceString;
+				var args = _args.asIteration().interpret();
 
-				var argsArray = args.asIteration().interpret();
+				var script = _this.game.project.resources['ProjectScript'].find(x => x.name == name);
 
-				var script = _this.game.project.resources['ProjectScript'].find(x => x.name == nameString);
 				if (script) {
 
 					// Store arguments
@@ -79,10 +71,10 @@ class GML {
 					}
 
 					// Change arguments
-					_this.game.globalVariables.argument = argsArray;
+					_this.game.globalVariables.argument = args;
 					_this.game.globalVariables.argument_relative = 0;
 					for (var i = 0; i < 16; i++) {
-						_this.game.globalVariables['argument'+i] = (argsArray[i] == null) ? 0 : argsArray[i];
+						_this.game.globalVariables['argument'+i] = (args[i] == null) ? 0 : args[i];
 					}
 
 					var r = _this.execute(_this.game.preparedCodes.get(script), _this.currentInstance);
@@ -93,107 +85,82 @@ class GML {
 
 					return r;
 				} else {
-					return _this.builtInFunction(nameString, argsArray, _this.currentInstance);
+					return _this.builtInFunction(name, args, _this.currentInstance);
 				}
 
 			},
-			Name (a, b) {
-				return this.sourceString;
+			Less(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return (a < b) ? 1 : 0;
 			},
-			Expression(a) {
-				//console.log('Expression: ', a.sourceString);
-				return a.interpret();
+			LessOrEqual(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return (a <= b) ? 1 : 0;
 			},
-
-			Less(a, _, b) {
-				var ia = a.interpret();
-				var ib = b.interpret();
-
-				return (ia < ib) ? 1 : 0;
+			Equal(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return (a === b) ? 1 : 0;
 			},
-			LessOrEqual(a, _, b) {
-				var ia = a.interpret();
-				var ib = b.interpret();
-
-				return (ia <= ib) ? 1 : 0;
+			Different(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return (a !== b) ? 1 : 0;
 			},
-			Equal(le, op, re) {
-				//console.log('Equaling: ', le.sourceString, '>', op.sourceString, '<', re.sourceString);
-				var l = le.interpret();
-				var r = re.interpret();
-				//console.log('Equaling (result): ', l, op.sourceString, r, '=', (l === r) ? 1 : 0);
-				return (l === r) ? 1 : 0;
+			Greater(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return (a > b) ? 1 : 0;
 			},
-			Different(a, _, b) {
-				var ia = a.interpret();
-				var ib = b.interpret();
-
-				return (ia !== ib) ? 1 : 0;
+			GreaterOrEqual(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return (a >= b) ? 1 : 0;
 			},
-			Greater(a, _, b) {
-				var ia = a.interpret();
-				var ib = b.interpret();
-
-				return (ia > ib) ? 1 : 0;
+			// TODO check for type errors
+			Add(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return a + b;
 			},
-			GreaterOrEqual(a, _, b) {
-				var ia = a.interpret();
-				var ib = b.interpret();
-
-				return (ia >= ib) ? 1 : 0;
+			Subtract(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return a - b;
 			},
-
-			Parentheses(lp, expression, rp) {
-				//console.log('Parentheses: ', '('+expression.sourceString+')');
-				return expression.interpret();
+			Multiply(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return a * b;
 			},
-			
-			Add(le, op, re) {
-				//console.log('Adding: ', le.sourceString, '>', op.sourceString, '<', re.sourceString);
-				var l = le.interpret();
-				var r = re.interpret();
-				//console.log('Adding (result): ', l, op.sourceString, r, '=', l+r);
-				return l + r;
+			Divide(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return a / b;
 			},
-			Subtract(le, op, re) {
-				//console.log('Subtracting: ', le.sourceString, '>', op.sourceString, '<', re.sourceString);
-				var l = le.interpret();
-				var r = re.interpret();
-				//console.log('Subtracting (result): ', l, op.sourceString, r, '=', l-r);
-				return l - r;
+			Parentheses(_0, _expression, _2) {
+				return _expression.interpret();
 			},
-			Multiply(le, op, re) {
-				//console.log('Multiplying: ', le.sourceString, '>', op.sourceString, '<', re.sourceString);
-				var l = le.interpret();
-				var r = re.interpret();
-				//console.log('Multiplying (result): ', l, '*', r, '=', l*r);
-				return l * r;
+			Number(_integer, _dot, _decimals) {
+				return Number(_integer.sourceString + _dot.sourceString + _decimals.sourceString);
 			},
-			Divide(le, op, re) {
-				//console.log('Dividing: ', le.sourceString, '>', op.sourceString, '<', re.sourceString);
-				var l = le.interpret();
-				var r = re.interpret();
-				//console.log('Dividing (result): ', l, '/', r, '=', l/r);
-				return l / r;
+			String(_0, _string, _1) {
+				return _string.sourceString;
 			},
-
-			Number(integer, dot, decimals) {
-				return Number(integer.sourceString+dot.sourceString+decimals.sourceString);
-			},
-			String(oq, string, cq) {
-				return string.sourceString;
-			},
-			Variable(name) {
+			VariableGet(_name) {
+				var name = _name.interpret();
 				var v;
-				v = _this.vars[name.sourceString];
+				v = _this.vars[name];
 				if (v == undefined) {
-					v = _this.currentInstance.variables[name.sourceString];
+					v = _this.currentInstance.variables[name];
 					if (v == undefined) {
-						v = _this.game.globalVariables[name.sourceString];
+						v = _this.game.globalVariables[name];
 						if (v == undefined) {
-							v = _this.game.constants[name.sourceString];
+							v = _this.game.constants[name];
 							if (v == undefined) {
-								_this.game.throwFatalError("No variable or constant called "+name.sourceString);
+								_this.game.throwFatalError("No variable or constant called " + name);
 							}
 						}
 					}
@@ -201,59 +168,63 @@ class GML {
 				
 				return v;
 			},
-			Assignment(name, equal, expression) {
-				var success = _this.setVariable(name.sourceString, value => expression.interpret());
+			Variable(_name) {
+				// Currently just return the name, but in the future it will return some sort of reference so it can have a object, array index, etc. That means it will figure out globals and other things here.
+				return _name.sourceString;
+			},
+			Assignment(_variable, _1, _expression) {
+				var variable = _variable.interpret();
+				var success = _this.setVariable(variable, value => _expression.interpret());
 				if (!success) {
-					// new variable
-					_this.currentInstance.variables[name.sourceString] = expression.interpret();
+					_this.currentInstance.variables[variable] = _expression.interpret();
 				}
 				
 			},
-			AssignmentAdd(name, equal, expression) {
-				var success = _this.setVariable(name.sourceString, value => value + expression.interpret());
+			AssignmentAdd(_variable, _1, _expression) {
+				var variable = _variable.interpret();
+				var success = _this.setVariable(variable, value => value + _expression.interpret());
 				if (!success) {
-					_this.game.throwFatalError("No variable called "+name.sourceString);
+					_this.game.throwFatalError("No variable called " + variable);
+				}
+					
+			},
+			AssignmentSubtract(_variable, _1, _expression) {
+				var variable = _variable.interpret();
+				var success = _this.setVariable(variable, value => value - _expression.interpret());
+				if (!success) {
+					_this.game.throwFatalError("No variable called " + variable);
 				}
 			},
-			AssignmentSubtract(name, equal, expression) {
-				var success = _this.setVariable(name.sourceString, value => value - expression.interpret());
+			AssignmentMultiply(_variable, _1, _expression) {
+				var variable = _variable.interpret();
+				var success = _this.setVariable(variable, value => value * _expression.interpret());
 				if (!success) {
-					_this.game.throwFatalError("No variable called "+name.sourceString);
+					_this.game.throwFatalError("No variable called " + variable);
 				}
 			},
-			AssignmentMultiply(name, equal, expression) {
-				var success = _this.setVariable(name.sourceString, value => value * expression.interpret());
+			AssignmentDivide(_variable, _1, _expression) {
+				var variable = _variable.interpret();
+				var success = _this.setVariable(variable, value => value / _expression.interpret());
 				if (!success) {
-					_this.game.throwFatalError("No variable called "+name.sourceString);
+					_this.game.throwFatalError("No variable called " + variable);
 				}
 			},
-			AssignmentDivide(name, equal, expression) {
-				var success = _this.setVariable(name.sourceString, value => value / expression.interpret());
-				if (!success) {
-					_this.game.throwFatalError("No variable called "+name.sourceString);
-				}
-			},
-
-			AssignmentVar(_, names) {
-				names.asIteration().interpret().forEach(name => {
+			VarDeclare(_0, _names) {
+				_names.asIteration().children.forEach(_name => {
+					var name = _name.sourceString;
 					if (_this.vars[name] == undefined) {
 						_this.vars[name] = null;
 					}
-
 				});
 			},
-			AssignmentGlobalVar(_, names) {
-				names.asIteration().interpret().forEach(name => {
+			GlobalVarDeclare(_, _names) {
+				_names.asIteration().children.forEach(_name => {
+					var name = _name.sourceString;
 					if (_this.game.globalVariables[name] == undefined) {
 						_this.game.globalVariables[name] = 0;
 					}
 				});
 			},
-
-			Semicolon(a) {
-				//
-			}
-
 		});
 
 	}

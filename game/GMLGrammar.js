@@ -10,8 +10,8 @@ class GMLGrammar {
 GameMakerLanguage {
 
 	Start
-		= CurlyBrackets
-		| Code
+		= Block
+		| ListOfStatements
 
 	space += comment | multiComment
 
@@ -20,36 +20,43 @@ GameMakerLanguage {
 	multiComment
 		= "/*" #(~"*/" any)* "*/"
 
-	CurlyBrackets
-		= "{" Code "}"
+	eol
+		= "\n"
+		| "\r"
 
-	Code
-		= (Statement|Semicolon)*
+	Block
+		= "{" ListOfStatements "}"
+
+	ListOfStatements
+		= Statement*
 
 	Statement
+		= StatementNoSemicolon ";"*
+
+	StatementNoSemicolon
 		= If
 		| While
 		| Exit
 		| Function
-		| AssignmentVar
-		| AssignmentGlobalVar
+		| VarDeclare
+		| GlobalVarDeclare
 		| Assignment
 		| AssignmentAdd
 		| AssignmentSubtract
 		| AssignmentMultiply
 		| AssignmentDivide
 
-	eol
-		= "\n"
-		| "\r"
+	BlockOrStatement
+		= Block
+		| Statement
 
 	If
-		= "if" Expression (CurlyBrackets|Statement) Else?
+		= "if" Expression BlockOrStatement Else?
 	Else
-		= "else" (CurlyBrackets|Statement)
+		= "else" BlockOrStatement
 
 	While
-		= "while" Expression (CurlyBrackets|Statement)
+		= "while" Expression BlockOrStatement
 
 	Exit
 		= "exit"
@@ -58,7 +65,7 @@ GameMakerLanguage {
 		= Name "(" ListOf<Expression,","> ")"
 
 	Name
-		= (letter) (alnum | "_")*
+		= (letter | "_") (alnum | "_")*
 
 	Expression
 		= ExpressionBooleanComparison
@@ -125,7 +132,7 @@ GameMakerLanguage {
 		| Function
 		| Number
 		| String
-		| Variable
+		| VariableGet
 
 	Parentheses
 		= "(" Expression ")"
@@ -137,29 +144,30 @@ GameMakerLanguage {
 		= "\"" #(~"\"" any)* "\""
 		| "'" #(~"'" any)* "'"
 
+	VariableGet
+		= Variable
+
+	// TODO add objects and arrays HERE
 	Variable
 		= Name
 
 	Assignment
-		= Name "=" Expression
+		= Variable "=" Expression
 
 	AssignmentAdd
-		= Name "+=" Expression
+		= Variable "+=" Expression
 	AssignmentSubtract
-		= Name "-=" Expression
+		= Variable "-=" Expression
 	AssignmentMultiply
-		= Name "*=" Expression
+		= Variable "*=" Expression
 	AssignmentDivide
-		= Name "/=" Expression
+		= Variable "/=" Expression
 
-	AssignmentVar
+	VarDeclare
 		= "var" NonemptyListOf<Name, ",">
 
-	AssignmentGlobalVar
+	GlobalVarDeclare
 		= "globalvar" NonemptyListOf<Name, ",">
-
-	Semicolon
-		= ";"
 
 }
 

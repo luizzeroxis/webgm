@@ -149,65 +149,80 @@ class GML {
 			String(_0, _string, _1) {
 				return _string.sourceString;
 			},
-			VariableGet(_name) {
-				var name = _name.interpret();
-				var v;
-				v = _this.vars[name];
-				if (v == undefined) {
-					v = _this.currentInstance.variables[name];
-					if (v == undefined) {
-						v = _this.game.globalVariables[name];
-						if (v == undefined) {
-							v = _this.game.constants[name];
-							if (v == undefined) {
-								_this.game.throwFatalError("No variable or constant called " + name);
-							}
-						}
-					}
-				}
-				
-				return v;
+			VariableGet(_variable) {
+				var varInfo = _variable.interpret();
+
+				var value = _this.getVariableValue(varInfo);
+				if (value == undefined)
+					_this.game.throwFatalError("No variable or constant called " + varInfo.name);
+
+				return value;
 			},
 			Variable(_name) {
 				// Currently just return the name, but in the future it will return some sort of reference so it can have a object, array index, etc. That means it will figure out globals and other things here.
-				return _name.sourceString;
+
+				var varInfo = {};
+				varInfo.name = _name.sourceString;
+				varInfo.object = null;
+				varInfo.arrayIndex = null;
+
+				return varInfo;
+
 			},
 			Assignment(_variable, _1, _expression) {
-				var variable = _variable.interpret();
-				var success = _this.setVariable(variable, value => _expression.interpret());
-				if (!success) {
-					_this.currentInstance.variables[variable] = _expression.interpret();
-				}
+				var varInfo = _variable.interpret();
+				var value = _expression.interpret();
+
+				_this.setVariableValue(varInfo, value);
 				
 			},
 			AssignmentAdd(_variable, _1, _expression) {
-				var variable = _variable.interpret();
-				var success = _this.setVariable(variable, value => value + _expression.interpret());
-				if (!success) {
-					_this.game.throwFatalError("No variable called " + variable);
-				}
-					
+				var varInfo = _variable.interpret();
+				var value = _expression.interpret();
+				
+				var varOriginal = _this.getVariableValue(varInfo);
+				if (varOriginal == undefined)
+					_this.game.throwFatalError("No variable or constant called " + varInfo.name);
+
+				var varNew = varOriginal + value;
+
+				_this.setVariableValue(varInfo, varNew);
 			},
 			AssignmentSubtract(_variable, _1, _expression) {
-				var variable = _variable.interpret();
-				var success = _this.setVariable(variable, value => value - _expression.interpret());
-				if (!success) {
-					_this.game.throwFatalError("No variable called " + variable);
-				}
+				var varInfo = _variable.interpret();
+				var value = _expression.interpret();
+				
+				var varOriginal = _this.getVariableValue(varInfo);
+				if (varOriginal == undefined)
+					_this.game.throwFatalError("No variable or constant called " + varInfo.name);
+
+				var varNew = varOriginal - value;
+
+				_this.setVariableValue(varInfo, varNew);
 			},
 			AssignmentMultiply(_variable, _1, _expression) {
-				var variable = _variable.interpret();
-				var success = _this.setVariable(variable, value => value * _expression.interpret());
-				if (!success) {
-					_this.game.throwFatalError("No variable called " + variable);
-				}
+				var varInfo = _variable.interpret();
+				var value = _expression.interpret();
+				
+				var varOriginal = _this.getVariableValue(varInfo);
+				if (varOriginal == undefined)
+					_this.game.throwFatalError("No variable or constant called " + varInfo.name);
+
+				var varNew = varOriginal * value;
+
+				_this.setVariableValue(varInfo, varNew);
 			},
 			AssignmentDivide(_variable, _1, _expression) {
-				var variable = _variable.interpret();
-				var success = _this.setVariable(variable, value => value / _expression.interpret());
-				if (!success) {
-					_this.game.throwFatalError("No variable called " + variable);
-				}
+				var varInfo = _variable.interpret();
+				var value = _expression.interpret();
+				
+				var varOriginal = _this.getVariableValue(varInfo);
+				if (varOriginal == undefined)
+					_this.game.throwFatalError("No variable or constant called " + varInfo.name);
+
+				var varNew = varOriginal * value;
+
+				_this.setVariableValue(varInfo, varNew);
 			},
 			VarDeclare(_0, _names) {
 				_names.asIteration().children.forEach(_name => {
@@ -226,6 +241,43 @@ class GML {
 				});
 			},
 		});
+
+	}
+
+	getVariableValue(varInfo) {
+		var value;
+
+		if (varInfo.object == null && varInfo.arrayIndex == null) {
+			value = this.vars[varInfo.name];
+			if (value == undefined)
+				value = this.currentInstance.variables[varInfo.name];
+			if (value == undefined)
+				value = this.game.globalVariables[varInfo.name];
+			if (value == undefined)
+				value = this.game.constants[varInfo.name];
+		}
+
+		return value;
+	}
+
+	// Always check if returned false
+	setVariableValue(varInfo, value) {
+
+		if (varInfo.object == null && varInfo.arrayIndex == null) {
+			if (this.vars[varInfo.name] !== undefined) {
+				this.vars[varInfo.name] = value;
+			} else if (this.currentInstance.variables[varInfo.name] !== undefined) {
+				this.currentInstance.variables[varInfo.name] = value;
+			} else if (this.game.globalVariables[varInfo.name] !== undefined) {
+				this.game.globalVariables[varInfo.name] = value;
+			} else if (this.game.constants[varInfo.name] !== undefined) {
+				return false;
+			} else {
+				this.currentInstance.variables[varInfo.name] = value;
+			}
+		}
+
+		return true;
 
 	}
 

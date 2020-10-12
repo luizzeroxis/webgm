@@ -185,21 +185,25 @@ class GML {
 			},
 			Variable(name) {
 				var v;
-				v = _this.vars[name.sourceString];
-				if (v == undefined) {
-					v = _this.currentInstance.variables[name.sourceString];
-					if (v == undefined) {
-						v = _this.game.globalVariables[name.sourceString];
-						if (v == undefined) {
-							v = _this.game.constants[name.sourceString];
-							if (v == undefined) {
-								_this.game.throwFatalError("No variable or constant called "+name.sourceString);
-							}
-						}
-					}
-				}
 				
-				return v;
+				v = _this.vars[name.sourceString];
+				if (v != undefined)
+					return v;
+				
+				v = _this.currentInstance.variables[name.sourceString];
+				if (v != undefined)
+					return v;
+				
+				v = _this.game.globalVariables[name.sourceString];
+				if (v != undefined)
+					return v;
+				
+				v = _this.game.constants[name.sourceString];
+				if (v != undefined)
+					return v;
+				
+				_this.game.throwFatalError("No variable or constant called "+name.sourceString);
+				
 			},
 			Assignment(name, equal, expression) {
 				var success = _this.setVariable(name.sourceString, value => expression.interpret());

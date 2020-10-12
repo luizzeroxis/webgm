@@ -158,16 +158,23 @@ class GML {
 
 				return value;
 			},
-			Variable(_name) {
-				// Currently just return the name, but in the future it will return some sort of reference so it can have a object, array index, etc. That means it will figure out globals and other things here.
+			Variable(_name, _arrayIndex) {
 
 				var varInfo = {};
 				varInfo.name = _name.sourceString;
 				varInfo.object = null;
-				varInfo.arrayIndex = null;
-
+				varInfo.arrayIndex = _arrayIndex.interpret()[0];
 				return varInfo;
 
+			},
+			ArrayIndex(_0, _index, _2) {
+				var index = _index.interpret();
+				if (typeof index != "number")
+					_this.game.throwFatalError("Wrong type of array index");
+				if (index < 0)
+					_this.game.throwFatalError("Negative array index");
+				return index;
+					
 			},
 			Assignment(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
@@ -247,7 +254,7 @@ class GML {
 	getVariableValue(varInfo) {
 		var value;
 
-		if (varInfo.object == null && varInfo.arrayIndex == null) {
+		if (varInfo.object == null) {
 			value = this.vars[varInfo.name];
 			if (value == undefined)
 				value = this.currentInstance.variables[varInfo.name];
@@ -257,23 +264,72 @@ class GML {
 				value = this.game.constants[varInfo.name];
 		}
 
+		if (value == undefined)
+			return value;
+
+		if (Array.isArray(value)) {
+			// If has index, must be within array limits
+			if (varInfo.arrayIndex != null) {
+				if (varInfo.arrayIndex >= value.length)
+					this.game.throwFatalError("Array index out of bounds");
+				value = value[varInfo.arrayIndex];
+
+			// If has no index, select first element
+			} else {
+				value = value[0];
+			}
+		} else {
+			// Trying to access non array as array with index more than 0
+			if (varInfo.arrayIndex > 0) {
+				this.game.throwFatalError("Array index out of bounds");
+			}
+		}
+
 		return value;
 	}
 
 	// Always check if returned false
 	setVariableValue(varInfo, value) {
 
-		if (varInfo.object == null && varInfo.arrayIndex == null) {
+		if (varInfo.object == null) {
 			if (this.vars[varInfo.name] !== undefined) {
-				this.vars[varInfo.name] = value;
+
+				if (varInfo.arrayIndex == null)
+					this.vars[varInfo.name] = value;
+				else {
+					this.vars[varInfo.name] = this.arraySet(
+						this.vars[varInfo.name], varInfo.arrayIndex, value);
+				}
+
 			} else if (this.currentInstance.variables[varInfo.name] !== undefined) {
-				this.currentInstance.variables[varInfo.name] = value;
+
+				if (varInfo.arrayIndex == null)
+					this.currentInstance.variables[varInfo.name] = value;
+				else {
+					this.currentInstance.variables[varInfo.name] = this.arraySet(
+						this.currentInstance.variables[varInfo.name], varInfo.arrayIndex, value);
+				}
+
 			} else if (this.game.globalVariables[varInfo.name] !== undefined) {
-				this.game.globalVariables[varInfo.name] = value;
+
+				if (varInfo.arrayIndex == null)
+					this.game.globalVariables[varInfo.name] = value;
+				else {
+					this.game.globalVariables[varInfo.name] = this.arraySet(
+						this.game.globalVariables[varInfo.name], varInfo.arrayIndex, value);
+				}
+
 			} else if (this.game.constants[varInfo.name] !== undefined) {
 				return false;
 			} else {
-				this.currentInstance.variables[varInfo.name] = value;
+				
+				if (varInfo.arrayIndex == null)
+					this.currentInstance.variables[varInfo.name] = value;
+				else {
+					this.currentInstance.variables[varInfo.name] = this.arraySet(
+						this.currentInstance.variables[varInfo.name], varInfo.arrayIndex, value);
+				}
+
 			}
 		}
 
@@ -281,21 +337,16 @@ class GML {
 
 	}
 
-	setVariable(name, funcExpression) {
-		if (name in this.vars) {
-			this.vars[name] = funcExpression(this.vars[name]);
-		} else
-		// local vars
-		if (name in this.currentInstance.variables) {
-			this.currentInstance.variables[name] = funcExpression(this.currentInstance.variables[name]);
-		} else
-		// global vars
-		if (name in this.game.globalVariables) {
-			this.game.globalVariables[name] = funcExpression(this.game.globalVariables[name]);
-		} else {
-			return false;
+	arraySet(array, index, value) {
+		if (!Array.isArray(array)) {
+			array = [array];
 		}
-		return true;
+		array[index] = value;
+		for (var i = 0; i < array.length; i++) {
+			if (array[i] == undefined)
+				array[i] = 0;
+		}
+		return array;
 	}
 
 	prepare(code) {

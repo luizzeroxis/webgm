@@ -11,6 +11,11 @@ GENERAL
 - Libraries: to refer to an action type, you use the name of the library (in GM, you use random ids, but that's garbage come on) and an id for each action type. Currently we just send a reference to the action type object. (also that should be formalized into a class!)
 - Implement mouse events in Game.js!
 - Somehow deal with all the collision stuff
+- Fix global variables, they should have more properties like being read only, and when you change them things have to happen (e.g. chaning 'room' should change the current room).
+
+GML
+- Add referencing instances and objects (object.variable)
+- Add for statement
 
 SPRITE
 - Allow multiple subimages for sprites
@@ -47,7 +52,3 @@ ROOM
 - 8 backgrounds, set background image and other things
 - Caption, creation code, tiles, views
 - Sort, shift, clear, lock, isometric grid, view options
-
-GML
-- Add referencing instances and objects (object.variable)
-- Add for statement

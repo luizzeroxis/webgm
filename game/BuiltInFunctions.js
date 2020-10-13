@@ -6,6 +6,8 @@ class BuiltInFunctions {
 
 	// # Computing things
 
+	// ## Constants  // no functions
+
 	// ## Real-valued functions
 
 	static abs ([x]) {
@@ -135,6 +137,8 @@ class BuiltInFunctions {
 		return parseDouble(str);
 	}
 
+	// ## Dealing with dates and time
+
 	// # Game play
 
 	// ## Moving around
@@ -152,6 +156,12 @@ class BuiltInFunctions {
 	static place_snapped ([hsnap, vsnap]) {
 		return (this.currentInstance.variables.x % hsnap == 0) && (this.currentInstance.variables.y % vsnap == 0)
 	}
+
+	// ## Paths
+
+	// ## Motion planning
+
+	// ## Collision checking
 
 	// ## Instances
 
@@ -187,6 +197,10 @@ class BuiltInFunctions {
 		return (i ? 1 : 0);
 	}
 
+	// ## Deactivating instances
+
+	// ## Timing
+
 	// ## Rooms
 
 	static room_goto ([numb]) {
@@ -197,6 +211,10 @@ class BuiltInFunctions {
 		this.game.shouldEnd = true;
 		return 0;
 	}
+
+	// ## Score  // no functions
+
+	// ## Generating events
 
 	// ## Miscellaneous variables and functions
 
@@ -219,7 +237,15 @@ class BuiltInFunctions {
 		return this.game.keyReleased[key] ? 1 : 0;
 	}
 
+	// ## The mouse
+
+	// ## The joystick
+
 	// # Game graphics
+
+	// ## Sprites and images  // no functions
+
+	// ## Backgrounds  // no functions
 
 	// ## Drawing sprites and backgrounds
 	static draw_sprite ([sprite, subimg, x, y]) {
@@ -331,6 +357,7 @@ class BuiltInFunctions {
 	}
 
 	// ## Fonts and text
+
 	static draw_set_font ([font]) {
 		this.game.drawFont = font;
 		return 0;
@@ -380,7 +407,31 @@ class BuiltInFunctions {
 		return 0;
 	}
 
+	// ## Drawing surfaces
+
+	// ## Tiles
+
+	// ## The display
+
+	// ## The window
+
+	// ## Views
+
+	// ## Repainting the screen
+
+	// # Sound and music
+
+	// ## Basic sound functions
+
+	// ## Sound effects
+
+	// ## 3D sound
+
+	// ## CD music
+
 	// # Splash screens, highscores, and other pop-ups
+
+	// ## Splash screens
 
 	// ## Pop-up messages and questions
 
@@ -397,7 +448,39 @@ class BuiltInFunctions {
 		return 0;
 	}
 
+	// ## Highscore list
+
+	// # Resources
+
+	// ## Sprites
+
+	// ## Sounds
+
+	// ## Backgrounds
+
+	// ## Fonts
+
+	// ## Paths
+
+	// ## Scripts
+
+	// ## Time lines
+
+	// ## Objects
+
+	// ## Rooms
+
 	// # Changing resources
+
+	// ## Sprites
+	
+	// ## Sounds
+
+	// ## Backgrounds
+
+	// ## Fonts
+
+	// ## Paths	
 
 	// ## Scripts
 
@@ -405,6 +488,92 @@ class BuiltInFunctions {
 		this.execute(this.prepare(str), this.currentInstance);
 		return 0;
 	}
+
+	// ## Time lines
+
+	// ## Objects
+
+	// ## Rooms
+
+	// # Files, registry, and executing programs
+
+	// ## Files
+
+	// ## Registry
+
+	// ## INI files
+
+	// ## Executing programs
+
+	// # Data structures
+
+	// ## Stacks
+
+	// ## Queues
+
+	// ## Lists
+
+	// ## Maps
+
+	// ## Priority queues
+
+	// ## Grids
+
+	// # Creating particles
+
+	// ## Simple effects
+
+	// ## Particle types
+
+	// ## Particle systems
+
+	// ## Emmiters
+
+	// ## Attractors
+
+	// ## Destroyers
+
+	// ## Deflectors
+
+	// ## Changers
+
+	// ## Firework example  // no functions
+
+	// # Multiplayer games
+
+	// ## Setting up a connection
+
+	// ## Creating and joining sessions
+
+	// ## Players
+
+	// ## Shared data
+
+	// ## Messages
+
+	// # Using DLL's
+
+	// # 3D Graphics
+
+	// ## Going to 3D mode
+
+	// ## Easy drawing
+
+	// ## Drawing polygons in 3D
+
+	// ## Drawing basic shapes
+
+	// ## Viewing the world
+
+	// ## Transformations
+
+	// ## Fog
+
+	// ## Lighting
+
+	// ## Creating models
+
+	// ## Final words  // no functions
 
 	// # Action functions
 

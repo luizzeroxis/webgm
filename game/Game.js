@@ -225,6 +225,8 @@ class Game {
 			this.timeout = setTimeout(() => this.mainLoop(), 1000 / this.room.roomSpeed);
 			this.timeoutPreviousTime = performance.now();
 
+			console.log("Loaded.")
+
 		});
 
 	}

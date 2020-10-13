@@ -64,8 +64,8 @@ class HTMLWindow {
 			}) );
 
 			add( newButton(null, 'Ok', () => {
-				applyOkFunc();
-				okFunc();
+				if (applyOkFunc() != false)
+					okFunc();
 			}) );
 
 			endparent()

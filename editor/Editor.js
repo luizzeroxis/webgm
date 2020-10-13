@@ -95,8 +95,8 @@ class Editor {
 				editor.newProject();
 			}) )
 
-			add( newButton(null, 'Open', () => {
-				editor.openProject();
+			add ( this.newButtonOpenFile(null, 'Open', file => {
+				this.openProjectFromFile(file);
 			}) )
 
 			add( newButton(null, 'Save', () => {
@@ -114,6 +114,34 @@ class Editor {
 			endparent()
 	}
 
+	newButtonOpenFile(classes, content, onselectfile, multiple=false) {
+		var e = html('button', {class: classes}, {
+			click: e => {
+				VirtualFileSystem.openDialog('application/json')
+				.then(file => {
+					return onselectfile(file);
+				})
+			},
+			dragover: e => {
+				e.preventDefault();
+			},
+			drop: e => {
+				e.preventDefault();
+
+				if (multiple) {
+					// flatMap - if item is not file, don't add to list, if it is, get as file
+					onselectfile(e.dataTransfer.items.flatMap(item => item.kind != 'file' ? [] : [item.getAsFile()]));
+				} else {
+					var item = e.dataTransfer.items[0];
+					if (item != undefined && item.kind == 'file')
+						onselectfile(item.getAsFile());
+				}
+
+			},
+		}, content);
+		return e;
+	}
+
 	newProject () {
 		this.project = new Project();
 
@@ -122,9 +150,15 @@ class Editor {
 	}
 
 	openProject () {
-
 		VirtualFileSystem.openDialog('application/json')
-		.then(file => VirtualFileSystem.readEntireFile(file))
+		.then(file => {
+			this.openProjectFromFile(file);
+		})
+	}
+
+	openProjectFromFile(file) {
+
+		VirtualFileSystem.readEntireFile(file)
 		.then(json => {
 
 			var project = ProjectSerializer.unserialize(json);
@@ -160,10 +194,12 @@ class Editor {
 			return;
 		}
 
+		this.gameArea.scrollIntoView();
+		this.gameCanvas.focus();
+
 		this.stopGame();
 		this.game = new Game(this.project, $('.canvas'), $('.canvas'));
-
-		this.gameArea.scrollIntoView();
+				
 	}
 
 	stopGame () {

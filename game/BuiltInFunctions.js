@@ -198,6 +198,13 @@ class BuiltInFunctions {
 		return 0;
 	}
 
+	// ## Miscellaneous variables and functions
+
+	static show_debug_message ([message]) {
+		console.log(message);
+		return 0;
+	}
+
 	// # User interaction
 
 	// ## The keyboard
@@ -4173,10 +4180,6 @@ class BuiltInFunctions {
 		return 0;
 	}
 	static set_synchronization ([_]) {
-
-		return 0;
-	}
-	static show_debug_message ([_]) {
 
 		return 0;
 	}

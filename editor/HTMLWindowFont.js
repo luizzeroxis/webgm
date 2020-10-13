@@ -32,7 +32,7 @@ class HTMLWindowFont extends HTMLWindow {
 				() => {
 					this.editor.changeResourceName(font, this.inputName.value);
 					font.font = this.inputFont.value;
-					font.size = this.inputSize.value;
+					font.size = parseInt(this.inputSize.value);
 					font.bold = this.inputBold.checked;
 					font.italic = this.inputItalic.checked;
 					// changes here

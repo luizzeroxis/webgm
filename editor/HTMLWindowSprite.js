@@ -77,7 +77,7 @@ class HTMLWindowSprite extends HTMLWindow {
 				() => {
 					this.editor.changeResourceName(sprite, inputName.value);
 					this.editor.changeSpriteImages(sprite, paramImages);
-					this.editor.changeSpriteOrigin(sprite, inputOriginX.value, inputOriginY.value);
+					this.editor.changeSpriteOrigin(sprite, parseInt(inputOriginX.value), parseInt(inputOriginY.value));
 				},
 				() => {
 					this.editor.deleteWindow(this);

@@ -198,9 +198,10 @@ class HTMLWindowRoom extends HTMLWindow {
 			this.makeApplyOkButtons(
 				() => {
 					this.editor.changeResourceName(room, this.inputName.value);
-					room.width = this.inputWidth.value;
-					room.height = this.inputHeight.value;
-					room.speed = this.inputSpeed.value;
+
+					room.width = parseInt(this.inputWidth.value);
+					room.height = parseInt(this.inputHeight.value);
+					room.speed = parseInt(this.inputSpeed.value);
 
 					room.background_color = this.inputBackgroundColor.value;
 					room.instances = this.paramInstances;

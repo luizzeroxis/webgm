@@ -246,10 +246,10 @@ class HTMLWindowObject extends HTMLWindow {
 			this.makeApplyOkButtons(
 				() => {
 					this.editor.changeResourceName(object, inputName.value);
-					this.editor.changeObjectSprite(object, selectSprite.value);
+					this.editor.changeObjectSprite(object, parseInt(selectSprite.value));
 					object.visible = inputVisible.checked;
 					object.solid = inputSolid.checked;
-					object.depth = inputDepth.value;
+					object.depth = parseInt(inputDepth.value);
 					object.persistent = inputPersistent.checked;
 					this.htmlActionWindows.forEach(w => {
 						w.apply();

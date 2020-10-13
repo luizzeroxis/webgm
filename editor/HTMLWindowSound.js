@@ -29,7 +29,7 @@ class HTMLWindowSound extends HTMLWindow {
 				() => {
 					this.editor.changeResourceName(sound, inputName.value);
 					sound.sound = paramSound;
-					sound.volume = inputVolume.value;
+					sound.volume = parseFloat(inputVolume.value);
 					//
 				},
 				() => {

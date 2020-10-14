@@ -158,23 +158,30 @@ class GML {
 
 				return value;
 			},
-			Variable(_name, _arrayIndex) {
+			Variable(_name, _arrayIndexes) {
 
 				var varInfo = {};
 				varInfo.name = _name.sourceString;
 				varInfo.object = null;
-				varInfo.arrayIndex = _arrayIndex.interpret()[0];
+				varInfo.arrayIndex = _arrayIndexes.interpret()[0];
+
 				return varInfo;
 
 			},
-			ArrayIndex(_0, _index, _2) {
-				var index = _index.interpret();
-				if (typeof index != "number")
-					_this.game.throwFatalError("Wrong type of array index");
-				if (index < 0)
-					_this.game.throwFatalError("Negative array index");
-				return index;
-					
+			ArrayIndexes(_0, _index1, _index2, _3) {
+				var indexes = [];
+				var index1 = _index1.interpret();
+				indexes.push(_this.arrayIndexValidate(index1));
+
+				var index2 = _index2.interpret();
+				if (index2.length==1) {
+					indexes.push(index2[0]);
+				}
+
+				return indexes;
+			},
+			ArrayIndex2(_0, _index) {
+				return _this.arrayIndexValidate(_index.interpret());
 			},
 			Assignment(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
@@ -267,23 +274,66 @@ class GML {
 		if (value == undefined)
 			return value;
 
-		if (Array.isArray(value)) {
-			// If has index, must be within array limits
-			if (varInfo.arrayIndex != null) {
-				if (varInfo.arrayIndex >= value.length)
-					this.game.throwFatalError("Array index out of bounds");
-				value = value[varInfo.arrayIndex];
+		var type = this.variableGetType(value);
 
-			// If has no index, select first element
-			} else {
-				value = value[0];
+		if (varInfo.arrayIndex == null) { // no array index
+
+			switch (type) {
+				case 'array1d': // Get value on [0]
+					value = value[0];
+					break;
+				case 'array2d': // Get value on [0,0]
+					value = (value[0] || [0])[0];
+					break;
 			}
-		} else {
-			// Trying to access non array as array with index more than 0
-			if (varInfo.arrayIndex > 0) {
-				this.game.throwFatalError("Array index out of bounds");
+
+		} else if (varInfo.arrayIndex.length==1) { // 1d array index
+
+			var index = varInfo.arrayIndex[0];
+
+			switch (type) {
+				case 'normal': // If index is not 0 it's out of bounds
+					if (index > 0)
+						this.game.throwFatalError("Array index out of bounds");
+					break;
+				case 'array1d': // Get value on [i]
+					if (index > value.length)
+						this.game.throwFatalError("Array index out of bounds");
+					value = value[index];
+					break;
+				case 'array2d': // Get value on [0,i]
+					if (index > (value[0] || [0]).length)
+						this.game.throwFatalError("Array index out of bounds");
+					value = (value[0] || [0])[index];
+					break;
 			}
+
+		} else if (varInfo.arrayIndex.length==2) { // 2d array index
+
+			var index1 = varInfo.arrayIndex[0];
+			var index2 = varInfo.arrayIndex[1];
+
+			switch (type) {
+				case 'normal': // If both indexes are not 0 it's out of bounds
+					if (index1 > 0 || index2 > 0)
+						this.game.throwFatalError("Array index out of bounds");
+					break;
+				case 'array1d': // Get value on [i2], if index1 is not 0 it's out of bounds
+					if (index1 > 0 || index2 > value.length)
+						this.game.throwFatalError("Array index out of bounds");
+					value = value[index2];
+					break;
+				case 'array2d': // Get value on [i1,i2]
+					if (index1 > value.length || index2 > (value[index1] || [0]).length)
+						this.game.throwFatalError("Array index out of bounds");
+					value = (value[index1] || [0])[index2];
+					break;
+			}
+
 		}
+
+		if (value == undefined)
+			value = 0;
 
 		return value;
 	}
@@ -291,66 +341,99 @@ class GML {
 	// Always check if returned false
 	setVariableValue(varInfo, value) {
 
+		var where = this.currentInstance.variables;
+
 		if (varInfo.object == null) {
 			if (this.vars[varInfo.name] !== undefined) {
-
-				if (varInfo.arrayIndex == null)
-					this.vars[varInfo.name] = value;
-				else {
-					this.vars[varInfo.name] = this.arraySet(
-						this.vars[varInfo.name], varInfo.arrayIndex, value);
-				}
-
+				where = this.vars;
 			} else if (this.currentInstance.variables[varInfo.name] !== undefined) {
-
-				if (varInfo.arrayIndex == null)
-					this.currentInstance.variables[varInfo.name] = value;
-				else {
-					this.currentInstance.variables[varInfo.name] = this.arraySet(
-						this.currentInstance.variables[varInfo.name], varInfo.arrayIndex, value);
-				}
-
+				where = this.currentInstance.variables;
 			} else if (this.game.globalVariables[varInfo.name] !== undefined) {
-
-				if (varInfo.arrayIndex == null)
-					this.game.globalVariables[varInfo.name] = value;
-				else {
-					this.game.globalVariables[varInfo.name] = this.arraySet(
-						this.game.globalVariables[varInfo.name], varInfo.arrayIndex, value);
-				}
-
+				where = this.game.globalVariables;
 			} else if (this.game.constants[varInfo.name] !== undefined) {
 				return false;
-			} else {
-				
-				if (varInfo.arrayIndex == null)
-					this.currentInstance.variables[varInfo.name] = value;
-				else {
-					this.currentInstance.variables[varInfo.name] = this.arraySet(
-						this.currentInstance.variables[varInfo.name], varInfo.arrayIndex, value);
+			}
+
+			var type = this.variableGetType(where[varInfo.name]);
+
+			if (varInfo.arrayIndex == null) { // no array index
+
+				switch (type) {
+					case 'normal': // Just set value
+						where[varInfo.name] = value;
+						break;
+					case 'array1d': // Set value on [0]
+						where[varInfo.name][0] = value;
+						break;
+					case 'array2d': // Set value on [0,0]
+						where[varInfo.name][0][0] = value;
+						break;
 				}
 
+			} else if (varInfo.arrayIndex.length==1) { // 1d array index
+
+				var index = varInfo.arrayIndex[0];
+
+				switch (type) {
+					case 'normal': // Upgrade from normal to 1d array
+						where[varInfo.name] = [ where[varInfo.name] ];
+						where[varInfo.name][index] = value;
+						break;
+					case 'array1d': // Just set value
+						where[varInfo.name][index] = value;
+						break;
+					case 'array2d': // Set value on [0,i]
+						where[varInfo.name][0][index] = value;
+						break;
+				}
+
+			} else if (varInfo.arrayIndex.length==2) { // 2d array index
+
+				var index1 = varInfo.arrayIndex[0];
+				var index2 = varInfo.arrayIndex[1];
+
+				switch (type) {
+					case 'normal': // Upgrade from normal to 2d array
+						where[varInfo.name] = [ [ where[varInfo.name] ] ]; // [0,0]
+						break;
+					case 'array1d': // Upgrade from 1d array to 2d array
+						where[varInfo.name] = [ where[varInfo.name] ]; // [0,i]
+						break;
+				}
+
+				// Fix index1 if undefined, then set value
+				if (where[varInfo.name][index1] == undefined)
+					where[varInfo.name][index1] = [];
+				where[varInfo.name][index1][index2] = value;
+
 			}
+
 		}
 
 		return true;
 
 	}
 
-	arraySet(array, index, value) {
-		if (!Array.isArray(array)) {
-			array = [array];
+	arrayIndexValidate(index) {
+		if (typeof index != "number")
+			_this.game.throwFatalError("Wrong type of array index");
+		if (index < 0)
+			_this.game.throwFatalError("Negative array index");
+		return index;
+	}
+
+	variableGetType(variable) {
+		var type = 'normal';
+		if (Array.isArray(variable)) {
+			type = 'array1d';
+			if (Array.isArray(variable[0]))
+				type = 'array2d';
 		}
-		array[index] = value;
-		for (var i = 0; i < array.length; i++) {
-			if (array[i] == undefined)
-				array[i] = 0;
-		}
-		return array;
+		return type;
 	}
 
 	prepare(code) {
-		var trace = this.grammar.trace(code).toString();
+		//var trace = this.grammar.trace(code).toString();
 		//console.log(trace);
 
 		var match = this.grammar.match(code);

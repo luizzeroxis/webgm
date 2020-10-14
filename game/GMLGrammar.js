@@ -149,10 +149,13 @@ GameMakerLanguage {
 
 	// TODO add objects and arrays HERE
 	Variable
-		= Name ArrayIndex?
+		= Name ArrayIndexes?
 
-	ArrayIndex
-		= "[" Expression "]"
+	ArrayIndexes
+		= "[" Expression ArrayIndex2? "]"
+
+	ArrayIndex2
+		= "," Expression
 
 	Assignment
 		= Variable "=" Expression

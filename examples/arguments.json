@@ -31,15 +31,13 @@
 						"actions": [
 							{
 								"classname": "ProjectAction",
-								"type": {
-									"id": 603,
-									"name": "Execute a piece of code",
-									"kind": "code"
-								},
-								"appliesTo": -1,
+								"typeLibrary": "control",
+								"typeId": 603,
+								"typeKind": "code",
 								"args": [
 									"script0(42);"
 								],
+								"appliesTo": -1,
 								"relative": false,
 								"not": false
 							}

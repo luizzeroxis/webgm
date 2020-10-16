@@ -37,14 +37,13 @@
 						"actions": [
 							{
 								"classname": "ProjectAction",
-								"type": {
-									"name": "Execute a piece of code",
-									"kind": "code"
-								},
-								"appliesTo": -1,
+								"typeLibrary": "control",
+								"typeId": 603,
+								"typeKind": "code",
 								"args": [
 									"draw_set_font(font0);\ndraw_text(irandom(room_width), irandom(room_height), 'xd')"
 								],
+								"appliesTo": -1,
 								"relative": false,
 								"not": false
 							}

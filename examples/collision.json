@@ -46,14 +46,14 @@
 						"actions": [
 							{
 								"classname": "ProjectAction",
-								"type": {
-									"name": "Execute a piece of code",
-									"kind": "code"
-								},
-								"appliesTo": -1,
+								"typeLibrary": "control",
+								"typeId": 603,
+								"typeKind": "code",
 								"args": [
 									"x += (keyboard_check(vk_right) - keyboard_check(vk_left))*2;\ny += (keyboard_check(vk_down) - keyboard_check(vk_up))*2;"
 								],
+								"appliesTo": -1,
+								"relative": false,
 								"not": false
 							}
 						]
@@ -79,14 +79,13 @@
 						"actions": [
 							{
 								"classname": "ProjectAction",
-								"type": {
-									"name": "Execute a piece of code",
-									"kind": "code"
-								},
-								"appliesTo": -1,
+								"typeLibrary": "control",
+								"typeId": 603,
+								"typeKind": "code",
 								"args": [
 									"instance_destroy();"
 								],
+								"appliesTo": -1,
 								"relative": false,
 								"not": false
 							}
@@ -154,5 +153,21 @@
 		"ProjectObject": 2,
 		"ProjectRoom": 1
 	},
+	"gameInformation": {
+		"text": ""
+	},
+	"globalGameSettings": {
+		"colorOutsideRoom": "#000000",
+		"displayCursor": true,
+		"keyEscEndsGame": true,
+		"keyF1ShowsGameInformation": true,
+		"keyF5SavesF6Loads": true,
+		"keyF9Screenshots": true,
+		"displayErrors": true,
+		"abortOnError": false,
+		"unitializedVarsAre0": false,
+		"author": ""
+	},
+	"extensionPackages": {},
 	"lastId": 100000
 }

@@ -24,14 +24,14 @@
 						"actions": [
 							{
 								"classname": "ProjectAction",
-								"type": {
-									"name": "Execute a piece of code",
-									"kind": "code"
-								},
-								"appliesTo": -1,
+								"typeLibrary": "control",
+								"typeId": 603,
+								"typeKind": "code",
 								"args": [
 									"// local variables\n\ntext = 'General Kenobi!';\n\n// global variables\n\nglobalvar amount_of_text;\namount_of_text = 0;\n\n// script variables\nvar text; // temporarily overrides local var\ntext = \"Hello there\";\n\nshow_message(text);"
 								],
+								"appliesTo": -1,
+								"relative": false,
 								"not": false
 							}
 						]
@@ -43,14 +43,14 @@
 						"actions": [
 							{
 								"classname": "ProjectAction",
-								"type": {
-									"name": "Execute a piece of code",
-									"kind": "code"
-								},
-								"appliesTo": -1,
+								"typeLibrary": "control",
+								"typeId": 603,
+								"typeKind": "code",
 								"args": [
 									"var i;\ni = 0;\n\nwhile(i < amount_of_text) {\n  draw_text(16,16+i*i, text);\n  i+=1;\n}"
 								],
+								"appliesTo": -1,
+								"relative": false,
 								"not": false
 							}
 						]
@@ -62,14 +62,14 @@
 						"actions": [
 							{
 								"classname": "ProjectAction",
-								"type": {
-									"name": "Execute a piece of code",
-									"kind": "code"
-								},
-								"appliesTo": -1,
+								"typeLibrary": "control",
+								"typeId": 603,
+								"typeKind": "code",
 								"args": [
 									"amount_of_text += 1;"
 								],
+								"appliesTo": -1,
+								"relative": false,
 								"not": false
 							}
 						]
@@ -96,7 +96,8 @@
 				"speed": "30",
 				"background_color": "#c0c0c0"
 			}
-		]
+		],
+		"ProjectBackground": []
 	},
 	"counter": {
 		"ProjectSprite": 0,
@@ -106,5 +107,21 @@
 		"ProjectObject": 1,
 		"ProjectRoom": 1
 	},
+	"gameInformation": {
+		"text": ""
+	},
+	"globalGameSettings": {
+		"colorOutsideRoom": "#000000",
+		"displayCursor": true,
+		"keyEscEndsGame": true,
+		"keyF1ShowsGameInformation": true,
+		"keyF5SavesF6Loads": true,
+		"keyF9Screenshots": true,
+		"displayErrors": true,
+		"abortOnError": false,
+		"unitializedVarsAre0": false,
+		"author": ""
+	},
+	"extensionPackages": {},
 	"lastId": 100000
 }

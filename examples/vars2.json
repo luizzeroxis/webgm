@@ -24,17 +24,15 @@
 						"actions": [
 							{
 								"classname": "ProjectAction",
-								"type": {
-									"id": 603,
-									"name": "Execute Code",
-									"kind": "code"
-								},
-								"appliesTo": -1,
-								"relative": false,
-								"not": false,
+								"typeLibrary": "control",
+								"typeId": 603,
+								"typeKind": "code",
 								"args": [
 									"//// Normal variable\n\nnormal = 'normal';\n\n// Access normal var as array, only on [0]\nshow_message(\"T1 normal == \" + normal[0]);\n\n// Access normal var as 2d array, only on [0,0]\nshow_message(\"T2 normal == \" + normal[0,0]);\n\n//// 1d array\n\narray1d[0] = 'array1d[0]';\narray1d[1] = 'array1d[1]';\n\n// Access array as normal var (returns [0])\nshow_message(\"T3 array1d[0] == \" + array1d);\n\n// Access array\nshow_message(\"T4 array1d[0] == \" + array1d[0])\n\n// Access array as 2d array, only on [0,i]\nshow_message(\"T5 array1d[0] == \" + array1d[0,0])\n\n//// 2d array\n\narray2d[0,0] = 'array2d[0,0]'\narray2d[0,1] = 'array2d[0,1]'\narray2d[1,0] = 'array2d[1,0]'\n\n// Access 2d array as normal var (returns [0,0])\nshow_message(\"T6 array2d[0,0] == \"+array2d);\n\n// Access 2d array as 1d array (returns [0,i])\nshow_message(\"T7 array2d[0,0] == \" + array2d[0])\n\n// Access 2d array\nshow_message(\"T8 array2d[0,0] == \" + array2d[0,0]);\n\n//// Convert normal var into array\nnormal[1] = 'normal[1]'\n\nshow_message(\"T9 normal == \" + normal + \" == \" + normal[0]);\nshow_message(\"T10 normal[1] == \" + normal[1]);\n\n//// Convert array into 2d array\n\nnormal[1,1] = 'normal[1,1]';\n\nshow_message(\"T11 normal == \" + normal + \" == \" + normal[0] + \" == \" + normal[0,0]);\nshow_message(\"T12 normal[1] == \" + normal[1] + \" == \" + normal[0,1]);\nshow_message(\"T13 normal[1,1] == \" + normal[1,1]);\n\n//// Convert normal var into 2d array\n\nanormal = 'anormal'\nanormal[1,1] = 'anormal[1,1]'\n\nshow_message(\"T14 anormal == \" + anormal + \" == \" + anormal[0] + \" == \" + anormal[0,0]);\nshow_message(\"T15 anormal[1,1] == \" + anormal[1,1]);\n"
-								]
+								],
+								"appliesTo": -1,
+								"relative": false,
+								"not": false
 							}
 						]
 					}

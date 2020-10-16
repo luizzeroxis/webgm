@@ -195,16 +195,16 @@ class Game {
 
 		this.project.resources.ProjectObject.forEach(object => {
 			object.events.forEach(event => {
-				event.actions.forEach(action => {
+				event.actions.forEach((action, actionNumber) => {
 
-					if (action.type.kind == 'code') {
+					if (action.typeKind == 'code') {
 						var preparedCode = this.gml.prepare(action.args[0]);
 
 						if (preparedCode.succeeded()) {
 							this.preparedCodes.set(action, preparedCode);
 						} else {
 							console.log(preparedCode.message);
-							this.showError("FATAL COMPILATION ERROR in action "+action.getName()+" in event "+event.getName()+" in object "+object.name+'\n'+preparedCode.message);
+							this.showError("FATAL COMPILATION ERROR in action "+actionNumber.toString()+" in event "+event.getName()+" in object "+object.name+'\n'+preparedCode.message);
 						}
 					}
 
@@ -502,15 +502,16 @@ class Game {
 
 		//var object = this.project.objects.find(x => x.id == instance.variables.object_index);
 
-		switch (action.type.kind) {
+		switch (action.typeKind) {
 			case 'code':
 				this.gml.execute(this.preparedCodes.get(action), instance);
 				break;
-			default:
-			//case 'gmfunction':
+			case 'normal':
 				//action.appliesTo
 				//action.not
-				this.gml.builtInFunction(action.type.gmfunction, action.args, instance, action.relative);
+				if (action.typeExecution == 'function') {
+					this.gml.builtInFunction(action.typeExecutionFunction, action.args, instance, action.relative);
+				}
 				break;
 		}
 

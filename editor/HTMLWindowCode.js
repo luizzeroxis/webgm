@@ -9,7 +9,9 @@ class HTMLWindowCode extends HTMLWindow {
 		this.action = action;
 		this.object = object;
 
-		this.htmlTitle.textContent = 'Execute code';
+		this.actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
+
+		this.htmlTitle.textContent = this.actionType.description;
 
 		parent(this.htmlClient)
 			add( newElem(null, 'div') )

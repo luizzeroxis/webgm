@@ -411,13 +411,34 @@ class Editor {
 	}
 
 	deleteResourceWindow(resource) {
-		console.log('del')
 		var index = this.htmlWindows.findIndex(x => x.id == resource);
 		if (index>=0) {
 			this.htmlWindows[index].remove();
 			this.htmlWindows.splice(index, 1);
 		}
 	}
+
+	getActionType(...args) {
+		var actionTypeLibrary, actionTypeId;
+
+		var [action] = args;
+		if (action instanceof ProjectAction) {
+			actionTypeLibrary = action.typeLibrary;
+			actionTypeId = action.typeId;
+		} else {
+			[actionTypeLibrary, actionTypeId] = args;
+		}
+
+		var library = this.libraries.find(x => x.name == actionTypeLibrary);
+		var actionType = library.items.find(x => x.id == actionTypeId);
+		return actionType;
+	}
+
+/*	getActionType(actionTypeLibrary, actionTypeId) {
+		var library = this.libraries.find(x => x.name == actionTypeLibrary);
+		var actionType = library.items.find(x => x.id == actionTypeId);
+		return actionType;
+	}*/
 
 	// Game area
 	makeGameArea() {

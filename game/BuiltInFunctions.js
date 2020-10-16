@@ -581,12 +581,18 @@ class BuiltInFunctions {
 
 	static action_move_to ([x, y]) {
 		this.currentInstance.variables.x = x;
-		this.currentInstance.variables.y = xy;
+		this.currentInstance.variables.y = y;
 		return 0;
 	}
 
 	// ## main1
 	// ## main2
+
+	static action_message ([message]) {
+		BuiltInFunctions.show_message([message]);
+		return 0;
+	}
+
 	// ## control
 	// ## score
 	// ## extra
@@ -839,10 +845,6 @@ class BuiltInFunctions {
 		return 0;
 	}
 	static action_load_game ([_]) {
-
-		return 0;
-	}
-	static action_message ([_]) {
 
 		return 0;
 	}

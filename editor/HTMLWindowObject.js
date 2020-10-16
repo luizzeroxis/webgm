@@ -13,8 +13,21 @@ class HTMLWindowObject extends HTMLWindow {
 		var paramEvents = object.events.map(event => {
 			var newevent = new ProjectEvent(event.type, event.subtype);
 			newevent.actions = event.actions.map(action => {
-				var newaction = new ProjectAction(action.type, action.appliesTo, action.relative, action.not);
-				newaction.args = action.args.slice(); // TODO actually copy each type of argument properly
+				var newaction = new ProjectAction();
+				newaction.typeLibrary = action.typeLibrary;
+				newaction.typeId = action.typeId;
+				newaction.typeKind = action.typeKind;
+				newaction.typeExecution = action.typeExecution;
+				newaction.typeExecutionFunction = action.typeExecutionFunction;
+				newaction.typeExecutionCode = action.typeExecutionCode;
+				newaction.typeIsQuestion = action.typeIsQuestion;
+
+				newaction.args = [...action.args];
+
+				newaction.appliesTo = action.appliesTo;
+				newaction.relative = action.relative;
+				newaction.not = action.not;
+
 				return newaction;
 			})
 			return newevent;
@@ -63,7 +76,16 @@ class HTMLWindowObject extends HTMLWindow {
 						if (event) {
 							parent(selectActions);
 								event.actions.forEach((action, i) => {
-									selectActionsOptions[i] = add( html('option', {/*value: action.getNameId()*/}, null, action.getName()) )
+
+									var actionType = this.editor.getActionType(action);
+
+									//selectActionsOptions[event.actions.length -1]
+									//		= add( html('option', {
+									//			/*value: action.getNameId(),*/
+									//			title: actionType.getHintText(action),
+									//		}, null, actionType.getListText(action)) )
+
+									selectActionsOptions[i] = add( html('option', {/*value: action.getNameId(),*/ title: actionType.getHintText(action)}, null, actionType.getListText(action)) )
 								})
 								endparent()
 						}
@@ -209,9 +231,9 @@ class HTMLWindowObject extends HTMLWindow {
 
 							add( newElem(null, 'legend', library.name) )
 
-							library.items.forEach(item => {
+							library.items.forEach(actionType => {
 
-								add( newButton(null, item.name, () => {
+								add( newButton(null, actionType.description, () => {
 
 									var event = paramEvents.find(event => selectEvents.value == event.getNameId());
 									if (!event) {
@@ -219,8 +241,28 @@ class HTMLWindowObject extends HTMLWindow {
 										return;
 									}
 
-									// var action = new ProjectAction(library.name, item.id, -1, false, false);
-									var action = new ProjectAction(item, -1, false, false);
+									var action = new ProjectAction();
+									action.typeLibrary = library.name;
+									action.typeId = actionType.id;
+									action.typeKind = actionType.kind;
+									action.typeExecution = actionType.execution;
+									action.typeExecutionFunction = actionType.executionFunction;
+									action.typeExecutionCode = actionType.executionCode;
+									action.typeIsQuestion = actionType.isQuestion;
+
+									action.appliesTo = -1;
+									action.relative = false;
+									action.not = false;
+
+									if (actionType.kind == 'normal') {
+										action.args = actionType.args.map(arg => arg.default);
+									} else if (actionType.kind == 'repeat') {
+										action.args = [1];
+									} else if (actionType.kind == 'variable') {
+										action.args = ['', '0'];
+									} else if (actionType.kind == 'code') {
+										action.args = [''];
+									}
 
 									this.openActionWindow(action);
 
@@ -228,7 +270,10 @@ class HTMLWindowObject extends HTMLWindow {
 
 									parent(selectActions);
 										selectActionsOptions[event.actions.length -1]
-											= add( html('option', {/*value: action.getNameId()*/}, null, action.getName()) )
+											= add( html('option', {
+												/*value: action.getNameId(),*/
+												title: actionType.getHintText(action),
+											}, null, actionType.getListText(action)) )
 										endparent();
 
 								}) )
@@ -266,13 +311,33 @@ class HTMLWindowObject extends HTMLWindow {
 	}
 
 	openActionWindow(action) {
-		this.htmlActionWindows.find(x => x == w)
+		// this.htmlActionWindows.find(x => x == w)
 
-		var htmlclass = (action.type.kind == "code") ? HTMLWindowCode : HTMLWindowAction
+		var actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
 
-		var w = this.editor.openWindow(htmlclass, action, action, this);
-		if (w) {
-			this.htmlActionWindows.push(w);
+		var htmlclass;
+
+		if (actionType.kind == 'normal') {
+			if (['normal', 'none', 'arrows'].includes(actionType.interfaceKind)) {
+				htmlclass = HTMLWindowAction;
+			} else if (['code', 'text'].includes(actionType.interfaceKind)) {
+				htmlclass = HTMLWindowCode;
+			}
+		} else if (actionType.kind == 'repeat') {
+			// ???
+			htmlclass = HTMLWindowAction;
+		} else if (actionType.kind == 'variable') {
+			// ???
+			htmlclass = HTMLWindowAction;
+		} else if (actionType.kind == 'code') {
+			htmlclass = HTMLWindowCode;
+		}
+
+		if (htmlclass) {
+			var w = this.editor.openWindow(htmlclass, action, action, this);
+			if (w) {
+				this.htmlActionWindows.push(w);
+			}
 		}
 		
 	}

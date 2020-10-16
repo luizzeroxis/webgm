@@ -170,6 +170,8 @@ class Editor {
 				this.updateResourcesArea();
 				this.updateWindowsArea();
 
+				this.projectName = file.name;
+
 			} else {
 				alert('Error Loading: File seems to be corrupt.');
 				return;

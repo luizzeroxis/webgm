@@ -548,6 +548,7 @@ class Game {
 				case 'else':
 					break;
 				case 'exit':
+					return true;
 					break;
 				case 'repeat':
 					break;

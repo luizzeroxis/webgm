@@ -3,15 +3,15 @@ WEBGM PROGRESS
 Things to do:
 
 GENERAL
-- Change project file format to a ZIP file so files like images can be properly stored.
-- Compile to HTML
-- Maybe make some more realistic windows like elements, like context menus and floating windows.
-- More global game settings
-- Expansion packages (wtf?)
-- Libraries: to refer to an action type, you use the name of the library (in GM, you use random ids, but that's garbage come on) and an id for each action type. Currently we just send a reference to the action type object. (also that should be formalized into a class!)
-- Implement mouse events in Game.js!
+- Actually make some flow for drag and drop, so actions that are questions, begin and end block, etc actually work.
+- Fix global and local variables, they should have more properties like being read only, and when you change them things have to happen (e.g. changing 'room' should change the current room).
 - Somehow deal with all the collision stuff
-- Fix global variables, they should have more properties like being read only, and when you change them things have to happen (e.g. chaning 'room' should change the current room).
+- Implement mouse events in Game.js!
+- Change project file format to a ZIP file so files like images can be properly stored.
+- Maybe make some more realistic Windows like elements, like context menus and floating windows.
+- More global game settings
+- Compile to HTML
+- Expansion packages (wtf?)
 
 GML
 - Add referencing instances and objects (object.variable)

@@ -255,7 +255,17 @@ class HTMLWindowObject extends HTMLWindow {
 									action.not = false;
 
 									if (actionType.kind == 'normal') {
-										action.args = actionType.args.map(arg => arg.default);
+
+										if (actionType.interfaceKind == 'none') {
+											action.args = [];
+										} else if (actionType.interfaceKind == 'arrows') {
+											action.args = ["000000000", 0];
+										} else if (['code', 'text'].includes(actionType.interfaceKind)) {
+											action.args = [''];
+										} else if (actionType.interfaceKind == 'normal') {
+											action.args = actionType.args.map(arg => arg.default);
+										}
+
 									} else if (actionType.kind == 'repeat') {
 										action.args = [1];
 									} else if (actionType.kind == 'variable') {

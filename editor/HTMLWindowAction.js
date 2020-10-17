@@ -39,6 +39,21 @@ class HTMLWindowAction extends HTMLWindow {
 						}
 
 					})
+				} else if (this.actionType.interfaceKind == 'arrows') {
+
+					this.inputArgs = [];
+
+					var directions = action.args[0];
+					var speed = action.args[1];
+
+					// TODO actually make arrows
+					this.inputArgs[0] = add( newTextBox(null, "Directions:", directions) ).$('input');
+					this.inputArgs[1] = add( newTextBox(null, "Speed:", speed) ).$('input');
+
+				} else if (actionType.kind == 'repeat') {
+					// TODO repeat interface
+				} else if (actionType.kind == 'variable') {
+					// TODO variable set interface
 				}
 			}
 
@@ -62,7 +77,18 @@ class HTMLWindowAction extends HTMLWindow {
 
 	apply() {
 
-		this.action.args = this.actionType.args.map((argType, i) => {
+		var args = [];
+		if (this.actionType.interfaceKind == 'normal') {
+			args = this.actionType.args;
+		} else if (this.actionType.interfaceKind == 'arrows') {
+			args = [ {type: 'string'}, {type: 'expression'} ];
+		} else if (this.actionType.interfaceKind == 'repeat') {
+			args = [ {type: 'expression'} ];
+		} else if (this.actionType.interfaceKind == 'variable') {
+			args = [ {type: 'string'}, {type: 'expression'} ];
+		}
+
+		this.action.args = args.map((argType, i) => {
 			return this.inputArgs[i].value;
 		})
 

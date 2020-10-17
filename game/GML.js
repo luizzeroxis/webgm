@@ -449,9 +449,9 @@ class GML {
 		if (preparedcode.succeeded()) {
 			//console.log('Executing...');
 			this.currentInstance = inst;
-			var currentVars = this.vars;
+			var currentVars = this.vars; // TODO copy arrays (ProjectSerializer?)
 			this.vars = {};
-			this.semantics(preparedcode).interpret();
+			var result = this.semantics(preparedcode).interpret();
 			this.vars = currentVars;
 
 			if (this.game.shouldEnd) {
@@ -460,10 +460,15 @@ class GML {
 
 			//console.log('Done.');
 
+			return 0; // TODO return return
+
 		} else {
 			console.log(preparedcode.message)
 			console.log("Some error was found in the GML!");
 		}
+
+
+
 	}
 
 	builtInFunction(name, args, inst, relative) {

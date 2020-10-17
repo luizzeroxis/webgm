@@ -219,11 +219,14 @@ class Game {
 		this.room = this.project.resources.ProjectRoom[0];
 		this.loadRoom(this.room);
 
+		this.fps = 0;
+		this.fpsFrameCount = 0;
+
 		//Only start when all async processes finished.
 		Promise.all(promises).then(() => {
 
-			this.timeout = setTimeout(() => this.mainLoop(), 1000 / this.room.roomSpeed);
-			this.timeoutPreviousTime = performance.now();
+			this.timeout = setTimeout(() => this.mainLoop(), 0);
+			this.fpsTimeout = setInterval(() => this.updateFps(), 1000);
 
 			console.log("Loaded.")
 
@@ -232,6 +235,10 @@ class Game {
 	}
 
 	mainLoop () {
+
+		this.timeoutStepStart = performance.now() / 1000;
+
+		++this.fpsFrameCount;
 
 		// Draw
 
@@ -243,7 +250,7 @@ class Game {
 
 		// Draw instances by depth.
 		var instances_by_depth = [...this.instances].sort(
-			(a, b) => a.depth - b.depth
+			(a, b) => a.variables.depth - b.variables.depth
 		);
 
 		for (var i = 0; i < instances_by_depth.length; i++) {
@@ -255,7 +262,7 @@ class Game {
 			var draw = obj.events.find((x) => x.type == 'draw');
 			if (draw) {
 				if (inst.variables.visible) {
-					this.doActions(draw.actions, inst);
+					this.doEvent(draw, inst);
 				}
 			} else {
 				// In case there's no draw event, draw the sprite of object, if there's one.
@@ -278,6 +285,8 @@ class Game {
 				}
 			}
 		}
+
+		this.globalVariables.fps = this.fps;
 
 		// Get all events
 		var eventsToRun = {};
@@ -315,7 +324,7 @@ class Game {
 		// Begin step
 		if (eventsToRun['step'] && eventsToRun['step']['begin']) {
 			eventsToRun['step']['begin'].some(event => {
-				return this.doActions(event.event.actions, event.instance);
+				return this.doEvent(event.event, event.instance);
 			})
 		}
 
@@ -324,10 +333,15 @@ class Game {
 			Object.entries(eventsToRun['alarm']).some(([subtype, listevents]) => {
 				return listevents.some(event => {
 
-					// should i update alarm here? well yes, but actually no
+					// Update alarm (decrease by one) here, before running event
+					// Alarm stays 0 until next alarm check, where it becomes -1 forever
+
+					if (event.instance.variables.alarm[subtype] >= 0) {
+						event.instance.variables.alarm[subtype] -= 1;
+					}
 
 					if (event.instance.variables.alarm[subtype] == 0) {
-						return this.doActions(event.event.actions, event.instance);
+						return this.doEvent(event.event, event.instance);
 					}
 				})
 			})
@@ -338,7 +352,7 @@ class Game {
 			Object.entries(eventsToRun['keyboard']).some(([subtype, listevents]) => {
 				return listevents.some(event => {
 					if (this.key[subtype]) {
-						return this.doActions(event.event.actions, event.instance);
+						return this.doEvent(event.event, event.instance);
 					}
 				})
 			})
@@ -348,7 +362,7 @@ class Game {
 			Object.entries(eventsToRun['keypress']).some(([subtype, listevents]) => {
 				return listevents.some(event => {
 					if (this.keyPressed[subtype]) {
-						return this.doActions(event.event.actions, event.instance);
+						return this.doEvent(event.event, event.instance);
 					}
 				})
 			})
@@ -358,7 +372,7 @@ class Game {
 			Object.entries(eventsToRun['keyrelease']).some(([subtype, listevents]) => {
 				return listevents.some(event => {
 					if (this.keyReleased[subtype]) {
-						return this.doActions(event.event.actions, event.instance);
+						return this.doEvent(event.event, event.instance);
 					}
 				})
 			})
@@ -370,7 +384,7 @@ class Game {
 		// Step
 		if (eventsToRun['step'] && eventsToRun['step']['normal']) {
 			eventsToRun['step']['normal'].some(event => {
-				return this.doActions(event.event.actions, event.instance);
+				return this.doEvent(event.event, event.instance);
 			})
 		}
 
@@ -426,7 +440,7 @@ class Game {
 						})
 
 						if (c) {
-							return this.doActions(event.event.actions, event.instance);
+							return this.doEvent(event.event, event.instance);
 						}
 
 					})
@@ -438,7 +452,7 @@ class Game {
 		// End step
 		if (eventsToRun['step'] && eventsToRun['step']['end']) {
 			eventsToRun['step']['end'].some(event => {
-				return this.doActions(event.event.actions, event.instance);
+				return this.doEvent(event.event, event.instance);
 			})
 		}
 
@@ -457,12 +471,26 @@ class Game {
 		// TODO: check if gm still runs fine if frame takes less than frame of time
 		// It seems like so
 
-		var currentTime = performance.now()
-		var deltaTime = currentTime - this.timeoutPreviousTime;
-		var waitTime = Math.max(0, (1000 / this.globalVariables.room_speed) - deltaTime);
-		this.timeoutPreviousTime = currentTime;
+		this.timeoutStepEnd = performance.now() / 1000;
+		this.timeoutStepTime = this.timeoutStepEnd - this.timeoutStepStart;
+		this.timeoutStepMinTime = 1 / this.globalVariables.room_speed;
+		this.timeoutWaitTime = Math.max(0, this.timeoutStepMinTime - this.timeoutStepTime);
+		this.timeout = setTimeout(() => this.mainLoop(), this.timeoutWaitTime * 1000);
 
-		this.timeout = setTimeout(() => this.mainLoop(), waitTime);
+		this.timeoutTotalStepTime = this.timeoutStepTime + this.timeoutWaitTime;
+
+		// console.log("------");
+		// console.log("StepTime", this.timeoutStepTime);
+		// console.log("StepMinTime", this.timeoutStepMinTime);
+		// console.log("WaitTime", this.timeoutWaitTime);
+		// console.log("TotalStepTime", this.timeoutTotalStepTime);
+		// console.log(1/this.timeoutTotalStepTime, "fps");
+
+	}
+
+	updateFps() {
+		this.fps = this.fpsFrameCount;
+		this.fpsFrameCount = 0;
 	}
  
 	loadRoom(room) {
@@ -486,35 +514,55 @@ class Game {
 
 	}
 
-	doActions(actions, instance) {
-		return actions.some(action => {
+	doEvent(event, instance) {
+		this.currentEvent = event;
+		this.currentInstance = instance;
 
-			this.doAction(action, instance);
+		return event.actions.some((action, actionNumber) => {
+			this.currentActionNumber = actionNumber;
+
+			// normal, begin group, end group, else, exit, repeat, variable, code
+			switch (action.typeKind) {
+				case 'normal':
+					// typeIsQuestion
+					// appliesTo
+					// relative
+					// not
+
+					// none, function, code
+					switch (action.typeExecution) {
+						case 'function':
+							var result = this.gml.builtInFunction(action.typeExecutionFunction, action.args, instance, action.relative);
+							break;
+
+						case 'code':
+							
+							break;
+					}
+					break;
+
+				case 'begin group':
+					break;
+				case 'end group':
+					break;
+				case 'else':
+					break;
+				case 'exit':
+					break;
+				case 'repeat':
+					break;
+				case 'variable':
+					break;
+				case 'code':
+					this.gml.execute(this.preparedCodes.get(action), instance);
+					break;
+			}
 
 			if (this.shouldEnd) {
 				return true;
 			}
 
-		})
-	}
-
-	doAction(action, instance) {
-
-		//var object = this.project.objects.find(x => x.id == instance.variables.object_index);
-
-		switch (action.typeKind) {
-			case 'code':
-				this.gml.execute(this.preparedCodes.get(action), instance);
-				break;
-			case 'normal':
-				//action.appliesTo
-				//action.not
-				if (action.typeExecution == 'function') {
-					this.gml.builtInFunction(action.typeExecutionFunction, action.args, instance, action.relative);
-				}
-				break;
-		}
-
+		});
 	}
 
 	throwError(message) {
@@ -541,7 +589,7 @@ class Game {
 		var obj = this.project.resources.ProjectObject.find(x => x.id == instance.object_index);
 		var create = obj.events.find((x) => x.type == 'create');
 		if (create) {
-			this.doActions(create.actions, instance);
+			this.doEvent(create, instance);
 		}
 
 		return instance.variables.id;
@@ -559,6 +607,7 @@ class Game {
 		console.log('Stopping game.')
 
 		clearTimeout(this.timeout);
+		clearInterval(this.fpsTimeout);
 		delete this; //delet tis
 
 		//TODO: add event system so that editor can know when game ends
@@ -574,21 +623,32 @@ class Instance {
 
 		var obj = game.project.resources.ProjectObject.find(x => x.id == this.object_index);
 
+		// BuiltInLocals
+
 		this.variables = {
+			// Id
 			id: 100001,
-			//object_index: object,
-			x: x,
-			y: y,
+
+			// Inherited from object
+			object_index: obj.id,
 			sprite_index: obj.sprite_index,
-			image_index: 0,
 			visible: obj.visible,
 			solid: obj.solid,
 			depth: obj.depth,
 			persistent: obj.persistent,
 			parent: obj.parent,
 			mask: obj.mask,
+
+			// Set by constructor
+			x: x,
+			y: y,
+
+			// All others
+			alarm: new Array(12).fill(0),
 			direction: 0,
+			image_index: 0,
 			speed: 0
+
 		};
 
 	}

@@ -25,7 +25,7 @@ class GML {
 			If(_0, _conditionExpression, _code, _elseStatement) {
 				var condition = _conditionExpression.interpret();
 				if (typeof condition !== "number") {
-					_this.game.throwFatalError('Expression expected (condition "' + condition.toString() + '" is not a number)');
+					_this.game.error('Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpression);
 				}
 				if (condition > 0) {
 					_code.interpret();
@@ -39,13 +39,13 @@ class GML {
 			While(_0, _conditionExpression, _code) {
 				var condition = _conditionExpression.interpret();
 				if (typeof condition !== typeof 1) {
-					_this.game.throwFatalError('Expression expected (condition "' + condition.toString() + '" is not a number)');
+					_this.game.error('Expression expected (condition "' + condition.toString() + '" is not a number)');
 				}
 				while (condition) {
 					_code.interpret();
 					condition = _conditionExpression.interpret();
 					if (typeof condition !== typeof 1) {
-						_this.game.throwFatalError('Expression expected (condition "' + condition.toString() + '" is not a number)');
+						_this.game.error('Expression expected (condition "' + condition.toString() + '" is not a number)');
 						break;
 					}
 				}
@@ -154,7 +154,7 @@ class GML {
 
 				var value = _this.getVariableValue(varInfo);
 				if (value == undefined)
-					_this.game.throwFatalError("No variable or constant called " + varInfo.name);
+					_this.game.error("No variable or constant called " + varInfo.name);
 
 				return value;
 			},
@@ -196,7 +196,7 @@ class GML {
 				
 				var varOriginal = _this.getVariableValue(varInfo);
 				if (varOriginal == undefined)
-					_this.game.throwFatalError("No variable or constant called " + varInfo.name);
+					_this.game.error("No variable or constant called " + varInfo.name);
 
 				var varNew = varOriginal + value;
 
@@ -208,7 +208,7 @@ class GML {
 				
 				var varOriginal = _this.getVariableValue(varInfo);
 				if (varOriginal == undefined)
-					_this.game.throwFatalError("No variable or constant called " + varInfo.name);
+					_this.game.error("No variable or constant called " + varInfo.name);
 
 				var varNew = varOriginal - value;
 
@@ -220,7 +220,7 @@ class GML {
 				
 				var varOriginal = _this.getVariableValue(varInfo);
 				if (varOriginal == undefined)
-					_this.game.throwFatalError("No variable or constant called " + varInfo.name);
+					_this.game.error("No variable or constant called " + varInfo.name);
 
 				var varNew = varOriginal * value;
 
@@ -232,7 +232,7 @@ class GML {
 				
 				var varOriginal = _this.getVariableValue(varInfo);
 				if (varOriginal == undefined)
-					_this.game.throwFatalError("No variable or constant called " + varInfo.name);
+					_this.game.error("No variable or constant called " + varInfo.name);
 
 				var varNew = varOriginal * value;
 
@@ -294,16 +294,16 @@ class GML {
 			switch (type) {
 				case 'normal': // If index is not 0 it's out of bounds
 					if (index > 0)
-						this.game.throwFatalError("Array index out of bounds");
+						this.game.error("Array index out of bounds");
 					break;
 				case 'array1d': // Get value on [i]
 					if (index > value.length)
-						this.game.throwFatalError("Array index out of bounds");
+						this.game.error("Array index out of bounds");
 					value = value[index];
 					break;
 				case 'array2d': // Get value on [0,i]
 					if (index > (value[0] || [0]).length)
-						this.game.throwFatalError("Array index out of bounds");
+						this.game.error("Array index out of bounds");
 					value = (value[0] || [0])[index];
 					break;
 			}
@@ -316,16 +316,16 @@ class GML {
 			switch (type) {
 				case 'normal': // If both indexes are not 0 it's out of bounds
 					if (index1 > 0 || index2 > 0)
-						this.game.throwFatalError("Array index out of bounds");
+						this.game.error("Array index out of bounds");
 					break;
 				case 'array1d': // Get value on [i2], if index1 is not 0 it's out of bounds
 					if (index1 > 0 || index2 > value.length)
-						this.game.throwFatalError("Array index out of bounds");
+						this.game.error("Array index out of bounds");
 					value = value[index2];
 					break;
 				case 'array2d': // Get value on [i1,i2]
 					if (index1 > value.length || index2 > (value[index1] || [0]).length)
-						this.game.throwFatalError("Array index out of bounds");
+						this.game.error("Array index out of bounds");
 					value = (value[index1] || [0])[index2];
 					break;
 			}
@@ -416,9 +416,9 @@ class GML {
 
 	arrayIndexValidate(index) {
 		if (typeof index != "number")
-			_this.game.throwFatalError("Wrong type of array index");
+			_this.game.error("Wrong type of array index");
 		if (index < 0)
-			_this.game.throwFatalError("Negative array index");
+			_this.game.error("Negative array index");
 		return index;
 	}
 
@@ -479,7 +479,7 @@ class GML {
 			this.currentInstance = inst;
 			return func.call(this, args, relative);
 		} else {
-			this.game.throwFatalError('No such function called "'+name+'".');
+			this.game.error('No such function called "'+name+'".');
 		}
 	}
 

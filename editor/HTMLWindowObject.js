@@ -4,8 +4,6 @@ class HTMLWindowObject extends HTMLWindow {
 	}
 	makeClient(object) {
 
-		this.defineEventTypes();
-
 		this.htmlTitle.textContent = 'Edit Object '+object.name;
 		this.htmlActionWindows = [];
 
@@ -60,11 +58,11 @@ class HTMLWindowObject extends HTMLWindow {
 					var selectEvents = parent( add( newSelect('events', 'Events:') ).$('select') );
 						paramEvents.forEach(event => {
 							selectEventsOptions[event.getNameId()] = add( html('option',
-								{value: event.getNameId()}, null, this.getEventName(event)) )
+								{value: event.getNameId()}, null, Events.getEventName(event, this.editor.project)) )
 						})
 						endparent();
 
-					selectEvents.size = 10;
+					selectEvents.size = 2;
 
 					// Update actions select when changing events
 					var updateSelectActions = () => {
@@ -96,7 +94,7 @@ class HTMLWindowObject extends HTMLWindow {
 					var eventType = 'create';
 					var eventSubtype = 0;
 
-					var selectEventType = add( newSelect(null, 'Event type:', this.listEventTypes) ).$('select');
+					var selectEventType = add( newSelect(null, 'Event type:', Events.listEventTypes) ).$('select');
 
 					var divEventSubtype = add( html('div') );
 
@@ -112,7 +110,7 @@ class HTMLWindowObject extends HTMLWindow {
 
 							if (eventType == 'step') {
 								subtypeElement = add( newSelect(null, 'Step:',
-									Object.keys(this.listStepSubtypes).map(x => ({value: x, name: this.listStepSubtypes[x]}))
+									Object.keys(Events.listStepSubtypes).map(x => ({value: x, name: Events.listStepSubtypes[x]}))
 								)).$('select');
 							} else
 
@@ -126,7 +124,7 @@ class HTMLWindowObject extends HTMLWindow {
 
 							if (eventType == 'mouse') {
 								subtypeElement = add( newSelect(null, 'Mouse:',
-									Object.keys(this.listMouseSubtypes).map(x => ({value: x, name: this.listMouseSubtypes[x]}))
+									Object.keys(Events.listMouseSubtypes).map(x => ({value: x, name: Events.listMouseSubtypes[x]}))
 								)).$('select');
 							} else
 
@@ -136,7 +134,7 @@ class HTMLWindowObject extends HTMLWindow {
 
 							if (eventType == 'other') {
 								subtypeElement = add( newSelect(null, 'Other:',
-									Object.keys(this.listOtherSubtypes).map(x => ({value: x, name: this.listOtherSubtypes[x]}))
+									Object.keys(Events.listOtherSubtypes).map(x => ({value: x, name: Events.listOtherSubtypes[x]}))
 								)).$('select');
 							}
 
@@ -165,7 +163,7 @@ class HTMLWindowObject extends HTMLWindow {
 
 						parent(selectEvents);
 							selectEventsOptions[event.getNameId()]
-								= add( html('option', {value: event.getNameId()}, null, this.getEventName(event)) )
+								= add( html('option', {value: event.getNameId()}, null, Events.getEventName(event, this.editor.project)) )
 							endparent();
 
 						selectEvents.selectedIndex++; //can't believe this works
@@ -195,7 +193,7 @@ class HTMLWindowObject extends HTMLWindow {
 
 					updateSelectActions();
 
-					selectActions.size = 10;
+					selectActions.size = 2;
 
 					var buttonActionEdit = add( newButton(null, 'Edit action', () => {
 						var event = paramEvents.find(event => selectEvents.value == event.getNameId());
@@ -365,111 +363,5 @@ class HTMLWindowObject extends HTMLWindow {
 		this.htmlActionWindows.forEach(w => {
 			this.editor.deleteWindow(w);
 		})
-	}
-
-	defineEventTypes() {
-		this.listEventTypes = [
-			{value: 'create',     name: 'Create',      getFullName: () => 'Create'},
-			{value: 'destroy',    name: 'Destroy',     getFullName: () => 'Destroy'},
-			{value: 'step',       name: 'Step',        getFullName: (subtype) => this.listStepSubtypes[subtype]},
-			{value: 'alarm',      name: 'Alarm',       getFullName: (subtype) => 'Alarm '+subtype},
-			{value: 'keyboard',   name: 'Keyboard',    getFullName: (subtype) => 'Keyboard '+subtype},
-			{value: 'mouse',      name: 'Mouse',       getFullName: (subtype) => this.listMouseSubtypes[subtype]},
-			{value: 'collision',  name: 'Collision',   getFullName: (subtype) => 'Collision with '+ (this.editor.project.resources.ProjectObject.find(x => x.id == subtype).name)},
-			{value: 'other',      name: 'Other',       getFullName: (subtype) => this.listOtherSubtypes[subtype]},
-			{value: 'draw',       name: 'Draw',        getFullName: () => 'Draw'},
-			{value: 'keypress',   name: 'Key press',   getFullName: (subtype) => 'Key press'+subtype},
-			{value: 'keyrelease', name: 'Key release', getFullName: (subtype) => 'Key release'+subtype},
-		];
-
-		this.listStepSubtypes = {
-			'normal': 'Step',
-			'begin': 'Begin step',
-			'end': 'End step',
-		};
-		this.listMouseSubtypes = {
-			0: 'Left Button',
-			1: 'Right Button',
-			2: 'Middle Button',
-			3: 'No Button',
-			4: 'Left Press',
-			5: 'Right Press',
-			6: 'Middle Press',
-			7: 'Left Release',
-			8: 'Right Release',
-			9: 'Middle Release',
-			10: 'Mouse Enter',
-			11: 'Mouse Leave',
-			12: 'Global Press',
-			13: 'Global Release',
-			16: 'Joystick1 Left',
-			17: 'Joystick1 Right',
-			18: 'Joystick1 Up',
-			19: 'Joystick1 Down',
-			21: 'Joystick1 Button1',
-			22: 'Joystick1 Button2',
-			23: 'Joystick1 Button3',
-			24: 'Joystick1 Button4',
-			25: 'Joystick1 Button5',
-			26: 'Joystick1 Button6',
-			27: 'Joystick1 Button7',
-			28: 'Joystick1 Button8',
-			31: 'Joystick2 Left',
-			32: 'Joystick2 Right',
-			33: 'Joystick2 Up',
-			34: 'Joystick2 Down',
-			36: 'Joystick2 Button1',
-			37: 'Joystick2 Button2',
-			38: 'Joystick2 Button3',
-			39: 'Joystick2 Button4',
-			40: 'Joystick2 Button5',
-			41: 'Joystick2 Button6',
-			42: 'Joystick2 Button7',
-			43: 'Joystick2 Button8',
-			50: 'Global Left Button',
-			51: 'Global Right Button',
-			52: 'Global Middle Button',
-			53: 'Global Left Press',
-			54: 'Global Right Press',
-			55: 'Global Middle Press',
-			56: 'Global Left Release',
-			57: 'Global Right Release',
-			58: 'Global Middle Release',
-			60: 'Mouse Wheel Up',
-			61: 'Mouse Wheel Down',
-		};
-		this.listOtherSubtypes = {
-			0: 'Outside',
-			1: 'Boundary',
-			2: 'Game start',
-			3: 'Game end',
-			4: 'Room start',
-			5: 'Room end',
-			6: 'No more lives',
-			7: 'Animation end',
-			8: 'End of path',
-			9: 'No more health',
-			10: 'User 0',
-			11: 'User 1',
-			12: 'User 2',
-			13: 'User 3',
-			14: 'User 4',
-			15: 'User 5',
-			16: 'User 6',
-			17: 'User 7',
-			18: 'User 8',
-			19: 'User 9',
-			20: 'User 10',
-			21: 'User 11',
-			22: 'User 12',
-			23: 'User 13',
-			24: 'User 14',
-			25: 'User 15',
-			30: 'Close button',
-		}
-	}
-
-	getEventName (event) {
-		return this.listEventTypes.find(x => x.value == event.type).getFullName(event.subtype);
 	}
 }

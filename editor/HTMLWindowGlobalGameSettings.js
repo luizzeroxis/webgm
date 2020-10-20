@@ -11,9 +11,12 @@ class HTMLWindowGlobalGameSettings extends HTMLWindow {
 
 			this.inputColor = add( newColorBox(null, 'Color outside the room region:', globalGameSettings.colorOutsideRoom) ).$('input')
 
+			this.inputDisplayCursor = add( newCheckBox(null, 'Display the cursor', globalGameSettings.displayCursor) ).$('input');
+
 			this.makeApplyOkButtons(
 				() => {
 					globalGameSettings.colorOutsideRoom = this.inputColor.value;
+					globalGameSettings.displayCursor = this.inputDisplayCursor.checked;
 				},
 				() => this.editor.deleteWindow(this)
 			);

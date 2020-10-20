@@ -94,14 +94,16 @@
 }
 .grid-resource.resource-object .events select {
 	width: 100%;
-	height: 100%;
+	height: calc(12*16px);
+	resize: vertical;
 }
 .grid-resource.resource-object .actions label {
 	display: block;
 }
 .grid-resource.resource-object .actions select {
 	width: 100%;
-	height: 100%;
+	height: calc(12*16px);
+	resize: vertical;
 }
 
 .code {
@@ -157,4 +159,7 @@
 
 canvas {
 	image-rendering: pixelated;
+}
+canvas.no-cursor {
+	cursor: none;
 }

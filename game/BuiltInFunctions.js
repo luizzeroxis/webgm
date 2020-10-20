@@ -335,7 +335,7 @@ class BuiltInFunctions {
 		this.game.ctx.fillStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 		this.game.ctx.strokeStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 
-		this.game.ctx.fillRect(x1, y1, x2-x1, y2-x2);
+		this.game.ctx.fillRect(x1, y1, x2-x1, y2-y1);
 		if (outline >= 1) {
 			this.game.ctx.stroke();
 		} else {
@@ -578,6 +578,38 @@ class BuiltInFunctions {
 	// # Action functions
 
 	// ## move
+
+	static action_move ([directions, speed]) {
+		console.log(directions, speed);
+
+		var directionAngles = [
+			225, 270, 315,
+			180, null, 0,
+			135, 90, 45,
+		];
+
+		var possibleDirections = [];
+
+		for (var i = 0; i < 9; ++i) {
+			if (directions[i] != "0") {
+				possibleDirections.push(directionAngles[i]);
+			}
+		}
+
+		var chosenDirection = possibleDirections[Math.floor( Math.random() * possibleDirections.length )];
+
+		console.log(possibleDirections);
+		console.log(chosenDirection);
+		
+		if (chosenDirection != null) {
+			this.currentInstance.variables.direction = chosenDirection;
+			this.currentInstance.variables.speed = speed;
+		} else {
+			this.currentInstance.variables.speed = 0;
+		}
+
+		return 0;
+	}
 
 	static action_move_to ([x, y]) {
 		this.currentInstance.variables.x = x;
@@ -845,10 +877,6 @@ class BuiltInFunctions {
 		return 0;
 	}
 	static action_load_game ([_]) {
-
-		return 0;
-	}
-	static action_move ([_]) {
 
 		return 0;
 	}

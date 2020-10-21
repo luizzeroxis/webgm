@@ -579,7 +579,7 @@ class BuiltInFunctions {
 
 	// ## move
 
-	static action_move ([directions, speed]) {
+	static action_move ([directions, speed], relative) {
 
 		var values = parseArrowString(directions);
 
@@ -601,7 +601,11 @@ class BuiltInFunctions {
 		
 		if (chosenAngle != null) {
 			this.currentInstance.variables.direction = chosenAngle;
-			this.currentInstance.variables.speed = speed;
+			if (!relative) {
+				this.currentInstance.variables.speed = speed;
+			} else {
+				this.currentInstance.variables.speed += speed;
+			}
 		} else {
 			this.currentInstance.variables.speed = 0;
 		}

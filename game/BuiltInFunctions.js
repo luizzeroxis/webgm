@@ -580,29 +580,27 @@ class BuiltInFunctions {
 	// ## move
 
 	static action_move ([directions, speed]) {
-		console.log(directions, speed);
 
-		var directionAngles = [
+		var values = parseArrowString(directions);
+
+		var angles = [
 			225, 270, 315,
 			180, null, 0,
 			135, 90, 45,
 		];
 
-		var possibleDirections = [];
+		var possibleAngles = [];
 
 		for (var i = 0; i < 9; ++i) {
-			if (directions[i] != "0") {
-				possibleDirections.push(directionAngles[i]);
+			if (values[i]) {
+				possibleAngles.push(angles[i]);
 			}
 		}
 
-		var chosenDirection = possibleDirections[Math.floor( Math.random() * possibleDirections.length )];
-
-		console.log(possibleDirections);
-		console.log(chosenDirection);
+		var chosenAngle = possibleAngles[Math.floor( Math.random() * possibleAngles.length )];
 		
-		if (chosenDirection != null) {
-			this.currentInstance.variables.direction = chosenDirection;
+		if (chosenAngle != null) {
+			this.currentInstance.variables.direction = chosenAngle;
 			this.currentInstance.variables.speed = speed;
 		} else {
 			this.currentInstance.variables.speed = 0;

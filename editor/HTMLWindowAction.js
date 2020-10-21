@@ -43,11 +43,23 @@ class HTMLWindowAction extends HTMLWindow {
 
 					this.inputArgs = [];
 
-					var directions = action.args[0];
+					var directions = parseArrowString(action.args[0]);
 					var speed = action.args[1];
 
-					// TODO actually make arrows
-					this.inputArgs[0] = add( newTextBox(null, "Directions:", directions) ).$('input');
+					var directionNames = ['down left', 'down', 'down right', 'left', 'stop', 'right', 'up left', 'up', 'up right'];
+
+					this.inputDirections = [];
+
+					parent( add( newElem('arrow-interface', 'div') ) );
+
+						for (var y=2; y>=0; --y)
+						for (var x=0; x<=2; ++x) {
+							var i = (3*y)+x;
+							this.inputDirections[i] = add( newCheckBox(null, directionNames[i], directions[i]) ).$('input');
+						}
+
+						endparent();
+
 					this.inputArgs[1] = add( newTextBox(null, "Speed:", speed) ).$('input');
 
 				} else if (actionType.kind == 'repeat') {
@@ -88,9 +100,18 @@ class HTMLWindowAction extends HTMLWindow {
 			args = [ {type: 'string'}, {type: 'expression'} ];
 		}
 
-		this.action.args = args.map((argType, i) => {
-			return this.inputArgs[i].value;
-		})
+		if (this.actionType.interfaceKind == 'arrows') {
+
+			var values = this.inputDirections.map(x => x.checked);
+
+			this.action.args[0] = stringifyArrowValues(values);
+			this.action.args[1] = this.inputArgs[1].value;
+
+		} else {
+			this.action.args = args.map((argType, i) => {
+				return this.inputArgs[i].value;
+			});
+		}
 
 		if (this.actionType.hasApplyTo)
 			this.action.appliesTo = -1;

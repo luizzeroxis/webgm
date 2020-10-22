@@ -8,7 +8,7 @@ class HTMLWindowObject extends HTMLWindow {
 		this.htmlActionWindows = [];
 
 		// make a copy of the events and actions inside
-		var paramEvents = object.events.map(event => {
+		this.paramEvents = object.events.map(event => {
 			var newevent = new ProjectEvent(event.type, event.subtype);
 			newevent.actions = event.actions.map(action => {
 				var newaction = new ProjectAction();
@@ -32,8 +32,8 @@ class HTMLWindowObject extends HTMLWindow {
 		})
 		// you know, fuck javascript
 
-		var selectEventsOptions = {}; //<option>s inside event <select>
-		var selectActionsOptions = {}; //<option>s inside action <select>
+		this.selectEventsOptions = {}; //<option>s inside event <select>
+		this.selectActionsOptions = {}; //<option>s inside action <select>
 
 		parent(this.htmlClient)
 			parent( add( newElem('grid-resource resource-object', 'div') ) )
@@ -54,169 +54,98 @@ class HTMLWindowObject extends HTMLWindow {
 
 				parent( add( newElem(null, 'div') ) ) // Events area
 
-					// Initial creation of event options
-					var selectEvents = parent( add( newSelect('events', 'Events:') ).$('select') );
-						paramEvents.forEach(event => {
-							selectEventsOptions[event.getNameId()] = add( html('option',
-								{value: event.getNameId()}, null, Events.getEventName(event, this.editor.project)) )
-						})
-						endparent();
+					// // Events
 
-					selectEvents.size = 2;
+					this.selectEvents = add( newSelect('events', 'Events:') ).$('select');
+					this.selectEvents.size = 2;
 
 					// Update actions select when changing events
-					var updateSelectActions = () => {
+					this.selectEvents.onchange = () => this.updateSelectActions();
 
-						selectActions.textContent = '';
+					// // Add event
 
-						var event = paramEvents.find(event => selectEvents.value == event.getNameId());
+					this.selectEventType = add( newSelect(null, 'Event type:', Events.listEventTypes) ).$('select');
 
-						if (event) {
-							parent(selectActions);
-								event.actions.forEach((action, i) => {
+					// Update event subtype div when changing type
+					this.selectEventType.onchange = () => this.updateDivEventSubtype();
 
-									var actionType = this.editor.getActionType(action);
+					this.divEventSubtype = add( html('div') );
 
-									//selectActionsOptions[event.actions.length -1]
-									//		= add( html('option', {
-									//			/*value: action.getNameId(),*/
-									//			title: actionType.getHintText(action),
-									//		}, null, actionType.getListText(action)) )
-
-									selectActionsOptions[i] = add( html('option', {/*value: action.getNameId(),*/ title: actionType.getHintText(action)}, null, actionType.getListText(action)) )
-								})
-								endparent()
-						}
-
-					}
-					selectEvents.onchange = () => updateSelectActions();
-
-					var eventType = 'create';
-					var eventSubtype = 0;
-
-					var selectEventType = add( newSelect(null, 'Event type:', Events.listEventTypes) ).$('select');
-
-					var divEventSubtype = add( html('div') );
-
-					var updateDivEventSubtype = () => {
-
-						divEventSubtype.textContent = '';
-						eventType = selectEventType.value;
-						eventSubtype = 0;
-
-						parent(divEventSubtype);
-
-							var subtypeElement;
-
-							if (eventType == 'step') {
-								subtypeElement = add( newSelect(null, 'Step:',
-									Object.keys(Events.listStepSubtypes).map(x => ({value: x, name: Events.listStepSubtypes[x]}))
-								)).$('select');
-							} else
-
-							if (eventType == 'alarm') {
-								subtypeElement = add( newNumberBox(null, 'Alarm:', 0, 1, 0, 11) ).$('input');
-							} else
-
-							if (eventType == 'keyboard' || eventType == 'keypress' || eventType == 'keyrelease') {
-								subtypeElement = add( newNumberBox(null, 'Key:', 0, 1, 0) ).$('input');
-							} else
-
-							if (eventType == 'mouse') {
-								subtypeElement = add( newSelect(null, 'Mouse:',
-									Object.keys(Events.listMouseSubtypes).map(x => ({value: x, name: Events.listMouseSubtypes[x]}))
-								)).$('select');
-							} else
-
-							if (eventType == 'collision') {
-								subtypeElement = add( this.makeResourceSelect(null, 'Object:', 'ProjectObject', true) ).$('select');
-							} else
-
-							if (eventType == 'other') {
-								subtypeElement = add( newSelect(null, 'Other:',
-									Object.keys(Events.listOtherSubtypes).map(x => ({value: x, name: Events.listOtherSubtypes[x]}))
-								)).$('select');
-							}
-
-							if (subtypeElement) {
-								eventSubtype = subtypeElement.value;
-								subtypeElement.onchange = () => {eventSubtype = subtypeElement.value};
-							}
-
-							endparent()
-						
-					}
-
-					updateDivEventSubtype();
-					selectEventType.onchange = () => updateDivEventSubtype();
-
+					// Add event button
 					var buttonEventAdd = add( newButton(null, 'Add event', () => {
 
-						if (paramEvents.find(x => x.type == eventType && x.subtype == eventSubtype)) {
+						var eventType = this.selectEventType.value;
+						var eventSubtype = 0;
+
+						if (this.subtypeElement)
+							eventSubtype = this.subtypeElement.value;
+
+						if (this.paramEvents.find(x => x.type == eventType && x.subtype == eventSubtype)) {
 							return;
 						}
 
 						var event = new ProjectEvent();
 						event.type = eventType;
 						event.subtype = eventSubtype;
-						paramEvents.push(event);
+						this.paramEvents.push(event);
 
-						parent(selectEvents);
-							selectEventsOptions[event.getNameId()]
-								= add( html('option', {value: event.getNameId()}, null, Events.getEventName(event, this.editor.project)) )
-							endparent();
+						this.sortEvents();
+						this.updateSelectEvents();
 
-						selectEvents.selectedIndex++; //can't believe this works
-						updateSelectActions();
+						this.selectEvents.value = event.getNameId();
+						this.updateSelectActions();
 
 					}) )
 
+					// Delete event button
 					var buttonEventDelete = add( newButton(null, 'Delete event', () => {
 
-						var index = paramEvents.findIndex(event => selectEvents.value == event.getNameId());
+						var index = this.paramEvents.findIndex(event => this.selectEvents.value == event.getNameId());
 						if (index < 0) return;
 
-						remove(selectEventsOptions[selectEvents.value])
-						delete selectEventsOptions[selectEvents.value];
+						// if (this.paramEvents[index].actions.length > 0) 
+						// if (!confirm("Are you sure you want to remove the event with all its actions?"))
+						// 	return;
 
-						paramEvents.splice(index, 1);
+						this.paramEvents.splice(index, 1);
 
-						selectActions.textContent = '';
+						remove(this.selectEventsOptions[this.selectEvents.value])
+
+						this.selectActions.textContent = '';
+
 					}) )
 
 					endparent();
 
 				parent( add( newElem(null, 'div') ) ) // Actions area
 
-					// Initial creation of action options
-					var selectActions = add( newSelect('actions', 'Actions:') ).$('select');
+					// // Actions
 
-					updateSelectActions();
-
-					selectActions.size = 2;
+					this.selectActions = add( newSelect('actions', 'Actions:') ).$('select');
+					this.selectActions.size = 2;
 
 					var buttonActionEdit = add( newButton(null, 'Edit action', () => {
-						var event = paramEvents.find(event => selectEvents.value == event.getNameId());
+						var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
 						if (!event) return;
-						var action = event.actions.find((action,i) => i == selectActions.selectedIndex);
+						var action = event.actions.find((action,i) => i == this.selectActions.selectedIndex);
 						if (!action) return;
 
 						this.openActionWindow(action);
 					}) )
 
 					var buttonActionDelete = add( newButton(null, 'Delete action', () => {
-						var event = paramEvents.find(event => selectEvents.value == event.getNameId());
+						var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
 						if (!event) return;
-						var action = event.actions.find((action,i) => i == selectActions.selectedIndex);
+						var action = event.actions.find((action,i) => i == this.selectActions.selectedIndex);
 						if (!action) return;
 
-						remove(selectActionsOptions[selectActions.selectedIndex]);
-						delete selectActionsOptions[selectActions.selectedIndex];
+						remove(this.selectActionsOptions[this.selectActions.selectedIndex]);
+						delete this.selectActionsOptions[this.selectActions.selectedIndex];
 
 						var w = this.htmlActionWindows.find(x => x.id == action);
 						if (w) {w.close();}
 
-						event.actions.splice(selectActions.selectedIndex, 1);
+						event.actions.splice(this.selectActions.selectedIndex, 1);
 					}) )
 
 					endparent();
@@ -233,7 +162,7 @@ class HTMLWindowObject extends HTMLWindow {
 
 								add( newButton(null, actionType.description, () => {
 
-									var event = paramEvents.find(event => selectEvents.value == event.getNameId());
+									var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
 									if (!event) {
 										alert("You need to select or add an event before you can add actions.");
 										return;
@@ -276,8 +205,8 @@ class HTMLWindowObject extends HTMLWindow {
 
 									event.actions.push(action);
 
-									parent(selectActions);
-										selectActionsOptions[event.actions.length -1]
+									parent(this.selectActions);
+										this.selectActionsOptions[event.actions.length -1]
 											= add( html('option', {
 												/*value: action.getNameId(),*/
 												title: actionType.getHintText(action),
@@ -296,6 +225,16 @@ class HTMLWindowObject extends HTMLWindow {
 
 				endparent();
 
+			// Add initial events
+			this.updateSelectEvents();
+
+			// Select first event
+			this.selectEvents.selectedIndex = 0;
+			this.updateSelectActions();
+
+			// Add initial subtypes
+			this.updateDivEventSubtype();
+
 			this.makeApplyOkButtons(
 				() => {
 					this.editor.changeResourceName(object, inputName.value);
@@ -308,7 +247,7 @@ class HTMLWindowObject extends HTMLWindow {
 						w.apply();
 					})
 
-					object.events = paramEvents;
+					object.events = this.paramEvents;
 					// changes here
 				},
 				() => {
@@ -316,6 +255,106 @@ class HTMLWindowObject extends HTMLWindow {
 				}
 			);
 			endparent();
+	}
+
+	sortEvents() {
+		this.paramEvents.sort((a, b) => {
+
+			var aTypeId = Events.listEventTypes.find(x => x.value == a.type).id;
+			var bTypeId = Events.listEventTypes.find(x => x.value == b.type).id;
+
+			var compareTypeId = aTypeId - bTypeId;
+			if (compareTypeId != 0) return compareTypeId;
+
+			var aSubtypeId = a.subtype;
+			var bSubtypeId = b.subtype;
+			
+			var compareSubtypeId = aSubtypeId - bSubtypeId;
+			return compareSubtypeId;
+
+		})
+	}
+
+	updateSelectEvents() {
+
+		this.selectEvents.textContent = '';
+		this.selectEventsOptions = {};
+
+		parent( this.selectEvents );
+			this.paramEvents.forEach(event => {
+				this.selectEventsOptions[event.getNameId()] = add( html('option',
+					{value: event.getNameId()}, null, Events.getEventName(event, this.editor.project)) )
+			})
+			endparent();
+
+	}
+
+	updateDivEventSubtype() {
+
+		this.divEventSubtype.textContent = '';
+		var eventType = this.selectEventType.value;
+
+		parent(this.divEventSubtype);
+
+			this.subtypeElement = null;
+
+			if (eventType == 'step') {
+				this.subtypeElement = add( newSelect(null, 'Step:',
+					Object.keys(Events.listStepSubtypes).map(x => ({value: x, name: Events.listStepSubtypes[x]}))
+				)).$('select');
+			} else
+
+			if (eventType == 'alarm') {
+				this.subtypeElement = add( newNumberBox(null, 'Alarm:', 0, 1, 0, 11) ).$('input');
+			} else
+
+			if (eventType == 'keyboard' || eventType == 'keypress' || eventType == 'keyrelease') {
+				this.subtypeElement = add( newNumberBox(null, 'Key:', 0, 1, 0) ).$('input');
+			} else
+
+			if (eventType == 'mouse') {
+				this.subtypeElement = add( newSelect(null, 'Mouse:',
+					Object.keys(Events.listMouseSubtypes).map(x => ({value: x, name: Events.listMouseSubtypes[x]}))
+				)).$('select');
+			} else
+
+			if (eventType == 'collision') {
+				this.subtypeElement = add( this.makeResourceSelect(null, 'Object:', 'ProjectObject', true) ).$('select');
+			} else
+
+			if (eventType == 'other') {
+				this.subtypeElement = add( newSelect(null, 'Other:',
+					Object.keys(Events.listOtherSubtypes).map(x => ({value: x, name: Events.listOtherSubtypes[x]}))
+				)).$('select');
+			}
+
+			endparent()
+		
+	}
+
+	updateSelectActions() {
+
+		this.selectActions.textContent = '';
+
+		var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
+
+		if (event) {
+			parent(this.selectActions);
+				event.actions.forEach((action, i) => {
+
+					var actionType = this.editor.getActionType(action);
+
+					//this.selectActionsOptions[event.actions.length -1]
+					//		= add( html('option', {
+					//			/*value: action.getNameId(),*/
+					//			title: actionType.getHintText(action),
+					//		}, null, actionType.getListText(action)) )
+
+					this.selectActionsOptions[i] = add( html('option', {/*value: action.getNameId(),*/ title: actionType.getHintText(action)}, null, actionType.getListText(action)) )
+				})
+				endparent()
+		}
+
 	}
 
 	openActionWindow(action) {

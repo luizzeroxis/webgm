@@ -124,10 +124,12 @@ class HTMLWindowObject extends HTMLWindow {
 					this.selectActions = add( newSelect('actions', 'Actions:') ).$('select');
 					this.selectActions.size = 2;
 
+					this.selectActions.onchange = () => this.updateActionsMenu();
+
 					var buttonActionEdit = add( newButton(null, 'Edit action', () => {
 						var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
 						if (!event) return;
-						var action = event.actions.find((action,i) => i == this.selectActions.selectedIndex);
+						var action = event.actions[actionIndex];
 						if (!action) return;
 
 						this.openActionWindow(action);
@@ -136,16 +138,50 @@ class HTMLWindowObject extends HTMLWindow {
 					var buttonActionDelete = add( newButton(null, 'Delete action', () => {
 						var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
 						if (!event) return;
-						var action = event.actions.find((action,i) => i == this.selectActions.selectedIndex);
-						if (!action) return;
 
-						remove(this.selectActionsOptions[this.selectActions.selectedIndex]);
-						delete this.selectActionsOptions[this.selectActions.selectedIndex];
+						var actionIndex = this.selectActions.selectedIndex;
+						if (actionIndex < 0) return;
+
+						var action = event.actions[actionIndex];
+						if (!action) return;
 
 						var w = this.htmlActionWindows.find(x => x.id == action);
 						if (w) {w.close();}
 
-						event.actions.splice(this.selectActions.selectedIndex, 1);
+						event.actions.splice(actionIndex, 1);
+ 
+ 						this.updateSelectActions();
+
+ 						this.selectActions.selectedIndex = Math.min(actionIndex, event.actions.length-1);
+
+					}) )
+
+					var buttonActionUp = add( newButton(null, '▲', () => {
+						var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
+						if (!event) return;
+
+						var actionIndex = this.selectActions.selectedIndex;
+						if (actionIndex < 0 || actionIndex == 0) return;
+
+						event.actions.splice(actionIndex-1, 0, event.actions.splice(actionIndex, 1)[0]);
+
+						this.updateSelectActions();
+
+						this.selectActions.selectedIndex = actionIndex-1;
+					}) )
+
+					var buttonActionDown = add( newButton(null, '▼', () => {
+						var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
+						if (!event) return;
+
+						var actionIndex = this.selectActions.selectedIndex;
+						if (actionIndex < 0 || actionIndex == event.actions.length-1) return;
+
+						event.actions.splice(actionIndex+1, 0, event.actions.splice(actionIndex, 1)[0]);
+
+						this.updateSelectActions();
+
+						this.selectActions.selectedIndex = actionIndex+1;
 					}) )
 
 					endparent();
@@ -212,6 +248,8 @@ class HTMLWindowObject extends HTMLWindow {
 												title: actionType.getHintText(action),
 											}, null, actionType.getListText(action)) )
 										endparent();
+
+									this.selectActions.selectedIndex = event.actions.length-1;
 
 								}) )
 
@@ -344,17 +382,18 @@ class HTMLWindowObject extends HTMLWindow {
 
 					var actionType = this.editor.getActionType(action);
 
-					//this.selectActionsOptions[event.actions.length -1]
-					//		= add( html('option', {
-					//			/*value: action.getNameId(),*/
-					//			title: actionType.getHintText(action),
-					//		}, null, actionType.getListText(action)) )
-
 					this.selectActionsOptions[i] = add( html('option', {/*value: action.getNameId(),*/ title: actionType.getHintText(action)}, null, actionType.getListText(action)) )
+
 				})
 				endparent()
+
+			this.selectActions.selectedIndex = 0;
 		}
 
+	}
+
+	updateActionsMenu() {
+		// TODO disable buttons when unusable
 	}
 
 	openActionWindow(action) {

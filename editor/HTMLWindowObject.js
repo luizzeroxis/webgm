@@ -103,9 +103,9 @@ class HTMLWindowObject extends HTMLWindow {
 						var index = this.paramEvents.findIndex(event => this.selectEvents.value == event.getNameId());
 						if (index < 0) return;
 
-						// if (this.paramEvents[index].actions.length > 0) 
-						// if (!confirm("Are you sure you want to remove the event with all its actions?"))
-						// 	return;
+						if (this.paramEvents[index].actions.length > 0) 
+						if (!confirm("Are you sure you want to remove the event with all its actions?"))
+							return;
 
 						this.paramEvents.splice(index, 1);
 

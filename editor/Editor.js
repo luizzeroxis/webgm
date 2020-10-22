@@ -92,6 +92,7 @@ class Editor {
 		parent( add( newElem('menu', 'div') ) )
 
 			add( newButton(null, 'New', () => {
+				if (!confirm("Clear current project and start anew?")) return;
 				editor.newProject();
 			}) )
 

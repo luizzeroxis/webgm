@@ -113,6 +113,8 @@ class HTMLWindowObject extends HTMLWindow {
 
 						this.selectActions.textContent = '';
 
+						this.updateActionsMenu();
+
 					}) )
 
 					endparent();
@@ -126,16 +128,20 @@ class HTMLWindowObject extends HTMLWindow {
 
 					this.selectActions.onchange = () => this.updateActionsMenu();
 
-					var buttonActionEdit = add( newButton(null, 'Edit action', () => {
+					this.buttonActionEdit = add( newButton(null, 'Edit action', () => {
 						var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
 						if (!event) return;
+
+						var actionIndex = this.selectActions.selectedIndex;
+						if (actionIndex < 0) return;
+						
 						var action = event.actions[actionIndex];
 						if (!action) return;
 
 						this.openActionWindow(action);
 					}) )
 
-					var buttonActionDelete = add( newButton(null, 'Delete action', () => {
+					this.buttonActionDelete = add( newButton(null, 'Delete action', () => {
 						var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
 						if (!event) return;
 
@@ -154,9 +160,11 @@ class HTMLWindowObject extends HTMLWindow {
 
  						this.selectActions.selectedIndex = Math.min(actionIndex, event.actions.length-1);
 
+ 						this.updateActionsMenu();
+
 					}) )
 
-					var buttonActionUp = add( newButton(null, '▲', () => {
+					this.buttonActionUp = add( newButton(null, '▲', () => {
 						var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
 						if (!event) return;
 
@@ -168,9 +176,11 @@ class HTMLWindowObject extends HTMLWindow {
 						this.updateSelectActions();
 
 						this.selectActions.selectedIndex = actionIndex-1;
+
+						this.updateActionsMenu();
 					}) )
 
-					var buttonActionDown = add( newButton(null, '▼', () => {
+					this.buttonActionDown = add( newButton(null, '▼', () => {
 						var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
 						if (!event) return;
 
@@ -182,6 +192,8 @@ class HTMLWindowObject extends HTMLWindow {
 						this.updateSelectActions();
 
 						this.selectActions.selectedIndex = actionIndex+1;
+
+						this.updateActionsMenu();
 					}) )
 
 					endparent();
@@ -241,15 +253,9 @@ class HTMLWindowObject extends HTMLWindow {
 
 									event.actions.push(action);
 
-									parent(this.selectActions);
-										this.selectActionsOptions[event.actions.length -1]
-											= add( html('option', {
-												/*value: action.getNameId(),*/
-												title: actionType.getHintText(action),
-											}, null, actionType.getListText(action)) )
-										endparent();
-
+									this.updateSelectActions();
 									this.selectActions.selectedIndex = event.actions.length-1;
+									this.updateActionsMenu();
 
 								}) )
 
@@ -390,10 +396,30 @@ class HTMLWindowObject extends HTMLWindow {
 			this.selectActions.selectedIndex = 0;
 		}
 
+		console.log("updateSelectActions", this.selectActions.selectedIndex);
+		this.updateActionsMenu();
+
 	}
 
 	updateActionsMenu() {
-		// TODO disable buttons when unusable
+		var event = this.getSelectedEvent();
+		
+		if (this.selectActions.selectedIndex < 0) {
+			this.buttonActionEdit.disabled = true;
+			this.buttonActionDelete.disabled = true;
+			this.buttonActionUp.disabled = true;
+			this.buttonActionDown.disabled = true;
+		} else {
+			this.buttonActionEdit.disabled = false;
+			this.buttonActionDelete.disabled = false;
+			this.buttonActionUp.disabled = (this.selectActions.selectedIndex == 0);
+			this.buttonActionDown.disabled = (this.selectActions.selectedIndex == event.actions.length-1);
+		}
+
+	}
+
+	getSelectedEvent() {
+		return this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
 	}
 
 	openActionWindow(action) {

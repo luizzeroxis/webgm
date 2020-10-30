@@ -15,7 +15,9 @@ class Game {
 		// promises.push(this.loadBackgrounds());  // TODO
 		// promises.push(this.loadSounds());  // TODO
 
-		this.prepareGML();
+		if (!this.initGML()) {
+			return;
+		}
 
 		// Other things
 		this.globalVariables = BuiltInGlobals.getList();
@@ -88,42 +90,136 @@ class Game {
 		return Promise.all(promises);
 	}
 
-	prepareGML() {
-		this.gml = new GML();
-		this.gml.game = this;
+	initGML() {
+		this.gml = new GML(this);
 
 		this.preparedCodes = new Map();
 
-		this.project.resources.ProjectScript.forEach(script => {
-			var preparedCode = this.gml.prepare(script.code);
-			if (preparedCode.succeeded()) {
-				this.preparedCodes.set(script, preparedCode);
-			} else {
-				// console.log(preparedCode.message);
-				this.throwFatalError("FATAL COMPILATION ERROR in script "+script.name+'\n'+preparedCode.message);
-			}
-		})
+		// Prepare script resource GML
+		if (!this.project.resources.ProjectScript.every(script => {
 
-		// TODO prepare timeline codes
+			return this.prepareGML(script.code, script, matchResult => {
+				this.throwCompilationErrorInScript(script, matchResult.message);
+			});
 
-		this.project.resources.ProjectObject.forEach(object => {
-			object.events.forEach(event => {
-				event.actions.forEach((action, actionNumber) => {
+		})) {
+			return false;
+		}
+
+		// TODO prepare timeline resource GML
+
+		// Prepare object resource GML
+		if (!this.project.resources.ProjectObject.every(object => {
+			return object.events.every(event => {
+				return event.actions.every((action, actionNumber) => {
 
 					if (action.typeKind == 'code') {
-						var preparedCode = this.gml.prepare(action.args[0]);
+						
+						return this.prepareGML(action.args[0], action, matchResult => {
+							this.throwErrorInObject(object, event, actionNumber,
+								`COMPILATION ERROR in code action:\n` + matchResult.message, true);
+							console.log(matchResult);
+						});
 
-						if (preparedCode.succeeded()) {
-							this.preparedCodes.set(action, preparedCode);
-						} else {
-							// console.log(preparedCode.message);
-							this.throwFatalError("FATAL COMPILATION ERROR in action "+actionNumber.toString()+" in event "+event.getName()+" in object "+object.name+'\n'+preparedCode.message);
-						}
+					} else if (action.typeKind == 'normal' && action.typeExecution == 'code') {
+
+						return this.prepareGML(action.args[0], action, matchResult => {
+
+							this.throwErrorInObject(object, event, actionNumber,
+								`COMPILATION ERROR in code action:\n` + matchResult.message
+								+ `\n(this was inside the action type in a library)`, true);
+
+						});
+
 					}
 
+					return true;
 				})
 			})
-		});
+		})) {
+			return false;
+		}
+
+		return true;
+	}
+
+	prepareGML(gml, mapKey, failureFunction) {
+		var preparedCode = this.gml.prepare(gml);
+
+		if (preparedCode.succeeded()) {
+			this.preparedCodes.set(mapKey, preparedCode);
+			return true;
+		} else {
+			failureFunction(preparedCode);
+			return false;
+		}
+	}
+
+	throwCompilationErrorInScript(script, message) {
+		// TODO make the message more like the one from GM
+		this.gameEnd();
+		this.showErrorBox(`
+___________________________________________
+COMPILATION ERROR in Script: ` + script.name + `
+
+` + message + `
+`);
+	}
+
+	throwErrorInObject(object, event, actionNumber, message, isFatal=false) {
+		this.gamePause();
+		this.showErrorBox(`
+___________________________________________
+` + (isFatal ? "FATAL " : "") + `ERROR in
+action number ` + actionNumber.toString() + `
+of ` + Events.getEventName(event) + ` Event
+for object ` + object.name + `:
+
+` + message + `
+`)
+		if (isFatal) {
+			this.gameEnd();
+		} else {
+			this.gameResume();
+		}
+	}
+
+	throwErrorInCurrent(message, isFatal=false) {
+		var object = this.getResourceById(this.currentInstance.object_index);
+		return this.throwErrorInObject(object.name, this.currentEvent, this.currentActionNumber, message, isFatal);
+	}
+
+	throwErrorInGMLNode(message, node, isFatal=false) {
+
+		console.log(node);
+
+		var index = node.source.startIdx;
+		var lines = node.source.sourceString.split('\n');
+		var totalLength = 0;
+
+		for (var i = 0; i < lines.length; ++i) {
+			var lineLength = lines[i].length + 1;
+			totalLength += lineLength;
+			if (totalLength >= index) {
+
+				var lineNumber = i + 1;
+				var gmlLine = lines[i];
+				var position = (index - (totalLength - lineLength)) + 1;
+				var arrowString = " ".repeat(position-1) + "^";
+
+				break;
+			}
+		}
+
+		this.throwErrorInCurrent(
+`Error in code at line ` + lineNumber + `:
+` + gmlLine + `
+` + arrowString + `
+at position ` + position + `: ` + message + `
+`, isFatal);
+
+		throw "exit";
+
 	}
 
 	loadFirstRoom() {
@@ -223,13 +319,13 @@ class Game {
 		this.globalVariables.fps = this.fps;
 
 		// Begin step
-		this.getEventsOfTypeAndSubtype('step', 'begin').some(({event, instance}) => {
+		this.getEventsOfTypeAndSubtype('step', 'begin').every(({event, instance}) => {
 			return this.doEvent(event, instance);
 		});
 
 		// Alarm
-		this.getEventsOfType('alarm').some(([subtype, list]) => {
-			return list.some(({event, instance}) => {
+		this.getEventsOfType('alarm').every(([subtype, list]) => {
+			return list.every(({event, instance}) => {
 
 				// Update alarm (decrease by one) here, before running event
 				// Alarm stays 0 until next alarm check, where it becomes -1 forever
@@ -246,24 +342,24 @@ class Game {
 		});
 
 		// Keyboard
-		this.getEventsOfType('keyboard').some(([subtype, list]) => {
-			return list.some(({event, instance}) => {
+		this.getEventsOfType('keyboard').every(([subtype, list]) => {
+			return list.every(({event, instance}) => {
 				if (this.key[subtype]) {
 					return this.doEvent(event, instance);
 				}
 			});
 		});
 
-		this.getEventsOfType('keypress').some(([subtype, list]) => {
-			return list.some(({event, instance}) => {
+		this.getEventsOfType('keypress').every(([subtype, list]) => {
+			return list.every(({event, instance}) => {
 				if (this.keyPressed[subtype]) {
 					return this.doEvent(event, instance);
 				}
 			});
 		});
 
-		this.getEventsOfType('keyrelease').some(([subtype, list]) => {
-			return list.some(({event, instance}) => {
+		this.getEventsOfType('keyrelease').every(([subtype, list]) => {
+			return list.every(({event, instance}) => {
 				if (this.keyReleased[subtype]) {
 					return this.doEvent(event, instance);
 				}
@@ -274,7 +370,7 @@ class Game {
 		// TODO
 
 		// Step
-		this.getEventsOfTypeAndSubtype('step', 'normal').some(({event, instance}) => {
+		this.getEventsOfTypeAndSubtype('step', 'normal').every(({event, instance}) => {
 			return this.doEvent(event, instance);
 		});
 
@@ -292,10 +388,10 @@ class Game {
 		});
 
 		// Collisions
-		this.getEventsOfType('collision').some(([subtype, list]) => {
-			return list.some(({event, instance}) => {
+		this.getEventsOfType('collision').every(([subtype, list]) => {
+			return list.every(({event, instance}) => {
 				var others = this.instances.filter(x => x.object_index == subtype);
-				others.some(other => {
+				others.every(other => {
 					if (this.checkCollision(instance, other)) {
 						this.doEvent(event, instance, other);
 					}
@@ -304,7 +400,7 @@ class Game {
 		});
 
 		// End step
-		this.getEventsOfTypeAndSubtype('step', 'end').some(({event, instance}) => {
+		this.getEventsOfTypeAndSubtype('step', 'end').every(({event, instance}) => {
 			return this.doEvent(event, instance);
 		});
 
@@ -394,27 +490,30 @@ class Game {
 
 	}
 
+	getApplyToInstances(appliesTo) {
+		// -1 = self, -2 = other, 0>= = object index
+		switch (appliesTo) {
+			case -1:
+				return [this.currentInstance];
+			case -2:
+				return [this.currentOther];
+			default:
+				return this.instances.filter(x => x.object_index == appliesTo);
+		}
+	}
+
 	doEvent(event, instance, other=null) {
 		this.currentEvent = event;
 		this.currentInstance = instance;
 		this.currentOther = other || instance;
 
-		return event.actions.some((action, actionNumber) => {
-			this.currentActionNumber = actionNumber;
+		var actionIndex = 0;
 
-			var applyToInstances;
-			// -1 = self, -2 = other, 0>= = object index
-			switch (action.appliesTo) {
-				case -1:
-					applyToInstances = [instance];
-					break;
-				case -2:
-					applyToInstances = [other];
-					break;
-				default:
-					applyToInstances = this.instances.filter(x => x.object_index == action.appliesTo);
-					break;
-			}
+		while (actionIndex < event.actions.length) {
+			this.currentActionNumber = actionIndex + 1;
+
+			var action = event.actions[actionIndex];
+			var applyToInstances = this.getApplyToInstances(action.appliesTo);
 
 			// normal, begin group, end group, else, exit, repeat, variable, code
 			switch (action.typeKind) {
@@ -424,18 +523,47 @@ class Game {
 					// relative
 					// not
 
+					var finalResult = false;
+
 					// none, function, code
 					switch (action.typeExecution) {
 						case 'function':
-							// TODO get result for question
+
+							finalResult = true;
+
 							applyToInstances.forEach(applyToInstance => {
 								var result = this.gml.builtInFunction(action.typeExecutionFunction, action.args, applyToInstance, action.relative);
+								if (typeof result !== "number" || result < 0.5) {
+									finalResult = false;
+								}
 							});
 							break;
 
 						case 'code':
+
+							finalResult = true;
+
+							applyToInstances.forEach(applyToInstance => {
+								var result = this.gml.execute(this.preparedCodes.get(action), applyToInstance);
+								if (typeof result !== "number" || result < 0.5) {
+									finalResult = false;
+								}
+							});
 							break;
 					}
+
+					if (action.not) {
+						finalResult = !finalResult;
+					}
+
+					if (action.typeIsQuestion) {
+						if (finalResult) {
+							//this.doIfTrue();
+						} else {
+							//this.doIfFalse();
+						}
+					}
+
 					break;
 
 				case 'begin group':
@@ -467,55 +595,14 @@ class Game {
 				return true;
 			}
 
-		});
-	}
-
-	error(message, node) {
-
-		console.log(node);
-
-		var objectName = this.getResourceById('ProjectObject', this.currentInstance.object_index).name;
-
-		var index = node.source.startIdx;
-		var lines = node.source.sourceString.split('\n');
-		var totalLength = 0;
-
-		for (var i = 0; i < lines.length; ++i) {
-			var lineLength = lines[i].length + 1;
-			totalLength += lineLength;
-			if (totalLength >= index) {
-
-				var lineNumber = i + 1;
-				var gmlLine = lines[i];
-				var position = (index - (totalLength - lineLength)) + 1;
-				var arrowString = " ".repeat(position-1) + "^";
-
-				break;
-			}
+			actionIndex++;
 		}
 
-		this.showError(`
-___________________________________________
-ERROR in
-action number ` + this.currentActionNumber + `
-of ` + Events.getEventName(this.currentEvent) + ` Event
-for object ` + objectName + `
-
-Error in code at line ` + lineNumber + `:
-` + gmlLine + `
-` + arrowString + `
-at position ` + position + `: ` + message + `
-`);
+		return true;
 
 	}
 
-	throwFatalError(message) {
-		this.showError(message);
-		this.gameEnd();
-		throw message;
-	}
-
-	showError(message) {
+	showErrorBox(message) {
 		alert(message);
 	}
 
@@ -542,6 +629,14 @@ at position ` + position + `: ` + message + `
 
 	}
 
+	gamePause() {
+		// TODO
+	}
+
+	gameResume() {
+		// TODO
+	}
+
 	gameEnd () {
 
 		console.log('Stopping game.')
@@ -550,8 +645,6 @@ at position ` + position + `: ` + message + `
 		clearInterval(this.fpsTimeout);
 
 		this.canvas.classList.remove("no-cursor");
-
-		delete this; //delet tis
 
 		//TODO: add event system so that editor can know when game ends
 	}
@@ -596,67 +689,66 @@ class Instance {
 	constructor (x, y, object, game) {
 
 		this.object_index = object;
+		this.game = game;
 
+		this.variables = {};
+		for (var name in BuiltInLocals) {
+			if (typeof BuiltInLocals[name].default == "function") {
+				this.variables[name] = BuiltInLocals[name].default.call(this);
+			} else {
+				this.variables[name] = BuiltInLocals[name].default || 0;
+			}
+		}
+
+		// Id
+		this.variables.id = 100001;
+
+		// Inherited from object
 		var obj = game.getResourceById('ProjectObject', this.object_index);
 		
-		// BuiltInLocals
+		this.variables.object_index = obj.id;
+		this.variables.sprite_index = obj.sprite_index;
+		this.variables.visible = obj.visible;
+		this.variables.solid = obj.solid;
+		this.variables.depth = obj.depth;
+		this.variables.persistent = obj.persistent;
+		this.variables.parent = obj.parent;
+		this.variables.mask = obj.mask;
 
-		this.variables = {
-			// Id
-			id: 100001,
-
-			// Inherited from object
-			object_index: obj.id,
-			sprite_index: obj.sprite_index,
-			visible: obj.visible,
-			solid: obj.solid,
-			depth: obj.depth,
-			persistent: obj.persistent,
-			parent: obj.parent,
-			mask: obj.mask,
-
-			// Set by constructor
-			x: x,
-			y: y,
-
-			// All others
-			alarm: new Array(12).fill(0),
-			direction: 0,
-			friction: 0,
-			image_index: 0,
-			speed: 0
-
-		};
+		// Set by constructor
+		this.variables.x = x;
+		this.variables.y = y;
 
 	}
 
-	getLocalVariable(variableName) {
-		var variable = this.variables[variableName];
+	getVar(name) {
+		var variable = this.variables[name];
 		if (variable == undefined) {
-			// variable not set
-		} else if (variable.get) {
-			return variable.get();
+			return null; // variable doesn't exist
 		} else {
+			if (BuiltInLocals[name])
+			if (BuiltInLocals[name].get) {
+				return BuiltInLocals[name].get.call(this);
+			}
 			return variable.value;
 		}
 	}
 
-	setLocalVariable(variableName, value) {
-		var variable = this.variables[variableName];
+	setVar(name, value) {
+		var variable = this.variables[name];
 		if (variable == undefined) {
-			this.variables[variableName] = {value: value};
+			this.variables[name] = value;
 		} else {
-			if (variable.readOnly) {
-				// variable read only
-				return;
+			if (BuiltInLocals[name]) {
+				if (BuiltInLocals[name].readOnly) {
+					return false; // variable is read only
+				} else if (BuiltInLocals[name].set) {
+					this.variables[name] = BuiltInLocals[name].set.call(this, value);
+				}
 			}
-			if (variable.set) {
-				return variable.set(value);
-			} else {
-				variable.value = value;
-			}
+			this.variables[name] = value;
 		}
-
+		return true;
 	}
 
 }

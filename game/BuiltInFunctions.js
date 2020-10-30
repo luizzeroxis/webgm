@@ -143,6 +143,13 @@ class BuiltInFunctions {
 
 	// ## Moving around
 
+	static move_bounce_all ([adv]) {
+		return 0;
+	}
+	static move_bounce_solid ([adv]) {
+		return 0;
+	}
+
 	static move_snap ([hsnap, vsnap]) {
 		this.currentInstance.variables.x = Math.floor(this.currentInstance.variables.x / hsnap) * hsnap;
 		this.currentInstance.variables.y = Math.floor(this.currentInstance.variables.y / vsnap) * vsnap;
@@ -282,10 +289,20 @@ class BuiltInFunctions {
 	static color_get_blue ([col]) {
 		return Math.floor(col % (256*256*256) / (256*256));
 	}
-	static draw_circle ([x ,y , r, outline]) {
+	static color_get_hue ([col]) {
+		return decimalColorToHSVValues(col).h;
+	}
+	static color_get_saturation ([col]) {
+		return decimalColorToHSVValues(col).s;
+	}
+	static color_get_value ([col]) {
+		return decimalColorToHSVValues(col).v;
+	}
+	static draw_circle ([x , y, r, outline]) {
 
-		this.game.ctx.fillStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
-		this.game.ctx.strokeStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
+		var style = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
+		this.game.ctx.fillStyle = style;
+		this.game.ctx.strokeStyle = style;
 
 		this.game.ctx.beginPath();
 		this.game.ctx.arc(x, y, r, 0, Math.PI*2);
@@ -302,6 +319,30 @@ class BuiltInFunctions {
 		this.game.ctx.fillStyle = decimalColorToRGB(col);
 		this.game.ctx.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
 		return 0;
+	}
+	static draw_ellipse ([x1, y1, x2, y2, outline]) {
+
+		var style = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
+		var x = (x2 - x1) / 2 + x1;
+		var y = (y2 - y1) / 2 + y1;
+
+		this.game.ctx.fillStyle = style;
+		this.game.ctx.strokeStyle = style;
+
+		this.game.ctx.beginPath();
+		this.game.ctx.ellipse(x, y, x2 - x,  y2 - y, 0, 0, Math.PI*2);
+		if (outline >= 1) {
+			this.game.ctx.stroke();
+		} else {
+			this.game.ctx.fill();
+		}
+		this.game.ctx.closePath();
+
+		return 0;
+	}
+	static draw_getpixel ([x, y]) {
+		var data = this.game.ctx.getImageData(x, y, 1, 1);
+		return rgbValuesToDecimalColor(data[0], data[1], data[2]);
 	}
 	static draw_get_alpha ([]) {
 		return this.game.drawAlpha;
@@ -619,6 +660,15 @@ class BuiltInFunctions {
 		return 0;
 	}
 
+	static action_bounce ([precise, against]) {
+		if (against == 0) {
+			BuiltInFunctions.move_bounce_solid(precise);
+		} else if (against == 1) {
+			BuiltInFunctions.move_bounce_all(precise);
+		}
+		return 0;
+	}
+
 	// ## main1
 	// ## main2
 
@@ -647,10 +697,6 @@ class BuiltInFunctions {
 	}
 
 	static action_another_room ([_]) {
-
-		return 0;
-	}
-	static action_bounce ([_]) {
 
 		return 0;
 	}
@@ -1323,18 +1369,6 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-	static color_get_hue ([_]) {
-
-		return 0;
-	}
-	static color_get_saturation ([_]) {
-
-		return 0;
-	}
-	static color_get_value ([_]) {
-
-		return 0;
-	}
 	static d3d_draw_block ([_]) {
 
 		return 0;
@@ -1951,15 +1985,7 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-	static draw_ellipse ([_]) {
-
-		return 0;
-	}
 	static draw_ellipse_color ([_]) {
-
-		return 0;
-	}
-	static draw_getpixel ([_]) {
 
 		return 0;
 	}
@@ -3354,14 +3380,6 @@ class BuiltInFunctions {
 		return 0;
 	}
 	static move_bounce ([_]) {
-
-		return 0;
-	}
-	static move_bounce_all ([_]) {
-
-		return 0;
-	}
-	static move_bounce_solid ([_]) {
 
 		return 0;
 	}

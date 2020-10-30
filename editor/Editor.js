@@ -104,13 +104,14 @@ class Editor {
 				editor.saveProject();
 			}) )
 
-			add( newButton(null, 'Run', () => {
+			this.runButton = add( newButton(null, 'Run', () => {
 				editor.runGame();
 			}) )
 
-			add( newButton(null, 'Stop', () => {
+			this.stopButton = add( newButton(null, 'Stop', () => {
 				editor.stopGame();
 			}) )
+			this.stopButton.disabled = true;
 
 			endparent()
 	}
@@ -197,11 +198,21 @@ class Editor {
 			return;
 		}
 
+		this.runButton.disabled = true;
+		this.stopButton.disabled = false;
+
 		this.gameArea.scrollIntoView();
 		this.gameCanvas.focus();
 
 		this.stopGame();
 		this.game = new Game(this.project, $('.canvas'), $('.canvas'));
+
+		this.game.dispatcher.listen({
+			gameEnd: i => {
+				this.runButton.disabled = false;
+				this.stopButton.disabled = true;
+			}
+		})
 				
 	}
 

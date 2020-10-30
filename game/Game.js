@@ -7,6 +7,10 @@ class Game {
 		this.canvas = canvas;
 		this.input = input;
 
+		// Dispatcher
+		this.dispatcher = new Dispatcher();
+
+		// Init
 		this.initRender();
 		this.initInput();
 
@@ -44,12 +48,8 @@ class Game {
 
 		//Only start when all async processes finished.
 		Promise.all(promises).then(() => {
-
-			this.timeout = setTimeout(() => this.mainLoop(), 0);
-			this.fpsTimeout = setInterval(() => this.updateFps(), 1000);
-
+			this.gameResume();
 			console.log("Loaded.")
-
 		});
 
 	}
@@ -227,8 +227,35 @@ at position ` + position + `: ` + message + `
 		this.loadRoom(this.room);
 	}
 
+	gamePause() {
+		clearTimeout(this.timeout);
+		this.timeout = null;
+
+		clearInterval(this.fpsTimeout);
+		this.fpsTimeout = null;
+	}
+
+	gameResume() {
+		if (this.timeout == null) {
+			this.timeout = setTimeout(() => this.mainLoop(), 0);
+		}
+
+		if (this.fpsTimeout == null) {
+			this.fpsTimeout = setInterval(() => this.updateFps(), 1000);
+		}
+	}
+
+	gameEnd () {
+		console.log('Stopping game.')
+
+		this.gamePause();
+		this.canvas.classList.remove("no-cursor");
+
+		this.dispatcher.speak('gameEnd');
+	}
+
 	drawViews() {
-		// Currently there are no views.
+		// Currently there are no views. But the following should happen for every view.
 
 		// Draw background color
 		this.ctx.fillStyle = this.room.background_color;
@@ -627,26 +654,6 @@ at position ` + position + `: ` + message + `
 		var index = this.instances.findIndex(x => x == instance);
 		this.instances.splice(index, 1);
 
-	}
-
-	gamePause() {
-		// TODO
-	}
-
-	gameResume() {
-		// TODO
-	}
-
-	gameEnd () {
-
-		console.log('Stopping game.')
-
-		clearTimeout(this.timeout);
-		clearInterval(this.fpsTimeout);
-
-		this.canvas.classList.remove("no-cursor");
-
-		//TODO: add event system so that editor can know when game ends
 	}
 
 	getResourceById(type, id) {

@@ -10,6 +10,28 @@ class Game {
 		// Dispatcher
 		this.dispatcher = new Dispatcher();
 
+	}
+
+	init() {
+		try {
+			this.initNoCatch();
+		} catch (e) {
+			this.dealWithException(e);
+		}
+	}
+
+	dealWithException(e) {
+		if (e instanceof EngineException) {
+			this.close(e);
+		} else if (e instanceof CompilationException || e instanceof FatalErrorException) {
+			this.close();
+		} else {
+			throw e;
+		}
+	}
+
+	initNoCatch() {
+
 		// Init
 		this.initRender();
 		this.initInput();
@@ -19,9 +41,7 @@ class Game {
 		// promises.push(this.loadBackgrounds());  // TODO
 		// promises.push(this.loadSounds());  // TODO
 
-		if (!this.initGML()) {
-			return;
-		}
+		this.initGML();
 
 		// Other things
 		this.globalVariables = BuiltInGlobals.getList();
@@ -47,11 +67,24 @@ class Game {
 		this.loadFirstRoom();
 
 		//Only start when all async processes finished.
-		Promise.all(promises).then(() => {
-			this.gameResume();
+		this.promise = Promise.all(promises).then(() => {
 			console.log("Loaded.")
+			this.initTimeout();
+		}).catch(e => {
+			this.dealWithException(e);
 		});
 
+	}
+
+	close(e) {
+		console.log('Closing game.');
+
+		this.closeRender();
+		this.closeInput();
+
+		this.closeTimeout();
+
+		this.dispatcher.speak('close', e);
 	}
 
 	initRender() {
@@ -61,6 +94,10 @@ class Game {
 		if (!this.project.globalGameSettings.displayCursor) {
 			this.canvas.classList.add("no-cursor");
 		}
+	}
+
+	closeRender() {
+		this.canvas.classList.remove("no-cursor");
 	}
 
 	initInput() {
@@ -80,13 +117,19 @@ class Game {
 		})
 	}
 
+	closeInput() {
+		// remove event listeners?
+	}
+
 	loadSprites() {
 		var promises = [];
-		for (var i = 0; i < this.project.resources.ProjectSprite.length; i++) {
-			for (var j = 0; j < this.project.resources.ProjectSprite[i].images.length; j++) {
-				promises.push(this.project.resources.ProjectSprite[i].images[j].promise);
-			}
-		}
+		this.project.resources.ProjectSprite.forEach(sprite => {
+			sprite.images.forEach((image, imageNumber) => {
+				promises.push(image.promise.catch(e => {
+					throw new EngineException("Could not load image " + imageNumber.toString() + " in sprite " + sprite.name);
+				}));
+			})
+		})
 		return Promise.all(promises);
 	}
 
@@ -96,20 +139,18 @@ class Game {
 		this.preparedCodes = new Map();
 
 		// Prepare script resource GML
-		if (!this.project.resources.ProjectScript.every(script => {
+		this.project.resources.ProjectScript.every(script => {
 
 			return this.prepareGML(script.code, script, matchResult => {
 				this.throwCompilationErrorInScript(script, matchResult.message);
 			});
 
-		})) {
-			return false;
-		}
+		})
 
 		// TODO prepare timeline resource GML
 
 		// Prepare object resource GML
-		if (!this.project.resources.ProjectObject.every(object => {
+		this.project.resources.ProjectObject.every(object => {
 			return object.events.every(event => {
 				return event.actions.every((action, actionNumber) => {
 
@@ -136,11 +177,8 @@ class Game {
 					return true;
 				})
 			})
-		})) {
-			return false;
-		}
+		})
 
-		return true;
 	}
 
 	prepareGML(gml, mapKey, failureFunction) {
@@ -157,17 +195,17 @@ class Game {
 
 	throwCompilationErrorInScript(script, message) {
 		// TODO make the message more like the one from GM
-		this.gameEnd();
 		this.showErrorBox(`
 ___________________________________________
 COMPILATION ERROR in Script: ` + script.name + `
 
 ` + message + `
 `);
+
+		throw new CompilationException();
 	}
 
 	throwErrorInObject(object, event, actionNumber, message, isFatal=false) {
-		this.gamePause();
 		this.showErrorBox(`
 ___________________________________________
 ` + (isFatal ? "FATAL " : "") + `ERROR in
@@ -177,16 +215,17 @@ for object ` + object.name + `:
 
 ` + message + `
 `)
+
 		if (isFatal) {
-			this.gameEnd();
+			throw new FatalErrorException();
 		} else {
-			this.gameResume();
+			throw new NonFatalErrorException();
 		}
 	}
 
 	throwErrorInCurrent(message, isFatal=false) {
 		var object = this.getResourceById(this.currentInstance.object_index);
-		return this.throwErrorInObject(object.name, this.currentEvent, this.currentActionNumber, message, isFatal);
+		this.throwErrorInObject(object.name, this.currentEvent, this.currentActionNumber, message, isFatal);
 	}
 
 	throwErrorInGMLNode(message, node, isFatal=false) {
@@ -218,8 +257,6 @@ for object ` + object.name + `:
 at position ` + position + `: ` + message + `
 `, isFatal);
 
-		throw "exit";
-
 	}
 
 	loadFirstRoom() {
@@ -227,7 +264,7 @@ at position ` + position + `: ` + message + `
 		this.loadRoom(this.room);
 	}
 
-	gamePause() {
+	closeTimeout() {
 		clearTimeout(this.timeout);
 		this.timeout = null;
 
@@ -235,7 +272,7 @@ at position ` + position + `: ` + message + `
 		this.fpsTimeout = null;
 	}
 
-	gameResume() {
+	initTimeout() {
 		if (this.timeout == null) {
 			this.timeout = setTimeout(() => this.mainLoop(), 0);
 		}
@@ -248,7 +285,7 @@ at position ` + position + `: ` + message + `
 	gameEnd () {
 		console.log('Stopping game.')
 
-		this.gamePause();
+		this.closeTimeout();
 		this.canvas.classList.remove("no-cursor");
 
 		this.dispatcher.speak('gameEnd');
@@ -539,87 +576,96 @@ at position ` + position + `: ` + message + `
 		while (actionIndex < event.actions.length) {
 			this.currentActionNumber = actionIndex + 1;
 
-			var action = event.actions[actionIndex];
-			var applyToInstances = this.getApplyToInstances(action.appliesTo);
+			try {
+				var action = event.actions[actionIndex];
+				var applyToInstances = this.getApplyToInstances(action.appliesTo);
 
-			// normal, begin group, end group, else, exit, repeat, variable, code
-			switch (action.typeKind) {
-				case 'normal':
-					// typeIsQuestion
-					// appliesTo
-					// relative
-					// not
+				// normal, begin group, end group, else, exit, repeat, variable, code
+				switch (action.typeKind) {
+					case 'normal':
+						// typeIsQuestion
+						// appliesTo
+						// relative
+						// not
 
-					var finalResult = false;
+						var finalResult = false;
 
-					// none, function, code
-					switch (action.typeExecution) {
-						case 'function':
+						// none, function, code
+						switch (action.typeExecution) {
+							case 'function':
 
-							finalResult = true;
+								finalResult = true;
 
-							applyToInstances.forEach(applyToInstance => {
-								var result = this.gml.builtInFunction(action.typeExecutionFunction, action.args, applyToInstance, action.relative);
-								if (typeof result !== "number" || result < 0.5) {
-									finalResult = false;
-								}
-							});
-							break;
+								applyToInstances.forEach(applyToInstance => {
+									var result = this.gml.builtInFunction(action.typeExecutionFunction, action.args, applyToInstance, action.relative);
+									if (typeof result !== "number" || result < 0.5) {
+										finalResult = false;
+									}
+								});
+								break;
 
-						case 'code':
+							case 'code':
 
-							finalResult = true;
+								finalResult = true;
 
-							applyToInstances.forEach(applyToInstance => {
-								var result = this.gml.execute(this.preparedCodes.get(action), applyToInstance);
-								if (typeof result !== "number" || result < 0.5) {
-									finalResult = false;
-								}
-							});
-							break;
-					}
-
-					if (action.not) {
-						finalResult = !finalResult;
-					}
-
-					if (action.typeIsQuestion) {
-						if (finalResult) {
-							//this.doIfTrue();
-						} else {
-							//this.doIfFalse();
+								applyToInstances.forEach(applyToInstance => {
+									var result = this.gml.execute(this.preparedCodes.get(action), applyToInstance);
+									if (typeof result !== "number" || result < 0.5) {
+										finalResult = false;
+									}
+								});
+								break;
 						}
-					}
 
-					break;
+						if (action.not) {
+							finalResult = !finalResult;
+						}
 
-				case 'begin group':
-					break;
-				case 'end group':
-					break;
-				case 'else':
-					break;
-				case 'exit':
+						if (action.typeIsQuestion) {
+							if (finalResult) {
+								//this.doIfTrue();
+							} else {
+								//this.doIfFalse();
+							}
+						}
+
+						break;
+
+					case 'begin group':
+						break;
+					case 'end group':
+						break;
+					case 'else':
+						break;
+					case 'exit':
+						return true;
+						break;
+					case 'repeat':
+						break;
+					case 'variable':
+						applyToInstances.forEach(applyToInstance => {
+							var [varName, varValue] = action.args;
+							this.evaluateExpression
+							applyToInstance.variables[action.args[0]];
+						});
+						break;
+					case 'code':
+						applyToInstances.forEach(applyToInstance => {
+							this.gml.execute(this.preparedCodes.get(action), applyToInstance);
+						});
+						break;
+				}
+
+				if (this.shouldEnd) {
 					return true;
-					break;
-				case 'repeat':
-					break;
-				case 'variable':
-					applyToInstances.forEach(applyToInstance => {
-						var [varName, varValue] = action.args;
-						this.evaluateExpression
-						applyToInstance.variables[action.args[0]];
-					});
-					break;
-				case 'code':
-					applyToInstances.forEach(applyToInstance => {
-						this.gml.execute(this.preparedCodes.get(action), applyToInstance);
-					});
-					break;
-			}
+				}
 
-			if (this.shouldEnd) {
-				return true;
+			} catch (e) {
+				if (e instanceof NonFatalErrorException) {
+					// continue
+				} else {
+					throw e;
+				}
 			}
 
 			actionIndex++;
@@ -630,7 +676,9 @@ at position ` + position + `: ` + message + `
 	}
 
 	showErrorBox(message) {
+		this.closeTimeout();
 		alert(message);
+		this.initTimeout();
 	}
 
 	instanceCreate (x, y, object) {
@@ -693,9 +741,9 @@ at position ` + position + `: ` + message + `
 
 class Instance {
 
-	constructor (x, y, object, game) {
+	constructor (x, y, object_index, game) {
 
-		this.object_index = object;
+		this.object_index = object_index;
 		this.game = game;
 
 		this.variables = {};

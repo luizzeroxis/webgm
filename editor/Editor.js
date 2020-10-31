@@ -193,6 +193,8 @@ class Editor {
 
 	runGame () {
 
+		this.stopGame();
+
 		if (this.project.resources.ProjectRoom.length <= 0) {
 			alert('A game must have at least one room to run.');
 			return;
@@ -204,29 +206,38 @@ class Editor {
 		this.gameArea.scrollIntoView();
 		this.gameCanvas.focus();
 
-		this.stopGame();
 		this.game = new Game(this.project, $('.canvas'), $('.canvas'));
 
 		this.game.dispatcher.listen({
-			gameEnd: i => {
+			close: e => {
+
+				if (e instanceof WebGMException) {
+					alert("An error has ocurred when trying to run the game:\n" + e.message);
+				}
+
 				this.runButton.disabled = false;
 				this.stopButton.disabled = true;
+
+				// Haxs for cleaning canvas
+				var h = this.gameCanvas.height;
+				this.gameCanvas.height = 0;
+				this.gameCanvas.height = h;
+
+				if (e) {
+					throw e;
+				}
 			}
 		})
+
+		this.game.init();
 				
 	}
 
 	stopGame () {
-
 		if (this.game) {
-			this.game.gameEnd();
+			this.game.close();
 			this.game = null;
 		}
-
-		// Haxs for cleaning canvas
-		var h = this.gameCanvas.height;
-		this.gameCanvas.height = 0;
-		this.gameCanvas.height = h;
 	}
 
 	// Resources area

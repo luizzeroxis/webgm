@@ -34,7 +34,9 @@ class HTMLWindowCode extends HTMLWindow {
 				() => {
 					this.apply()
 				},
-				() => this.editor.deleteWindow(this)
+				() => {
+					this.close();
+				}
 			);
 			endparent();
 	}

@@ -208,7 +208,8 @@ class HTMLWindowObject extends HTMLWindow {
 
 							library.items.forEach(actionType => {
 
-								add( newButton(null, actionType.description, () => {
+								// TODO add images to the buttons
+								var actionTypeButton = add( newButton(null, actionType.description, () => {
 
 									var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
 									if (!event) {
@@ -258,6 +259,8 @@ class HTMLWindowObject extends HTMLWindow {
 									this.updateActionsMenu();
 
 								}) )
+
+								actionTypeButton.title = actionType.description;
 
 							})
 
@@ -396,7 +399,7 @@ class HTMLWindowObject extends HTMLWindow {
 			this.selectActions.selectedIndex = 0;
 		}
 
-		console.log("updateSelectActions", this.selectActions.selectedIndex);
+		// console.log("updateSelectActions", this.selectActions.selectedIndex);
 		this.updateActionsMenu();
 
 	}

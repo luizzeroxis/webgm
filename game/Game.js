@@ -571,108 +571,103 @@ at position ` + position + `: ` + message + `
 		this.currentInstance = instance;
 		this.currentOther = other || instance;
 
-		var actionIndex = 0;
+		var parsedActions = new ActionsParser(event.actions).parse();
+		console.log(parsedActions);
 
-		while (actionIndex < event.actions.length) {
-			this.currentActionNumber = actionIndex + 1;
-
+		return parsedActions.every(treeAction => {
 			try {
-				var action = event.actions[actionIndex];
-				var applyToInstances = this.getApplyToInstances(action.appliesTo);
-
-				// normal, begin group, end group, else, exit, repeat, variable, code
-				switch (action.typeKind) {
-					case 'normal':
-						// typeIsQuestion
-						// appliesTo
-						// relative
-						// not
-
-						var finalResult = false;
-
-						// none, function, code
-						switch (action.typeExecution) {
-							case 'function':
-
-								finalResult = true;
-
-								applyToInstances.forEach(applyToInstance => {
-									var result = this.gml.builtInFunction(action.typeExecutionFunction, action.args, applyToInstance, action.relative);
-									if (typeof result !== "number" || result < 0.5) {
-										finalResult = false;
-									}
-								});
-								break;
-
-							case 'code':
-
-								finalResult = true;
-
-								applyToInstances.forEach(applyToInstance => {
-									var result = this.gml.execute(this.preparedCodes.get(action), applyToInstance);
-									if (typeof result !== "number" || result < 0.5) {
-										finalResult = false;
-									}
-								});
-								break;
-						}
-
-						if (action.not) {
-							finalResult = !finalResult;
-						}
-
-						if (action.typeIsQuestion) {
-							if (finalResult) {
-								//this.doIfTrue();
-							} else {
-								//this.doIfFalse();
-							}
-						}
-
-						break;
-
-					case 'begin group':
-						break;
-					case 'end group':
-						break;
-					case 'else':
-						break;
-					case 'exit':
-						return true;
-						break;
-					case 'repeat':
-						break;
-					case 'variable':
-						applyToInstances.forEach(applyToInstance => {
-							var [varName, varValue] = action.args;
-							this.evaluateExpression
-							applyToInstance.variables[action.args[0]];
-						});
-						break;
-					case 'code':
-						applyToInstances.forEach(applyToInstance => {
-							this.gml.execute(this.preparedCodes.get(action), applyToInstance);
-						});
-						break;
-				}
-
-				if (this.shouldEnd) {
-					return true;
-				}
-
+				this.doTreeAction(treeAction);
 			} catch (e) {
-				if (e instanceof NonFatalErrorException) {
-					// continue
+				if (e instanceof ExitException) {
+					return false;
 				} else {
 					throw e;
 				}
 			}
+			return true;
+		})
 
-			actionIndex++;
+	}
+
+	doTreeAction(treeAction) {
+
+		if (treeAction.appliesTo != undefined) {
+			var applyToInstances = this.getApplyToInstances(treeAction.appliesTo);
 		}
 
-		return true;
+		switch (treeAction.type) {
+			case 'executeFunction':
+			case 'executeCode':
 
+				var result = true;
+				applyToInstances.forEach(applyToInstance => {
+
+					var args = treeAction.args.map(x => this.parseActionArg(x));
+
+					if (treeAction.type == 'executeFunction') {
+						var currentResult = this.gml.builtInFunction(treeAction.function, args, applyToInstance, treeAction.relative);
+					} else {
+						// TODO send arguments and argument_relative
+						var currentResult = this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance);
+					}
+
+					if (typeof currentResult !== "number" || currentResult < 0.5) {
+						result = false;
+					}
+
+				});
+
+				return result;
+
+			case 'if':
+				var result = this.doTreeAction(treeAction.condition);
+				if (result) {
+					this.doTreeAction(treeAction.ifTrue);
+				} else {
+					this.doTreeAction(treeAction.ifFalse);
+				}
+				break;
+
+			case 'block':
+				treeAction.actions.forEach(blockTreeAction => {
+					this.doTreeAction(blockTreeAction);
+				});
+				break;
+
+			case 'exit':
+				throw new ExitException();
+				break;
+
+			case 'repeat':
+				var times = this.parseActionArg(treeAction.times);
+				for (var i=0; i<times; i++) {
+					this.doTreeAction(treeAction.treeAction);
+				}
+				break;
+
+			case 'variable': // TODO
+				break;
+
+			case 'code':
+				applyToInstances.forEach(applyToInstance => {
+					this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance);
+				});
+				break;
+		}
+	}
+
+	parseActionArg(arg) {
+		if (arg.kind == 'both') {
+			if (arg.value[0] != `'` && arg.value[0] != `"`) {
+				return arg.value;
+			}
+		}
+		if (arg.kind == 'both' || arg.kind == 'expression') {
+			return this.gml.executeString(arg.value);
+		}
+		if (arg.value != undefined)
+			return arg.value;
+		return arg;
 	}
 
 	showErrorBox(message) {

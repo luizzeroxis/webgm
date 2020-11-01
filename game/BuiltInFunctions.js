@@ -526,7 +526,7 @@ class BuiltInFunctions {
 	// ## Scripts
 
 	static execute_string ([str]) {
-		this.execute(this.prepare(str), this.currentInstance);
+		this.executeString(str);
 		return 0;
 	}
 

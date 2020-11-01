@@ -442,16 +442,16 @@ class GML {
 		return match;
 	}
 
-	execute(preparedcode, inst) {
+	execute(preparedCode, inst) {
 
 		//console.log('Interpreting...');
 
-		if (preparedcode.succeeded()) {
+		if (preparedCode.succeeded()) {
 			//console.log('Executing...');
 			this.currentInstance = inst;
 			var currentVars = this.vars; // TODO copy arrays (ProjectSerializer?)
 			this.vars = {};
-			var result = this.semantics(preparedcode).interpret();
+			var result = this.semantics(preparedCode).interpret();
 			this.vars = currentVars;
 
 			if (this.game.shouldEnd) {
@@ -463,12 +463,14 @@ class GML {
 			return 0; // TODO return return
 
 		} else {
-			console.log(preparedcode.message)
+			console.log(preparedCode.message)
 			console.log("Some error was found in the GML!");
 		}
 
+	}
 
-
+	executeString(gml) {
+		return this.execute(this.prepare(gml), this.currentInstance);
 	}
 
 	builtInFunction(name, args, inst, relative) {

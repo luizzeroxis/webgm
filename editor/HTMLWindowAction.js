@@ -27,12 +27,19 @@ class HTMLWindowAction extends HTMLWindow {
 
 					this.actionType.args.forEach((argType, i) => {
 
+						// argType.kinds:
+						// expression, string, both == string
+						// boolean, menu, color, sprite, sound, background, path, script, object, room, font, timeline == number
+
 						if (['expression', 'string', 'both'].includes(argType.kind)) {
 							this.inputArgs[i] = add( newTextBox(null, argType.name, action.args[i]) ).$('input');
 						// } else if (['boolean'].includes(argType.kind)) {
 						// 	//
-						// } else if (['menu'].includes(argType.kind)) {
-						// 	// argType.menu
+						} else if (['menu'].includes(argType.kind)) {
+
+							var options = argType.menu.map((name, value) => ({name, value}));
+							this.inputArgs[i] = add( newSelect(null, argType.name, options) ).$('select');
+
 						} else if (['color'].includes(argType.kind)) {
 							this.inputArgs[i] = add( newColorBox(null, argType.name,
 								decimalColorToRGB(action.args[i])) ).$('input');
@@ -67,6 +74,11 @@ class HTMLWindowAction extends HTMLWindow {
 				} else if (actionType.kind == 'variable') {
 					// TODO variable set interface
 				}
+			} else if (this.actionType.kind == 'repeat') {
+
+				this.inputArgs = [];
+				this.inputArgs[0] = add( newTextBox(null, 'times', action.args[0]) ).$('input');
+
 			}
 
 			if (this.actionType.hasRelative) {
@@ -81,7 +93,9 @@ class HTMLWindowAction extends HTMLWindow {
 				() => {
 					this.apply()
 				},
-				() => this.editor.deleteWindow(this)
+				() => {
+					this.close()
+				},
 			);
 			
 			endparent();
@@ -89,14 +103,18 @@ class HTMLWindowAction extends HTMLWindow {
 
 	apply() {
 
+		// debugger;
+
 		var args = [];
 		if (this.actionType.interfaceKind == 'normal') {
 			args = this.actionType.args;
 		} else if (this.actionType.interfaceKind == 'arrows') {
 			args = [ {type: 'string'}, {type: 'expression'} ];
-		} else if (this.actionType.interfaceKind == 'repeat') {
+		}
+
+		if (this.actionType.kind == 'repeat') {
 			args = [ {type: 'expression'} ];
-		} else if (this.actionType.interfaceKind == 'variable') {
+		} else if (this.actionType.kind == 'variable') {
 			args = [ {type: 'string'}, {type: 'expression'} ];
 		}
 
@@ -109,8 +127,16 @@ class HTMLWindowAction extends HTMLWindow {
 
 		} else {
 			this.action.args = args.map((argType, i) => {
-				return this.inputArgs[i].value;
+
+				if (['expression', 'string', 'both'].includes(argType.kind)) {
+					return this.inputArgs[i].value.toString();
+				} else {
+					return parseFloat(this.inputArgs[i].value);
+				}
+				
 			});
+
+			// console.log(this.action.args);
 		}
 
 		if (this.actionType.hasApplyTo)

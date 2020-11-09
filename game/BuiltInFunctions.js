@@ -669,6 +669,32 @@ class BuiltInFunctions {
 		return 0;
 	}
 
+	static action_wrap ([direction]) {
+		// TODO check sprite size
+		var horizontal = (direction == 0 || direction == 2);
+		var vertical = (direction == 1 || direction == 2);
+
+		if (horizontal) {
+			if (this.currentInstance.variables.x >= this.game.room.width) {
+				this.currentInstance.variables.x = this.currentInstance.variables.x - this.game.room.width;
+			}
+			if (this.currentInstance.variables.x < 0) {
+				this.currentInstance.variables.x = this.game.room.width + this.currentInstance.variables.x;
+			}
+		}
+
+		if (vertical) {
+			if (this.currentInstance.variables.y >= this.game.room.height) {
+				this.currentInstance.variables.y = this.currentInstance.variables.y - this.game.room.height;
+			}
+			if (this.currentInstance.variables.y < 0) {
+				this.currentInstance.variables.y = this.game.room.height + this.currentInstance.variables.y;
+			}
+		}
+		
+		return 0;
+	}
+
 	// ## main1
 	// ## main2
 
@@ -1184,11 +1210,6 @@ class BuiltInFunctions {
 
 		return 0;
 	}
-	static action_wrap ([_]) {
-
-		return 0;
-	}
-	
 	static background_add ([_]) {
 
 		return 0;

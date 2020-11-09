@@ -28,7 +28,7 @@ class HTMLWindowCode extends HTMLWindow {
 			if (action.appliesTo >= 0)
 				this.selectObject.value = action.appliesTo;
 
-			this.textareaCode = add( newElem('code', 'textarea', action.args[0]) )
+			this.textareaCode = add( newElem('code', 'textarea', action.args[0].value) )
 
 			this.makeApplyOkButtons(
 				() => {
@@ -42,7 +42,7 @@ class HTMLWindowCode extends HTMLWindow {
 	}
 
 	apply() {
-		this.action.args[0] = this.textareaCode.value;
+		this.action.args[0].value = this.textareaCode.value;
 		this.action.appliesTo = (
 			this.radioAppliesToSelf.checked ? -1 :
 			this.radioAppliesToOther.checked ? -2 :

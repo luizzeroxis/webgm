@@ -13,79 +13,82 @@ class HTMLWindowAction extends HTMLWindow {
 
 		this.htmlTitle.textContent = this.actionType.description;
 
+		var actionTypeInfo = this.object.getActionTypeInfo();
+		var actionTypeInfoItem = actionTypeInfo.find(x => x.kind == this.actionType.kind && x.interfaceKind == this.actionType.interfaceKind);
+
 		parent(this.htmlClient)
 			add( newElem(null, 'div') )
 
-			if (this.actionType.hasApplyTo) {
+			this.actionTypeHasApplyTo = this.actionType.hasApplyTo;
+			if (this.actionType.hasApplyTo == undefined) {
+				this.actionTypeHasApplyTo = actionTypeInfoItem.hasApplyTo;
+			}
+
+			if (this.actionTypeHasApplyTo) {
 				//
 			}
 
-			if (this.actionType.kind == 'normal') {
-				if (this.actionType.interfaceKind == 'normal') {
-
-					this.inputArgs = [];
-
-					this.actionType.args.forEach((argType, i) => {
-
-						// argType.kinds:
-						// expression, string, both == string
-						// boolean, menu, color, sprite, sound, background, path, script, object, room, font, timeline == number
-
-						if (['expression', 'string', 'both'].includes(argType.kind)) {
-							this.inputArgs[i] = add( newTextBox(null, argType.name, action.args[i]) ).$('input');
-						// } else if (['boolean'].includes(argType.kind)) {
-						// 	//
-						} else if (['menu'].includes(argType.kind)) {
-
-							var options = argType.menu.map((name, value) => ({name, value}));
-							this.inputArgs[i] = add( newSelect(null, argType.name, options) ).$('select');
-
-						} else if (['color'].includes(argType.kind)) {
-							this.inputArgs[i] = add( newColorBox(null, argType.name,
-								decimalColorToRGB(action.args[i])) ).$('input');
-						}
-
-					})
-				} else if (this.actionType.interfaceKind == 'arrows') {
-
-					this.inputArgs = [];
-
-					var directions = parseArrowString(action.args[0]);
-					var speed = action.args[1];
-
-					var directionNames = ['down left', 'down', 'down right', 'left', 'stop', 'right', 'up left', 'up', 'up right'];
-
-					this.inputDirections = [];
-
-					parent( add( newElem('arrow-interface', 'div') ) );
-
-						for (var y=2; y>=0; --y)
-						for (var x=0; x<=2; ++x) {
-							var i = (3*y)+x;
-							this.inputDirections[i] = add( newCheckBox(null, directionNames[i], directions[i]) ).$('input');
-						}
-
-						endparent();
-
-					this.inputArgs[1] = add( newTextBox(null, "Speed:", speed) ).$('input');
-
-				} else if (actionType.kind == 'repeat') {
-					// TODO repeat interface
-				} else if (actionType.kind == 'variable') {
-					// TODO variable set interface
-				}
-			} else if (this.actionType.kind == 'repeat') {
-
-				this.inputArgs = [];
-				this.inputArgs[0] = add( newTextBox(null, 'times', action.args[0]) ).$('input');
-
+			this.actionTypeArgs = this.actionType.args;
+			if (this.actionType.args == undefined) {
+				this.actionTypeArgs = actionTypeInfoItem.args;
 			}
 
-			if (this.actionType.hasRelative) {
+			this.argsInterfaces = [];
+
+			this.actionTypeArgs.forEach((argType, i) => {
+
+				switch (argType.kind) {
+					case 'expression':
+					case 'string':
+					case 'both':
+						if (this.actionType.interfaceKind == 'arrows' && i == 0) {
+							this.argsInterfaces[i] = this.makeDirectionInterface(argType.name, action.args[i].value);
+						} else {
+							this.argsInterfaces[i] = this.makeTextInterface(argType.name, action.args[i].value);
+						}
+						break;
+
+					case 'boolean':
+						this.argsInterfaces[i] = this.makeMenuInterface(argType.name, ['false', 'true'], action.args[i].value);
+						break;
+
+					case 'menu':
+						this.argsInterfaces[i] = this.makeMenuInterface(argType.name, argType.menu, action.args[i].value);
+						break;
+
+					case 'color':
+						this.argsInterfaces[i] = this.makeColorInterface(argType.name, action.args[i].value);
+						break;
+
+					case 'sprite':
+					case 'background':
+					case 'path':
+					case 'script':
+					case 'object':
+					case 'room':
+					case 'font':
+					case 'timeline':
+						this.argsInterfaces[i] = this.makeResourceInterface(argType.name, argType.kind, action.args[i].value);
+						break;
+				}
+
+			})
+
+			this.actionTypeHasRelative = this.actionType.hasRelative;
+			if (this.actionTypeHasRelative == undefined) {
+				this.actionTypeHasRelative = actionTypeInfoItem.hasRelative;
+			}
+
+			if (this.actionTypeHasRelative) {
 				this.inputRelative = add( newCheckBox(null, "Relative", action.relative) ).$('input');
 			}
 
-			if (this.actionType.isQuestion) {
+			this.actionTypeIsQuestion = this.actionType.isQuestion;
+			if (this.actionTypeIsQuestion == undefined) {
+				this.actionTypeIsQuestion = actionTypeInfoItem.isQuestion;
+			}
+
+			if (this.actionTypeIsQuestion) {
 				this.inputNot = add( newCheckBox(null, "NOT", action.not) ).$('input');
 			}
 
@@ -101,51 +104,67 @@ class HTMLWindowAction extends HTMLWindow {
 			endparent();
 	}
 
+	makeTextInterface(name, value) {
+		var input = add( newTextBox(null, name, value) ).$('input');
+		return {
+			getValue: () => input.value,
+		}
+	}
+
+	makeDirectionInterface(name, value) {
+		var directions = parseArrowString(value);
+		var directionNames = ['down left', 'down', 'down right', 'left', 'stop', 'right', 'up left', 'up', 'up right'];
+
+		var inputs = [];
+
+		add( newElem(null, 'span', name) )
+
+		parent( add( newElem('arrow-interface', 'div') ) );
+
+			for (var y=2; y>=0; --y)
+			for (var x=0; x<=2; ++x) {
+				var i = (3*y)+x;
+				inputs[i] = add( newCheckBox(null, directionNames[i], directions[i]) ).$('input');
+			}
+
+			endparent();
+
+		return {
+			getValue: () => stringifyArrowValues(inputs.map(x => x.checked)),
+		}
+	}
+
+	makeMenuInterface(name, optionNames, value) {
+		var options = optionNames.map((name, value) => ({name, value}));
+		var select = add( newSelect(null, name, options) ).$('select');
+		select.selectedIndex = value;
+		return {
+			getValue: () => parseInt(select.value),
+		}
+	}
+
+	makeColorInterface(name, value) {
+		var input = add( newColorBox(null, name, hexColorToDecimalColor(value)) ).$('input');
+		return {
+			getValue: () => hexColorToDecimalColor(input.value),
+		}
+	}
+
+	makeResourceInterface(name, resourceTypeName, value) {}
+
 	apply() {
 
-		// debugger;
-
-		var args = [];
-		if (this.actionType.interfaceKind == 'normal') {
-			args = this.actionType.args;
-		} else if (this.actionType.interfaceKind == 'arrows') {
-			args = [ {type: 'string'}, {type: 'expression'} ];
+		for (var i = 0; i < this.action.args.length; i++) {
+			this.action.args[i] = {kind: this.actionTypeArgs[i].kind, value: this.argsInterfaces[i].getValue()};
 		}
 
-		if (this.actionType.kind == 'repeat') {
-			args = [ {type: 'expression'} ];
-		} else if (this.actionType.kind == 'variable') {
-			args = [ {type: 'string'}, {type: 'expression'} ];
-		}
-
-		if (this.actionType.interfaceKind == 'arrows') {
-
-			var values = this.inputDirections.map(x => x.checked);
-
-			this.action.args[0] = stringifyArrowValues(values);
-			this.action.args[1] = this.inputArgs[1].value;
-
-		} else {
-			this.action.args = args.map((argType, i) => {
-
-				if (['expression', 'string', 'both'].includes(argType.kind)) {
-					return this.inputArgs[i].value.toString();
-				} else {
-					return parseFloat(this.inputArgs[i].value);
-				}
-				
-			});
-
-			// console.log(this.action.args);
-		}
-
-		if (this.actionType.hasApplyTo)
+		if (this.actionTypeHasApplyTo)
 			this.action.appliesTo = -1;
 
-		if (this.actionType.hasRelative)
+		if (this.actionTypeHasRelative)
 			this.action.relative = this.inputRelative.checked;
 
-		if (this.actionType.isQuestion)
+		if (this.actionTypeIsQuestion)
 			this.action.not = this.inputNot.checked;
 
 	}

@@ -3,7 +3,6 @@ WEBGM PROGRESS
 Things to do:
 
 GENERAL
-- Actually make some flow for drag and drop, so actions that are questions, begin and end block, etc actually work.
 - Fix global and local variables, they should have more properties like being read only, and when you change them things have to happen (e.g. changing 'room' should change the current room).
 - Somehow deal with all the collision stuff
 - Implement mouse events in Game.js!
@@ -41,7 +40,6 @@ TIMELINE
 OBJECT
 - Parent, mask, object information
 - Event key selection menu
-- Make buttons disabled when unable to do anything
 - Add icons to events, action types, and actions
 - Make tabs for libraries
 - Add more actions!!!

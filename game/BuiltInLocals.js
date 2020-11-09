@@ -49,32 +49,4 @@ class BuiltInLocals {
 		return vspeed;
 	}};
 
-/*	static getList() {
-		return {
-			// Id
-			id: {
-				readOnly: true,
-			},
-
-			// Inherited from object
-			object_index: obj.id,
-			sprite_index: obj.sprite_index,
-			visible: obj.visible,
-			solid: obj.solid,
-			depth: obj.depth,
-			persistent: obj.persistent,
-			parent: obj.parent,
-			mask: obj.mask,
-
-			// Set by constructor
-			x: x,
-			y: y,
-
-			// All others
-			alarm: new Array(12).fill(0),
-			direction: 0,
-			image_index: 0,
-			speed: 0
-		};
-	}*/
 }

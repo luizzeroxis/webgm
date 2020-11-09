@@ -156,7 +156,7 @@ class Game {
 
 					if (action.typeKind == 'code') {
 						
-						return this.prepareGML(action.args[0], action, matchResult => {
+						return this.prepareGML(action.args[0].value, action, matchResult => {
 							this.throwErrorInObject(object, event, actionNumber,
 								`COMPILATION ERROR in code action:\n` + matchResult.message, true);
 							console.log(matchResult);
@@ -164,7 +164,7 @@ class Game {
 
 					} else if (action.typeKind == 'normal' && action.typeExecution == 'code') {
 
-						return this.prepareGML(action.args[0], action, matchResult => {
+						return this.prepareGML(action.args[0].value, action, matchResult => {
 
 							this.throwErrorInObject(object, event, actionNumber,
 								`COMPILATION ERROR in code action:\n` + matchResult.message
@@ -665,9 +665,7 @@ at position ` + position + `: ` + message + `
 		if (arg.kind == 'both' || arg.kind == 'expression') {
 			return this.gml.executeString(arg.value);
 		}
-		if (arg.value != undefined)
-			return arg.value;
-		return arg;
+		return arg.value;
 	}
 
 	showErrorBox(message) {

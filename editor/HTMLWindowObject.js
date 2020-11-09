@@ -20,7 +20,7 @@ class HTMLWindowObject extends HTMLWindow {
 				newaction.typeExecutionCode = action.typeExecutionCode;
 				newaction.typeIsQuestion = action.typeIsQuestion;
 
-				newaction.args = [...action.args];
+				newaction.args = action.args.map(x => ({kind: x.kind, value: x.value}));
 
 				newaction.appliesTo = action.appliesTo;
 				newaction.relative = action.relative;
@@ -230,24 +230,12 @@ class HTMLWindowObject extends HTMLWindow {
 									action.relative = false;
 									action.not = false;
 
-									if (actionType.kind == 'normal') {
-
-										if (actionType.interfaceKind == 'none') {
-											action.args = [];
-										} else if (actionType.interfaceKind == 'arrows') {
-											action.args = ["000000000", 0];
-										} else if (['code', 'text'].includes(actionType.interfaceKind)) {
-											action.args = [''];
-										} else if (actionType.interfaceKind == 'normal') {
-											action.args = actionType.args.map(arg => arg.default);
-										}
-
-									} else if (actionType.kind == 'repeat') {
-										action.args = [1];
-									} else if (actionType.kind == 'variable') {
-										action.args = ['', '0'];
-									} else if (actionType.kind == 'code') {
-										action.args = [''];
+									if (actionType.kind == 'normal' && actionType.interfaceKind == 'normal') {
+										action.args = actionType.args.map(arg => new ProjectActionArg(arg.kind, arg.default));
+									} else {
+										action.args = this.getActionTypeInfo()
+											.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind)
+											.args.map(arg => new ProjectActionArg(arg.kind, arg.default));
 									}
 
 									this.openActionWindow(action);
@@ -425,31 +413,46 @@ class HTMLWindowObject extends HTMLWindow {
 		return this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
 	}
 
+	getActionTypeInfo() {
+		return [
+			{kind: 'normal', interfaceKind: 'none', args: []},
+			{kind: 'normal', interfaceKind: 'normal', htmlclass: HTMLWindowAction},
+			{kind: 'normal', interfaceKind: 'arrows', htmlclass: HTMLWindowAction, args: [
+				{name: 'Directions:', kind: 'string', default: "000000000"},
+				{name: 'Speed:', kind: 'expression', default: "0"},
+			]},
+			{kind: 'normal', interfaceKind: 'code', htmlclass: HTMLWindowCode, args: [
+				{kind: 'string', default: ""},
+			]},
+			{kind: 'normal', interfaceKind: 'text', htmlclass: HTMLWindowCode, args: [
+				{kind: 'string', default: ""},
+			]},
+			{kind: 'repeat', htmlclass: HTMLWindowAction, hasApplyTo: false, args: [
+				{name: 'times:', kind: 'expression', default: "1"},
+			]},
+			{kind: 'variable', htmlclass: HTMLWindowAction, hasApplyTo: true, args: [
+				{name: 'variable:', kind: 'string', default: ""},
+				{name: 'value:', kind: 'expression', default: "0"},
+			]},
+			{kind: 'code', htmlclass: HTMLWindowCode, hasApplyTo: true, args: [
+				{kind: 'string', default: ""},
+			]},
+			{kind: 'begin', args: []},
+			{kind: 'end', args: []},
+			{kind: 'else', args: []},
+			{kind: 'exit', args: []},
+		];
+	}
+
 	openActionWindow(action) {
-		// this.htmlActionWindows.find(x => x == w)
 
 		var actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
 
-		var htmlclass;
+		var actionTypeInfo = this.getActionTypeInfo();
+		var actionTypeInfoItem = actionTypeInfo.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind);
 
-		if (actionType.kind == 'normal') {
-			if (['normal', 'none', 'arrows'].includes(actionType.interfaceKind)) {
-				htmlclass = HTMLWindowAction;
-			} else if (['code', 'text'].includes(actionType.interfaceKind)) {
-				htmlclass = HTMLWindowCode;
-			}
-		} else if (actionType.kind == 'repeat') {
-			// ???
-			htmlclass = HTMLWindowAction;
-		} else if (actionType.kind == 'variable') {
-			// ???
-			htmlclass = HTMLWindowAction;
-		} else if (actionType.kind == 'code') {
-			htmlclass = HTMLWindowCode;
-		}
-
-		if (htmlclass) {
-			var w = this.editor.openWindow(htmlclass, action, action, this);
+		if (actionTypeInfoItem.htmlclass) {
+			var w = this.editor.openWindow(actionTypeInfoItem.htmlclass, action, action, this);
 			if (w) {
 				this.htmlActionWindows.push(w);
 			}

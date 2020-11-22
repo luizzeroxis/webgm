@@ -5,7 +5,7 @@ class GML {
 
 		let _this = this; //fuck javascript
 
-		this.vars = {};
+		this.vars = new VariableHolder();
 		this.currentInstance = null;
 		this.gameShouldEnd = false;
 
@@ -51,7 +51,10 @@ class GML {
 				}
 			},
 			Exit(_0) {
-				throw "exit";
+				throw new ExitException();
+			},
+			Return(_0, _value) {
+				throw new ReturnException(_value.interpret());
 			},
 			Function (_name, _1, _args, _3) {
 
@@ -63,27 +66,36 @@ class GML {
 				if (script) {
 
 					// Store arguments
-					var prevGlobalVariables = {};
-					prevGlobalVariables.argument = _this.game.globalVariables.argument;
-					prevGlobalVariables.argument_relative = _this.game.globalVariables.argument_relative;
-					for (var i = 0; i < 16; i++) {
-						prevGlobalVariables['argument' + i] = _this.game.globalVariables['argument' + i];
+
+					var savedArgument = _this.game.globalVars.save('argument');
+					var savedArgumentNumbered = [];
+					for (var i=0; i<16; i++) {
+						savedArgumentNumbered[i] = _this.game.globalVars.save('argument' + i.toString());
 					}
+					var savedArgumentRelative = _this.game.globalVars.save('argument_relative');
 
 					// Change arguments
-					_this.game.globalVariables.argument = args;
-					_this.game.globalVariables.argument_relative = 0;
-					for (var i = 0; i < 16; i++) {
-						_this.game.globalVariables['argument'+i] = (args[i] == null) ? 0 : args[i];
-					}
 
-					var r = _this.execute(_this.game.preparedCodes.get(script), _this.currentInstance);
+					_this.game.globalVars.clear('argument'); // avoid spillage
+					for (var i=0; i<16; i++) {
+						var arg = (args[i] == null) ? 0 : args[i];
+						_this.game.globalVars.setForce('argument', arg, [i]);
+						_this.game.globalVars.setForce('argument' + i.toString(), arg);
+					}
+					_this.game.globalVars.setForce('argument_relative', 0);
+
+					// Execute
+					var result = _this.execute(_this.game.preparedCodes.get(script), _this.currentInstance);
 
 					// Restore arguments
-					Object.assign(_this.game.globalVariables, prevGlobalVariables);
 
+					_this.game.globalVars.load('argument', savedArgument);
+					for (var i=0; i<16; i++) {
+						_this.game.globalVars.load('argument' + i.toString(), savedArgumentNumbered[i]);
+					}
+					_this.game.globalVars.load('argument_relative', savedArgumentRelative);
 
-					return r;
+					return result;
 				} else {
 					return _this.builtInFunction(name, args, _this.currentInstance);
 				}
@@ -149,29 +161,22 @@ class GML {
 			String(_0, _string, _1) {
 				return _string.sourceString;
 			},
-			VariableGet(_variable) {
-				var varInfo = _variable.interpret();
-
-				var value = _this.getVariableValue(varInfo);
-				if (value == undefined)
-					_this.game.throwErrorInGMLNode("No variable or constant called " + varInfo.name, _variable);
-
-				return value;
-			},
 			Variable(_name, _arrayIndexes) {
-
 				var varInfo = {};
 				varInfo.name = _name.sourceString;
 				varInfo.object = null;
-				varInfo.arrayIndex = _arrayIndexes.interpret()[0];
-
+				varInfo.indexes = _arrayIndexes.interpret()[0];
 				return varInfo;
-
+			},
+			VariableGet(_variable) {
+				var varInfo = _variable.interpret();
+				var value = _this.varGet(varInfo, _variable);
+				return value;
 			},
 			ArrayIndexes(_0, _index1, _index2, _3) {
 				var indexes = [];
 				var index1 = _index1.interpret();
-				indexes.push(_this.arrayIndexValidate(index1));
+				indexes.push(_this.arrayIndexValidate(index1, _index1));
 
 				var index2 = _index2.interpret();
 				if (index2.length==1) {
@@ -181,76 +186,46 @@ class GML {
 				return indexes;
 			},
 			ArrayIndex2(_0, _index) {
-				return _this.arrayIndexValidate(_index.interpret());
+				return _this.arrayIndexValidate(_index.interpret(), _index);
 			},
 			Assignment(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
 				var value = _expression.interpret();
-
-				_this.setVariableValue(varInfo, value);
-				
+				_this.varSet(varInfo, value);
 			},
 			AssignmentAdd(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
 				var value = _expression.interpret();
-				
-				var varOriginal = _this.getVariableValue(varInfo);
-				if (varOriginal == undefined)
-					_this.game.throwErrorInGMLNode("No variable or constant called " + varInfo.name, _variable);
-
-				var varNew = varOriginal + value;
-
-				_this.setVariableValue(varInfo, varNew);
+				_this.varModify(varInfo, old => old + value);
 			},
 			AssignmentSubtract(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
 				var value = _expression.interpret();
-				
-				var varOriginal = _this.getVariableValue(varInfo);
-				if (varOriginal == undefined)
-					_this.game.throwErrorInGMLNode("No variable or constant called " + varInfo.name, _variable);
-
-				var varNew = varOriginal - value;
-
-				_this.setVariableValue(varInfo, varNew);
+				_this.varModify(varInfo, old => old - value);
 			},
 			AssignmentMultiply(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
 				var value = _expression.interpret();
-				
-				var varOriginal = _this.getVariableValue(varInfo);
-				if (varOriginal == undefined)
-					_this.game.throwErrorInGMLNode("No variable or constant called " + varInfo.name, _variable);
-
-				var varNew = varOriginal * value;
-
-				_this.setVariableValue(varInfo, varNew);
+				_this.varModify(varInfo, old => old * value);
 			},
 			AssignmentDivide(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
 				var value = _expression.interpret();
-				
-				var varOriginal = _this.getVariableValue(varInfo);
-				if (varOriginal == undefined)
-					_this.game.throwErrorInGMLNode("No variable or constant called " + varInfo.name, _variable);
-
-				var varNew = varOriginal * value;
-
-				_this.setVariableValue(varInfo, varNew);
+				_this.varModify(varInfo, old => old / value);
 			},
 			VarDeclare(_0, _names) {
 				_names.asIteration().children.forEach(_name => {
 					var name = _name.sourceString;
-					if (_this.vars[name] == undefined) {
-						_this.vars[name] = null;
+					if (!_this.vars.exists(name)) {
+						_this.vars.set(name, null);
 					}
 				});
 			},
 			GlobalVarDeclare(_, _names) {
 				_names.asIteration().children.forEach(_name => {
 					var name = _name.sourceString;
-					if (_this.game.globalVariables[name] == undefined) {
-						_this.game.globalVariables[name] = 0;
+					if (!_this.game.globalVars.exists(name)) {
+						_this.game.globalVars.set(name, 0);
 					}
 				});
 			},
@@ -258,178 +233,59 @@ class GML {
 
 	}
 
-	getVariableValue(varInfo) {
-		var value;
+	varGet(varInfo, node) {
 
-		if (varInfo.object == null) {
-			value = this.vars[varInfo.name];
-			if (value == undefined)
-				value = this.currentInstance.variables[varInfo.name];
-			if (value == undefined)
-				value = this.game.globalVariables[varInfo.name];
-			if (value == undefined)
-				value = this.game.constants[varInfo.name];
+		if (this.vars.exists(varInfo.name)) {
+			var value = this.vars.get(varInfo.name, varInfo.indexes);
+			if (value != null)
+				return value;
+			else
+				this.game.throwErrorInGMLNode("Unknown variable " + varInfo.name, node);
 		}
+		if (this.currentInstance.vars.exists(varInfo.name))
+			return this.currentInstance.vars.get(varInfo.name, varInfo.indexes);
+		if (this.game.globalVars.exists(varInfo.name))
+			return this.game.globalVars.get(varInfo.name, varInfo.indexes);
+		if (this.game.constants[varInfo.name] != null)
+			return this.game.constants[varInfo.name];
 
-		if (value == undefined)
-			return value;
-
-		var type = this.variableGetType(value);
-
-		if (varInfo.arrayIndex == null) { // no array index
-
-			switch (type) {
-				case 'array1d': // Get value on [0]
-					value = value[0];
-					break;
-				case 'array2d': // Get value on [0,0]
-					value = (value[0] || [0])[0];
-					break;
-			}
-
-		} else if (varInfo.arrayIndex.length==1) { // 1d array index
-
-			var index = varInfo.arrayIndex[0];
-
-			switch (type) {
-				case 'normal': // If index is not 0 it's out of bounds
-					if (index > 0)
-						this.game.throwErrorInCurrent("Array index out of bounds");
-					break;
-				case 'array1d': // Get value on [i]
-					if (index > value.length)
-						this.game.throwErrorInCurrent("Array index out of bounds");
-					value = value[index];
-					break;
-				case 'array2d': // Get value on [0,i]
-					if (index > (value[0] || [0]).length)
-						this.game.throwErrorInCurrent("Array index out of bounds");
-					value = (value[0] || [0])[index];
-					break;
-			}
-
-		} else if (varInfo.arrayIndex.length==2) { // 2d array index
-
-			var index1 = varInfo.arrayIndex[0];
-			var index2 = varInfo.arrayIndex[1];
-
-			switch (type) {
-				case 'normal': // If both indexes are not 0 it's out of bounds
-					if (index1 > 0 || index2 > 0)
-						this.game.throwErrorInCurrent("Array index out of bounds");
-					break;
-				case 'array1d': // Get value on [i2], if index1 is not 0 it's out of bounds
-					if (index1 > 0 || index2 > value.length)
-						this.game.throwErrorInCurrent("Array index out of bounds");
-					value = value[index2];
-					break;
-				case 'array2d': // Get value on [i1,i2]
-					if (index1 > value.length || index2 > (value[index1] || [0]).length)
-						this.game.throwErrorInCurrent("Array index out of bounds");
-					value = (value[index1] || [0])[index2];
-					break;
-			}
-
-		}
-
-		if (value == undefined)
-			value = 0;
-
-		return value;
-	}
-
-	// Always check if returned false
-	setVariableValue(varInfo, value) {
-
-		var where = this.currentInstance.variables;
-
-		if (varInfo.object == null) {
-			if (this.vars[varInfo.name] !== undefined) {
-				where = this.vars;
-			} else if (this.currentInstance.variables[varInfo.name] !== undefined) {
-				where = this.currentInstance.variables;
-			} else if (this.game.globalVariables[varInfo.name] !== undefined) {
-				where = this.game.globalVariables;
-			} else if (this.game.constants[varInfo.name] !== undefined) {
-				return false;
-			}
-
-			var type = this.variableGetType(where[varInfo.name]);
-
-			if (varInfo.arrayIndex == null) { // no array index
-
-				switch (type) {
-					case 'normal': // Just set value
-						where[varInfo.name] = value;
-						break;
-					case 'array1d': // Set value on [0]
-						where[varInfo.name][0] = value;
-						break;
-					case 'array2d': // Set value on [0,0]
-						where[varInfo.name][0][0] = value;
-						break;
-				}
-
-			} else if (varInfo.arrayIndex.length==1) { // 1d array index
-
-				var index = varInfo.arrayIndex[0];
-
-				switch (type) {
-					case 'normal': // Upgrade from normal to 1d array
-						where[varInfo.name] = [ where[varInfo.name] ];
-						where[varInfo.name][index] = value;
-						break;
-					case 'array1d': // Just set value
-						where[varInfo.name][index] = value;
-						break;
-					case 'array2d': // Set value on [0,i]
-						where[varInfo.name][0][index] = value;
-						break;
-				}
-
-			} else if (varInfo.arrayIndex.length==2) { // 2d array index
-
-				var index1 = varInfo.arrayIndex[0];
-				var index2 = varInfo.arrayIndex[1];
-
-				switch (type) {
-					case 'normal': // Upgrade from normal to 2d array
-						where[varInfo.name] = [ [ where[varInfo.name] ] ]; // [0,0]
-						break;
-					case 'array1d': // Upgrade from 1d array to 2d array
-						where[varInfo.name] = [ where[varInfo.name] ]; // [0,i]
-						break;
-				}
-
-				// Fix index1 if undefined, then set value
-				if (where[varInfo.name][index1] == undefined)
-					where[varInfo.name][index1] = [];
-				where[varInfo.name][index1][index2] = value;
-
-			}
-
-		}
-
-		return true;
+		this.game.throwErrorInGMLNode("Unknown variable " + varInfo.name, node);
 
 	}
 
-	arrayIndexValidate(index) {
+	varSet(varInfo, value, node) {
+
+		if (this.vars.exists(varInfo.name))
+			return this.vars.set(varInfo.name, value, varInfo.indexes);
+		if (this.currentInstance.vars.exists(varInfo.name))
+			return this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
+		if (this.game.globalVars.exists(varInfo.name))
+			return this.game.globalVars.set(varInfo.name, value, varInfo.indexes);
+		if (this.game.constants[varInfo.name] != null)
+			this.game.throwErrorInGMLNode("Cannot assign to the variable (it's a constant!)", node);
+
+		this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
+
+	}
+
+	varModify(varInfo, valueFunc, node) {
+		var oldValue = this.varGet(varInfo, node);
+		var newValue = valueFunc(oldValue);
+		this.varSet(varInfo, newValue, node);
+	}
+
+	operationAdd(a, b) {
+		if (typeof a != typeof b) {
+			'Wrong type of arguments to +'
+		}
+	}
+
+	arrayIndexValidate(index, node) {
 		if (typeof index != "number")
-			this.game.throwErrorInCurrent("Wrong type of array index");
+			this.game.throwErrorInGMLNode("Wrong type of array index", node);
 		if (index < 0)
-			this.game.throwErrorInCurrent("Negative array index");
+			this.game.throwErrorInGMLNode("Negative array index", node);
 		return index;
-	}
-
-	variableGetType(variable) {
-		var type = 'normal';
-		if (Array.isArray(variable)) {
-			type = 'array1d';
-			if (Array.isArray(variable[0]))
-				type = 'array2d';
-		}
-		return type;
 	}
 
 	prepare(code) {
@@ -442,25 +298,36 @@ class GML {
 		return match;
 	}
 
-	execute(preparedCode, inst) {
-
-		//console.log('Interpreting...');
+	execute(preparedCode, instance) {
 
 		if (preparedCode.succeeded()) {
-			//console.log('Executing...');
-			this.currentInstance = inst;
-			var currentVars = this.vars; // TODO copy arrays (ProjectSerializer?)
-			this.vars = {};
-			var result = this.semantics(preparedCode).interpret();
-			this.vars = currentVars;
+
+			this.currentInstance = instance;
+			
+			var savedVars = this.vars.saveAll();
+			this.vars.clearAll();
+
+			var result = 0;
+
+			try {
+				this.semantics(preparedCode).interpret();
+			} catch (e) {
+				if (e instanceof ExitException) {
+					console.log('exit called');
+				} else if (e instanceof ReturnException) {
+					result = e.value;
+				} else {
+					throw e;
+				}
+			}
+
+			this.vars.loadAll(savedVars);
 
 			if (this.game.shouldEnd) {
 				this.game.gameEnd();
 			}
 
-			//console.log('Done.');
-
-			return 0; // TODO return return
+			return result;
 
 		} else {
 			console.log(preparedCode.message)
@@ -473,12 +340,12 @@ class GML {
 		return this.execute(this.prepare(gml), this.currentInstance);
 	}
 
-	builtInFunction(name, args, inst, relative) {
+	builtInFunction(name, args, instance, relative) {
 
 		var func = BuiltInFunctions[name];
 
 		if (func) {
-			this.currentInstance = inst;
+			this.currentInstance = instance;
 			return func.call(this, args, relative);
 		} else {
 			this.game.throwErrorInCurrent('No such function called "'+name+'".');

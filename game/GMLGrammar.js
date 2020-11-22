@@ -37,6 +37,7 @@ GameMakerLanguage {
 		= If
 		| While
 		| Exit
+		| Return
 		| Function
 		| VarDeclare
 		| GlobalVarDeclare
@@ -60,6 +61,9 @@ GameMakerLanguage {
 
 	Exit
 		= "exit"
+
+	Return
+		= "return" Expression
 
 	Function
 		= Name "(" ListOf<Expression,","> ")"
@@ -144,12 +148,12 @@ GameMakerLanguage {
 		= "\"" #(~"\"" any)* "\""
 		| "'" #(~"'" any)* "'"
 
-	VariableGet
-		= Variable
-
 	// TODO add objects and arrays HERE
 	Variable
 		= Name ArrayIndexes?
+
+	VariableGet
+		= Variable
 
 	ArrayIndexes
 		= "[" Expression ArrayIndex2? "]"

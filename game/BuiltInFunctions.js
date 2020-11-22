@@ -151,17 +151,17 @@ class BuiltInFunctions {
 	}
 
 	static move_snap ([hsnap, vsnap]) {
-		this.currentInstance.variables.x = Math.floor(this.currentInstance.variables.x / hsnap) * hsnap;
-		this.currentInstance.variables.y = Math.floor(this.currentInstance.variables.y / vsnap) * vsnap;
+		this.currentInstance.vars.set('x', Math.floor(this.currentInstance.vars.get('x') / hsnap) * hsnap);
+		this.currentInstance.vars.set('y', Math.floor(this.currentInstance.vars.get('y') / vsnap) * vsnap);
 		return 0;
 	}
 	static move_towards_point ([x, y, sp]) {
-		this.currentInstance.variables.speed = sp;
-		this.currentInstance.variables.direction = Math.atan2(x, y) * 180 / this.game.constants.pi;
+		this.currentInstance.vars.set('speed', sp);
+		this.currentInstance.vars.set('direction', Math.atan2(x, y) * 180 / this.game.constants.pi);
 		return 0;
 	}
 	static place_snapped ([hsnap, vsnap]) {
-		return (this.currentInstance.variables.x % hsnap == 0) && (this.currentInstance.variables.y % vsnap == 0)
+		return (this.currentInstance.vars.get('x') % hsnap == 0) && (this.currentInstance.vars.get('y') % vsnap == 0)
 	}
 
 	// ## Paths
@@ -641,22 +641,22 @@ class BuiltInFunctions {
 		var chosenAngle = possibleAngles[Math.floor( Math.random() * possibleAngles.length )];
 		
 		if (chosenAngle != null) {
-			this.currentInstance.variables.direction = chosenAngle;
+			this.currentInstance.vars.set('direction', chosenAngle);
 			if (!relative) {
-				this.currentInstance.variables.speed = speed;
+				this.currentInstance.vars.set('speed', speed);
 			} else {
-				this.currentInstance.variables.speed += speed;
+				this.currentInstance.vars.setAdd('speed', speed);
 			}
 		} else {
-			this.currentInstance.variables.speed = 0;
+			this.currentInstance.vars.set('speed', 0);
 		}
 
 		return 0;
 	}
 
 	static action_move_to ([x, y]) {
-		this.currentInstance.variables.x = x;
-		this.currentInstance.variables.y = y;
+		this.currentInstance.vars.set('x', x);
+		this.currentInstance.vars.set('y', y);
 		return 0;
 	}
 
@@ -675,20 +675,20 @@ class BuiltInFunctions {
 		var vertical = (direction == 1 || direction == 2);
 
 		if (horizontal) {
-			if (this.currentInstance.variables.x >= this.game.room.width) {
-				this.currentInstance.variables.x = this.currentInstance.variables.x - this.game.room.width;
+			if (this.currentInstance.vars.get('x') >= this.game.room.width) {
+				this.currentInstance.vars.set('x', this.currentInstance.vars.get('x') - this.game.room.width);
 			}
-			if (this.currentInstance.variables.x < 0) {
-				this.currentInstance.variables.x = this.game.room.width + this.currentInstance.variables.x;
+			if (this.currentInstance.vars.get('x') < 0) {
+				this.currentInstance.vars.set('x', this.game.room.width + this.currentInstance.vars.get('x'));
 			}
 		}
 
 		if (vertical) {
-			if (this.currentInstance.variables.y >= this.game.room.height) {
-				this.currentInstance.variables.y = this.currentInstance.variables.y - this.game.room.height;
+			if (this.currentInstance.vars.get('y') >= this.game.room.height) {
+				this.currentInstance.vars.set('y', this.currentInstance.vars.get('y') - this.game.room.height);
 			}
-			if (this.currentInstance.variables.y < 0) {
-				this.currentInstance.variables.y = this.game.room.height + this.currentInstance.variables.y;
+			if (this.currentInstance.vars.get('y') < 0) {
+				this.currentInstance.vars.set('y', this.game.room.height + this.currentInstance.vars.get('y'));
 			}
 		}
 		

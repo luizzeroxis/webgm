@@ -44,12 +44,12 @@ class Game {
 		this.initGML();
 
 		// Other things
-		this.globalVariables = BuiltInGlobals.getList();
+		this.globalVars = new VariableHolder(this, BuiltInGlobals)
 		this.constants = BuiltInConstants.getList();
 
 		// Add resources names as global variables
 		Project.getTypes().forEach(type => {
-			this.project.resources[type.name].forEach(x => {this.globalVariables[x.name] = x.id});
+			this.project.resources[type.name].forEach(x => {this.globalVars.set(x.name, x.id)});
 		})
 
 		// Initialize game vars
@@ -305,29 +305,29 @@ at position ` + position + `: ` + message + `
 		// Draw instances
 
 		var instances_by_depth = [...this.instances].sort(
-			(a, b) => a.variables.depth - b.variables.depth
+			(a, b) => a.vars.get('depth') - b.vars.get('depth')
 		);
 
 		instances_by_depth.forEach(instance => {
 			var object = this.getResourceById('ProjectObject', instance.object_index);
 
 			// Only draw if visible
-			if (instance.variables.visible) {
+			if (instance.vars.get('visible')) {
 				var drawEvent = object.events.find(x => x.type == 'draw');
 
 				if (drawEvent) {
 					this.doEvent(drawEvent, instance);
 				} else {
 					// No draw event, draw sprite if it has one.
-					var index = instance.variables.sprite_index;
+					var index = instance.vars.get('sprite_index');
 					if (index >= 0) {
 						var sprite = this.getResourceById('ProjectSprite', index);
 						if (sprite) {
-							var image = sprite.images[instance.variables.image_index];
+							var image = sprite.images[instance.vars.get('image_index')];
 							if (image) {
 								this.ctx.save();
 								this.ctx.translate(-sprite.originx, -sprite.originy);
-								this.ctx.drawImage(image.image, instance.variables.x, instance.variables.y);
+								this.ctx.drawImage(image.image, instance.vars.get('x'), instance.vars.get('y'));
 								this.ctx.restore();
 							} else {
 								// no image index
@@ -380,7 +380,7 @@ at position ` + position + `: ` + message + `
 		this.drawViews();
 
 		// Do some stuff
-		this.globalVariables.fps = this.fps;
+		this.globalVars.setForce('fps', this.fps);
 
 		// Begin step
 		this.getEventsOfTypeAndSubtype('step', 'begin').every(({event, instance}) => {
@@ -394,11 +394,11 @@ at position ` + position + `: ` + message + `
 				// Update alarm (decrease by one) here, before running event
 				// Alarm stays 0 until next alarm check, where it becomes -1 forever
 
-				if (instance.variables.alarm[subtype] >= 0) {
-					instance.variables.alarm[subtype] -= 1;
+				if (instance.vars.get('alarm', [subtype]) >= 0) {
+					instance.vars.setAdd('alarm', -1, [subtype]);
 				}
 
-				if (instance.variables.alarm[subtype] == 0) {
+				if (instance.vars.get('alarm', [subtype]) == 0) {
 					return this.doEvent(event, instance);
 				}
 
@@ -442,12 +442,12 @@ at position ` + position + `: ` + message + `
 
 		this.instances.forEach(instance => {
 
-			instance.variables.x += Math.cos(instance.variables.direction
-				* this.constants.pi / 180) * instance.variables.speed;
-			instance.variables.y -= Math.sin(instance.variables.direction
-				* this.constants.pi / 180) * instance.variables.speed;
+			instance.vars.setAdd('x', Math.cos(instance.vars.get('direction')
+				* this.constants.pi / 180) * instance.vars.get('speed'));
+			instance.vars.setAdd('y', - Math.sin(instance.vars.get('direction')
+				* this.constants.pi / 180) * instance.vars.get('speed'));
 
-			instance.variables.speed -= instance.variables.friction;
+			instance.vars.setAdd('speed', - instance.vars.get('friction'));
 
 		});
 
@@ -483,7 +483,7 @@ at position ` + position + `: ` + message + `
 
 		this.timeoutStepEnd = performance.now() / 1000;
 		this.timeoutStepTime = this.timeoutStepEnd - this.timeoutStepStart;
-		this.timeoutStepMinTime = 1 / this.globalVariables.room_speed;
+		this.timeoutStepMinTime = 1 / this.globalVars.get('room_speed');
 		this.timeoutWaitTime = Math.max(0, this.timeoutStepMinTime - this.timeoutStepTime);
 		this.timeout = setTimeout(() => this.mainLoop(), this.timeoutWaitTime * 1000);
 
@@ -502,26 +502,26 @@ at position ` + position + `: ` + message + `
 
 		// TODO masks
 
-		var selfSprite = this.getResourceById('ProjectSprite', self.variables.sprite_index);
-		var selfImage = selfSprite.images[self.variables.image_index];
+		var selfSprite = this.getResourceById('ProjectSprite', self.vars.get('sprite_index'));
+		var selfImage = selfSprite.images[self.vars.get('image_index')];
 
-		var otherSprite = this.getResourceById('ProjectSprite', other.variables.sprite_index);
-		var otherImage = otherSprite.images[other.variables.image_index];
+		var otherSprite = this.getResourceById('ProjectSprite', other.vars.get('sprite_index'));
+		var otherImage = otherSprite.images[other.vars.get('image_index')];
 
 		// TODO collision masks, will assume rectangle now
 		// selfSprite.boundingbox == 'fullimage';
 		// selfSprite.shape = 'rectangle';
 
 		var c = collision2Rectangles({
-			x1: self.variables.x - selfSprite.originx,
-			y1: self.variables.y - selfSprite.originy,
-			x2: self.variables.x - selfSprite.originx + selfImage.image.width,
-			y2: self.variables.y - selfSprite.originy + selfImage.image.height
+			x1: self.vars.get('x') - selfSprite.originx,
+			y1: self.vars.get('y') - selfSprite.originy,
+			x2: self.vars.get('x') - selfSprite.originx + selfImage.image.width,
+			y2: self.vars.get('y') - selfSprite.originy + selfImage.image.height
 		}, {
-			x1: other.variables.x - otherSprite.originx,
-			y1: other.variables.y - otherSprite.originy,
-			x2: other.variables.x - otherSprite.originx + otherImage.image.width,
-			y2: other.variables.y - otherSprite.originy + otherImage.image.height
+			x1: other.vars.get('x') - otherSprite.originx,
+			y1: other.vars.get('y') - otherSprite.originy,
+			x2: other.vars.get('x') - otherSprite.originx + otherImage.image.width,
+			y2: other.vars.get('y') - otherSprite.originy + otherImage.image.height
 		})
 
 		return c;
@@ -543,9 +543,9 @@ at position ` + position + `: ` + message + `
 		this.canvas.width = room.width;
 		this.canvas.height = room.height;
 
-		this.globalVariables.room_width = room.width;
-		this.globalVariables.room_height = room.height;
-		this.globalVariables.room_speed = room.speed;
+		this.globalVars.setForce('room_width', room.width);
+		this.globalVars.setForce('room_height', room.height);
+		this.globalVars.setForce('room_speed', room.speed);
 
 		var insts = room.instances;
 		for (var i = 0; i < insts.length; i++) {
@@ -572,7 +572,6 @@ at position ` + position + `: ` + message + `
 		this.currentOther = other || instance;
 
 		var parsedActions = new ActionsParser(event.actions).parse();
-		console.log(parsedActions);
 
 		return parsedActions.every(treeAction => {
 			try {
@@ -687,7 +686,7 @@ at position ` + position + `: ` + message + `
 			this.doEvent(create, instance);
 		}
 
-		return instance.variables.id;
+		return instance.vars.get('id');
 	}
 
 	instanceDestroy (instance) {
@@ -739,64 +738,27 @@ class Instance {
 		this.object_index = object_index;
 		this.game = game;
 
-		this.variables = {};
-		for (var name in BuiltInLocals) {
-			if (typeof BuiltInLocals[name].default == "function") {
-				this.variables[name] = BuiltInLocals[name].default.call(this);
-			} else {
-				this.variables[name] = BuiltInLocals[name].default || 0;
-			}
-		}
+		this.vars = new VariableHolder(this, BuiltInLocals);
 
 		// Id
-		this.variables.id = 100001;
-
+		this.vars.setForce('id', 100001);
+		
 		// Inherited from object
 		var obj = game.getResourceById('ProjectObject', this.object_index);
-		
-		this.variables.object_index = obj.id;
-		this.variables.sprite_index = obj.sprite_index;
-		this.variables.visible = obj.visible;
-		this.variables.solid = obj.solid;
-		this.variables.depth = obj.depth;
-		this.variables.persistent = obj.persistent;
-		this.variables.parent = obj.parent;
-		this.variables.mask = obj.mask;
+
+		this.vars.setForce('object_index', obj.id);
+		this.vars.setForce('sprite_index', obj.sprite_index);
+		this.vars.setForce('visible', obj.visible);
+		this.vars.setForce('solid', obj.solid);
+		this.vars.setForce('depth', obj.depth);
+		this.vars.setForce('persistent', obj.persistent);
+		this.vars.setForce('parent', obj.parent);
+		this.vars.setForce('mask', obj.mask);
 
 		// Set by constructor
-		this.variables.x = x;
-		this.variables.y = y;
+		this.vars.setForce('x', x);
+		this.vars.setForce('y', y);
 
-	}
-
-	getVar(name) {
-		var variable = this.variables[name];
-		if (variable == undefined) {
-			return null; // variable doesn't exist
-		} else {
-			if (BuiltInLocals[name])
-			if (BuiltInLocals[name].get) {
-				return BuiltInLocals[name].get.call(this);
-			}
-			return variable.value;
-		}
-	}
-
-	setVar(name, value) {
-		var variable = this.variables[name];
-		if (variable == undefined) {
-			this.variables[name] = value;
-		} else {
-			if (BuiltInLocals[name]) {
-				if (BuiltInLocals[name].readOnly) {
-					return false; // variable is read only
-				} else if (BuiltInLocals[name].set) {
-					this.variables[name] = BuiltInLocals[name].set.call(this, value);
-				}
-			}
-			this.variables[name] = value;
-		}
-		return true;
 	}
 
 }

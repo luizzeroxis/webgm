@@ -31,10 +31,10 @@
 				"classname": "ProjectObject",
 				"id": 0,
 				"name": "object0",
-				"sprite_index": "0",
+				"sprite_index": 0,
 				"visible": true,
 				"solid": false,
-				"depth": "0",
+				"depth": 0,
 				"persistent": false,
 				"parent": null,
 				"mask": null,
@@ -49,8 +49,15 @@
 								"typeLibrary": "control",
 								"typeId": 603,
 								"typeKind": "code",
+								"typeExecution": null,
+								"typeExecutionFunction": null,
+								"typeExecutionCode": null,
+								"typeIsQuestion": null,
 								"args": [
-									"x += (keyboard_check(vk_right) - keyboard_check(vk_left))*2;\ny += (keyboard_check(vk_down) - keyboard_check(vk_up))*2;"
+									{
+										"kind": "string",
+										"value": "x += (keyboard_check(vk_right) - keyboard_check(vk_left))*2;\ny += (keyboard_check(vk_down) - keyboard_check(vk_up))*2;"
+									}
 								],
 								"appliesTo": -1,
 								"relative": false,
@@ -64,10 +71,10 @@
 				"classname": "ProjectObject",
 				"id": 1,
 				"name": "object1",
-				"sprite_index": "1",
+				"sprite_index": 1,
 				"visible": true,
 				"solid": false,
-				"depth": "0",
+				"depth": 0,
 				"persistent": false,
 				"parent": null,
 				"mask": null,
@@ -82,8 +89,15 @@
 								"typeLibrary": "control",
 								"typeId": 603,
 								"typeKind": "code",
+								"typeExecution": null,
+								"typeExecutionFunction": null,
+								"typeExecutionCode": null,
+								"typeIsQuestion": null,
 								"args": [
-									"instance_destroy();"
+									{
+										"kind": "string",
+										"value": "instance_destroy();"
+									}
 								],
 								"appliesTo": -1,
 								"relative": false,
@@ -138,12 +152,14 @@
 					}
 				],
 				"caption": "",
-				"width": "640",
-				"height": "480",
-				"speed": "30",
+				"width": 640,
+				"height": 480,
+				"speed": 30,
 				"background_color": "#c0c0c0"
 			}
-		]
+		],
+		"ProjectPath": [],
+		"ProjectTimeline": []
 	},
 	"counter": {
 		"ProjectSprite": 2,

@@ -1,7 +1,7 @@
 class VariableHolder {
 
-	constructor(game, builtInClass) {
-		this.game = game;
+	constructor(caller, builtInClass) {
+		this.caller = caller;
 		this.builtInClass = builtInClass;
 		this.builtInList = {};
 		this.customList = {};
@@ -106,8 +106,8 @@ class VariableHolder {
 					throw new Error("Cannot assign to the variable (it's read only!)");
 				}
 				// This is more like a warning that it has been set, can't really control it
-				if (callSet && this.game != null && this.builtInClass[name].set) {
-					this.builtInClass[name].set.call(this.game, value, indexes);
+				if (callSet && this.caller != null && this.builtInClass[name].set) {
+					this.builtInClass[name].set.call(this.caller, value, indexes);
 				}
 			}
 

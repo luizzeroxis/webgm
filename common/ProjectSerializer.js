@@ -81,7 +81,6 @@ class ProjectSerializer {
 
 		return Promise.all(promises).then(() => {
 			var json = JSON.stringify(projectObject, null, "\t");
-			console.log(json);
 			return json;
 		})
 	}

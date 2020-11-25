@@ -12,6 +12,12 @@ class VariableHolder {
 			} else {
 				this.builtInList[name] = {value: this.builtInClass[name].default || 0};
 			}
+			this.builtInList[name].dimensions = this.builtInClass[name].dimensions || 0;
+			if (this.builtInClass[name].dimensions == undefined) {
+				if (Array.isArray(this.builtInClass[name].default)) {
+					this.builtInClass[name].dimensions = 1;
+				}
+			}
 		}
 	}
 

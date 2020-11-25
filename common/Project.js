@@ -34,21 +34,21 @@ class Project {
 
 }
 
-class ProjectSprite {
+	class ProjectSprite {
 
-	constructor () {
-		this.classname = "ProjectSprite";
-		this.id = null;
-		this.name = null;
-		this.images = []; //AbstractImage
-		this.originx = 0;
-		this.originy = 0;
+		constructor () {
+			this.classname = "ProjectSprite";
+			this.id = null;
+			this.name = null;
+			this.images = []; //AbstractImage
+			this.originx = 0;
+			this.originy = 0;
+		}
+		static getName() { return 'sprite'; }
+		static getScreenName() { return 'Sprite'; }
+		static getScreenGroupName() { return 'Sprites'; }
+
 	}
-	static getName() { return 'sprite'; }
-	static getScreenName() { return 'Sprite'; }
-	static getScreenGroupName() { return 'Sprites'; }
-
-}
 
 	class ProjectSound {
 		constructor () {

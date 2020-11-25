@@ -60,7 +60,10 @@ class HTMLWindowObject extends HTMLWindow {
 					this.selectEvents.size = 2;
 
 					// Update actions select when changing events
-					this.selectEvents.onchange = () => this.updateSelectActions();
+					this.selectEvents.onchange = () => {
+						this.updateEventsMenu();
+						this.updateSelectActions();
+					}
 
 					// // Add event
 
@@ -90,15 +93,15 @@ class HTMLWindowObject extends HTMLWindow {
 						this.paramEvents.push(event);
 
 						this.sortEvents();
-						this.updateSelectEvents();
 
 						this.selectEvents.value = event.getNameId();
+						this.updateSelectEvents();
 						this.updateSelectActions();
 
 					}) )
 
 					// Delete event button
-					var buttonEventDelete = add( newButton(null, 'Delete event', () => {
+					this.buttonEventDelete = add( newButton(null, 'Delete event', () => {
 
 						var index = this.paramEvents.findIndex(event => this.selectEvents.value == event.getNameId());
 						if (index < 0) return;
@@ -110,6 +113,7 @@ class HTMLWindowObject extends HTMLWindow {
 						this.paramEvents.splice(index, 1);
 
 						remove(this.selectEventsOptions[this.selectEvents.value])
+						this.updateEventsMenu();
 
 						this.selectActions.textContent = '';
 
@@ -321,6 +325,18 @@ class HTMLWindowObject extends HTMLWindow {
 					{value: event.getNameId()}, null, Events.getEventName(event, this.editor.project)) )
 			})
 			endparent();
+
+		this.updateEventsMenu();
+
+	}
+
+	updateEventsMenu() {
+		
+		if (this.selectEvents.selectedIndex < 0) {
+			this.buttonEventDelete.disabled = true;
+		} else {
+			this.buttonEventDelete.disabled = false;
+		}
 
 	}
 

@@ -662,7 +662,7 @@ at position ` + position + `: ` + message + `
 			}
 		}
 		if (arg.kind == 'both' || arg.kind == 'expression') {
-			return this.gml.executeString(arg.value);
+			return this.gml.executeStringExpression(arg.value, this.currentInstance);
 		}
 		return arg.value;
 	}

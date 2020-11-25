@@ -16,6 +16,10 @@ class GML {
 
 		this.semantics.addOperation('interpret', {
 
+			Start(_code) {
+				_code.interpret();
+				return 0;
+			},
 			Block(_0, _listOfStatements, _2) {
 				return _listOfStatements.interpret();
 			},
@@ -288,11 +292,11 @@ class GML {
 		return index;
 	}
 
-	prepare(code) {
+	prepare(code, startRule) {
 		//var trace = this.grammar.trace(code).toString();
 		//console.log(trace);
 
-		var match = this.grammar.match(code);
+		var match = this.grammar.match(code, startRule);
 		//console.log(match);
 
 		return match;
@@ -310,7 +314,7 @@ class GML {
 			var result = 0;
 
 			try {
-				this.semantics(preparedCode).interpret();
+				result = this.semantics(preparedCode).interpret();
 			} catch (e) {
 				if (e instanceof ExitException) {
 					console.log('exit called');
@@ -336,8 +340,12 @@ class GML {
 
 	}
 
-	executeString(gml) {
-		return this.execute(this.prepare(gml), this.currentInstance);
+	executeString(gml, instance) {
+		return this.execute(this.prepare(gml), instance);
+	}
+
+	executeStringExpression(gml, instance) {
+		return this.execute(this.prepare(gml, "Expression"), instance);
 	}
 
 	builtInFunction(name, args, instance, relative) {

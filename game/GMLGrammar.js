@@ -10,6 +10,9 @@ class GMLGrammar {
 GameMakerLanguage {
 
 	Start
+		= Code
+
+	Code
 		= Block
 		| ListOfStatements
 

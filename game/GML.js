@@ -105,6 +105,21 @@ class GML {
 				}
 
 			},
+			And(_a, _1, _b) {
+				var a = _a.interpret() >= 0.5;
+				var b = _b.interpret() >= 0.5;
+				return (a && b) ? 1 : 0;
+			},
+			Or(_a, _1, _b) {
+				var a = _a.interpret() >= 0.5;
+				var b = _b.interpret() >= 0.5;
+				return (a || b) ? 1 : 0;
+			},
+			Xor(_a, _1, _b) {
+				var a = _a.interpret() >= 0.5;
+				var b = _b.interpret() >= 0.5;
+				return (a != b) ? 1 : 0;
+			},
 			Less(_a, _1, _b) {
 				var a = _a.interpret();
 				var b = _b.interpret();

@@ -75,7 +75,20 @@ GameMakerLanguage {
 		= (letter | "_") (alnum | "_")*
 
 	Expression
-		= ExpressionBooleanComparison
+		= ExpressionUnary
+		| ExpressionBooleanComparison
+
+	ExpressionUnary
+		= Not
+		| Negate
+		| NegateBitwise
+
+	Not
+		= "!" Expression
+	Negate
+		= "-" Expression
+	NegateBitwise
+		= "~" Expression
 
 	ExpressionBooleanComparison
 		= And
@@ -145,7 +158,7 @@ GameMakerLanguage {
 	Add
 		= Expression "+" ExpressionMultiplyOrDivide
 	Subtract
-		= Expression? "-" ExpressionMultiplyOrDivide
+		= Expression "-" ExpressionMultiplyOrDivide
 
 	ExpressionMultiplyOrDivide
 		= Multiply

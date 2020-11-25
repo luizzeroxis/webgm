@@ -106,6 +106,18 @@ class GML {
 
 			},
 			// TODO check for type errors
+			Not(_0, _a) {
+				var a = _a.interpret() >= 0.5;
+				return (!a) ? 1 : 0;
+			},
+			Negate(_0, _a) {
+				var a = _a.interpret();
+				return (-a);
+			},
+			NegateBitwise(_0, _a) {
+				var a = _a.interpret();
+				return (~a);
+			},
 			And(_a, _1, _b) {
 				var a = _a.interpret() >= 0.5;
 				var b = _b.interpret() >= 0.5;

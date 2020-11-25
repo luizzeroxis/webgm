@@ -105,6 +105,7 @@ class GML {
 				}
 
 			},
+			// TODO check for type errors
 			And(_a, _1, _b) {
 				var a = _a.interpret() >= 0.5;
 				var b = _b.interpret() >= 0.5;
@@ -150,7 +151,31 @@ class GML {
 				var b = _b.interpret();
 				return (a >= b) ? 1 : 0;
 			},
-			// TODO check for type errors
+			BitwiseAnd(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return a & b;
+			},
+			BitwiseOr(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return a | b;
+			},
+			BitwiseXor(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return a ^ b;
+			},
+			BitwiseShiftLeft(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return a << b;
+			},
+			BitwiseShiftRight(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return a >> b;
+			},
 			Add(_a, _1, _b) {
 				var a = _a.interpret();
 				var b = _b.interpret();

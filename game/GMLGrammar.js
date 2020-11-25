@@ -97,22 +97,45 @@ GameMakerLanguage {
 		| Different
 		| Greater
 		| GreaterOrEqual
-		| ExpressionAddOrSubtract
+		| ExpressionBitwise
 
 	Less
-		= Expression "<" ExpressionAddOrSubtract
+		= Expression "<" ExpressionBitwise
 	LessOrEqual
-		= Expression "<=" ExpressionAddOrSubtract
+		= Expression "<=" ExpressionBitwise
 	Equal
-		= Expression equalSymbol ExpressionAddOrSubtract
+		= Expression equalSymbol ExpressionBitwise
 	equalSymbol
 		= "=" "="?
 	Different
-		= Expression "!=" ExpressionAddOrSubtract
+		= Expression "!=" ExpressionBitwise
 	Greater
-		= Expression ">" ExpressionAddOrSubtract
+		= Expression ">" ExpressionBitwise
 	GreaterOrEqual
-		= Expression ">=" ExpressionAddOrSubtract	
+		= Expression ">=" ExpressionBitwise
+
+	ExpressionBitwise
+		= BitwiseAnd
+		| BitwiseOr
+		| BitwiseXor
+		| ExpressionBitwiseShift
+
+	BitwiseAnd
+		= Expression "&" ExpressionBitwiseShift
+	BitwiseOr
+		= Expression "|" ExpressionBitwiseShift
+	BitwiseXor
+		= Expression "^" ExpressionBitwiseShift
+
+	ExpressionBitwiseShift
+		= BitwiseShiftLeft
+		| BitwiseShiftRight
+		| ExpressionAddOrSubtract
+
+	BitwiseShiftLeft
+		= Expression "<<" ExpressionAddOrSubtract
+	BitwiseShiftRight
+		= Expression ">>" ExpressionAddOrSubtract
 
 	ExpressionAddOrSubtract
 		= Add

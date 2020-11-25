@@ -6,7 +6,7 @@ class Editor {
 		//this.editor = this;
 		this.project = new Project();
 		this.game = null;
-		this.projectName = 'game.json';
+		this.projectName = 'game';
 
 		this.dispatcher = new Dispatcher();
 
@@ -98,7 +98,7 @@ class Editor {
 
 			add ( this.newButtonOpenFile(null, 'Open', file => {
 				this.openProjectFromFile(file);
-			}) )
+			}, 'application/zip,application/json') )
 
 			add( newButton(null, 'Save', () => {
 				editor.saveProject();
@@ -116,10 +116,10 @@ class Editor {
 			endparent()
 	}
 
-	newButtonOpenFile(classes, content, onselectfile, multiple=false) {
+	newButtonOpenFile(classes, content, onselectfile, accept, multiple=false) {
 		var e = html('button', {class: classes}, {
 			click: e => {
-				VirtualFileSystem.openDialog('application/json')
+				VirtualFileSystem.openDialog(accept)
 				.then(file => {
 					return onselectfile(file);
 				})
@@ -144,15 +144,15 @@ class Editor {
 		return e;
 	}
 
-	newProject () {
+	newProject() {
 		this.project = new Project();
 
 		this.updateResourcesArea();
 		this.updateWindowsArea();
 	}
 
-	openProject () {
-		VirtualFileSystem.openDialog('application/json')
+	openProject() {
+		VirtualFileSystem.openDialog('application/zip,application/json')
 		.then(file => {
 			this.openProjectFromFile(file);
 		})
@@ -160,38 +160,41 @@ class Editor {
 
 	openProjectFromFile(file) {
 
-		VirtualFileSystem.readEntireFile(file)
-		.then(json => {
+		var promise;
 
-			var project = ProjectSerializer.unserialize(json);
+		if (file.type == 'application/json') {
+			promise = VirtualFileSystem.readEntireFile(file)
+			.then(json => ProjectSerializer.unserialize(json))
+		} else {
+			promise = ProjectSerializer.unserializeZIP(file);
+		}
+
+		promise.then(project => {
 			if (project) {
-
-				delete this.project;
 				this.project = project;
 
 				this.updateResourcesArea();
 				this.updateWindowsArea();
 
-				this.projectName = file.name;
+				this.projectName = file.name.substring(0, file.name.lastIndexOf('.'));
 
 			} else {
 				alert('Error Loading: File seems to be corrupt.');
 				return;
 			}
-
 		})
 	}
 
-	saveProject () {
+	saveProject() {
 
-		ProjectSerializer.serialize(this.project)
-		.then(json => {
-			var blob = new Blob([json], {type: 'text/json'});
-			VirtualFileSystem.save(blob, this.projectName);
-		});
+		ProjectSerializer.serializeZIP(this.project)
+		.then(blob => {
+			VirtualFileSystem.save(blob, this.projectName+".zip");
+		})
+		
 	}
 
-	runGame () {
+	runGame() {
 
 		this.stopGame();
 

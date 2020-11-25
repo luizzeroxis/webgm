@@ -1,63 +1,5 @@
 class ProjectSerializer {
 
-	static getClassByName(name) {
-		const classes = [ProjectSprite, ProjectSound, ProjectScript, ProjectFont, ProjectObject, ProjectRoom,
-			ProjectEvent];
-
-		const classNames = {}
-		classes.forEach(_class => {
-			classNames[_class.constructor.name] = _class;
-		})
-
-		if (classNames[name]) {
-			return classNames[name];
-		}
-		return {};
-	}
-
-	static clone(obj) {
-		// Deep cloning
-		var copy;
-
-		// Handle the 3 simple types, and null or undefined
-		if (null == obj || "object" != typeof obj) return obj;
-
-		// Handle Array
-		if (obj instanceof Array) {
-			copy = [];
-			for (var i = 0, len = obj.length; i < len; i++) {
-				copy[i] = ProjectSerializer.clone(obj[i]);
-			}
-			return copy;
-		}
-
-		// Handle Blob
-		if (obj instanceof Blob) {
-			copy = new Blob([obj], {type: obj.type});
-			return copy;
-		}
-
-		// Handle Function
-		if (obj instanceof Function) {
-			return obj;
-		}
-
-		// Handle Object
-		if (obj instanceof Object) {
-			copy = Object.assign(ProjectSerializer.getClassByName(obj.constructor.name), obj);
-			// Object.keys(obj).forEach((attr) => {
-			// 	copy[attr] = ProjectSerializer.clone(obj[attr]);
-			// })
-			console.log(copy);
-			for (var attr in obj) {
-			    if (obj.hasOwnProperty(attr)) copy[attr] = ProjectSerializer.clone(obj[attr]);
-			}
-			return copy;
-		}
-
-		throw new Error("Unable to copy obj! Its type isn't supported.");
-	}
-
 	static serialize(project) {
 		var projectObject = ProjectSerializer.clone(project);
 
@@ -133,6 +75,82 @@ class ProjectSerializer {
 		var project = Object.assign(new Project(), jsonObject);
 		console.log(project);
 
-		return project;
+		return Promise.resolve(project);
+	}
+
+	static serializeZIP(project) {
+		var zip = new JSZip();
+		zip.file("version", "1");
+
+		return ProjectSerializer.serialize(project)
+		.then(json => {
+			zip.file("project.json", json);
+
+			return zip.generateAsync({type: 'blob'})
+		});
+	}
+
+	static unserializeZIP(blob) {
+		return JSZip.loadAsync(blob)
+		.then(zip => zip.file("project.json").async('string'))
+		.then(json => ProjectSerializer.unserialize(json));
+	}
+
+	static getClassByName(name) {
+		const classes = [ProjectSprite, ProjectSound, ProjectScript, ProjectFont, ProjectObject, ProjectRoom,
+			ProjectEvent];
+
+		const classNames = {}
+		classes.forEach(_class => {
+			classNames[_class.constructor.name] = _class;
+		})
+
+		if (classNames[name]) {
+			return classNames[name];
+		}
+		return {};
+	}
+
+	static clone(obj) {
+		// Deep cloning
+		var copy;
+
+		// Handle the 3 simple types, and null or undefined
+		if (null == obj || "object" != typeof obj) return obj;
+
+		// Handle Array
+		if (obj instanceof Array) {
+			copy = [];
+			for (var i = 0, len = obj.length; i < len; i++) {
+				copy[i] = ProjectSerializer.clone(obj[i]);
+			}
+			return copy;
+		}
+
+		// Handle Blob
+		if (obj instanceof Blob) {
+			copy = new Blob([obj], {type: obj.type});
+			return copy;
+		}
+
+		// Handle Function
+		if (obj instanceof Function) {
+			return obj;
+		}
+
+		// Handle Object
+		if (obj instanceof Object) {
+			copy = Object.assign(ProjectSerializer.getClassByName(obj.constructor.name), obj);
+			// Object.keys(obj).forEach((attr) => {
+			// 	copy[attr] = ProjectSerializer.clone(obj[attr]);
+			// })
+			console.log(copy);
+			for (var attr in obj) {
+			    if (obj.hasOwnProperty(attr)) copy[attr] = ProjectSerializer.clone(obj[attr]);
+			}
+			return copy;
+		}
+
+		throw new Error("Unable to copy obj! Its type isn't supported.");
 	}
 }

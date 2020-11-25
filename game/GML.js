@@ -41,24 +41,41 @@ class GML {
 				return _code.interpret();
 			},
 			While(_0, _conditionExpression, _code) {
-				var condition = _conditionExpression.interpret();
-				if (typeof condition !== "number") {
-					_this.game.throwErrorInGMLNode('Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpression);
-				}
-				while (condition >= 0.5) {
-					_code.interpret();
-					condition = _conditionExpression.interpret();
+				
+				while (true) {
+
+					var condition = _conditionExpression.interpret();
 					if (typeof condition !== "number") {
 						_this.game.throwErrorInGMLNode('Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpression);
-						break;
+					}
+
+					if (!(condition >= 0.5)) break;
+
+					try {
+						_code.interpret();
+					} catch (e) {
+						if (e instanceof BreakException) {
+							break;
+						} if (e instanceof ContinueException) {
+							continue;
+						} else {
+							throw e;
+						}
 					}
 				}
+
 			},
 			Exit(_0) {
 				throw new ExitException();
 			},
 			Return(_0, _value) {
 				throw new ReturnException(_value.interpret());
+			},
+			Break(_0) {
+				throw new BreakException();
+			},
+			Continue(_0) {
+				throw new ContinueException();
 			},
 			Function (_name, _1, _args, _3) {
 
@@ -378,8 +395,8 @@ class GML {
 			try {
 				result = this.semantics(preparedCode).interpret();
 			} catch (e) {
-				if (e instanceof ExitException) {
-					console.log('exit called');
+				if (e instanceof ExitException || e instanceof BreakException || e instanceof ContinueException) {
+					// Nothing lol
 				} else if (e instanceof ReturnException) {
 					result = e.value;
 				} else {

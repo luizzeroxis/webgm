@@ -41,6 +41,8 @@ GameMakerLanguage {
 		| While
 		| Exit
 		| Return
+		| Break
+		| Continue
 		| Function
 		| VarDeclare
 		| GlobalVarDeclare
@@ -64,9 +66,12 @@ GameMakerLanguage {
 
 	Exit
 		= "exit"
-
 	Return
 		= "return" Expression
+	Break
+		= "break"
+	Continue
+		= "continue"
 
 	Function
 		= Name "(" ListOf<Expression,","> ")"

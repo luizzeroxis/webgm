@@ -19,7 +19,6 @@ GML
 - Add repeat statement
 - Add do until statement
 - Add switch case statement
-- Add continue statement
 - Add with statements
 
 SPRITE

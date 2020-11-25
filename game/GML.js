@@ -196,6 +196,16 @@ class GML {
 				var b = _b.interpret();
 				return a / b;
 			},
+			IntegerDivision(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return Math.floor(a / b);
+			},
+			Modulo(_a, _1, _b) {
+				var a = _a.interpret();
+				var b = _b.interpret();
+				return a % b;
+			},
 			Parentheses(_0, _expression, _2) {
 				return _expression.interpret();
 			},

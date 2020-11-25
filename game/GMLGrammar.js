@@ -150,12 +150,18 @@ GameMakerLanguage {
 	ExpressionMultiplyOrDivide
 		= Multiply
 		| Divide
+		| IntegerDivision
+		| Modulo
 		| OtherExpression
 
 	Multiply
 		= ExpressionMultiplyOrDivide "*" OtherExpression
 	Divide
 		= ExpressionMultiplyOrDivide "/" OtherExpression
+	IntegerDivision
+		= ExpressionMultiplyOrDivide "div" OtherExpression
+	Modulo
+		= ExpressionMultiplyOrDivide "mod" OtherExpression
 
 	OtherExpression
 		= Parentheses

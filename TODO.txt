@@ -16,7 +16,7 @@ GML
 - Type check for operations, both normal and assignment (also look at the *= bug in GM)
 - Add referencing instances and objects (object.variable)
 - Add for statement
-- Add div, mod, !, - (not as subtraction), ~
+- Add !, - (not as subtraction), ~
 - Add repeat statement
 - Add do until statement
 - Add switch case statement

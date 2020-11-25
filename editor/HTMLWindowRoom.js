@@ -51,7 +51,7 @@ class HTMLWindowRoom extends HTMLWindow {
 
 						add( newElem(null, 'legend', 'Backgrounds') )
 
-						this.inputBackgroundColor = add( newColorBox(null, 'Background color:', room.background_color) ).$('input');
+						this.inputBackgroundColor = add( newColorBox(null, 'Background color:', room.backgroundColor) ).$('input');
 
 						endparent()
 
@@ -203,7 +203,7 @@ class HTMLWindowRoom extends HTMLWindow {
 					room.height = parseInt(this.inputHeight.value);
 					room.speed = parseInt(this.inputSpeed.value);
 
-					room.background_color = this.inputBackgroundColor.value;
+					room.backgroundColor = this.inputBackgroundColor.value;
 					room.instances = this.paramInstances;
 				},
 				() => {

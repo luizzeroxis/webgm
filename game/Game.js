@@ -295,7 +295,7 @@ at position ` + position + `: ` + message + `
 		// Currently there are no views. But the following should happen for every view.
 
 		// Draw background color
-		this.ctx.fillStyle = this.room.background_color;
+		this.ctx.fillStyle = this.room.backgroundColor;
 		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 		// this.ctx.fillStyle = "black";
 

@@ -63,7 +63,7 @@
 				"width": "640",
 				"height": "480",
 				"speed": "30",
-				"background_color": "#c0c0c0"
+				"backgroundColor": "#c0c0c0"
 			}
 		],
 		"ProjectSound": [],

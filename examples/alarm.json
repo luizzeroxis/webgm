@@ -208,7 +208,7 @@
 				"width": 640,
 				"height": 480,
 				"speed": 60,
-				"background_color": "#c0c0c0"
+				"backgroundColor": "#c0c0c0"
 			}
 		]
 	},

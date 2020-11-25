@@ -3,7 +3,7 @@ WEBGM PROGRESS
 Things to do:
 
 GENERAL
-- Fix global and local variables, they should have more properties like being read only, and when you change them things have to happen (e.g. changing 'room' should change the current room).
+- Add, or add features to, local and global variables. Some variables don't do anything when they should when setting them.
 - Somehow deal with all the collision stuff
 - Implement mouse events in Game.js!
 - Change project file format to a ZIP file so files like images can be properly stored.
@@ -13,8 +13,15 @@ GENERAL
 - Expansion packages (wtf?)
 
 GML
+- Type check for operations, both normal and assignment (also look at the *= bug in GM)
 - Add referencing instances and objects (object.variable)
 - Add for statement
+- Add &&, ||, ^^, &, |, ^, <<, >>, div, mod, !, - (not as subtraction), ~
+- Add repeat statement
+- Add do until statement
+- Add switch case statement
+- Add continue statement
+- Add with statements
 
 SPRITE
 - Allow multiple subimages for sprites

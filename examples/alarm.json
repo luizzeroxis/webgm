@@ -53,7 +53,10 @@
 								"typeExecutionCode": null,
 								"typeIsQuestion": null,
 								"args": [
-									"alarm[0] = room_speed;"
+									{
+										"kind": "string",
+										"value": "alarm[0] = room_speed;"
+									}
 								],
 								"appliesTo": -1,
 								"relative": false,
@@ -76,7 +79,10 @@
 								"typeExecutionCode": null,
 								"typeIsQuestion": null,
 								"args": [
-									"depth = -depth;\nalarm[0] = room_speed;"
+									{
+										"kind": "string",
+										"value": "depth = -depth;\nalarm[0] = room_speed;"
+									}
 								],
 								"appliesTo": -1,
 								"relative": false,
@@ -99,7 +105,10 @@
 								"typeExecutionCode": null,
 								"typeIsQuestion": null,
 								"args": [
-									"draw_sprite(sprite_index, image_index, x, y)\n\ndraw_text(0,0,fps)"
+									{
+										"kind": "string",
+										"value": "draw_sprite(sprite_index, image_index, x, y)\n\ndraw_text(0,0,fps)"
+									}
 								],
 								"appliesTo": -1,
 								"relative": false,
@@ -136,7 +145,10 @@
 								"typeExecutionCode": null,
 								"typeIsQuestion": null,
 								"args": [
-									"alarm[0] = room_speed;"
+									{
+										"kind": "string",
+										"value": "alarm[0] = room_speed;"
+									}
 								],
 								"appliesTo": -1,
 								"relative": false,
@@ -159,7 +171,10 @@
 								"typeExecutionCode": null,
 								"typeIsQuestion": null,
 								"args": [
-									"depth = -depth;\nalarm[0] = room_speed;"
+									{
+										"kind": "string",
+										"value": "depth = -depth;\nalarm[0] = room_speed;"
+									}
 								],
 								"appliesTo": -1,
 								"relative": false,

@@ -27,8 +27,15 @@
 								"typeLibrary": "control",
 								"typeId": 603,
 								"typeKind": "code",
+								"typeExecution": null,
+								"typeExecutionFunction": null,
+								"typeExecutionCode": null,
+								"typeIsQuestion": null,
 								"args": [
-									"// local variables\n\ntext = 'General Kenobi!';\n\n// global variables\n\nglobalvar amount_of_text;\namount_of_text = 0;\n\n// script variables\nvar text; // temporarily overrides local var\ntext = \"Hello there\";\n\nshow_message(text);"
+									{
+										"kind": "string",
+										"value": "// local variables\n\ntext = 'General Kenobi!';\n\n// global variables\n\nglobalvar amount_of_text;\namount_of_text = 0;\n\n// script variables\nvar text; // temporarily overrides local var\ntext = \"Hello there\";\n\nshow_message(text);"
+									}
 								],
 								"appliesTo": -1,
 								"relative": false,
@@ -46,8 +53,15 @@
 								"typeLibrary": "control",
 								"typeId": 603,
 								"typeKind": "code",
+								"typeExecution": null,
+								"typeExecutionFunction": null,
+								"typeExecutionCode": null,
+								"typeIsQuestion": null,
 								"args": [
-									"var i;\ni = 0;\n\nwhile(i < amount_of_text) {\n  draw_text(16,16+i*i, text);\n  i+=1;\n}"
+									{
+										"kind": "string",
+										"value": "var i;\ni = 0;\n\nwhile(i < amount_of_text) {\n  draw_text(16,16+i*i, text);\n  i+=1;\n}"
+									}
 								],
 								"appliesTo": -1,
 								"relative": false,
@@ -65,8 +79,15 @@
 								"typeLibrary": "control",
 								"typeId": 603,
 								"typeKind": "code",
+								"typeExecution": null,
+								"typeExecutionFunction": null,
+								"typeExecutionCode": null,
+								"typeIsQuestion": null,
 								"args": [
-									"amount_of_text += 1;"
+									{
+										"kind": "string",
+										"value": "amount_of_text += 1;"
+									}
 								],
 								"appliesTo": -1,
 								"relative": false,
@@ -97,7 +118,9 @@
 				"background_color": "#c0c0c0"
 			}
 		],
-		"ProjectBackground": []
+		"ProjectBackground": [],
+		"ProjectPath": [],
+		"ProjectTimeline": []
 	},
 	"counter": {
 		"ProjectSprite": 0,

@@ -28,7 +28,10 @@
 								"typeId": 603,
 								"typeKind": "code",
 								"args": [
-									"a[0] = \"zero\";\na[1] = \"one\";\n\nshow_message(a[0]);\nshow_message(a[1])\n\na[0] = \"new zero\"\n\nshow_message(a[0]);\n\na[52] = \"what\";\n\nshow_message(a[52])\nshow_message(a[11])"
+									{
+										"kind": "string",
+										"value": "a[0] = \"zero\";\na[1] = \"one\";\n\nshow_message(a[0]);\nshow_message(a[1])\n\na[0] = \"new zero\"\n\nshow_message(a[0]);\n\na[52] = \"what\";\n\nshow_message(a[52])\nshow_message(a[11])"
+									}
 								],
 								"appliesTo": -1,
 								"relative": false,

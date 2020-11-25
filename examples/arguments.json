@@ -35,7 +35,10 @@
 								"typeId": 603,
 								"typeKind": "code",
 								"args": [
-									"script0(42);"
+									{
+										"kind": "string",
+										"value": "script0(42);"
+									}
 								],
 								"appliesTo": -1,
 								"relative": false,

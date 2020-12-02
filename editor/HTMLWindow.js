@@ -36,18 +36,18 @@ class HTMLWindow {
 
 		this.editor.dispatcher.listen({
 			createResource: i => {
-				if (i.classname != resourcetype) return;
+				if (i.constructor.name != resourcetype) return;
 				parent(select)
 					selectOptions[i.id] = add( html('option', {value: i.id}, null, i.name) )
 					endparent()
 			},
 			deleteResource: i => {
-				if (i.classname != resourcetype) return;
+				if (i.constructor.name != resourcetype) return;
 				remove(selectOptions[i.id])
 				delete selectOptions[i.id];
 			},
 			changeResourceName: i => {
-				if (i.classname != resourcetype) return;
+				if (i.constructor.name != resourcetype) return;
 				selectOptions[i.id].textContent = i.name;
 			}
 		})

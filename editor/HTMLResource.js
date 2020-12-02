@@ -31,7 +31,7 @@ class HTMLResource {
 				this.htmlName.textContent = i.name;
 			},
 			changeSpriteImages: i => {
-				if (resource.classname == "ProjectObject") {
+				if (resource.constructor.name == "ProjectObject") {
 					if (i.id != resource.sprite_index) return;
 				} else {
 					if (i != this.resource) return;

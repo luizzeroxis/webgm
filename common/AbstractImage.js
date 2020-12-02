@@ -30,4 +30,8 @@ class AbstractImage {
 		this.image.src = this.src;
 	}
 
+	toJSON() {
+		return undefined;
+	}
+
 }

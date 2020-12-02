@@ -1,33 +1,154 @@
 class ProjectSerializer {
 
-	static serialize(project) {
-		var projectObject = ProjectSerializer.clone(project);
+	static serializeZIP(project) {
 
-		console.log(projectObject);
+		var zip = new JSZip();
+		zip.file("version", "2");
 
-		var promises = [];
+		ProjectSerializer.initClasses();
+		var classes = Object.values(ProjectSerializer.classes);
 
-		projectObject.resources[ProjectSprite.name].forEach(sprite => {
-			sprite.images.forEach((image, i) => {
+		var json = JSON.stringify(project, function(key, value) {
 
-				console.log(image);
+			if (value != null) {
+				if (classes.includes(value.constructor)) {
+					value = {...value, $class: value.constructor.name};
+				}
+			}
 
-				promises.push(
-					blobToBase64(image.blob).then(base64 => {
-						sprite.images[i] = base64;
-					})
-				)
+			return value;
+		}, "\t");
 
+		zip.file("project.json", json);
+
+		project.resources['ProjectSprite'].forEach(sprite => {
+			sprite.images.forEach((image, index) => {
+				zip.file("sprites/"+sprite.id+"/"+index, image.blob);
 			})
 		})
 
-		return Promise.all(promises).then(() => {
-			var json = JSON.stringify(projectObject, null, "\t");
-			return json;
+		project.resources['ProjectBackground'].forEach(background => {
+			zip.file("backgrounds/"+background.id, background.image.blob);
 		})
+
+		return zip.generateAsync({type: 'blob'});
+
 	}
 
-	static unserialize(json) {
+	static unserializeZIP(blob) {
+
+		var zip = new JSZip();
+		var version;
+
+		return zip.loadAsync(blob)
+		.then(() => zip.file("version").async("string"))
+		.then(versionString => {
+			version = parseInt(versionString);
+			console.log("ZIP version:", version);
+			if (version < 1 || version > 2) throw new Error("Unsupported version");
+		})
+		.then(() => zip.file("project.json").async('string'))
+		.then(json => {
+
+			if (version == 1) {
+				return ProjectSerializer.unserializeV1(json);
+			}
+			if (version == 2) {
+
+				var promises = [];
+
+				ProjectSerializer.initClasses();
+
+				var project = JSON.parse(json, function(key, value) {
+					if (value != null && value.$class) {
+						var obj = new (ProjectSerializer.classes[value.$class])();
+						obj = Object.assign(obj, value);
+						delete obj.$class;
+						return obj;
+					}
+					return value;
+				});
+
+				Project.getTypes().forEach(x => {
+					if (project.resources[x.name] == undefined)
+						project.resources[x.name] = [];
+					if (project.counter[x.name] == undefined)
+						project.counter[x.name] = 0;
+				})
+
+				project.resources['ProjectSprite'].forEach(sprite => {
+					sprite.images.forEach((image, index) => {
+
+						var file = zip.file("sprites/"+sprite.id+"/"+index);
+						if (file == null) return;
+
+						promises.push(file.async('blob')
+						.then(blob => {
+							sprite.images[index] = new AbstractImage(blob);
+						}));
+
+					})
+				})
+
+				project.resources['ProjectBackground'].forEach(background => {
+
+					var file = zip.file("backgrounds/"+background.id);
+					if (file == null) return;
+
+					promises.push(file.async('blob')
+						.then(blob => {
+							background.image = new AbstractImage(blob);
+						}));
+
+				})
+
+				return Promise.all(promises).then(() => {
+					return project;
+				});
+			}
+
+		})
+
+	}
+
+	static initClasses() {
+
+		if (ProjectSerializer.classes != undefined) return;
+
+		var classes = [
+			Project,
+			ProjectSprite,
+			ProjectSound,
+			ProjectBackground,
+			ProjectPath,
+			ProjectPathPoint,
+			ProjectScript,
+			ProjectFont,
+			ProjectTimeline,
+			ProjectTimelineMoment,
+			ProjectObject,
+			ProjectEvent,
+			ProjectAction,
+			ProjectActionArg,
+			ProjectRoom,
+			ProjectInstance,
+			ProjectRoomTile,
+			ProjectRoomBackground,
+			ProjectRoomView,
+			ProjectGameInformation,
+			ProjectGlobalGameSettings,
+			ProjectExtensionPackages,
+		];
+
+		ProjectSerializer.classes = {};
+
+		for (var cls of classes) {
+			ProjectSerializer.classes[cls.name] = cls;
+		}
+
+	}
+
+	static unserializeV1(json) {
 		var jsonObject;
 
 		try {
@@ -47,6 +168,8 @@ class ProjectSerializer {
 
 			jsonObject.resources[type.name] = jsonObject.resources[type.name].map(resource => {
 
+				delete resource.classname;
+
 				//convert sprites from base64 to blobs
 				if (type.name == "ProjectSprite") {
 					resource.images = resource.images.map(image => {
@@ -58,10 +181,19 @@ class ProjectSerializer {
 					resource.events = resource.events.map(event => {
 						event.actions = event.actions.map(action => {
 							//convert action ids to action type objects???
+							delete action.classname;
 							return Object.assign(new ProjectAction(), action);
 						})
+						delete event.classname;
 						return Object.assign(new ProjectEvent(), event);
 
+					})
+				}
+
+				if (type.name == "ProjectRoom") {
+					resource.instances = resource.instances.map(instance => {
+						delete instance.classname;
+						return Object.assign(new ProjectInstance(), instance);
 					})
 				}
 
@@ -70,87 +202,9 @@ class ProjectSerializer {
 			})
 		});
 
-		console.log(jsonObject);
-
 		var project = Object.assign(new Project(), jsonObject);
-		console.log(project);
 
 		return Promise.resolve(project);
 	}
 
-	static serializeZIP(project) {
-		var zip = new JSZip();
-		zip.file("version", "1");
-
-		return ProjectSerializer.serialize(project)
-		.then(json => {
-			zip.file("project.json", json);
-
-			return zip.generateAsync({type: 'blob'})
-		});
-	}
-
-	static unserializeZIP(blob) {
-		return JSZip.loadAsync(blob)
-		.then(zip => zip.file("project.json").async('string'))
-		.then(json => ProjectSerializer.unserialize(json));
-	}
-
-	static getClassByName(name) {
-		const classes = [ProjectSprite, ProjectSound, ProjectScript, ProjectFont, ProjectObject, ProjectRoom,
-			ProjectEvent];
-
-		const classNames = {}
-		classes.forEach(_class => {
-			classNames[_class.constructor.name] = _class;
-		})
-
-		if (classNames[name]) {
-			return classNames[name];
-		}
-		return {};
-	}
-
-	static clone(obj) {
-		// Deep cloning
-		var copy;
-
-		// Handle the 3 simple types, and null or undefined
-		if (null == obj || "object" != typeof obj) return obj;
-
-		// Handle Array
-		if (obj instanceof Array) {
-			copy = [];
-			for (var i = 0, len = obj.length; i < len; i++) {
-				copy[i] = ProjectSerializer.clone(obj[i]);
-			}
-			return copy;
-		}
-
-		// Handle Blob
-		if (obj instanceof Blob) {
-			copy = new Blob([obj], {type: obj.type});
-			return copy;
-		}
-
-		// Handle Function
-		if (obj instanceof Function) {
-			return obj;
-		}
-
-		// Handle Object
-		if (obj instanceof Object) {
-			copy = Object.assign(ProjectSerializer.getClassByName(obj.constructor.name), obj);
-			// Object.keys(obj).forEach((attr) => {
-			// 	copy[attr] = ProjectSerializer.clone(obj[attr]);
-			// })
-			console.log(copy);
-			for (var attr in obj) {
-			    if (obj.hasOwnProperty(attr)) copy[attr] = ProjectSerializer.clone(obj[attr]);
-			}
-			return copy;
-		}
-
-		throw new Error("Unable to copy obj! Its type isn't supported.");
-	}
 }

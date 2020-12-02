@@ -403,7 +403,6 @@ class HTMLWindowObject extends HTMLWindow {
 			this.selectActions.selectedIndex = 0;
 		}
 
-		// console.log("updateSelectActions", this.selectActions.selectedIndex);
 		this.updateActionsMenu();
 
 	}

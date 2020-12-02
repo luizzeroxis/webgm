@@ -57,8 +57,8 @@ class Editor {
 	deleteResource (resource) {
 
 		if (confirm('You are about to delete '+resource.name+'. This will be permanent. Continue?')) {
-			var index = this.project.resources[resource.classname].findIndex(x => x == resource);
-			this.project.resources[resource.classname].splice(index, 1);
+			var index = this.project.resources[resource.constructor.name].findIndex(x => x == resource);
+			this.project.resources[resource.constructor.name].splice(index, 1);
 
 			this.dispatcher.speak('deleteResource', resource);
 		}
@@ -164,7 +164,7 @@ class Editor {
 
 		if (file.type == 'application/json') {
 			promise = VirtualFileSystem.readEntireFile(file)
-			.then(json => ProjectSerializer.unserialize(json))
+			.then(json => ProjectSerializer.unserializeV1(json))
 		} else {
 			promise = ProjectSerializer.unserializeZIP(file);
 		}
@@ -318,7 +318,7 @@ class Editor {
 
 	addResourceToResourcesArea(resource) {
 
-		parent(this.htmlResourceTypes[resource.classname]);
+		parent(this.htmlResourceTypes[resource.constructor.name]);
 			var r = new HTMLResource(resource, editor);
 
 			r.htmlEditButton.onclick = () => this.openResourceWindow(resource)
@@ -340,17 +340,17 @@ class Editor {
 	}
 
 	getResourceIconSrc(resource) {
-		if (resource.classname == "ProjectSprite") {
+		if (resource.constructor.name == "ProjectSprite") {
 			if (resource.images.length > 0) {
 				return resource.images[0].image.src;
 			}
 		} else
-		if (resource.classname == "ProjectBackground") {
+		if (resource.constructor.name == "ProjectBackground") {
 			if (resource.image) {
 				return resource.image.image.src;
 			}
 		} else
-		if (resource.classname == "ProjectObject") {
+		if (resource.constructor.name == "ProjectObject") {
 			if (resource.sprite_index >= 0) {
 				var sprite = this.project.resources.ProjectSprite.find(x => x.id == resource.sprite_index);
 				if (sprite) {
@@ -360,7 +360,7 @@ class Editor {
 				}
 			}
 		} else {
-			return 'img/default-'+resource.classname+'-icon.png'; //LOL
+			return 'img/default-'+resource.constructor.name+'-icon.png'; //LOL
 		}
 		return null;
 	}
@@ -410,7 +410,7 @@ class Editor {
 		windowMakers[ProjectObject.name] = HTMLWindowObject;
 		windowMakers[ProjectRoom.name]   = HTMLWindowRoom;
 
-		this.openWindow(windowMakers[resource.classname], resource, resource);
+		this.openWindow(windowMakers[resource.constructor.name], resource, resource);
 	}
 
 	focusWindow(id) {

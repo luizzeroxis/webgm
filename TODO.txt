@@ -6,7 +6,6 @@ GENERAL
 - Add, or add features to, local and global variables. Some variables don't do anything when they should when setting them.
 - Somehow deal with all the collision stuff
 - Implement mouse events in Game.js!
-- Move sprites and other things to files and folder outside the project.json inside the zip file.
 - Maybe make some more realistic Windows like elements, like context menus and floating windows.
 - More global game settings
 - Compile to HTML

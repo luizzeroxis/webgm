@@ -1,6 +1,6 @@
 class Project {
 
-	constructor (json) {
+	constructor() {
 
 		this.resources = {};
 		this.counter = {};
@@ -38,8 +38,7 @@ class Project {
 
 	class ProjectSprite {
 
-		constructor () {
-			this.classname = "ProjectSprite";
+		constructor() {
 			this.id = null;
 			this.name = null;
 			this.images = []; //AbstractImage
@@ -62,8 +61,7 @@ class Project {
 	}
 
 	class ProjectSound {
-		constructor () {
-			this.classname = "ProjectSound";
+		constructor() {
 			this.id = null;
 			this.name = null;
 			this.sound = null;
@@ -76,8 +74,7 @@ class Project {
 
 	class ProjectBackground {
 
-		constructor () {
-			this.classname = "ProjectBackground";
+		constructor() {
 			this.id = null;
 			this.name = null;
 			this.image = null; // AbstractImage
@@ -99,11 +96,10 @@ class Project {
 	class ProjectPath {
 
 		constructor() {
-			this.classname = "ProjectPath";
 			this.id = null;
 			this.name = null;
 			this.points = []; // ProjectPathPoint
-			this.backgroundRoom = null; // ProjectRoom
+			this.backgroundRoomIndex = -1;
 			this.connectionKind = 'lines';
 			this.closed = true;
 			this.precision = 4;
@@ -117,7 +113,6 @@ class Project {
 
 		class ProjectPathPoint {
 			constructor(x=0, y=0, sp=100) {
-				this.classname = "ProjectPathPoint";
 				this.x = x;
 				this.y = y;
 				this.sp = sp;
@@ -126,7 +121,6 @@ class Project {
 
 	class ProjectScript {
 		constructor() {
-			this.classname = "ProjectScript";
 			this.id = null;
 			this.name = null;
 			this.code = "";
@@ -137,8 +131,7 @@ class Project {
 	}
 
 	class ProjectFont {
-		constructor () {
-			this.classname = "ProjectFont";
+		constructor() {
 			this.id = null;
 			this.name = null;
 			this.font = 'Arial';
@@ -154,7 +147,6 @@ class Project {
 	class ProjectTimeline {
 
 		constructor() {
-			this.classname = "ProjectTimeline";
 			this.id = null;
 			this.name = null;
 			this.moments = []; // ProjectTimelineMoment
@@ -173,8 +165,7 @@ class Project {
 		}
 
 	class ProjectObject {
-		constructor () {
-			this.classname = "ProjectObject";
+		constructor() {
 			this.id = null;
 			this.name = null;
 			this.sprite_index = -1;
@@ -192,8 +183,7 @@ class Project {
 	}
 
 		class ProjectEvent {
-			constructor (type, subtype) {
-				this.classname = "ProjectEvent";
+			constructor(type, subtype) {
 				this.type = type;
 				this.subtype = subtype;
 				this.actions = [];
@@ -207,9 +197,7 @@ class Project {
 		}
 
 			class ProjectAction {
-				constructor () {
-					this.classname = "ProjectAction";
-
+				constructor() {
 					this.typeLibrary = null;
 					this.typeId = null;
 					this.typeKind = null;  // normal, begin group, end group, else, exit, repeat, variable, code
@@ -235,7 +223,6 @@ class Project {
 
 	class ProjectRoom {
 		constructor() {
-			this.classname = "ProjectRoom";
 			this.id = null;
 			this.name = null;
 
@@ -265,7 +252,6 @@ class Project {
 
 		class ProjectInstance {
 			constructor(x, y, object_index) {
-				this.classname = "ProjectInstance";
 				this.x = x;
 				this.y = y;
 				this.object_index = object_index;
@@ -273,8 +259,8 @@ class Project {
 		}
 
 		class ProjectRoomTile {
-			constructor(background, x, y, backgroundX, backgroundY, backgroundW, backgroundH, depth) {
-				this.background = background;
+			constructor(backgroundIndex, x, y, backgroundX, backgroundY, backgroundW, backgroundH, depth) {
+				this.backgroundIndex = backgroundIndex;
 				this.x = x;
 				this.y = y;
 				this.backgroundX = backgroundX;
@@ -289,7 +275,7 @@ class Project {
 			constructor() {
 				this.visibleAtStart = false;
 				this.isForeground = false;
-				this.background = null; // ProjectBackground
+				this.backgroundIndex = -1;
 				this.tileHorizontally = true;
 				this.tileVertically = true;
 				this.x = 0;
@@ -311,7 +297,7 @@ class Project {
 				this.portY = 0;
 				this.portW = 640;
 				this.portH = 480;
-				this.objectFollow = null; // ProjectObject
+				this.objectFollowIndex = -1;
 				this.objectFollowHorizontalBorder = 32;
 				this.objectFollowVerticalBorder = 32;
 				this.objectFollowHorizontalSpeed = -1;

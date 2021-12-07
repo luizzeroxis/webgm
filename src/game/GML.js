@@ -321,6 +321,9 @@ export default class GML {
 					}
 				});
 			},
+			_iter(...children) {
+				return children.map(c => c.interpret());
+			},
 		});
 
 	}

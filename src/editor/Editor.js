@@ -70,6 +70,9 @@ export default class Editor {
 		this.libraries = BuiltInLibraries.getList();
 
 		//Areas
+
+		add( newElem(null, 'div', 'Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!') )
+
 		parent( add( html('div', {class: 'grid'}) ) )
 
 			this.makeMenuArea();

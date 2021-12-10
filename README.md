@@ -1,3 +1,4 @@
+
 # WebGM
 
 Web based version of Game Maker 8.
@@ -6,15 +7,19 @@ Live version: https://luizeldorado.github.io/webgm/index.html
 
 ## What's this?
 
-Game Maker 8 is an old program where you could make Windows games in a simple but powerful way. Many people learned how to program and make games through this software. This project aims to recreate it in a web enviroment, so that it's free, open, and easy to access.
+Game Maker 8 is an old program where you could make Windows games in a simple but powerful way. Many people learned how to program and make games through this software. This project aims to recreate it in a web environment, so that it's free, open, and easy to access.
 
 ## What's the point of this??
 
-Mainly nostalgia. But for me, personally, is to create a JavaScript game engine that's simple enough, not overcomplicated like the ones that are out there. However, making it the "right" way became too complicated. So a decided to replicate Game Maker, which I know a lot about, since it's much simpler and fundamentally flawed because of it.
+Mainly nostalgia. But for me, personally, is to create a JavaScript game engine that's simple enough, not overcomplicated like the ones that are out there. However, making it the "right" way became too complicated. So I decided to replicate Game Maker, which I know a lot about, since it's much simpler and fundamentally flawed because of it.
 
 ## How to run
 
-Download .zip or clone. Run index.html. Done.
+Clone it, install [Node.js](https://nodejs.org), run `npm install` on the folder.
+
+`npm run start` will run it in the browser, `npm run build` will build it in the 'dist' folder.
+
+Note that you cannot open the index.html directly, you must create a server for it, for example using [Python](https://python.org) - `python -m http.server`.
 
 ## How can I contribute???
 
@@ -25,7 +30,6 @@ First, keep in mind these points:
 * This is very object oriented, so you can make classes even if they are not currently used in the project.
 * Don't support old browsers, use new technology.
 * Mainly support desktop use. Mobile is an afterthought.
-* This is mainly supposed to be used as an *offline* HTML program. Make sure that, if you right click and save this thing, it can still run, without internet, in a local enviroment with no server whatsoever. That means not using XHR, unless you can provide an alternative.
 
 With that in mind, just send a pull request! Or an issue. I don't know, just learn how to GitHub, noob.
 

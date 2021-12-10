@@ -21,6 +21,7 @@ export default class HTMLWindow {
 
 	makeClient(resource) {}
 
+	// TODO change so resourcetype is the actual class, not a name
 	makeResourceSelect (classes, labelcontent, resourcetype, nonone) {
 
 		var e = add( newSelect(classes, labelcontent) );
@@ -38,18 +39,18 @@ export default class HTMLWindow {
 
 		this.editor.dispatcher.listen({
 			createResource: i => {
-				if (i.constructor.name != resourcetype) return;
+				if (i.constructor.getClassName() != resourcetype) return;
 				parent(select)
 					selectOptions[i.id] = add( html('option', {value: i.id}, null, i.name) )
 					endparent()
 			},
 			deleteResource: i => {
-				if (i.constructor.name != resourcetype) return;
+				if (i.constructor.getClassName() != resourcetype) return;
 				remove(selectOptions[i.id])
 				delete selectOptions[i.id];
 			},
 			changeResourceName: i => {
-				if (i.constructor.name != resourcetype) return;
+				if (i.constructor.getClassName() != resourcetype) return;
 				selectOptions[i.id].textContent = i.name;
 			}
 		})

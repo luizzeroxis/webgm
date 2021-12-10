@@ -37,13 +37,13 @@ export default class ProjectSerializer {
 		zip.file("version", "2");
 
 		ProjectSerializer.initClasses();
-		var classes = Object.values(ProjectSerializer.classes);
 
 		var json = JSON.stringify(project, function(key, value) {
 
 			if (value != null) {
-				if (classes.includes(value.constructor)) {
-					value = {...value, $class: value.constructor.name};
+				var name = Object.keys(ProjectSerializer.classes).find(x => ProjectSerializer.classes[x] == value.constructor);
+				if (name) {
+					value = {...value, $class: name};
 				}
 			}
 
@@ -101,10 +101,10 @@ export default class ProjectSerializer {
 				});
 
 				Project.getTypes().forEach(x => {
-					if (project.resources[x.name] == undefined)
-						project.resources[x.name] = [];
-					if (project.counter[x.name] == undefined)
-						project.counter[x.name] = 0;
+					if (project.resources[x.getClassName()] == undefined)
+						project.resources[x.getClassName()] = [];
+					if (project.counter[x.getClassName()] == undefined)
+						project.counter[x.getClassName()] = 0;
 				})
 
 				project.resources['ProjectSprite'].forEach(sprite => {
@@ -146,35 +146,29 @@ export default class ProjectSerializer {
 
 		if (ProjectSerializer.classes != undefined) return;
 
-		var classes = [
-			Project,
-			ProjectSprite,
-			ProjectSound,
-			ProjectBackground,
-			ProjectPath,
-			ProjectPathPoint,
-			ProjectScript,
-			ProjectFont,
-			ProjectTimeline,
-			ProjectTimelineMoment,
-			ProjectObject,
-			ProjectEvent,
-			ProjectAction,
-			ProjectActionArg,
-			ProjectRoom,
-			ProjectInstance,
-			ProjectRoomTile,
-			ProjectRoomBackground,
-			ProjectRoomView,
-			ProjectGameInformation,
-			ProjectGlobalGameSettings,
-			ProjectExtensionPackages,
-		];
-
-		ProjectSerializer.classes = {};
-
-		for (var cls of classes) {
-			ProjectSerializer.classes[cls.name] = cls;
+		ProjectSerializer.classes = {
+			"Project": Project,
+			"ProjectSprite": ProjectSprite,
+			"ProjectSound": ProjectSound,
+			"ProjectBackground": ProjectBackground,
+			"ProjectPath": ProjectPath,
+			"ProjectPathPoint": ProjectPathPoint,
+			"ProjectScript": ProjectScript,
+			"ProjectFont": ProjectFont,
+			"ProjectTimeline": ProjectTimeline,
+			"ProjectTimelineMoment": ProjectTimelineMoment,
+			"ProjectObject": ProjectObject,
+			"ProjectEvent": ProjectEvent,
+			"ProjectAction": ProjectAction,
+			"ProjectActionArg": ProjectActionArg,
+			"ProjectRoom": ProjectRoom,
+			"ProjectInstance": ProjectInstance,
+			"ProjectRoomTile": ProjectRoomTile,
+			"ProjectRoomBackground": ProjectRoomBackground,
+			"ProjectRoomView": ProjectRoomView,
+			"ProjectGameInformation": ProjectGameInformation,
+			"ProjectGlobalGameSettings": ProjectGlobalGameSettings,
+			"ProjectExtensionPackages": ProjectExtensionPackages,
 		}
 
 	}
@@ -192,23 +186,23 @@ export default class ProjectSerializer {
 
 		//convert objects into types
 		Project.getTypes().forEach(type => {
-			if (!jsonObject.resources[type.name]) {
-				jsonObject.resources[type.name] = [];
+			if (!jsonObject.resources[type.getClassName()]) {
+				jsonObject.resources[type.getClassName()] = [];
 				return;
 			}
 
-			jsonObject.resources[type.name] = jsonObject.resources[type.name].map(resource => {
+			jsonObject.resources[type.getClassName()] = jsonObject.resources[type.getClassName()].map(resource => {
 
 				delete resource.classname;
 
 				//convert sprites from base64 to blobs
-				if (type.name == "ProjectSprite") {
+				if (type == ProjectSprite) {
 					resource.images = resource.images.map(image => {
 						return new AbstractImage( base64ToBlob(image, 'image/png') );
 					})
 				}
 
-				if (type.name == "ProjectObject") {
+				if (type == ProjectObject) {
 					resource.events = resource.events.map(event => {
 						event.actions = event.actions.map(action => {
 							//convert action ids to action type objects???
@@ -221,7 +215,7 @@ export default class ProjectSerializer {
 					})
 				}
 
-				if (type.name == "ProjectRoom") {
+				if (type == ProjectRoom) {
 					resource.instances = resource.instances.map(instance => {
 						delete instance.classname;
 						return Object.assign(new ProjectInstance(), instance);

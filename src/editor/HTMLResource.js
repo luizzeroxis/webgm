@@ -1,4 +1,5 @@
 import {parent, endparent, add, remove, newElem, newButton, newImage} from '../common/tools.js'
+import {ProjectObject} from '../common/Project.js';
 
 export default class HTMLResource {
 
@@ -33,7 +34,7 @@ export default class HTMLResource {
 				this.htmlName.textContent = i.name;
 			},
 			changeSpriteImages: i => {
-				if (resource.constructor.name == "ProjectObject") {
+				if (resource.constructor == ProjectObject) {
 					if (i.id != resource.sprite_index) return;
 				} else {
 					if (i != this.resource) return;

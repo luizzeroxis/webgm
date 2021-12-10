@@ -66,7 +66,7 @@ export class Game {
 
 		// Add resources names as global variables
 		Project.getTypes().forEach(type => {
-			this.project.resources[type.name].forEach(x => {this.globalVars.set(x.name, x.id)});
+			this.project.resources[type.getClassName()].forEach(x => {this.globalVars.set(x.name, x.id)});
 		})
 
 		// Initialize game vars

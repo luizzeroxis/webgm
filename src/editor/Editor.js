@@ -98,11 +98,11 @@ export default class Editor {
 	createResource (type) {
 
 		var resource = new type();
-		resource.id = this.project.counter[type.name];
-		resource.name = type.getName() + this.project.counter[type.name];
+		resource.id = this.project.counter[type.getClassName()];
+		resource.name = type.getName() + this.project.counter[type.getClassName()];
 
-		this.project.counter[type.name]++;
-		this.project.resources[type.name].push( resource );
+		this.project.counter[type.getClassName()]++;
+		this.project.resources[type.getClassName()].push( resource );
 
 		this.dispatcher.speak('createResource', resource);
 
@@ -113,8 +113,8 @@ export default class Editor {
 	deleteResource (resource) {
 
 		if (confirm('You are about to delete '+resource.name+'. This will be permanent. Continue?')) {
-			var index = this.project.resources[resource.constructor.name].findIndex(x => x == resource);
-			this.project.resources[resource.constructor.name].splice(index, 1);
+			var index = this.project.resources[resource.constructor.getClassName()].findIndex(x => x == resource);
+			this.project.resources[resource.constructor.getClassName()].splice(index, 1);
 
 			this.dispatcher.speak('deleteResource', resource);
 		}
@@ -364,7 +364,7 @@ export default class Editor {
 		Project.getTypes().forEach(type => {
 
 			this.htmlResourceTypes[type.name].textContent = '';
-			this.project.resources[type.name].forEach(resource => {
+			this.project.resources[type.getClassName()].forEach(resource => {
 				this.addResourceToResourcesArea(resource);
 			})
 
@@ -396,17 +396,17 @@ export default class Editor {
 	}
 
 	getResourceIconSrc(resource) {
-		if (resource.constructor.name == "ProjectSprite") {
+		if (resource.constructor == ProjectSprite) {
 			if (resource.images.length > 0) {
 				return resource.images[0].image.src;
 			}
 		} else
-		if (resource.constructor.name == "ProjectBackground") {
+		if (resource.constructor == ProjectBackground) {
 			if (resource.image) {
 				return resource.image.image.src;
 			}
 		} else
-		if (resource.constructor.name == "ProjectObject") {
+		if (resource.constructor == ProjectObject) {
 			if (resource.sprite_index >= 0) {
 				var sprite = this.project.resources.ProjectSprite.find(x => x.id == resource.sprite_index);
 				if (sprite) {
@@ -417,12 +417,12 @@ export default class Editor {
 			}
 		} else {
 			var icons = {
-				"ProjectFont": DefaultProjectFontIcon,
-				"ProjectPath": DefaultProjectPathIcon,
-				"ProjectRoom": DefaultProjectRoomIcon,
-				"ProjectScript": DefaultProjectScriptIcon,
-				"ProjectSound": DefaultProjectSoundIcon,
-				"ProjectTimeline": DefaultProjectTimelineIcon,
+				[ProjectFont.name]: DefaultProjectFontIcon,
+				[ProjectPath.name]: DefaultProjectPathIcon,
+				[ProjectRoom.name]: DefaultProjectRoomIcon,
+				[ProjectScript.name]: DefaultProjectScriptIcon,
+				[ProjectSound.name]: DefaultProjectSoundIcon,
+				[ProjectTimeline.name]: DefaultProjectTimelineIcon,
 			}
 
 			return icons[resource.constructor.name]; //not lol, just sad

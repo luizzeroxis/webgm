@@ -291,7 +291,7 @@ export default class Editor {
 			}
 		})
 
-		this.game.init();
+		this.game.start();
 				
 	}
 

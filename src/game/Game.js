@@ -18,93 +18,80 @@ import {collision2Rectangles} from '../common/tools.js';
 export class Game {
 
 	constructor (project, canvas, input) {
-
-		//Store arguments
 		this.project = project;
 		this.canvas = canvas;
 		this.input = input;
 
-		// Dispatcher
 		this.dispatcher = new Dispatcher();
 
-	}
+		this.ctx = null;
 
-	init() {
-		try {
-			this.initNoCatch();
-		} catch (e) {
-			this.dealWithException(e);
-		}
-	}
+		this.keyDownHandler = null;
+		this.keyUpHandler = null;
 
-	dealWithException(e) {
-		if (e instanceof EngineException) {
-			this.close(e);
-		} else if (e instanceof CompilationException || e instanceof FatalErrorException) {
-			this.close();
-		} else {
-			throw e;
-		}
-	}
+		this.key = {};
+		this.keyPressed = {};
+		this.keyReleased = {};
 
-	initNoCatch() {
+		this.globalVars = null;
+		this.constants = null;
 
-		// Init
-		this.initRender();
-		this.initInput();
+		this.instances = [];
+		this.shouldDestroyInstances = [];
 
-		var promises = [];
-		promises.push(this.loadSprites());
-		// promises.push(this.loadBackgrounds());  // TODO
-		// promises.push(this.loadSounds());  // TODO
+		this.fps = 0;
+		this.fpsFrameCount = 0;
 
-		this.initGML();
-
-		// Other things
-		this.globalVars = new VariableHolder(this, BuiltInGlobals)
-		this.constants = BuiltInConstants.getList();
-
-		// Add resources names as global variables
-		Project.getTypes().forEach(type => {
-			this.project.resources[type.getClassName()].forEach(x => {this.globalVars.set(x.name, x.id)});
-		})
-
-		// Initialize game vars
 		this.drawColor = 0;
 		this.drawAlpha = 1;
 		this.drawFont = -1;
 		this.drawHAlign = 0;
 		this.drawVAlign = 0;
-		this.shouldDestroyInstances = [];
-		this.instances = [];
-		this.fps = 0;
-		this.fpsFrameCount = 0;
 
-		//Load first room
-		this.loadFirstRoom();
+		this.gml = null;
+		this.preparedCodes = new Map();
 
-		//Only start when all async processes finished.
-		this.promise = Promise.all(promises).then(() => {
-			console.log("Loaded.")
-			this.initTimeout();
-		}).catch(e => {
-			this.dealWithException(e);
-		});
+		this.room = null;
+
+		this.timeout = null;
+		this.fpsTimeout = null;
+
+		this.mapEvents = null;
 
 	}
 
-	close(e) {
-		console.log('Closing game.');
+	start() {
 
-		this.closeRender();
-		this.closeInput();
+		try {
+			this.startCanvas();
+			this.startInput();
+			this.startEngine();
 
-		this.closeTimeout();
-
-		this.dispatcher.speak('close', e);
+			this.loadProject()
+			.then(() => {
+				this.loadFirstRoom();
+				this.startMainLoop();
+			})
+			.catch(e => {this.catch(e)});
+		} catch (e) {
+			this.catch(e);
+		}
+		
 	}
 
-	initRender() {
+	end() {
+		// canvas
+		this.canvas.classList.remove("no-cursor");
+
+		// input
+		this.input.removeEventListener('keydown', this.keyDownHandler)
+		this.input.removeEventListener('keyup', this.keyUpHandler)
+
+		// main loop
+		this.endMainLoop();
+	}
+
+	startCanvas() {
 		this.ctx = this.canvas.getContext('2d');
 		this.ctx.imageSmoothingEnabled = false;
 
@@ -113,60 +100,84 @@ export class Game {
 		}
 	}
 
-	closeRender() {
-		this.canvas.classList.remove("no-cursor");
-	}
-
-	initInput() {
-		this.key = {};
-		this.keyPressed = {};
-		this.keyReleased = {};
-
-		this.input.addEventListener('keydown', (e) => {
+	startInput() {
+		this.keyDownHandler = (e) => {
 			this.key[e.which] = true;
 			this.keyPressed[e.which] = true;
 			e.preventDefault();
-		});
-		this.input.addEventListener('keyup', (e) => {
+		}
+		this.input.addEventListener('keydown', this.keyDownHandler);
+
+		this.keyUpHandler = (e) => {
 			this.key[e.which] = false;
 			this.keyReleased[e.which] = true;
 			e.preventDefault();
-		})
+		}
+		this.input.addEventListener('keyup', this.keyUpHandler);
+
+		// TODO mouse
 	}
 
-	closeInput() {
-		// remove event listeners?
+	startEngine() {
+		this.globalVars = new VariableHolder(this, BuiltInGlobals)
+		this.constants = BuiltInConstants.getList();
+
+		// TODO Add user defined constants
+
+		// Add resource names as constants
+		Project.getTypes().forEach(type => {
+			this.project.resources[type.getClassName()].forEach(x => {this.constants[x.name] = x.id});
+		});
+
+	}
+
+	loadProject() {
+		var promises = [
+			this.loadSprites(),
+			this.loadBackgrounds(), // TODO
+			this.loadSounds(), // TODO
+		];
+
+		this.loadGML();
+
+		return Promise.all(promises);
 	}
 
 	loadSprites() {
 		var promises = [];
 		this.project.resources.ProjectSprite.forEach(sprite => {
 			sprite.images.forEach((image, imageNumber) => {
-				promises.push(image.promise.catch(e => {
-					throw new EngineException("Could not load image " + imageNumber.toString() + " in sprite " + sprite.name);
-				}));
+				promises.push(image.promise
+					.catch(e => {
+						throw new EngineException("Could not load image " + imageNumber.toString() + " in sprite " + sprite.name);
+					}));
 			})
 		})
 		return Promise.all(promises);
 	}
 
-	initGML() {
+	loadBackgrounds() {} // TODO
+	loadSounds() {} // TODO
+
+	loadGML() {
 		this.gml = new GML(this);
 
-		this.preparedCodes = new Map();
+		this.loadGMLScripts();
+		this.loadGMLTimelines(); // TODO
+		this.loadGMLObjects();
+	}
 
-		// Prepare script resource GML
+	loadGMLScripts() {
 		this.project.resources.ProjectScript.every(script => {
-
 			return this.prepareGML(script.code, script, matchResult => {
 				this.throwCompilationErrorInScript(script, matchResult.message);
 			});
-
 		})
+	}
 
-		// TODO prepare timeline resource GML
+	loadGMLTimelines() {} // TODO
 
-		// Prepare object resource GML
+	loadGMLObjects() {
 		this.project.resources.ProjectObject.every(object => {
 			return object.events.every(event => {
 				return event.actions.every((action, actionNumber) => {
@@ -182,20 +193,16 @@ export class Game {
 					} else if (action.typeKind == 'normal' && action.typeExecution == 'code') {
 
 						return this.prepareGML(action.args[0].value, action, matchResult => {
-
 							this.throwErrorInObject(object, event, actionNumber,
 								`COMPILATION ERROR in code action:\n` + matchResult.message
 								+ `\n(this was inside the action type in a library)`, true);
-
 						});
 
 					}
-
 					return true;
 				})
 			})
 		})
-
 	}
 
 	prepareGML(gml, mapKey, failureFunction) {
@@ -210,28 +217,26 @@ export class Game {
 		}
 	}
 
-	throwCompilationErrorInScript(script, message) {
-		// TODO make the message more like the one from GM
-		this.showErrorBox(`
-___________________________________________
-COMPILATION ERROR in Script: ` + script.name + `
+	///// START ERROR THROWING
 
-` + message + `
-`);
+	throwCompilationErrorInScript(script, message) {
+		// TODO put all info in the exception itself, then show error on catch
+		// TODO make the message more like the one from GM
+
+		this.showErrorBox(`\n___________________________________________\n`
+			+ `COMPILATION ERROR in Script: ` + script.name + `\n\n` + message + `\n`);
 
 		throw new CompilationException();
 	}
 
 	throwErrorInObject(object, event, actionNumber, message, isFatal=false) {
-		this.showErrorBox(`
-___________________________________________
-` + (isFatal ? "FATAL " : "") + `ERROR in
-action number ` + actionNumber.toString() + `
-of ` + Events.getEventName(event) + ` Event
-for object ` + object.name + `:
+		// TODO put all info in the exception itself, then show error on catch
 
-` + message + `
-`)
+		this.showErrorBox(`\n___________________________________________\n`
+			+ (isFatal ? "FATAL " : "") + `ERROR in\n`
+			+ `action number ` + actionNumber.toString() + `\n`
+			+ `of ` + Events.getEventName(event) + ` Event\n`
+			+ `for object ` + object.name + `:\n\n` + message + `\n`);
 
 		if (isFatal) {
 			throw new FatalErrorException();
@@ -267,289 +272,26 @@ for object ` + object.name + `:
 			}
 		}
 
-		this.throwErrorInCurrent(
-`Error in code at line ` + lineNumber + `:
-` + gmlLine + `
-` + arrowString + `
-at position ` + position + `: ` + message + `
-`, isFatal);
+		this.throwErrorInCurrent(`Error in code at line ` + lineNumber + `:\n`
+			+ gmlLine + `\n` + arrowString + `\n`
+			+ `at position ` + position + `: ` + message + `\n`, isFatal);
 
 	}
+
+	showErrorBox(message) {
+		this.endMainLoop();
+		alert(message);
+		this.startMainLoop();
+	}
+
+
+	///// END ERROR THROWING
 
 	loadFirstRoom() {
 		this.room = this.project.resources.ProjectRoom[0];
 		this.loadRoom(this.room);
 	}
 
-	closeTimeout() {
-		clearTimeout(this.timeout);
-		this.timeout = null;
-
-		clearInterval(this.fpsTimeout);
-		this.fpsTimeout = null;
-	}
-
-	initTimeout() {
-		if (this.timeout == null) {
-			this.timeout = setTimeout(() => this.mainLoop(), 0);
-		}
-
-		if (this.fpsTimeout == null) {
-			this.fpsTimeout = setInterval(() => this.updateFps(), 1000);
-		}
-	}
-
-	gameEnd () {
-		console.log('Stopping game.')
-
-		this.closeTimeout();
-		this.canvas.classList.remove("no-cursor");
-
-		this.dispatcher.speak('gameEnd');
-	}
-
-	drawViews() {
-		// Currently there are no views. But the following should happen for every view.
-
-		// Draw background color
-		this.ctx.fillStyle = this.room.backgroundColor;
-		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-		// this.ctx.fillStyle = "black";
-
-		// TODO Draw background images
-		// TODO Draw tiles
-
-		// Draw instances
-
-		var instances_by_depth = [...this.instances].sort(
-			(a, b) => a.vars.get('depth') - b.vars.get('depth')
-		);
-
-		instances_by_depth.forEach(instance => {
-			var object = this.getResourceById('ProjectObject', instance.object_index);
-
-			// Only draw if visible
-			if (instance.vars.get('visible')) {
-				var drawEvent = object.events.find(x => x.type == 'draw');
-
-				if (drawEvent) {
-					this.doEvent(drawEvent, instance);
-				} else {
-					// No draw event, draw sprite if it has one.
-					var index = instance.vars.get('sprite_index');
-					if (index >= 0) {
-						var sprite = this.getResourceById('ProjectSprite', index);
-						if (sprite) {
-							var image = sprite.images[instance.vars.get('image_index')];
-							if (image) {
-								this.ctx.save();
-								this.ctx.translate(-sprite.originx, -sprite.originy);
-								this.ctx.drawImage(image.image, instance.vars.get('x'), instance.vars.get('y'));
-								this.ctx.restore();
-							} else {
-								// no image index
-							}
-						} else {
-							// no sprite indexs
-						}
-					}
-				}
-			}
-
-		});
-	}
-
-	getEventsOfTypeAndSubtype(type, subtype) {
-		var subtypes = this.mapEvents.get(type);
-		if (!subtypes) return [];
-		var list = subtypes.get(subtype);
-		if (!list) return [];
-		return list;
-	}
-
-	getEventsOfType(type) {
-		var subtypes = this.mapEvents.get(type);
-		if (!subtypes) return [];
-		return [...subtypes.entries()];
-	}
-
-	mainLoop () {
-
-		this.timeoutStepStart = performance.now() / 1000;
-		++this.fpsFrameCount;
-
-		/*
-			Begin step events 
-			Alarm events 
-			Keyboard, Key press, and Key release events 
-			Mouse events 
-			Normal step events 
-			(now all instances are set to their new positions) 
-			Collision events 
-			End step events 
-			Draw events // LIE!!!!!!!!1111111
-		*/
-
-		// Get all events
-		this.mapEvents = this.getMapOfEvents();
-
-		// Draw
-		this.drawViews();
-
-		// Do some stuff
-		this.globalVars.setForce('fps', this.fps);
-
-		// Begin step
-		this.getEventsOfTypeAndSubtype('step', 'begin').every(({event, instance}) => {
-			return this.doEvent(event, instance);
-		});
-
-		// Alarm
-		this.getEventsOfType('alarm').every(([subtype, list]) => {
-			return list.every(({event, instance}) => {
-
-				// Update alarm (decrease by one) here, before running event
-				// Alarm stays 0 until next alarm check, where it becomes -1 forever
-
-				if (instance.vars.get('alarm', [subtype]) >= 0) {
-					instance.vars.setAdd('alarm', -1, [subtype]);
-				}
-
-				if (instance.vars.get('alarm', [subtype]) == 0) {
-					return this.doEvent(event, instance);
-				}
-
-			});
-		});
-
-		// Keyboard
-		this.getEventsOfType('keyboard').every(([subtype, list]) => {
-			return list.every(({event, instance}) => {
-				if (this.key[subtype]) {
-					return this.doEvent(event, instance);
-				}
-			});
-		});
-
-		this.getEventsOfType('keypress').every(([subtype, list]) => {
-			return list.every(({event, instance}) => {
-				if (this.keyPressed[subtype]) {
-					return this.doEvent(event, instance);
-				}
-			});
-		});
-
-		this.getEventsOfType('keyrelease').every(([subtype, list]) => {
-			return list.every(({event, instance}) => {
-				if (this.keyReleased[subtype]) {
-					return this.doEvent(event, instance);
-				}
-			});
-		});
-
-		// Mouse
-		// TODO
-
-		// Step
-		this.getEventsOfTypeAndSubtype('step', 'normal').every(({event, instance}) => {
-			return this.doEvent(event, instance);
-		});
-
-		// Update instance variables and positions
-
-		this.instances.forEach(instance => {
-
-			instance.vars.setAdd('x', Math.cos(instance.vars.get('direction')
-				* this.constants.pi / 180) * instance.vars.get('speed'));
-			instance.vars.setAdd('y', - Math.sin(instance.vars.get('direction')
-				* this.constants.pi / 180) * instance.vars.get('speed'));
-
-			instance.vars.setAdd('speed', - instance.vars.get('friction'));
-
-		});
-
-		// Collisions
-		this.getEventsOfType('collision').every(([subtype, list]) => {
-			return list.every(({event, instance}) => {
-				var others = this.instances.filter(x => x.object_index == subtype);
-				others.every(other => {
-					if (this.checkCollision(instance, other)) {
-						this.doEvent(event, instance, other);
-					}
-				})
-			});
-		});
-
-		// End step
-		this.getEventsOfTypeAndSubtype('step', 'end').every(({event, instance}) => {
-			return this.doEvent(event, instance);
-		});
-
-		// Reset keyboard states
-		this.keyPressed = {};
-		this.keyReleased = {};
-
-		// Delete instances
-		this.shouldDestroyInstances.forEach(x => {
-			this.instanceDestroy(x);
-		})
-		this.shouldDestroyInstances = [];
-
-		// Run main loop again, after a frame of time has passed.
-		// This means the game will slow down if a loop takes too much time.
-
-		this.timeoutStepEnd = performance.now() / 1000;
-		this.timeoutStepTime = this.timeoutStepEnd - this.timeoutStepStart;
-		this.timeoutStepMinTime = 1 / this.globalVars.get('room_speed');
-		this.timeoutWaitTime = Math.max(0, this.timeoutStepMinTime - this.timeoutStepTime);
-		this.timeout = setTimeout(() => this.mainLoop(), this.timeoutWaitTime * 1000);
-
-		this.timeoutTotalStepTime = this.timeoutStepTime + this.timeoutWaitTime;
-
-		// console.log("------");
-		// console.log("StepTime", this.timeoutStepTime);
-		// console.log("StepMinTime", this.timeoutStepMinTime);
-		// console.log("WaitTime", this.timeoutWaitTime);
-		// console.log("TotalStepTime", this.timeoutTotalStepTime);
-		// console.log(1/this.timeoutTotalStepTime, "fps");
-
-	}
-
-	checkCollision(self, other) {
-
-		// TODO masks
-
-		var selfSprite = this.getResourceById('ProjectSprite', self.vars.get('sprite_index'));
-		var selfImage = selfSprite.images[self.vars.get('image_index')];
-
-		var otherSprite = this.getResourceById('ProjectSprite', other.vars.get('sprite_index'));
-		var otherImage = otherSprite.images[other.vars.get('image_index')];
-
-		// TODO collision masks, will assume rectangle now
-		// selfSprite.boundingbox == 'fullimage';
-		// selfSprite.shape = 'rectangle';
-
-		var c = collision2Rectangles({
-			x1: self.vars.get('x') - selfSprite.originx,
-			y1: self.vars.get('y') - selfSprite.originy,
-			x2: self.vars.get('x') - selfSprite.originx + selfImage.image.width,
-			y2: self.vars.get('y') - selfSprite.originy + selfImage.image.height
-		}, {
-			x1: other.vars.get('x') - otherSprite.originx,
-			y1: other.vars.get('y') - otherSprite.originy,
-			x2: other.vars.get('x') - otherSprite.originx + otherImage.image.width,
-			y2: other.vars.get('y') - otherSprite.originy + otherImage.image.height
-		})
-
-		return c;
-
-	}
-
-	updateFps() {
-		this.fps = this.fpsFrameCount;
-		this.fpsFrameCount = 0;
-	}
- 
 	loadRoom(room) {
 
 		//Empty room
@@ -564,24 +306,33 @@ at position ` + position + `: ` + message + `
 		this.globalVars.setForce('room_height', room.height);
 		this.globalVars.setForce('room_speed', room.speed);
 
-		var insts = room.instances;
-		for (var i = 0; i < insts.length; i++) {
-			this.instanceCreate(insts[i].x, insts[i].y, insts[i].object_index);
-		}
+		room.instances.forEach(roomInstance => {
+			this.instanceCreate(roomInstance.x, roomInstance.y, roomInstance.object_index);
+		})
 
 	}
 
-	getApplyToInstances(appliesTo) {
-		// -1 = self, -2 = other, 0>= = object index
-		switch (appliesTo) {
-			case -1:
-				return [this.currentInstance];
-			case -2:
-				return [this.currentOther];
-			default:
-				return this.instances.filter(x => x.object_index == appliesTo);
+	instanceCreate (x, y, object) {
+		var instance = new Instance(x, y, object, this);
+		this.instances.push(instance);
+
+		var obj = this.getResourceById('ProjectObject', instance.object_index) /////////////////////////////////////////
+
+		// TODO: This seems too simple, please compilicate it
+		var create = obj.events.find((x) => x.type == 'create');
+		if (create) {
+			this.doEvent(create, instance); /////////////////////////////////////////
 		}
+
+		// TODO set id?
+		return instance.vars.get('id');
 	}
+
+	getResourceById(type, id) {
+		return this.project.resources[type].find(x => x.id == id);
+	}
+
+	//
 
 	doEvent(event, instance, other=null) {
 		this.currentEvent = event;
@@ -676,6 +427,18 @@ at position ` + position + `: ` + message + `
 		}
 	}
 
+	getApplyToInstances(appliesTo) {
+		// -1 = self, -2 = other, 0>= = object index
+		switch (appliesTo) {
+			case -1:
+				return [this.currentInstance];
+			case -2:
+				return [this.currentOther];
+			default:
+				return this.instances.filter(x => x.object_index == appliesTo);
+		}
+	}
+
 	parseActionArg(arg) {
 		if (arg.kind == 'both') {
 			if (arg.value[0] != `'` && arg.value[0] != `"`) {
@@ -688,41 +451,180 @@ at position ` + position + `: ` + message + `
 		return arg.value;
 	}
 
-	showErrorBox(message) {
-		this.closeTimeout();
-		alert(message);
-		this.initTimeout();
-	}
+	//
 
-	instanceCreate (x, y, object) {
-
-		// Adds instance into room.
-
-		var instance = new Instance(x, y, object, this);
-		this.instances.push(instance);
-
-		var obj = this.getResourceById('ProjectObject', instance.object_index)
-		var create = obj.events.find((x) => x.type == 'create');
-		if (create) {
-			this.doEvent(create, instance);
+	startMainLoop() {
+		if (this.timeout == null) {
+			this.timeout = setTimeout(() => this.mainLoop(), 0);
 		}
 
-		return instance.vars.get('id');
+		if (this.fpsTimeout == null) {
+			this.fpsTimeout = setInterval(() => this.updateFps(), 1000);
+		}
 	}
 
-	instanceDestroy (instance) {
+	endMainLoop() {
+		clearTimeout(this.timeout);
+		this.timeout = null;
 
-		var index = this.instances.findIndex(x => x == instance);
-		this.instances.splice(index, 1);
-
+		clearInterval(this.fpsTimeout);
+		this.fpsTimeout = null;
 	}
 
-	getResourceById(type, id) {
-		return this.project.resources[type].find(x => x.id == id);
+	mainLoop() {
+
+		var timeoutStepStart = performance.now() / 1000;
+		++this.fpsFrameCount;
+
+		/*
+			Begin step events 
+			Alarm events 
+			Keyboard, Key press, and Key release events 
+			Mouse events 
+			Normal step events 
+			(now all instances are set to their new positions) 
+			Collision events 
+			End step events 
+			Draw events // LIE!!!!!!!!1111111
+		*/
+
+				// Get all events
+		this.mapEvents = this.getMapOfEvents();
+
+		// Draw
+		this.drawViews();
+
+		// Do some stuff
+		this.globalVars.setForce('fps', this.fps);
+
+		// Begin step
+		this.getEventsOfTypeAndSubtype('step', 'begin').every(({event, instance}) => {
+			return this.doEvent(event, instance); /////////////////
+		});
+
+		// Alarm
+		this.getEventsOfType('alarm').every(([subtype, list]) => {
+			return list.every(({event, instance}) => {
+
+				// Update alarm (decrease by one) here, before running event
+				// Alarm stays 0 until next alarm check, where it becomes -1 forever
+
+				if (instance.vars.get('alarm', [subtype]) >= 0) {
+					instance.vars.setAdd('alarm', -1, [subtype]);
+				}
+
+				if (instance.vars.get('alarm', [subtype]) == 0) {
+					return this.doEvent(event, instance); //////////////////
+				}
+
+			});
+		});
+
+		// Keyboard
+		this.getEventsOfType('keyboard').every(([subtype, list]) => {
+			return list.every(({event, instance}) => {
+				if (this.key[subtype]) {
+					return this.doEvent(event, instance);
+				}
+			});
+		});
+
+		this.getEventsOfType('keypress').every(([subtype, list]) => {
+			return list.every(({event, instance}) => {
+				if (this.keyPressed[subtype]) {
+					return this.doEvent(event, instance);
+				}
+			});
+		});
+
+		this.getEventsOfType('keyrelease').every(([subtype, list]) => {
+			return list.every(({event, instance}) => {
+				if (this.keyReleased[subtype]) {
+					return this.doEvent(event, instance);
+				}
+			});
+		});
+
+		// Mouse
+		// TODO
+
+		// Step
+		this.getEventsOfTypeAndSubtype('step', 'normal').every(({event, instance}) => {
+			return this.doEvent(event, instance);
+		});
+
+		// Update instance variables and positions
+
+		this.instances.forEach(instance => {
+
+			instance.vars.set('xprevious', instance.vars.get('x'));
+			instance.vars.set('yprevious', instance.vars.get('y'));
+
+			instance.vars.setAdd('x', instance.vars.get('hspeed'));
+			instance.vars.setAdd('y', instance.vars.get('vspeed'));
+
+			instance.vars.setAdd('speed', - instance.vars.get('friction'));
+
+			// gravity
+			instance.vars.setAdd('hspeed', Math.cos(instance.vars.get('gravity_direction')) * instance.vars.get('gravity'));
+			instance.vars.setAdd('vspeed', Math.sin(instance.vars.get('gravity_direction')) * instance.vars.get('gravity'));
+
+			// TODO paths??
+
+		});
+
+		// Collisions
+		this.getEventsOfType('collision').every(([subtype, list]) => {
+			return list.every(({event, instance}) => {
+				var others = this.instances.filter(x => x.object_index == subtype);
+				others.every(other => {
+					if (this.checkCollision(instance, other)) {
+						this.doEvent(event, instance, other);
+					}
+				})
+			});
+		});
+
+		// End step
+		this.getEventsOfTypeAndSubtype('step', 'end').every(({event, instance}) => {
+			return this.doEvent(event, instance);
+		});
+
+		// Reset keyboard states
+		this.keyPressed = {};
+		this.keyReleased = {};
+
+		// Delete instances
+		this.shouldDestroyInstances.forEach(x => {
+			this.instanceDestroy(x);
+		})
+		this.shouldDestroyInstances = [];
+
+		// Run main loop again, after a frame of time has passed.
+		// This means the game will slow down if a loop takes too much time.
+
+		var timeoutStepEnd = performance.now() / 1000;
+		var timeoutStepTime = timeoutStepEnd - timeoutStepStart;
+		var timeoutStepMinTime = 1 / this.globalVars.get('room_speed');
+		var timeoutWaitTime = Math.max(0, timeoutStepMinTime - timeoutStepTime);
+
+		this.timeout = setTimeout(() => this.mainLoop(), timeoutWaitTime * 1000);
+
+		// var timeoutTotalStepTime = timeoutStepTime + timeoutWaitTime;
+		// console.log("------");
+		// console.log("StepTime", timeoutStepTime);
+		// console.log("StepMinTime", timeoutStepMinTime);
+		// console.log("WaitTime", timeoutWaitTime);
+		// console.log("TotalStepTime", timeoutTotalStepTime);
+		// console.log(1/timeoutTotalStepTime, "fps");
+	}
+
+	updateFps() {
+		this.fps = this.fpsFrameCount;
+		this.fpsFrameCount = 0;
 	}
 
 	getMapOfEvents() {
-
 		var map = new Map();
 
 		this.instances.forEach(instance => {
@@ -748,6 +650,130 @@ at position ` + position + `: ` + message + `
 		})
 
 		return map;
+	}
+
+	drawViews() {
+		// Currently there are no views. But the following should happen for every view.
+
+		// Draw background color
+		this.ctx.fillStyle = this.room.backgroundColor;
+		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		// this.ctx.fillStyle = "black";
+
+		// TODO Draw background images
+		// TODO Draw tiles
+
+		// Draw instances
+
+		var instances_by_depth = [...this.instances].sort(
+			(a, b) => a.vars.get('depth') - b.vars.get('depth')
+		);
+
+		instances_by_depth.forEach(instance => {
+			var object = this.getResourceById('ProjectObject', instance.object_index);
+
+			// Only draw if visible
+			if (instance.vars.get('visible')) {
+				var drawEvent = object.events.find(x => x.type == 'draw');
+
+				if (drawEvent) {
+					this.doEvent(drawEvent, instance); ////////////////////
+				} else {
+					// No draw event, draw sprite if it has one.
+					var index = instance.vars.get('sprite_index');
+					if (index >= 0) {
+						var sprite = this.getResourceById('ProjectSprite', index);
+						if (sprite) {
+							var image = sprite.images[instance.vars.get('image_index')];
+							if (image) {
+								this.ctx.save();
+								this.ctx.translate(-sprite.originx, -sprite.originy);
+								this.ctx.drawImage(image.image, instance.vars.get('x'), instance.vars.get('y'));
+								this.ctx.restore();
+							} else {
+								// no image index
+							}
+						} else {
+							// no sprite indexs
+						}
+					}
+				}
+			}
+
+		});
+	}
+
+	getEventsOfTypeAndSubtype(type, subtype) {
+		var subtypes = this.mapEvents.get(type);
+		if (!subtypes) return [];
+		var list = subtypes.get(subtype);
+		if (!list) return [];
+		return list;
+	}
+
+	getEventsOfType(type) {
+		var subtypes = this.mapEvents.get(type);
+		if (!subtypes) return [];
+		return [...subtypes.entries()];
+	}
+
+	checkCollision(self, other) {
+
+		// TODO masks
+
+		var selfSprite = this.getResourceById('ProjectSprite', self.vars.get('sprite_index'));
+		var selfImage = selfSprite.images[self.vars.get('image_index')];
+
+		var otherSprite = this.getResourceById('ProjectSprite', other.vars.get('sprite_index'));
+		var otherImage = otherSprite.images[other.vars.get('image_index')];
+
+		// TODO collision masks, will assume rectangle now
+		// selfSprite.boundingbox == 'fullimage';
+		// selfSprite.shape = 'rectangle';
+
+		var c = collision2Rectangles({
+			x1: self.vars.get('x') - selfSprite.originx,
+			y1: self.vars.get('y') - selfSprite.originy,
+			x2: self.vars.get('x') - selfSprite.originx + selfImage.image.width,
+			y2: self.vars.get('y') - selfSprite.originy + selfImage.image.height
+		}, {
+			x1: other.vars.get('x') - otherSprite.originx,
+			y1: other.vars.get('y') - otherSprite.originy,
+			x2: other.vars.get('x') - otherSprite.originx + otherImage.image.width,
+			y2: other.vars.get('y') - otherSprite.originy + otherImage.image.height
+		})
+
+		return c;
+
+	}
+
+	instanceDestroy (instance) {
+		var index = this.instances.findIndex(x => x == instance);
+		this.instances.splice(index, 1);
+	}
+
+	catch(e) {
+		if (e instanceof EngineException) {
+			this.close(e);
+		} else if (e instanceof CompilationException || e instanceof FatalErrorException) {
+			this.close();
+		} else {
+			throw e;
+		}
+	}
+
+	close(e) {
+		console.log('Closing game.');
+		this.end();
+
+		this.dispatcher.speak('close', e);
+	}
+
+	gameEnd () {
+		console.log('Stopping game.')
+		this.end();
+
+		this.dispatcher.speak('gameEnd');
 	}
 
 }
@@ -779,6 +805,12 @@ export class Instance {
 		// Set by constructor
 		this.vars.setForce('x', x);
 		this.vars.setForce('y', y);
+
+		//
+		this.vars.setForce('xprevious', x);
+		this.vars.setForce('yprevious', y);
+		this.vars.setForce('xstart', x);
+		this.vars.setForce('ystart', y);
 
 	}
 

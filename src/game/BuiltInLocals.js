@@ -71,15 +71,35 @@ export default class BuiltInLocals {
 
 	// Game Graphics / Sprites and Images
 
-	static visible = {}
+	static visible = {default: 1}
 
-	static sprite_index = {default: -1}
+	static sprite_index = {default: -1, set (sprite_index) {
+		var sprite = this.game.getResourceById('ProjectSprite', sprite_index);
+
+		if (sprite) {
+			var image = sprite.images[this.vars.get('image_index')];
+
+			if (image) {
+				this.vars.setForce('sprite_width', image.image.width);
+				this.vars.setForce('sprite_height', image.image.height);
+			} else {
+				// no image index
+			}
+			this.vars.setForce('sprite_xoffset', sprite.originx);
+			this.vars.setForce('sprite_yoffset', sprite.originy);
+			this.vars.setForce('image_number', sprite.images.length);
+			
+		} else {
+			// no sprite indexs
+		}
+
+	}}
 	static sprite_width = {default: 0, readOnly: true}
 	static sprite_height = {default: 0, readOnly: true}
-	static sprite_xoffset = {default: 0}
-	static sprite_yoffset = {default: 0}
+	static sprite_xoffset = {default: 0, readOnly: true}
+	static sprite_yoffset = {default: 0, readOnly: true}
 	
-	static image_number = {default: 0}
+	static image_number = {default: 0, readOnly: true}
 	static image_index = {default: 0}
 	static image_speed = {default: 1}
 
@@ -91,13 +111,16 @@ export default class BuiltInLocals {
 	static image_alpha = {default: 1}
 	static image_blend = {default: 16777215}
 
-	static bbox_left = {default: -100000}
-	static bbox_right = {default: -100000}
-	static bbox_top = {default: -100000}
-	static bbox_bottom = {default: -100000}
+	static bbox_left = {default: -100000, readOnly: true}
+	static bbox_right = {default: -100000, readOnly: true}
+	static bbox_top = {default: -100000, readOnly: true}
+	static bbox_bottom = {default: -100000, readOnly: true}
 
 	// Unknown
 	
-	static image_single = {default: -1}
+	static image_single = {default: -1, set(image_single) {
+		this.vars.set('image_number', image_single);
+		this.vars.set('image_speed', 0);
+	}}
 
 }

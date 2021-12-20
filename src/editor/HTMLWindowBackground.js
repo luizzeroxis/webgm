@@ -1,6 +1,6 @@
 import HTMLWindow from './HTMLWindow.js';
 
-import {parent, endparent, add, newElem, newButton, newTextBox, newImage} from '../common/tools.js'
+import {$, parent, endparent, add, newElem, newButton, newTextBox, newImage} from '../common/H.js'
 
 import VirtualFileSystem from '../common/VirtualFileSystem.js'
 import AbstractImage from '../common/AbstractImage.js'
@@ -21,7 +21,7 @@ export default class HTMLWindowBackground extends HTMLWindow {
 					var paramName = background.name;
 					var paramImage = background.image;
 
-					var inputName = add( newTextBox(null, 'Name:', paramName) ).$('input');
+					var inputName = $( add( newTextBox(null, 'Name:', paramName) ), 'input');
 
 					add( newButton(null, 'Load Background', () => {
 

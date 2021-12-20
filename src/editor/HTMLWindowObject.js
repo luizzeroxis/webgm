@@ -1,6 +1,6 @@
 import HTMLWindow from './HTMLWindow.js';
 
-import {parent, endparent, add, remove, html, newElem, newButton,newTextBox, newNumberBox, newCheckBox, newSelect} from '../common/tools.js'
+import {$, parent, endparent, add, remove, html, newElem, newButton,newTextBox, newNumberBox, newCheckBox, newSelect} from '../common/H.js'
 
 import {ProjectEvent, ProjectAction, ProjectActionArg} from '../common/Project.js';
 import Events from '../common/Events.js';
@@ -50,15 +50,15 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 				parent( add( newElem(null, 'div') ) ) // Main area
 
-					var inputName = add( newTextBox(null, 'Name:', object.name) ).$('input');
+					var inputName = $( add( newTextBox(null, 'Name:', object.name) ), 'input');
 
-					var selectSprite = this.makeResourceSelect(null, 'Sprite:', 'ProjectSprite').$('select');
+					var selectSprite = $( this.makeResourceSelect(null, 'Sprite:', 'ProjectSprite'), 'select');
 					selectSprite.value = object.sprite_index;
 
-					var inputVisible = add( newCheckBox(null, 'Visible', object.visible) ).$('input');
-					var inputSolid = add( newCheckBox(null, 'Solid', object.solid) ).$('input');
-					var inputDepth = add( newNumberBox(null, 'Depth:', object.depth, 1) ).$('input');
-					var inputPersistent = add( newCheckBox(null, 'Persistent', object.persistent) ).$('input');
+					var inputVisible = $( add( newCheckBox(null, 'Visible', object.visible) ), 'input');
+					var inputSolid = $( add( newCheckBox(null, 'Solid', object.solid) ), 'input');
+					var inputDepth = $( add( newNumberBox(null, 'Depth:', object.depth, 1) ), 'input');
+					var inputPersistent = $( add( newCheckBox(null, 'Persistent', object.persistent) ), 'input');
 
 					endparent()
 
@@ -66,7 +66,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 					// // Events
 
-					this.selectEvents = add( newSelect('events', 'Events:') ).$('select');
+					this.selectEvents = $( add( newSelect('events', 'Events:') ), 'select');
 					this.selectEvents.size = 2;
 
 					// Update actions select when changing events
@@ -77,7 +77,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 					// // Add event
 
-					this.selectEventType = add( newSelect(null, 'Event type:', Events.listEventTypes) ).$('select');
+					this.selectEventType = $( add( newSelect(null, 'Event type:', Events.listEventTypes) ), 'select');
 
 					// Update event subtype div when changing type
 					this.selectEventType.onchange = () => this.updateDivEventSubtype();
@@ -137,7 +137,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 					// // Actions
 
-					this.selectActions = add( newSelect('actions', 'Actions:') ).$('select');
+					this.selectActions = $( add( newSelect('actions', 'Actions:') ), 'select');
 					this.selectActions.size = 2;
 
 					this.selectActions.onchange = () => this.updateActionsMenu();
@@ -360,33 +360,33 @@ export default class HTMLWindowObject extends HTMLWindow {
 			this.subtypeElement = null;
 
 			if (eventType == 'step') {
-				this.subtypeElement = add( newSelect(null, 'Step:',
+				this.subtypeElement = $( add( newSelect(null, 'Step:',
 					Object.keys(Events.listStepSubtypes).map(x => ({value: x, name: Events.listStepSubtypes[x]}))
-				)).$('select');
+				)), 'select');
 			} else
 
 			if (eventType == 'alarm') {
-				this.subtypeElement = add( newNumberBox(null, 'Alarm:', 0, 1, 0, 11) ).$('input');
+				this.subtypeElement = $( add( newNumberBox(null, 'Alarm:', 0, 1, 0, 11) ), 'input');
 			} else
 
 			if (eventType == 'keyboard' || eventType == 'keypress' || eventType == 'keyrelease') {
-				this.subtypeElement = add( newNumberBox(null, 'Key:', 0, 1, 0) ).$('input');
+				this.subtypeElement = $( add( newNumberBox(null, 'Key:', 0, 1, 0) ), 'input');
 			} else
 
 			if (eventType == 'mouse') {
-				this.subtypeElement = add( newSelect(null, 'Mouse:',
+				this.subtypeElement = $( add( newSelect(null, 'Mouse:',
 					Object.keys(Events.listMouseSubtypes).map(x => ({value: x, name: Events.listMouseSubtypes[x]}))
-				)).$('select');
+				)), 'select');
 			} else
 
 			if (eventType == 'collision') {
-				this.subtypeElement = add( this.makeResourceSelect(null, 'Object:', 'ProjectObject', true) ).$('select');
+				this.subtypeElement = $( add( this.makeResourceSelect(null, 'Object:', 'ProjectObject', true) ), 'select');
 			} else
 
 			if (eventType == 'other') {
-				this.subtypeElement = add( newSelect(null, 'Other:',
+				this.subtypeElement = $( add( newSelect(null, 'Other:',
 					Object.keys(Events.listOtherSubtypes).map(x => ({value: x, name: Events.listOtherSubtypes[x]}))
-				)).$('select');
+				)), 'select');
 			}
 
 			endparent()

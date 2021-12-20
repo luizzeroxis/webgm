@@ -1,6 +1,7 @@
 import HTMLWindow from './HTMLWindow.js';
 
-import {parent, endparent, add, newElem, newTextBox, newCheckBox, newSelect, newColorBox, parseArrowString, stringifyArrowValues, hexColorToDecimalColor} from '../common/tools.js'
+import {$, parent, endparent, add, newElem, newTextBox, newCheckBox, newSelect, newColorBox} from '../common/H.js'
+import {parseArrowString, stringifyArrowValues, hexColorToDecimalColor} from '../common/tools.js'
 
 export default class HTMLWindowAction extends HTMLWindow {
 
@@ -84,7 +85,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 			}
 
 			if (this.actionTypeHasRelative) {
-				this.inputRelative = add( newCheckBox(null, "Relative", action.relative) ).$('input');
+				this.inputRelative = $( add( newCheckBox(null, "Relative", action.relative) ), 'input');
 			}
 
 			this.actionTypeIsQuestion = this.actionType.isQuestion;
@@ -93,7 +94,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 			}
 
 			if (this.actionTypeIsQuestion) {
-				this.inputNot = add( newCheckBox(null, "NOT", action.not) ).$('input');
+				this.inputNot = $( add( newCheckBox(null, "NOT", action.not) ), 'input');
 			}
 
 			this.makeApplyOkButtons(
@@ -109,7 +110,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 	}
 
 	makeTextInterface(name, value) {
-		var input = add( newTextBox(null, name, value) ).$('input');
+		var input = $( add( newTextBox(null, name, value) ), 'input');
 		return {
 			getValue: () => input.value,
 		}
@@ -128,7 +129,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 			for (var y=2; y>=0; --y)
 			for (var x=0; x<=2; ++x) {
 				var i = (3*y)+x;
-				inputs[i] = add( newCheckBox(null, directionNames[i], directions[i]) ).$('input');
+				inputs[i] = $( add( newCheckBox(null, directionNames[i], directions[i]) ), 'input');
 			}
 
 			endparent();
@@ -140,7 +141,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 
 	makeMenuInterface(name, optionNames, value) {
 		var options = optionNames.map((name, value) => ({name, value}));
-		var select = add( newSelect(null, name, options) ).$('select');
+		var select = $( add( newSelect(null, name, options) ), 'select');
 		select.selectedIndex = value;
 		return {
 			getValue: () => parseInt(select.value),
@@ -148,7 +149,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 	}
 
 	makeColorInterface(name, value) {
-		var input = add( newColorBox(null, name, hexColorToDecimalColor(value)) ).$('input');
+		var input = $( add( newColorBox(null, name, hexColorToDecimalColor(value)) ), 'input');
 		return {
 			getValue: () => hexColorToDecimalColor(input.value),
 		}

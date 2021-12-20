@@ -1,4 +1,4 @@
-import {parent, endparent, add, remove, html, newElem, newButton,newSelect} from '../common/tools.js'
+import {$, parent, endparent, add, remove, html, newElem, newButton,newSelect} from '../common/H.js'
 
 export default class HTMLWindow {
 
@@ -27,7 +27,7 @@ export default class HTMLWindow {
 		var e = add( newSelect(classes, labelcontent) );
 
 		var selectOptions = {};
-		var select = parent(e.$('select'))
+		var select = parent($(e, 'select'))
 
 			if (!nonone) {
 				add( html('option', {value: -1}, null, '<none>') );

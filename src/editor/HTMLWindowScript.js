@@ -1,6 +1,6 @@
 import HTMLWindow from './HTMLWindow.js';
 
-import {parent, endparent, add, newElem, newTextBox} from '../common/tools.js'
+import {$, parent, endparent, add, newElem, newTextBox} from '../common/H.js'
 
 export default class HTMLWindowScript extends HTMLWindow {
 	constructor(...args) {
@@ -13,7 +13,7 @@ export default class HTMLWindowScript extends HTMLWindow {
 			parent( add( newElem('grid-resource resource-script', 'div') ) )
 				parent( add( newElem(null, 'div') ) )
 
-					var inputName = add( newTextBox(null, 'Name:', script.name) ).$('input');
+					var inputName = $( add( newTextBox(null, 'Name:', script.name) ), 'input');
 
 					this.textareaCode = add( newElem('code', 'textarea', script.code) )
 

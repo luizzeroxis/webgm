@@ -1,6 +1,6 @@
 import HTMLWindow from './HTMLWindow.js';
 
-import {parent, endparent, add, newElem, newCanvas, newTextBox, newNumberBox, newCheckBox, newRadioBox, newColorBox, uniqueID} from '../common/tools.js'
+import {$, parent, endparent, add, newElem, newCanvas, newTextBox, newNumberBox, newCheckBox, newRadioBox, newColorBox, uniqueID} from '../common/H.js'
 
 import {ProjectInstance} from '../common/Project.js'
 import AbstractImage from '../common/AbstractImage.js'
@@ -24,24 +24,24 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 					// left area
 
-					this.inputSnapX = add( newNumberBox(null, 'Snap X:', 16, 1, 1) ).$('input');
-					this.inputSnapY = add( newNumberBox(null, 'Snap Y:', 16, 1, 1) ).$('input');
-					this.inputShowGrid = add( newCheckBox(null, 'Show grid', true) ).$('input');
+					this.inputSnapX = $( add( newNumberBox(null, 'Snap X:', 16, 1, 1) ), 'input');
+					this.inputSnapY = $( add( newNumberBox(null, 'Snap Y:', 16, 1, 1) ), 'input');
+					this.inputShowGrid = $( add( newCheckBox(null, 'Show grid', true) ), 'input');
 
 					parent( add( newElem(null, 'fieldset') ) )
 
 						add( newElem(null, 'legend', 'Instances') )
 
-						this.selectObject = this.makeResourceSelect(null, 'Object:', 'ProjectObject').$('select');
+						this.selectObject = $( this.makeResourceSelect(null, 'Object:', 'ProjectObject'), 'select');
 
 						var toolGroup = '_radio_'+uniqueID();
-						this.radioAdd = add( newRadioBox(null, 'Add instance', toolGroup, true) ).$('input')
-						this.radioMultiple = add( newRadioBox(null, 'Add multiple instances', toolGroup) ).$('input')
-						this.radioMove = add( newRadioBox(null, 'Move instance', toolGroup) ).$('input')
-						this.radioDelete = add( newRadioBox(null, 'Delete instance', toolGroup) ).$('input')
+						this.radioAdd = $( add( newRadioBox(null, 'Add instance', toolGroup, true) ), 'input')
+						this.radioMultiple = $( add( newRadioBox(null, 'Add multiple instances', toolGroup) ), 'input')
+						this.radioMove = $( add( newRadioBox(null, 'Move instance', toolGroup) ), 'input')
+						this.radioDelete = $( add( newRadioBox(null, 'Delete instance', toolGroup) ), 'input')
 
-						this.inputSnapToGrid = add( newCheckBox(null, 'Snap to grid', true) ).$('input');
-						this.inputDeleteUnderlying = add( newCheckBox(null, 'Delete underlying', false) ).$('input');
+						this.inputSnapToGrid = $( add( newCheckBox(null, 'Snap to grid', true) ), 'input');
+						this.inputDeleteUnderlying = $( add( newCheckBox(null, 'Delete underlying', false) ), 'input');
 
 						endparent()
 
@@ -49,10 +49,10 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 						add( newElem(null, 'legend', 'Settings') )
 
-						this.inputName = add( newTextBox(null, 'Name:', room.name) ).$('input');
-						this.inputWidth = add( newNumberBox(null, 'Width:', room.width, 1, 1) ).$('input');
-						this.inputHeight = add( newNumberBox(null, 'Height:', room.height, 1, 1) ).$('input');
-						this.inputSpeed = add( newNumberBox(null, 'Speed:', room.speed, 1, 1) ).$('input');
+						this.inputName = $( add( newTextBox(null, 'Name:', room.name) ), 'input');
+						this.inputWidth = $( add( newNumberBox(null, 'Width:', room.width, 1, 1) ), 'input');
+						this.inputHeight = $( add( newNumberBox(null, 'Height:', room.height, 1, 1) ), 'input');
+						this.inputSpeed = $( add( newNumberBox(null, 'Speed:', room.speed, 1, 1) ), 'input');
 
 						endparent()
 					
@@ -60,7 +60,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 						add( newElem(null, 'legend', 'Backgrounds') )
 
-						this.inputBackgroundColor = add( newColorBox(null, 'Background color:', room.backgroundColor) ).$('input');
+						this.inputBackgroundColor = $( add( newColorBox(null, 'Background color:', room.backgroundColor) ), 'input');
 
 						endparent()
 

@@ -1,6 +1,6 @@
 import HTMLWindow from './HTMLWindow.js';
 
-import {parent, endparent, add, newCheckBox, newColorBox} from '../common/tools.js'
+import {$, parent, endparent, add, newCheckBox, newColorBox} from '../common/H.js'
 
 export default class HTMLWindowGlobalGameSettings extends HTMLWindow {
 
@@ -13,9 +13,9 @@ export default class HTMLWindowGlobalGameSettings extends HTMLWindow {
 
 		parent(this.htmlClient)
 
-			this.inputColor = add( newColorBox(null, 'Color outside the room region:', globalGameSettings.colorOutsideRoom) ).$('input')
+			this.inputColor = $( add( newColorBox(null, 'Color outside the room region:', globalGameSettings.colorOutsideRoom) ), 'input')
 
-			this.inputDisplayCursor = add( newCheckBox(null, 'Display the cursor', globalGameSettings.displayCursor) ).$('input');
+			this.inputDisplayCursor = $( add( newCheckBox(null, 'Display the cursor', globalGameSettings.displayCursor) ), 'input');
 
 			this.makeApplyOkButtons(
 				() => {

@@ -1,6 +1,6 @@
 import HTMLWindow from './HTMLWindow.js';
 
-import {parent, endparent, add, newElem, newRadioBox, uniqueID} from '../common/tools.js'
+import {$, parent, endparent, add, newElem, newRadioBox, uniqueID} from '../common/H.js'
 
 export default class HTMLWindowCode extends HTMLWindow {
 
@@ -21,14 +21,14 @@ export default class HTMLWindowCode extends HTMLWindow {
 			add( newElem(null, 'div') )
 
 			var appliesToGroup = '_radio_'+uniqueID();
-			this.radioAppliesToSelf = add( newRadioBox(null, 'Self',
-				appliesToGroup, (action.appliesTo == -1)) ).$('input')
-			this.radioAppliesToOther = add( newRadioBox(null, 'Other',
-				appliesToGroup, (action.appliesTo == -2)) ).$('input')
-			this.radioAppliesToObject = add( newRadioBox(null, 'Object:',
-				appliesToGroup, (action.appliesTo >= 0)) ).$('input')
+			this.radioAppliesToSelf = $( add( newRadioBox(null, 'Self',
+				appliesToGroup, (action.appliesTo == -1)) ), 'input')
+			this.radioAppliesToOther = $( add( newRadioBox(null, 'Other',
+				appliesToGroup, (action.appliesTo == -2)) ), 'input')
+			this.radioAppliesToObject = $( add( newRadioBox(null, 'Object:',
+				appliesToGroup, (action.appliesTo >= 0)) ), 'input')
 
-			this.selectObject = this.makeResourceSelect(null, '', 'ProjectObject').$('select');
+			this.selectObject = $( this.makeResourceSelect(null, '', 'ProjectObject'), 'select');
 			if (action.appliesTo >= 0)
 				this.selectObject.value = action.appliesTo;
 

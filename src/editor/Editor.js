@@ -17,8 +17,8 @@ import {
 import Dispatcher from '../common/Dispatcher.js'
 import BuiltInLibraries from '../common/BuiltInLibraries.js'
 
-// import {$, parent, endparent, add, remove, html, text, newElem, newButton, newCanvas, newTextBox, newNumberBox, newCheckBox, newRadioBox, newSelect, newColorBox, newImage} from '../common/tools.js'
-import {$, parent, endparent, add, html, newElem, newButton, newCanvas, newImage, setAttributeExceptNull} from '../common/tools.js'
+
+import {$, parent, endparent, add, html, newElem, newButton, newCanvas, newImage, setAttributeExceptNull} from '../common/H.js'
 
 import VirtualFileSystem from '../common/VirtualFileSystem.js';
 import ProjectSerializer from '../common/ProjectSerializer.js';

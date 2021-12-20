@@ -1,6 +1,6 @@
 import HTMLWindow from './HTMLWindow.js';
 
-import { parent, endparent, add, newElem, newButton, newTextBox, newNumberBox, newImage} from '../common/tools.js'
+import {$, parent, endparent, add, newElem, newButton, newTextBox, newNumberBox, newImage} from '../common/H.js'
 
 import VirtualFileSystem from '../common/VirtualFileSystem.js';
 import AbstractImage from '../common/AbstractImage.js';
@@ -23,7 +23,7 @@ export default class HTMLWindowSprite extends HTMLWindow {
 					var paramOriginX = sprite.originx;
 					var paramOriginY = sprite.originy;
 
-					var inputName = add( newTextBox(null, 'Name:', paramName) ).$('input');
+					var inputName = $( add( newTextBox(null, 'Name:', paramName) ), 'input');
 
 					add( newButton(null, 'Load Sprite', () => {
 
@@ -63,8 +63,8 @@ export default class HTMLWindowSprite extends HTMLWindow {
 
 						add( newElem(null, 'legend', 'Origin') )
 
-						var inputOriginX = add( newNumberBox(null, 'X:', paramOriginX, 1, 0) ).$('input');
-						var inputOriginY = add( newNumberBox(null, 'Y:', paramOriginY, 1, 0) ).$('input');
+						var inputOriginX = $( add( newNumberBox(null, 'X:', paramOriginX, 1, 0) ), 'input');
+						var inputOriginY = $( add( newNumberBox(null, 'Y:', paramOriginY, 1, 0) ), 'input');
 
 						endparent()
 

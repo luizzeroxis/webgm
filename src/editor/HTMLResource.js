@@ -1,4 +1,4 @@
-import {parent, endparent, add, remove, newElem, newButton, newImage} from '../common/tools.js'
+import {parent, endparent, add, remove, newElem, newButton, newImage} from '../common/H.js'
 import {ProjectObject} from '../common/Project.js';
 
 export default class HTMLResource {

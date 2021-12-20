@@ -1,6 +1,6 @@
 import HTMLWindow from './HTMLWindow.js';
 
-import {parent, endparent, add, newElem, newTextBox, newNumberBox, newCheckBox} from '../common/tools.js'
+import {$, parent, endparent, add, newElem, newTextBox, newNumberBox, newCheckBox} from '../common/H.js'
 
 export default class HTMLWindowFont extends HTMLWindow {
 
@@ -15,11 +15,11 @@ export default class HTMLWindowFont extends HTMLWindow {
 			parent( add( newElem('grid-resource resource-font', 'div') ) )
 				parent( add( newElem(null, 'div') ) )
 
-					this.inputName = add( newTextBox(null, 'Name:', font.name) ).$('input');
-					this.inputFont = add( newTextBox(null, 'Font:', font.font) ).$('input');
-					this.inputSize = add( newNumberBox(null, 'Size', font.size, 1, 1) ).$('input');
-					this.inputBold = add( newCheckBox(null, 'Bold', font.bold) ).$('input');
-					this.inputItalic = add( newCheckBox(null, 'Italic', font.italic) ).$('input');
+					this.inputName = $( add( newTextBox(null, 'Name:', font.name) ), 'input');
+					this.inputFont = $( add( newTextBox(null, 'Font:', font.font) ), 'input');
+					this.inputSize = $( add( newNumberBox(null, 'Size', font.size, 1, 1) ), 'input');
+					this.inputBold = $( add( newCheckBox(null, 'Bold', font.bold) ), 'input');
+					this.inputItalic = $( add( newCheckBox(null, 'Italic', font.italic) ), 'input');
 
 					this.divPreview = add( newElem('preview', 'div', 'AaBbCcDd') );
 					this.inputFont.oninput = () => this.updatePreview();

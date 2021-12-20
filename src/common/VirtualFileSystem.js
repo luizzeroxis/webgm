@@ -1,4 +1,4 @@
-import {newElem} from './tools.js';
+import {newElem} from './H.js';
 
 export default class VirtualFileSystem {
 

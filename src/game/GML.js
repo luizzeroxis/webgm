@@ -330,13 +330,8 @@ export default class GML {
 
 	varGet(varInfo, node) {
 
-		if (this.vars.exists(varInfo.name)) {
-			var value = this.vars.get(varInfo.name, varInfo.indexes);
-			if (value != null)
-				return value;
-			else
-				this.game.throwErrorInGMLNode("Unknown variable " + varInfo.name, node);
-		}
+		if (this.vars.exists(varInfo.name))
+			return this.vars.get(varInfo.name, varInfo.indexes);
 		if (this.currentInstance.vars.exists(varInfo.name))
 			return this.currentInstance.vars.get(varInfo.name, varInfo.indexes);
 		if (this.game.globalVars.exists(varInfo.name))
@@ -447,7 +442,12 @@ export default class GML {
 			this.currentInstance = instance;
 			return func.call(this, args, relative);
 		} else {
-			this.game.throwErrorInCurrent('No such function called "'+name+'".');
+			throw this.game.makeNonFatalError({
+					type: 'unknown_function_or_script',
+					functionOrScriptName: name,
+				},
+				'Unknown function or script: '+name
+			);
 		}
 	}
 

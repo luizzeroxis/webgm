@@ -262,19 +262,26 @@ export default class BuiltInFunctions {
 		if (spriteIndex >= 0) {
 			var sprite = this.game.project.resources.ProjectSprite.find(x => x.id == spriteIndex)
 			if (sprite) {
-				if (sprite.images[subimg]) {
+				var _subimg = subimg % sprite.images.length;
+				if (sprite.images[_subimg]) {
 					this.game.ctx.save();
 					this.game.ctx.translate(-sprite.originx, -sprite.originy);
-					this.game.ctx.drawImage(sprite.images[subimg].image, x, y);
+					this.game.ctx.drawImage(sprite.images[_subimg].image, x, y);
 					this.game.ctx.restore();
 				} else {
-					throw 'No subimage with index '+subimg+' on sprite '+sprite.name;
+					// Do nothing
 				}
 			} else {
-				throw 'No sprite with index '+spriteIndex;
+				throw this.game.makeNonFatalError({
+					type: 'trying_to_draw_non_existing_sprite',
+					spriteIndex: spriteIndex,
+				}, `Trying to draw non-existing sprite. (` + spriteIndex.toString() +`)`);
 			}
 		} else {
-			throw spriteIndex+' cannot be less than 0';
+			throw this.game.makeNonFatalError({
+				type: 'trying_to_draw_non_existing_sprite',
+				spriteIndex: spriteIndex,
+			}, `Trying to draw non-existing sprite. (` + spriteIndex.toString() +`)`);
 		}
 
 		return 0;

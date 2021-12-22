@@ -1,6 +1,6 @@
 import Dispatcher from '../common/Dispatcher.js'
 
-import {EngineException, CompilationException, FatalErrorException, NonFatalErrorException, ExitException} from '../common/Exceptions.js';
+import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException} from '../common/Exceptions.js';
 
 import {Project} from '../common/Project.js';
 
@@ -52,6 +52,11 @@ export class Game {
 		this.preparedCodes = new Map();
 
 		this.room = null;
+
+		this.currentEvent = null;
+		this.currentInstance = null;
+		this.currentOther = null;
+		this.currentActionNumber = null;
 
 		this.timeout = null;
 		this.fpsTimeout = null;
@@ -165,12 +170,24 @@ export class Game {
 		this.loadGMLScripts();
 		this.loadGMLTimelines(); // TODO
 		this.loadGMLObjects();
+		this.loadGMLRooms();
 	}
 
 	loadGMLScripts() {
 		this.project.resources.ProjectScript.every(script => {
 			return this.prepareGML(script.code, script, matchResult => {
-				this.throwCompilationErrorInScript(script, matchResult.message);
+
+				throw new FatalErrorException({
+					type: 'compilation',
+					location: 'script',
+					locationScript: script,
+					matchResult: matchResult,
+					text:
+						`\n___________________________________________\n`
+						+ `COMPILATION ERROR in Script: ` + script.name + `\n\n`
+						+ matchResult.message + `\n`,
+				});
+
 			});
 		})
 	}
@@ -185,23 +202,75 @@ export class Game {
 					if (action.typeKind == 'code') {
 						
 						return this.prepareGML(action.args[0].value, action, matchResult => {
-							this.throwErrorInObject(object, event, actionNumber,
-								`COMPILATION ERROR in code action:\n` + matchResult.message, true);
-							console.log(matchResult);
+
+							throw this.makeFatalError({
+									type: 'compilation',
+									locationIsActionTypeLibrary: false,
+									matchResult: matchResult,
+								},
+								`COMPILATION ERROR in code action:\n` + matchResult.message + `\n`,
+								object, event, actionNumber
+							);
+
 						});
 
 					} else if (action.typeKind == 'normal' && action.typeExecution == 'code') {
 
 						return this.prepareGML(action.args[0].value, action, matchResult => {
-							this.throwErrorInObject(object, event, actionNumber,
-								`COMPILATION ERROR in code action:\n` + matchResult.message
-								+ `\n(this was inside the action type in a library)`, true);
+
+							throw this.makeFatalError({
+									type: 'compilation',
+									locationIsActionTypeLibrary: true,
+									matchResult: matchResult,
+								},
+								`COMPILATION ERROR in code action (this was inside the action type in a library):\n` + matchResult.message + `\n`,
+								object, event, actionNumber
+							);
+
 						});
 
 					}
 					return true;
 				})
 			})
+		})
+	}
+
+	loadGMLRooms() {
+		this.project.resources.ProjectRoom.every(room => {
+
+			if (!room.instances.every(instance => {
+				return this.prepareGML(instance.creationCode, instance, matchResult => {
+
+					throw new FatalErrorException({
+						type: 'compilation',
+						location: 'instanceCreationCode',
+						locationInstance: instance,
+						locationRoom: room,
+						matchResult: matchResult,
+						text:
+							`\n___________________________________________\n`
+							+ `COMPILATION ERROR in creation code for instance ` + instance.id + ` in room ` + room.name + `\n\n`
+							+ matchResult.message + `\n`,
+					});
+
+				});
+			})) return false;
+
+			return this.prepareGML(room.creationCode, room, matchResult => {
+
+				throw new FatalErrorException({
+					type: 'compilation',
+					location: 'roomCreationCode',
+					locationRoom: room,
+					matchResult: matchResult,
+					text:
+						`\n___________________________________________\n`
+						+ `COMPILATION ERROR in creation code of room ` + room.name + `\n\n`
+						+ matchResult.message + `\n`,
+				});
+
+			});
 		})
 	}
 
@@ -219,35 +288,46 @@ export class Game {
 
 	///// START ERROR THROWING
 
-	throwCompilationErrorInScript(script, message) {
-		// TODO put all info in the exception itself, then show error on catch
-		// TODO make the message more like the one from GM
+	// TODO put all info in the exception itself, then show error on catch
+	// TODO make the message more like the one from GM
 
-		this.showErrorBox(`\n___________________________________________\n`
-			+ `COMPILATION ERROR in Script: ` + script.name + `\n\n` + message + `\n`);
-
-		throw new CompilationException();
-	}
-
-	throwErrorInObject(object, event, actionNumber, message, isFatal=false) {
-		// TODO put all info in the exception itself, then show error on catch
-
-		this.showErrorBox(`\n___________________________________________\n`
-			+ (isFatal ? "FATAL " : "") + `ERROR in\n`
-			+ `action number ` + actionNumber.toString() + `\n`
-			+ `of ` + Events.getEventName(event) + ` Event\n`
-			+ `for object ` + object.name + `:\n\n` + message + `\n`);
-
+	makeError(isFatal, ...args) {
 		if (isFatal) {
-			throw new FatalErrorException();
+			return this.makeFatalError(...args);
 		} else {
-			throw new NonFatalErrorException();
+			return this.makeNonFatalError(...args);
 		}
 	}
 
-	throwErrorInCurrent(message, isFatal=false) {
-		var object = this.getResourceById(this.currentInstance.object_index);
-		this.throwErrorInObject(object.name, this.currentEvent, this.currentActionNumber, message, isFatal);
+	makeFatalError(...args) {
+		return new FatalErrorException(this.makeErrorOptions(true, ...args));
+	}
+
+	makeNonFatalError(...args) {
+		return new NonFatalErrorException(this.makeErrorOptions(false, ...args));
+	}
+
+	makeErrorOptions(isFatal, options, extraText, object=null, event=null, actionNumber=null) {
+
+		var _object = object==null ? this.getResourceById('ProjectObject', this.currentInstance.object_index) : object;
+		var _event = event==null ? this.currentEvent : event;
+		var _actionNumber = actionNumber==null ? this.currentActionNumber : actionNumber;
+
+		var base = {text:
+			`\n___________________________________________\n`
+			+ (isFatal ? `FATAL ` : ``) + `ERROR in\n`
+			+ `action number ` + _actionNumber.toString() + `\n`
+			+ `of ` + Events.getEventName(_event) + ` Event\n`
+			+ `for object ` + _object.name + `:\n\n`
+			+ extraText,
+
+			location: 'object',
+			locationActionNumber: _actionNumber,
+			locationEvent: _event,
+			locationObject: _object,
+		};
+
+		return Object.assign(base, options);
 	}
 
 	throwErrorInGMLNode(message, node, isFatal=false) {
@@ -272,10 +352,20 @@ export class Game {
 			}
 		}
 
-		this.throwErrorInCurrent(`Error in code at line ` + lineNumber + `:\n`
+		throw this.makeError(isFatal, {
+				type: 'error_in_code',
+				node: node,
+				subType: message,
+			},
+			`Error in code at line ` + lineNumber + `:\n`
 			+ gmlLine + `\n` + arrowString + `\n`
-			+ `at position ` + position + `: ` + message + `\n`, isFatal);
+			+ `at position ` + position + `: ` + message + `\n`
+		);
 
+	}
+
+	showError(exception) {
+		this.showErrorBox(exception.text);
 	}
 
 	showErrorBox(message) {
@@ -347,6 +437,8 @@ export class Game {
 			} catch (e) {
 				if (e instanceof ExitException) {
 					return false;
+				} if (e instanceof NonFatalErrorException) {
+					this.showError(e);
 				} else {
 					throw e;
 				}
@@ -357,6 +449,7 @@ export class Game {
 	}
 
 	doTreeAction(treeAction) {
+		this.currentActionNumber = treeAction.actionNumber;
 
 		if (treeAction.appliesTo != undefined) {
 			var applyToInstances = this.getApplyToInstances(treeAction.appliesTo);
@@ -755,8 +848,11 @@ export class Game {
 	catch(e) {
 		if (e instanceof EngineException) {
 			this.close(e);
-		} else if (e instanceof CompilationException || e instanceof FatalErrorException) {
+		} else if (e instanceof ProjectErrorException) {
+
+			this.showErrorBox(e);
 			this.close();
+
 		} else {
 			throw e;
 		}

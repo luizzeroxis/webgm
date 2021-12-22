@@ -7,12 +7,19 @@ export class WebGMException extends Error {
 
 // Errors related to webgm itself (editor or runner catches it)
 export class EngineException extends WebGMException {}
-// Errors related to parsing GML
-export class CompilationException  extends WebGMException {}
+
+// Errors in the user project
+export class ProjectErrorException extends WebGMException {
+	constructor(object) {
+		super(JSON.stringify(object)/*, options*/);
+		Object.assign(this, object);
+	}
+}
+
 // Errors in the game that are fatal
-export class FatalErrorException extends WebGMException {}
+export class FatalErrorException extends ProjectErrorException {}
 // Errors in the game that are not fatal
-export class NonFatalErrorException extends WebGMException {}
+export class NonFatalErrorException extends ProjectErrorException {}
 
 // Not errors, used for flow control.
 export class ExitException extends WebGMException {}

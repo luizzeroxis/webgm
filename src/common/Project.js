@@ -241,7 +241,7 @@ export class Project {
 			this.height = 480;
 			this.speed = 30;
 			this.persistent = false;
-			this.creationCode = '';
+			this.creationCode = "";
 
 			this.tiles = []; // ProjectRoomTile
 
@@ -261,9 +261,11 @@ export class Project {
 
 		export class ProjectInstance {
 			constructor(x, y, object_index) {
+				this.id = null;
 				this.x = x;
 				this.y = y;
 				this.object_index = object_index;
+				this.creationCode = "";
 			}
 		}
 

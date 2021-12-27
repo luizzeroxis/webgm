@@ -330,40 +330,6 @@ export class Game {
 		return Object.assign(base, options);
 	}
 
-	throwErrorInGMLNode(message, node, isFatal=false) {
-
-		console.log(node);
-
-		var index = node.source.startIdx;
-		var lines = node.source.sourceString.split('\n');
-		var totalLength = 0;
-
-		for (var i = 0; i < lines.length; ++i) {
-			var lineLength = lines[i].length + 1;
-			totalLength += lineLength;
-			if (totalLength >= index) {
-
-				var lineNumber = i + 1;
-				var gmlLine = lines[i];
-				var position = (index - (totalLength - lineLength)) + 1;
-				var arrowString = " ".repeat(position-1) + "^";
-
-				break;
-			}
-		}
-
-		throw this.makeError(isFatal, {
-				type: 'error_in_code',
-				node: node,
-				subType: message,
-			},
-			`Error in code at line ` + lineNumber + `:\n`
-			+ gmlLine + `\n` + arrowString + `\n`
-			+ `at position ` + position + `: ` + message + `\n`
-		);
-
-	}
-
 	showError(exception) {
 		this.showErrorBox(exception.text);
 	}

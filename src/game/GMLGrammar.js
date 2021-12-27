@@ -1,8 +1,3 @@
-
-// This class contains a single static method that just returns the grammar string.
-// This was done because you cannot load a .ohm file using 'ohm.grammarFromScriptElement',
-// since for some reason it breaks CORS, even though it's a local file.
-
 export default class GMLGrammar {
 	static getText() {
 		return String.raw`

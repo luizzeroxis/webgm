@@ -18,8 +18,6 @@ export default class GML {
 		this.currentInstance = null;
 		this.gameShouldEnd = false;
 
-		//ohm is a global variable created by ohm.js.
-
 		this.grammar = ohm.grammar(GMLGrammar.getText());
 		this.semantics = this.grammar.createSemantics();
 
@@ -38,7 +36,7 @@ export default class GML {
 			If(_0, _conditionExpression, _code, _elseStatement) {
 				var condition = _conditionExpression.interpret();
 				if (typeof condition !== "number") {
-					_this.game.throwErrorInGMLNode('Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpression);
+					throw _this.makeErrorInGMLNode('Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpression);
 				}
 				if (condition >= 0.5) {
 					_code.interpret();
@@ -55,7 +53,7 @@ export default class GML {
 
 					var condition = _conditionExpression.interpret();
 					if (typeof condition !== "number") {
-						_this.game.throwErrorInGMLNode('Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpression);
+						throw _this.makeErrorInGMLNode('Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpression);
 					}
 
 					if (!(condition >= 0.5)) break;
@@ -91,7 +89,7 @@ export default class GML {
 				var name = _name.sourceString;
 				var args = _args.asIteration().interpret();
 
-				var script = _this.game.project.resources['ProjectScript'].find(x => x.name == name);
+				var script = _this.game.project.resources.ProjectScript.find(x => x.name == name);
 
 				if (script) {
 
@@ -283,27 +281,27 @@ export default class GML {
 			Assignment(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
 				var value = _expression.interpret();
-				_this.varSet(varInfo, value);
+				_this.varSet(varInfo, value, _variable);
 			},
 			AssignmentAdd(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
 				var value = _expression.interpret();
-				_this.varModify(varInfo, old => old + value);
+				_this.varModify(varInfo, old => old + value, _variable);
 			},
 			AssignmentSubtract(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
 				var value = _expression.interpret();
-				_this.varModify(varInfo, old => old - value);
+				_this.varModify(varInfo, old => old - value, _variable);
 			},
 			AssignmentMultiply(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
 				var value = _expression.interpret();
-				_this.varModify(varInfo, old => old * value);
+				_this.varModify(varInfo, old => old * value, _variable);
 			},
 			AssignmentDivide(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
 				var value = _expression.interpret();
-				_this.varModify(varInfo, old => old / value);
+				_this.varModify(varInfo, old => old / value, _variable);
 			},
 			VarDeclare(_0, _names) {
 				_names.asIteration().children.forEach(_name => {
@@ -330,29 +328,31 @@ export default class GML {
 
 	varGet(varInfo, node) {
 
-		if (this.vars.exists(varInfo.name))
-			return this.vars.get(varInfo.name, varInfo.indexes);
-		if (this.currentInstance.vars.exists(varInfo.name))
-			return this.currentInstance.vars.get(varInfo.name, varInfo.indexes);
-		if (this.game.globalVars.exists(varInfo.name))
-			return this.game.globalVars.get(varInfo.name, varInfo.indexes);
 		if (this.game.constants[varInfo.name] != null)
 			return this.game.constants[varInfo.name];
 
-		this.game.throwErrorInGMLNode("Unknown variable " + varInfo.name, node);
+		if (this.vars.exists(varInfo.name))
+			return this.vars.get(varInfo.name, varInfo.indexes);
+		if (this.game.globalVars.exists(varInfo.name))
+			return this.game.globalVars.get(varInfo.name, varInfo.indexes);
+		if (this.currentInstance.vars.exists(varInfo.name))
+			return this.currentInstance.vars.get(varInfo.name, varInfo.indexes);
+
+		throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
 
 	}
 
 	varSet(varInfo, value, node) {
 
+		if (this.game.constants[varInfo.name] != null)
+			throw this.makeErrorInGMLNode("Variable name expected. (it's a constant!)", node);
+
 		if (this.vars.exists(varInfo.name))
 			return this.vars.set(varInfo.name, value, varInfo.indexes);
-		if (this.currentInstance.vars.exists(varInfo.name))
-			return this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
 		if (this.game.globalVars.exists(varInfo.name))
 			return this.game.globalVars.set(varInfo.name, value, varInfo.indexes);
-		if (this.game.constants[varInfo.name] != null)
-			this.game.throwErrorInGMLNode("Cannot assign to the variable (it's a constant!)", node);
+		if (this.currentInstance.vars.exists(varInfo.name))
+			return this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
 
 		this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
 
@@ -372,9 +372,9 @@ export default class GML {
 
 	arrayIndexValidate(index, node) {
 		if (typeof index != "number")
-			this.game.throwErrorInGMLNode("Wrong type of array index", node);
+			throw this.makeErrorInGMLNode("Wrong type of array index", node);
 		if (index < 0)
-			this.game.throwErrorInGMLNode("Negative array index", node);
+			throw this.makeErrorInGMLNode("Negative array index", node);
 		return index;
 	}
 
@@ -449,6 +449,38 @@ export default class GML {
 				'Unknown function or script: '+name
 			);
 		}
+	}
+
+	makeErrorInGMLNode(message, node, isFatal=false) {
+		console.log(node);
+
+		var index = node.source.startIdx;
+		var lines = node.source.sourceString.split('\n');
+		var totalLength = 0;
+
+		for (var i = 0; i < lines.length; ++i) {
+			var lineLength = lines[i].length + 1;
+			totalLength += lineLength;
+			if (totalLength >= index) {
+
+				var lineNumber = i + 1;
+				var gmlLine = lines[i];
+				var position = (index - (totalLength - lineLength)) + 1;
+				var arrowString = " ".repeat(position-1) + "^";
+
+				break;
+			}
+		}
+
+		return this.game.makeError(isFatal, {
+				type: 'error_in_code',
+				node: node,
+				subType: message,
+			},
+			`Error in code at line ` + lineNumber + `:\n`
+			+ gmlLine + `\n` + arrowString + `\n`
+			+ `at position ` + position + `: ` + message + `\n`
+		);
 	}
 
 }

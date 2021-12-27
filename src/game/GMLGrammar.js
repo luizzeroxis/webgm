@@ -52,27 +52,30 @@ GameMakerLanguage {
 		| Statement
 
 	If
-		= "if" Expression BlockOrStatement Else?
+		= #("if" ~namePart) Expression BlockOrStatement Else?
 	Else
-		= "else" BlockOrStatement
+		= #("else" ~namePart) BlockOrStatement
 
 	While
-		= "while" Expression BlockOrStatement
+		= #("while" ~namePart) Expression BlockOrStatement
 
 	Exit
-		= "exit"
+		= #("exit" ~namePart)
 	Return
-		= "return" Expression
+		= #("return" ~namePart) Expression
 	Break
-		= "break"
+		= #("break" ~namePart)
 	Continue
-		= "continue"
+		= #("continue" ~namePart)
 
 	Function
-		= Name "(" ListOf<Expression,","> ")"
+		= name "(" ListOf<Expression,","> ")"
 
-	Name
-		= (letter | "_") (alnum | "_")*
+	name
+		= (letter | "_") namePart*
+
+	namePart
+		= (alnum | "_")
 
 	Expression
 		= ExpressionUnary
@@ -172,9 +175,9 @@ GameMakerLanguage {
 	Divide
 		= ExpressionMultiplyOrDivide "/" OtherExpression
 	IntegerDivision
-		= ExpressionMultiplyOrDivide "div" OtherExpression
+		= ExpressionMultiplyOrDivide #("div" ~namePart) OtherExpression
 	Modulo
-		= ExpressionMultiplyOrDivide "mod" OtherExpression
+		= ExpressionMultiplyOrDivide #("mod" ~namePart) OtherExpression
 
 	OtherExpression
 		= Parentheses
@@ -195,7 +198,7 @@ GameMakerLanguage {
 
 	// TODO add objects and arrays HERE
 	Variable
-		= Name ArrayIndexes?
+		= name ArrayIndexes?
 
 	VariableGet
 		= Variable
@@ -219,10 +222,10 @@ GameMakerLanguage {
 		= Variable "/=" Expression
 
 	VarDeclare
-		= "var" NonemptyListOf<Name, ",">
+		= #("var" ~namePart) NonemptyListOf<name, ",">
 
 	GlobalVarDeclare
-		= "globalvar" NonemptyListOf<Name, ",">
+		= #("globalvar" ~namePart) NonemptyListOf<name, ",">
 
 }
 

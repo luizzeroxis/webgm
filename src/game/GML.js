@@ -16,7 +16,6 @@ export default class GML {
 
 		this.vars = new VariableHolder();
 		this.currentInstance = null;
-		this.gameShouldEnd = false;
 
 		this.grammar = ohm.grammar(GMLGrammar.getText());
 		this.semantics = this.grammar.createSemantics();
@@ -129,118 +128,124 @@ export default class GML {
 				}
 
 			},
-			// TODO check for type errors
 			Not(_0, _a) {
-				var a = _a.interpret() >= 0.5;
+				var a = _this.toBool(_this.checkIsNumber(_a.interpret(), "Wrong type of arguments to unary operator.", _a));
 				return (!a) ? 1 : 0;
 			},
 			Negate(_0, _a) {
-				var a = _a.interpret();
+				var a = _this.checkIsNumber(_a.interpret(), "Wrong type of arguments to unary operator.", _a);
 				return (-a);
 			},
 			NegateBitwise(_0, _a) {
-				var a = _a.interpret();
+				var a = _this.checkIsNumber(_a.interpret(), "Wrong type of arguments to unary operator.", _a);
 				return (~a);
 			},
 			And(_a, _1, _b) {
-				var a = _a.interpret() >= 0.5;
-				var b = _b.interpret() >= 0.5;
+				var a = _this.toBool(_this.checkIsNumber(_a.interpret(), "Wrong type of arguments for &&.", _a));
+				var b = _this.toBool(_this.checkIsNumber(_b.interpret(), "Wrong type of arguments for &&.", _b));
 				return (a && b) ? 1 : 0;
 			},
 			Or(_a, _1, _b) {
-				var a = _a.interpret() >= 0.5;
-				var b = _b.interpret() >= 0.5;
+				var a = _this.toBool(_this.checkIsNumber(_a.interpret(), "Wrong type of arguments for ||.", _a));
+				var b = _this.toBool(_this.checkIsNumber(_b.interpret(), "Wrong type of arguments for ||.", _b));
 				return (a || b) ? 1 : 0;
 			},
 			Xor(_a, _1, _b) {
-				var a = _a.interpret() >= 0.5;
-				var b = _b.interpret() >= 0.5;
+				var a = _this.toBool(_this.checkIsNumber(_a.interpret(), "Wrong type of arguments for ^^.", _a));
+				var b = _this.toBool(_this.checkIsNumber(_b.interpret(), "Wrong type of arguments for ^^.", _b));
 				return (a != b) ? 1 : 0;
 			},
 			Less(_a, _1, _b) {
 				var a = _a.interpret();
 				var b = _b.interpret();
+				_this.checkIsSameType(a, b, "Cannot compare arguments.", _1);
 				return (a < b) ? 1 : 0;
 			},
 			LessOrEqual(_a, _1, _b) {
 				var a = _a.interpret();
 				var b = _b.interpret();
+				_this.checkIsSameType(a, b, "Cannot compare arguments.", _1);
 				return (a <= b) ? 1 : 0;
 			},
 			Equal(_a, _1, _b) {
 				var a = _a.interpret();
 				var b = _b.interpret();
+				_this.checkIsSameType(a, b, "Cannot compare arguments.", _1);
 				return (a === b) ? 1 : 0;
 			},
 			Different(_a, _1, _b) {
 				var a = _a.interpret();
 				var b = _b.interpret();
+				_this.checkIsSameType(a, b, "Cannot compare arguments.", _1);
 				return (a !== b) ? 1 : 0;
 			},
 			Greater(_a, _1, _b) {
 				var a = _a.interpret();
 				var b = _b.interpret();
+				_this.checkIsSameType(a, b, "Cannot compare arguments.", _1);
 				return (a > b) ? 1 : 0;
 			},
 			GreaterOrEqual(_a, _1, _b) {
 				var a = _a.interpret();
 				var b = _b.interpret();
+				_this.checkIsSameType(a, b, "Cannot compare arguments.", _1);
 				return (a >= b) ? 1 : 0;
 			},
 			BitwiseAnd(_a, _1, _b) {
-				var a = _a.interpret();
-				var b = _b.interpret();
+				var a = _this.checkIsNumber(_a.interpret(), "Wrong type of arguments for &.", _a);
+				var b = _this.checkIsNumber(_b.interpret(), "Wrong type of arguments for &.", _b);
 				return a & b;
 			},
 			BitwiseOr(_a, _1, _b) {
-				var a = _a.interpret();
-				var b = _b.interpret();
+				var a = _this.checkIsNumber(_a.interpret(), "Wrong type of arguments for |.", _a);
+				var b = _this.checkIsNumber(_b.interpret(), "Wrong type of arguments for |.", _b);
 				return a | b;
 			},
 			BitwiseXor(_a, _1, _b) {
-				var a = _a.interpret();
-				var b = _b.interpret();
+				var a = _this.checkIsNumber(_a.interpret(), "Wrong type of arguments for ^.", _a);
+				var b = _this.checkIsNumber(_b.interpret(), "Wrong type of arguments for ^.", _b);
 				return a ^ b;
 			},
 			BitwiseShiftLeft(_a, _1, _b) {
-				var a = _a.interpret();
-				var b = _b.interpret();
+				var a = _this.checkIsNumber(_a.interpret(), "Wrong type of arguments for <<.", _a);
+				var b = _this.checkIsNumber(_b.interpret(), "Wrong type of arguments for <<.", _b);
 				return a << b;
 			},
 			BitwiseShiftRight(_a, _1, _b) {
-				var a = _a.interpret();
-				var b = _b.interpret();
+				var a = _this.checkIsNumber(_a.interpret(), "Wrong type of arguments for >>.", _a);
+				var b = _this.checkIsNumber(_b.interpret(), "Wrong type of arguments for >>.", _b);
 				return a >> b;
 			},
 			Add(_a, _1, _b) {
 				var a = _a.interpret();
 				var b = _b.interpret();
+				_this.checkIsSameType(a, b, "Wrong type of arguments to +.", _1);
 				return a + b;
 			},
 			Subtract(_a, _1, _b) {
-				var a = _a.interpret();
-				var b = _b.interpret();
+				var a = _this.checkIsNumber(_a.interpret(), "Wrong type of arguments to -.", _a);
+				var b = _this.checkIsNumber(_b.interpret(), "Wrong type of arguments to -.", _b);
 				return a - b;
 			},
 			Multiply(_a, _1, _b) {
-				var a = _a.interpret();
-				var b = _b.interpret();
+				var a = _this.checkIsNumber(_a.interpret(), "Wrong type of arguments to *.", _a);
+				var b = _this.checkIsNumber(_b.interpret(), "Wrong type of arguments to *.", _b);
 				return a * b;
 			},
 			Divide(_a, _1, _b) {
-				var a = _a.interpret();
-				var b = _b.interpret();
+				var a = _this.checkIsNumber(_a.interpret(), "Wrong type of arguments to /.", _a);
+				var b = _this.checkIsNumber(_b.interpret(), "Wrong type of arguments to /.", _b);
 				return a / b;
 			},
 			IntegerDivision(_a, _1, _b) {
-				var a = _a.interpret();
-				var b = _b.interpret();
+				var a = _this.checkIsNumber(_a.interpret(), "Wrong type of arguments to div.", _a);
+				var b = _this.checkIsNumber(_b.interpret(), "Wrong type of arguments to div.", _b);
 				return Math.floor(a / b);
 			},
 			Modulo(_a, _1, _b) {
-				var a = _a.interpret();
-				var b = _b.interpret();
-				return a % b;
+				var a = _this.checkIsNumber(_a.interpret(), "Wrong type of arguments to mod.", _a);
+				var b = _this.checkIsNumber(_b.interpret(), "Wrong type of arguments to mod.", _b);
+				return a % b; // TODO check negative numbers
 			},
 			Parentheses(_0, _expression, _2) {
 				return _expression.interpret();
@@ -283,25 +288,52 @@ export default class GML {
 				var value = _expression.interpret();
 				_this.varSet(varInfo, value, _variable);
 			},
+
+			// Note: In GM, assignment operations don't error out when they should, and they have weird behaviour. It's replicated here.
 			AssignmentAdd(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
 				var value = _expression.interpret();
-				_this.varModify(varInfo, old => old + value, _variable);
+				_this.varModify(varInfo, old => {
+					if (typeof old === typeof value) {
+						return old + value; // Works for both numbers (addition) and strings (concatenation).
+					}
+					return old;
+				}, _variable);
 			},
 			AssignmentSubtract(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
 				var value = _expression.interpret();
-				_this.varModify(varInfo, old => old - value, _variable);
+				_this.varModify(varInfo, old => {
+					if (typeof old === 'number' && typeof value == 'number') {
+						return old - value;
+					}
+					return old;
+				}, _variable);
 			},
 			AssignmentMultiply(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
 				var value = _expression.interpret();
-				_this.varModify(varInfo, old => old * value, _variable);
+				_this.varModify(varInfo, old => {
+					if (typeof old === 'number' && typeof value == 'string') {
+						// Yeah, wtf. *= repeats the string like in Python, but only if the original value was a real and the new one a string. I have no idea why.
+						return value.repeat(old);
+					}
+					if (typeof old === 'number' && typeof value == 'number') {
+						return old * value;
+					}
+					return old;
+				}, _variable);
 			},
 			AssignmentDivide(_variable, _1, _expression) {
 				var varInfo = _variable.interpret();
 				var value = _expression.interpret();
-				_this.varModify(varInfo, old => old / value, _variable);
+				_this.varModify(varInfo, old => {
+					if (typeof old === 'number' && typeof value == 'number') {
+						return old / value;
+					}
+					return old;
+				}, _variable);
+				// strings or different: keep old
 			},
 			VarDeclare(_0, _names) {
 				_names.asIteration().children.forEach(_name => {
@@ -376,6 +408,23 @@ export default class GML {
 		if (index < 0)
 			throw this.makeErrorInGMLNode("Negative array index", node);
 		return index;
+	}
+
+	toBool(value) {
+		return value>=0.5;
+	}
+
+	checkIsNumber(value, message, node) {
+		if (typeof value !== "number") {
+			throw this.makeErrorInGMLNode(message, node);
+		}
+		return value;
+	}
+
+	checkIsSameType(a, b, message, node) {
+		if (typeof a !== typeof b) {
+			throw this.makeErrorInGMLNode(message, node);
+		}
 	}
 
 	prepare(code, startRule) {

@@ -186,7 +186,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 						{
 							let hover = this.getInstanceAtPosition(pos);
 							if (hover) {
-								this.spanObject.textContent = this.editor.project.resources['ProjectObject']
+								this.spanObject.textContent = this.editor.project.resources.ProjectObject
 									.find(x => x.id == hover.object_index).name;
 							}
 						}

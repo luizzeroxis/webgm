@@ -11,6 +11,7 @@
     "rules": {
         "no-unused-vars": ["warn", { "args": "none" }],
         "no-empty-pattern": "off",
-        "no-constant-condition": "off"
+        "no-constant-condition": "off",
+        "dot-notation": "warn"
     }
 }

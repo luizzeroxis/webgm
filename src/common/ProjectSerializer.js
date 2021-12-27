@@ -52,13 +52,13 @@ export default class ProjectSerializer {
 
 		zip.file("project.json", json);
 
-		project.resources['ProjectSprite'].forEach(sprite => {
+		project.resources.ProjectSprite.forEach(sprite => {
 			sprite.images.forEach((image, index) => {
 				zip.file("sprites/"+sprite.id+"/"+index, image.blob);
 			})
 		})
 
-		project.resources['ProjectBackground'].forEach(background => {
+		project.resources.ProjectBackground.forEach(background => {
 			zip.file("backgrounds/"+background.id, background.image.blob);
 		})
 
@@ -107,7 +107,7 @@ export default class ProjectSerializer {
 						project.counter[x.getClassName()] = 0;
 				})
 
-				project.resources['ProjectSprite'].forEach(sprite => {
+				project.resources.ProjectSprite.forEach(sprite => {
 					sprite.images.forEach((image, index) => {
 
 						var file = zip.file("sprites/"+sprite.id+"/"+index);
@@ -121,7 +121,7 @@ export default class ProjectSerializer {
 					})
 				})
 
-				project.resources['ProjectBackground'].forEach(background => {
+				project.resources.ProjectBackground.forEach(background => {
 
 					var file = zip.file("backgrounds/"+background.id);
 					if (file == null) return;

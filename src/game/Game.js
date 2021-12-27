@@ -331,6 +331,7 @@ export class Game {
 	}
 
 	showError(exception) {
+		console.log(exception.text);
 		this.showErrorBox(exception.text);
 	}
 
@@ -816,7 +817,7 @@ export class Game {
 			this.close(e);
 		} else if (e instanceof ProjectErrorException) {
 
-			this.showErrorBox(e);
+			this.showError(e);
 			this.close();
 
 		} else {

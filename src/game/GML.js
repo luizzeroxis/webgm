@@ -34,10 +34,9 @@ export default class GML {
 			},
 			If(_0, _conditionExpression, _code, _elseStatement) {
 				var condition = _conditionExpression.interpret();
-				if (typeof condition !== "number") {
-					throw _this.makeErrorInGMLNode('Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpression);
-				}
-				if (condition >= 0.5) {
+				_this.checkIsNumber(condition, 'Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpression);
+				
+				if (_this.toBool(condition)) {
 					_code.interpret();
 				} else {
 					_elseStatement.interpret();
@@ -51,11 +50,9 @@ export default class GML {
 				while (true) {
 
 					var condition = _conditionExpression.interpret();
-					if (typeof condition !== "number") {
-						throw _this.makeErrorInGMLNode('Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpression);
-					}
+					_this.checkIsNumber(condition, 'Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpression);
 
-					if (!(condition >= 0.5)) break;
+					if (!(_this.toBool(condition))) break;
 
 					try {
 						_code.interpret();
@@ -394,12 +391,6 @@ export default class GML {
 		var oldValue = this.varGet(varInfo, node);
 		var newValue = valueFunc(oldValue);
 		this.varSet(varInfo, newValue, node);
-	}
-
-	operationAdd(a, b) {
-		if (typeof a != typeof b) {
-			'Wrong type of arguments to +'
-		}
 	}
 
 	arrayIndexValidate(index, node) {

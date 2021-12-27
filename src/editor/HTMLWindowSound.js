@@ -1,6 +1,6 @@
 import HTMLWindow from './HTMLWindow.js';
 
-import {$, parent, endparent, add, newElem, newButton, newTextBox, newNumberBox, newSlider} from '../common/H.js'
+import {$, parent, endparent, add, newElem, newButton, newTextBox, newSlider} from '../common/H.js'
 
 import VirtualFileSystem from '../common/VirtualFileSystem.js';
 

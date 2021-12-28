@@ -435,7 +435,29 @@ export default class BuiltInFunctions {
 		this.game.ctx.textAlign = (['left', 'center', 'right'])[this.game.drawHAlign];
 		this.game.ctx.textBaseline = (['top', 'middle', 'bottom'])[this.game.drawVAlign];
 
-		this.game.ctx.fillText(string, x, y);
+		// Look, I tried making this be like GM but it just doesn't add up. Hopefully will be fixed if and when we change to a custom font renderer
+		
+		// Calculate heights and initial y
+		var textMetrics = this.game.ctx.measureText("");
+		var height = Math.abs(textMetrics.fontBoundingBoxDescent) + Math.abs(textMetrics.fontBoundingBoxAscent);
+
+		var currentY;
+		if (this.game.drawVAlign == 0) { // top
+			currentY = y;
+		} else if (this.game.drawVAlign == 1) { // middle
+			currentY = y - (height * lines.length)/2;
+		} else if (this.game.drawVAlign == 2) { // bottom
+			currentY = y - (height * lines.length);
+		}
+
+		// Capture #, except when preceeded by \, or \n, or \r
+		var lines = string.split(/(?<!\\)#|\n|\r/)
+		lines = lines.map(x => x.replaceAll("\\#", "#"));
+
+		for (var line of lines) {
+			this.game.ctx.fillText(line, x, currentY);
+			currentY += height;
+		}
 		return 0;
 	}
 

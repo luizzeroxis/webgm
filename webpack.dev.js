@@ -14,6 +14,8 @@ module.exports = mergeWithRules({
 	devtool: 'inline-source-map',
 	devServer: {
 		static: './dist',
+		hot: false,
+		liveReload: false,
 	},
 	module: {
 		rules: [

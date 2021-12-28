@@ -25,6 +25,37 @@ export default class BuiltInLibraries {
 
 					},
 					{
+						id: 117,
+						description: 'Align to Grid',
+						getListText: action => "Align to a grid of " + BIL.textArg(action, 0) + " by " + BIL.textArg(action, 1),
+						// @walign position to a grid with cells of @0 by @1 pixels
+						getHintText: action => (
+							BIL.textApplyTo(action)
+							+ "align position to a grid with cells of " + BIL.textArg(action, 0) + " by " + BIL.textArg(action, 1) + " pixels"
+						),
+						kind: 'normal',
+						execution: 'function',
+						executionFunction: 'action_snap',
+
+						interfaceKind: 'normal',
+						isQuestion: false,
+						hasApplyTo: true,
+						hasRelative: false,
+
+						args: [
+							{
+								name: 'snap hor:',
+								kind: 'expression',
+								default: 16,
+							},
+							{
+								name: 'snap vert:',
+								kind: 'expression',
+								default: 16,
+							},
+						],
+					},
+					{
 						id: 112,
 						description: 'Wrap Screen',
 						getListText: action => "Wrap @0 when outside",

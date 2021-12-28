@@ -474,7 +474,7 @@ export default class GML {
 		return this.execute(this.prepare(gml, "Expression"), instance);
 	}
 
-	builtInFunction(name, args, instance, relative) {
+	builtInFunction(name, args, instance, relative=false) {
 
 		var func = BuiltInFunctions[name];
 

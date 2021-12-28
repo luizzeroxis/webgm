@@ -649,6 +649,8 @@ export default class BuiltInFunctions {
 
 	// # Action functions
 
+	// (arguments, relative)
+
 	// ## move
 
 	static action_move ([directions, speed], relative) {
@@ -691,12 +693,8 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 
-	static action_bounce ([precise, against]) {
-		if (against == 0) {
-			BuiltInFunctions.move_bounce_solid(precise);
-		} else if (against == 1) {
-			BuiltInFunctions.move_bounce_all(precise);
-		}
+	static action_snap ([snapHor, snapVert]) {
+		BuiltInFunctions.move_snap.call(this, [snapHor, snapVert]);
 		return 0;
 	}
 
@@ -726,11 +724,20 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 
+	static action_bounce ([precise, against]) {
+		if (against == 0) {
+			BuiltInFunctions.move_bounce_solid.call(this, [precise]);
+		} else if (against == 1) {
+			BuiltInFunctions.move_bounce_all.call(this, [precise]);
+		}
+		return 0;
+	}
+
 	// ## main1
 	// ## main2
 
 	static action_message ([message]) {
-		BuiltInFunctions.show_message([message]);
+		BuiltInFunctions.show_message.call(this, [message]);
 		return 0;
 	}
 
@@ -1174,10 +1181,6 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static action_sleep ([_]) {
-
-		return 0;
-	}
-	static action_snap ([_]) {
 
 		return 0;
 	}

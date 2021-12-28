@@ -278,7 +278,6 @@ export default class HTMLWindowObject extends HTMLWindow {
 			this.updateSelectEvents();
 
 			// Select first event
-			this.selectEvents.selectedIndex = 0;
 			this.updateSelectActions();
 
 			// Add initial subtypes
@@ -336,12 +335,13 @@ export default class HTMLWindowObject extends HTMLWindow {
 			})
 			endparent();
 
+		this.selectEvents.selectedIndex = 0;
+
 		this.updateEventsMenu();
 
 	}
 
 	updateEventsMenu() {
-		
 		if (this.selectEvents.selectedIndex < 0) {
 			this.buttonEventDelete.disabled = true;
 		} else {

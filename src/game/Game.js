@@ -626,8 +626,10 @@ export class Game {
 			instance.vars.setAdd('speed', - instance.vars.get('friction'));
 
 			// gravity
-			instance.vars.setAdd('hspeed', Math.cos(instance.vars.get('gravity_direction')) * instance.vars.get('gravity'));
-			instance.vars.setAdd('vspeed', Math.sin(instance.vars.get('gravity_direction')) * instance.vars.get('gravity'));
+			if (instance.vars.get('gravity') != 0) {
+				instance.vars.setAdd('hspeed', Math.cos(instance.vars.get('gravity_direction') * (Math.PI / 180)) * instance.vars.get('gravity'));
+				instance.vars.setAdd('vspeed', Math.sin(instance.vars.get('gravity_direction') * (Math.PI / 180)) * instance.vars.get('gravity'));
+			}
 
 			// TODO paths??
 

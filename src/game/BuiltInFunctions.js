@@ -37,7 +37,7 @@ export default class BuiltInFunctions {
 		return Math.cos(x);
 	}
 	static degtorad ([x]) {
-		return x * this.game.constants.pi / 180;
+		return x * Math.PI / 180;
 	}
 	static exp ([x]) {
 		return Math.exp(x);
@@ -61,10 +61,10 @@ export default class BuiltInFunctions {
 		return (typeof x == 'string');
 	}
 	static lengthdir_x ([len, dir]) {
-		return Math.cos(dir * this.game.constants.pi / 180) * len;
+		return Math.cos(dir * Math.PI / 180) * len;
 	}
 	static lengthdir_y ([len, dir]) {
-		return Math.sin(dir * this.game.constants.pi / 180) * len;
+		return Math.sin(dir * Math.PI / 180) * len;
 	}
 	static ln ([x]) {
 		return Math.log(x);
@@ -89,7 +89,7 @@ export default class BuiltInFunctions {
 		return Math.min(...vals);
 	}
 	static point_direction ([x1, y1, x2, y2]) {
-		return Math.atan2(y2 - y1, x2 - x1) * 180 / this.game.constants.pi;
+		return Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
 	}
 	static point_distance ([x1, y1, x2, y2]) {
 		return Math.hypot(x2 - x1, y2 - y1);
@@ -98,7 +98,7 @@ export default class BuiltInFunctions {
 		return Math.pow(x, n);
 	}
 	static radtodeg ([x]) {
-		return x * 180 / this.game.constants.pi;
+		return x * (180 / Math.PI);
 	}
 	static random ([x]) {
 		return Math.random() * x;
@@ -159,7 +159,7 @@ export default class BuiltInFunctions {
 	}
 	static move_towards_point ([x, y, sp]) {
 		this.currentInstance.vars.set('speed', sp);
-		this.currentInstance.vars.set('direction', Math.atan2(x, y) * 180 / this.game.constants.pi);
+		this.currentInstance.vars.set('direction', Math.atan2(x, y) * (180 / Math.PI));
 		return 0;
 	}
 	static place_snapped ([hsnap, vsnap]) {

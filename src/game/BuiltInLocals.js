@@ -12,28 +12,28 @@ export default class BuiltInLocals {
 	static hspeed = {default: 0, set (hspeed) {
 		var vspeed = this.vars.get('vspeed');
 		this.vars.setNoCall('speed', Math.hypot(hspeed, vspeed));
-		this.vars.setNoCall('direction', Math.atan2(vspeed, hspeed) * 180 / this.game.constants.pi);
+		this.vars.setNoCall('direction', Math.atan2(-vspeed, hspeed) * (180 / Math.PI));
 		return hspeed;
 	}}
 
 	static vspeed = {default: 0, set (vspeed) {
 		var hspeed = this.vars.get('hspeed');
 		this.vars.setNoCall('speed', Math.hypot(hspeed, vspeed));
-		this.vars.setNoCall('direction', Math.atan2(vspeed, hspeed) * 180 / this.game.constants.pi);
+		this.vars.setNoCall('direction', Math.atan2(-vspeed, hspeed) * (180 / Math.PI));
 		return vspeed;
 	}}
 
 	static direction = {default: 0, set (direction) {
-		var dir = direction * this.game.constants.pi / 180;
+		var dir = direction * (Math.PI / 180);
 		this.vars.setNoCall('hspeed', Math.cos(dir) * this.vars.get('speed'));
-		this.vars.setNoCall('vspeed', Math.sin(dir) * this.vars.get('speed'));
+		this.vars.setNoCall('vspeed', -Math.sin(dir) * this.vars.get('speed'));
 		return direction;
 	}}
 
 	static speed = {default: 0, set (speed) {
-		var dir = this.vars.get('direction') * this.game.constants.pi / 180;
+		var dir = this.vars.get('direction') * (Math.PI / 180);
 		this.vars.setNoCall('hspeed', Math.cos(dir) * speed);
-		this.vars.setNoCall('vspeed', Math.sin(dir) * speed);
+		this.vars.setNoCall('vspeed', -Math.sin(dir) * speed);
 		return speed;
 	}}
 

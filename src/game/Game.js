@@ -623,12 +623,33 @@ export class Game {
 			instance.vars.setAdd('x', instance.vars.get('hspeed'));
 			instance.vars.setAdd('y', instance.vars.get('vspeed'));
 
-			instance.vars.setAdd('speed', - instance.vars.get('friction'));
+			if (instance.vars.get('friction') != 0) {
+				var direction = instance.vars.get('direction') * (Math.PI / 180);
+
+				var hspeedOld = instance.vars.get('hspeed');
+				if (hspeedOld != 0) {
+					var hspeedNew = hspeedOld - Math.cos(direction) * instance.vars.get('friction');
+					if (Math.sign(hspeedNew) != Math.sign(hspeedOld)) { // If changed sign, that is, going in the opposite direction, don't do that
+						hspeedNew = 0;
+					}
+					instance.vars.set('hspeed', hspeedNew);
+				}
+
+				var vspeedOld = instance.vars.get('vspeed');
+				if (vspeedOld != 0) {
+					var vspeedNew = vspeedOld - -Math.sin(direction) * instance.vars.get('friction');
+					if (Math.sign(vspeedNew) != Math.sign(vspeedOld)) {
+						vspeedNew = 0;
+					}
+					instance.vars.set('vspeed', vspeedNew);
+				}
+
+			}
 
 			// gravity
 			if (instance.vars.get('gravity') != 0) {
 				instance.vars.setAdd('hspeed', Math.cos(instance.vars.get('gravity_direction') * (Math.PI / 180)) * instance.vars.get('gravity'));
-				instance.vars.setAdd('vspeed', Math.sin(instance.vars.get('gravity_direction') * (Math.PI / 180)) * instance.vars.get('gravity'));
+				instance.vars.setAdd('vspeed', -Math.sin(instance.vars.get('gravity_direction') * (Math.PI / 180)) * instance.vars.get('gravity'));
 			}
 
 			// TODO paths??

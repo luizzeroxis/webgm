@@ -2,6 +2,8 @@ import HTMLWindow from './HTMLWindow.js';
 
 import {$, parent, endparent, add, newElem, newRadioBox, uniqueID} from '../common/H.js'
 
+import HTMLCodeEditor from './HTMLCodeEditor.js';
+
 export default class HTMLWindowCode extends HTMLWindow {
 
 	constructor(...args) {
@@ -32,7 +34,7 @@ export default class HTMLWindowCode extends HTMLWindow {
 			if (action.appliesTo >= 0)
 				this.selectObject.value = action.appliesTo;
 
-			this.textareaCode = add( newElem('code', 'textarea', action.args[0].value) )
+			this.codeEditor = new HTMLCodeEditor(action.args[0].value);
 
 			this.makeApplyOkButtons(
 				() => {
@@ -42,11 +44,14 @@ export default class HTMLWindowCode extends HTMLWindow {
 					this.close();
 				}
 			);
+
+			this.codeEditor.setNextElem(this.htmlApply);
+
 			endparent();
 	}
 
 	apply() {
-		this.action.args[0].value = this.textareaCode.value;
+		this.action.args[0].value = this.codeEditor.getValue();
 		this.action.appliesTo = (
 			this.radioAppliesToSelf.checked ? -1 :
 			this.radioAppliesToOther.checked ? -2 :

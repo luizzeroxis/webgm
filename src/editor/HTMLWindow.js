@@ -62,11 +62,11 @@ export default class HTMLWindow {
 	makeApplyOkButtons(applyOkFunc, okFunc) {
 		parent( add ( html('div') ) )
 
-			add( newButton(null, 'Apply', () => {
+			this.htmlApply = add( newButton(null, 'Apply', () => {
 				applyOkFunc();
 			}) );
 
-			add( newButton(null, 'Ok', () => {
+			this.htmlOk = add( newButton(null, 'Ok', () => {
 				if (applyOkFunc() != false)
 					okFunc();
 			}) );

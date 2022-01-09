@@ -2,6 +2,8 @@ import HTMLWindow from './HTMLWindow.js';
 
 import {$, parent, endparent, add, newElem, newTextBox} from '../common/H.js'
 
+import HTMLCodeEditor from './HTMLCodeEditor.js';
+
 export default class HTMLWindowScript extends HTMLWindow {
 	constructor(...args) {
 		super(...args);
@@ -15,7 +17,7 @@ export default class HTMLWindowScript extends HTMLWindow {
 
 					var inputName = $( add( newTextBox(null, 'Name:', script.name) ), 'input');
 
-					this.textareaCode = add( newElem('code', 'textarea', script.code) )
+					this.codeEditor = new HTMLCodeEditor(script.code);
 
 					endparent()
 				endparent();
@@ -23,12 +25,15 @@ export default class HTMLWindowScript extends HTMLWindow {
 			this.makeApplyOkButtons(
 				() => {
 					this.editor.changeResourceName(script, inputName.value);
-					script.code = this.textareaCode.value;
+					script.code = this.codeEditor.getValue();
 				},
 				() => {
 					this.editor.deleteWindow(this);
 				}
 			);
+
+			this.codeEditor.setNextElem(this.htmlApply);
+
 			endparent();
 	}
 }

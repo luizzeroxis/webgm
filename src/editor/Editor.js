@@ -27,6 +27,8 @@ import {Game} from '../game/Game.js';
 
 import {WebGMException} from '../common/Exceptions.js';
 
+import HTMLWindowPreferences from './HTMLWindowPreferences.js';
+
 import HTMLWindowSprite from './HTMLWindowSprite.js';
 import HTMLWindowSound from './HTMLWindowSound.js';
 import HTMLWindowBackground from './HTMLWindowBackground.js';
@@ -65,6 +67,11 @@ export default class Editor {
 		this.projectName = 'game';
 
 		this.dispatcher = new Dispatcher();
+
+		//Preferences
+		this.preferences = {
+			clearCanvasOnStop: true,
+		}
 
 		//Libraries
 		this.libraries = BuiltInLibraries.getList();
@@ -161,6 +168,10 @@ export default class Editor {
 
 			add( newButton(null, 'Save', () => {
 				this.saveProject();
+			}) )
+
+			add( newButton(null, 'Preferences', () => {
+				this.openWindow(HTMLWindowPreferences, 'preferences');
 			}) )
 
 			this.runButton = add( newButton(null, 'Run', () => {
@@ -281,9 +292,12 @@ export default class Editor {
 				this.stopButton.disabled = true;
 
 				// Haxs for cleaning canvas
-				var h = this.gameCanvas.height;
-				this.gameCanvas.height = 0;
-				this.gameCanvas.height = h;
+
+				if (this.preferences.clearCanvasOnStop) {
+					var h = this.gameCanvas.height;
+					this.gameCanvas.height = 0;
+					this.gameCanvas.height = h;
+				}
 
 				if (e) {
 					throw e;

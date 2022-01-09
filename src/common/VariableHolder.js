@@ -8,13 +8,18 @@ export default class VariableHolder {
 
 		for (var name in this.builtInClass) {
 			if (typeof this.builtInClass[name].default == "function") {
-				this.builtInList[name] = {value: this.builtInClass[name].default.call(this)};
+				var value = this.builtInClass[name].default.call(this);
+				if (Array.isArray(value)) {
+					value = value.map(x => ({value: x}));
+				}
+				this.builtInList[name] = {value: value};
 			} else {
 				this.builtInList[name] = {value: this.builtInClass[name].default || 0};
 			}
-			this.builtInList[name].dimensions = this.builtInClass[name].dimensions || 0;
+			this.builtInList[name].dimensions = this.builtInClass[name].dimensions;
 			if (this.builtInClass[name].dimensions == undefined) {
-				if (Array.isArray(this.builtInClass[name].default)) {
+				this.builtInClass[name].dimensions = 0;
+				if (Array.isArray(this.builtInList[name].value)) {
 					this.builtInClass[name].dimensions = 1;
 				}
 			}
@@ -203,9 +208,9 @@ export default class VariableHolder {
 		return this.set(name, value, indexes, overrideReadOnly, false);
 	}
 
-	setAdd(name, value, indexes, overrideReadOnly) {
+	setAdd(name, value, indexes, overrideReadOnly, callSet=true) {
 		var oldValue = this.get(name, indexes);
-		return this.set(name, oldValue + value, indexes, overrideReadOnly);
+		return this.set(name, oldValue + value, indexes, overrideReadOnly, callSet);
 	}
 
 	save(name) {

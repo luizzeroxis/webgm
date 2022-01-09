@@ -70,6 +70,8 @@ export default class Editor {
 
 		//Preferences
 		this.preferences = {
+			scrollToGameOnRun: true,
+			focusCanvasOnRun: true,
 			clearCanvasOnStop: true,
 		}
 
@@ -110,8 +112,7 @@ export default class Editor {
 		try {
 			preferences = JSON.parse(window.localStorage.getItem('preferences'));
 			if (preferences != null) {
-				this.preferences = preferences;
-				console.log(preferences);
+				this.preferences = Object.assign(this.preferences, preferences);
 			}
 		} catch (e) {
 			// SyntaxError
@@ -303,8 +304,12 @@ export default class Editor {
 		this.runButton.disabled = true;
 		this.stopButton.disabled = false;
 
-		this.gameArea.scrollIntoView();
-		this.gameCanvas.focus();
+		if (this.preferences.scrollToGameOnRun) {
+			this.gameArea.scrollIntoView();
+		}
+		if (this.preferences.focusCanvasOnRun) {
+			this.gameCanvas.focus({preventScroll: true});
+		}
 
 		this.game = new Game(this.project, $('.canvas'), $('.canvas'));
 

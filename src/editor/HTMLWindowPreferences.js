@@ -14,6 +14,7 @@ export default class HTMLWindowPreferences extends HTMLWindow {
 				() => {
 					// changes here
 					this.editor.preferences.clearCanvasOnStop = $(inputClearCanvasOnStop, 'input').checked;
+					this.editor.savePreferences();
 				},
 				() => this.editor.deleteWindow(this)
 			)

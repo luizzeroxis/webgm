@@ -73,6 +73,8 @@ export default class Editor {
 			clearCanvasOnStop: true,
 		}
 
+		this.loadPreferences();
+
 		//Libraries
 		this.libraries = BuiltInLibraries.getList();
 
@@ -101,6 +103,31 @@ export default class Editor {
 			},
 		});
 
+	}
+
+	loadPreferences() {
+		var preferences;
+		try {
+			preferences = JSON.parse(window.localStorage.getItem('preferences'));
+			if (preferences != null) {
+				this.preferences = preferences;
+				console.log(preferences);
+			}
+		} catch (e) {
+			// SyntaxError
+			console.log('Could not load preferences, clearing them', preferences);
+			window.localStorage.clear();
+		}
+	}
+
+	savePreferences() {
+		var preferences = JSON.stringify(this.preferences);
+		try {
+			window.localStorage.setItem('preferences', preferences);
+		} catch (e) {
+			// SecurityError
+			console.log('Could not save preferences', this.preferences);
+		}
 	}
 
 	// Resource management

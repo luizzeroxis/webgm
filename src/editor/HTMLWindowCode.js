@@ -2,6 +2,9 @@ import HTMLWindow from './HTMLWindow.js';
 
 import {$, parent, endparent, add, newElem, newRadioBox, uniqueID} from '../common/H.js'
 
+import {ProjectObject} from '../common/Project.js';
+
+import HTMLResourceSelect from './HTMLResourceSelect.js';
 import HTMLCodeEditor from './HTMLCodeEditor.js';
 
 export default class HTMLWindowCode extends HTMLWindow {
@@ -30,9 +33,9 @@ export default class HTMLWindowCode extends HTMLWindow {
 			this.radioAppliesToObject = $( add( newRadioBox(null, 'Object:',
 				appliesToGroup, (action.appliesTo >= 0)) ), 'input')
 
-			this.selectObject = $( this.makeResourceSelect(null, '', 'ProjectObject'), 'select');
+			this.selectObject = new HTMLResourceSelect(this.editor, null, ProjectObject);
 			if (action.appliesTo >= 0)
-				this.selectObject.value = action.appliesTo;
+				this.selectObject.setValue(action.appliesTo);
 
 			this.codeEditor = new HTMLCodeEditor(action.args[0].value);
 
@@ -55,7 +58,7 @@ export default class HTMLWindowCode extends HTMLWindow {
 		this.action.appliesTo = (
 			this.radioAppliesToSelf.checked ? -1 :
 			this.radioAppliesToOther.checked ? -2 :
-			this.radioAppliesToObject.checked ? this.selectObject.value :
+			this.radioAppliesToObject.checked ? this.selectObject.getValue() :
 			null
 		);
 	}

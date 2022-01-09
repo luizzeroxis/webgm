@@ -2,8 +2,10 @@ import HTMLWindow from './HTMLWindow.js';
 
 import {$, parent, endparent, add, newElem, newCanvas, newTextBox, newNumberBox, newCheckBox, newRadioBox, newColorBox, uniqueID} from '../common/H.js'
 
-import {ProjectInstance} from '../common/Project.js'
+import {ProjectObject, ProjectInstance} from '../common/Project.js'
 import AbstractImage from '../common/AbstractImage.js'
+
+import HTMLResourceSelect from './HTMLResourceSelect.js';
 
 import DefaultInstanceIcon from './img/default-instance-icon.png';
 
@@ -32,7 +34,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 						add( newElem(null, 'legend', 'Instances') )
 
-						this.selectObject = $( this.makeResourceSelect(null, 'Object:', 'ProjectObject'), 'select');
+						this.selectObject = new HTMLResourceSelect(this.editor, 'Object:', ProjectObject);
 
 						var toolGroup = '_radio_'+uniqueID();
 						this.radioAdd = $( add( newRadioBox(null, 'Add instance', toolGroup, true) ), 'input')
@@ -261,9 +263,9 @@ export default class HTMLWindowRoom extends HTMLWindow {
 	}
 
 	addInstance(e) {
-		if (this.selectObject.value < 0) return;
+		if (this.selectObject.getValue()) return;
 
-		var i = new ProjectInstance(this.currentPos.x, this.currentPos.y, this.selectObject.value);
+		var i = new ProjectInstance(this.currentPos.x, this.currentPos.y, this.selectObject.getValue());
 		this.paramInstances.push(i);
 		return i;
 	}

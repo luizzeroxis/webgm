@@ -1,4 +1,4 @@
-import {$, parent, endparent, add, remove, html, newElem, newButton,newSelect} from '../common/H.js'
+import {parent, endparent, add, remove, newElem, newButton} from '../common/H.js'
 
 export default class HTMLWindow {
 
@@ -21,46 +21,8 @@ export default class HTMLWindow {
 
 	makeClient(resource) {}
 
-	// TODO change so resourcetype is the actual class, not a name
-	makeResourceSelect (classes, labelcontent, resourcetype, nonone) {
-
-		var e = add( newSelect(classes, labelcontent) );
-
-		var selectOptions = {};
-		var select = parent($(e, 'select'))
-
-			if (!nonone) {
-				add( html('option', {value: -1}, null, '<none>') );
-			}
-			this.editor.project.resources[resourcetype].forEach(resource => {
-				selectOptions[resource.id] = add( html('option', {value: resource.id}, null, resource.name) )
-			})
-			endparent();
-
-		this.editor.dispatcher.listen({
-			createResource: i => {
-				if (i.constructor.getClassName() != resourcetype) return;
-				parent(select)
-					selectOptions[i.id] = add( html('option', {value: i.id}, null, i.name) )
-					endparent()
-			},
-			deleteResource: i => {
-				if (i.constructor.getClassName() != resourcetype) return;
-				remove(selectOptions[i.id])
-				delete selectOptions[i.id];
-			},
-			changeResourceName: i => {
-				if (i.constructor.getClassName() != resourcetype) return;
-				selectOptions[i.id].textContent = i.name;
-			}
-		})
-
-		return e;
-
-	}
-
 	makeApplyOkButtons(applyOkFunc, okFunc) {
-		parent( add ( html('div') ) )
+		parent( add ( newElem(null, 'div') ) )
 
 			this.htmlApply = add( newButton(null, 'Apply', () => {
 				applyOkFunc();

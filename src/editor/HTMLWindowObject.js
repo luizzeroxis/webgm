@@ -1,12 +1,14 @@
 import HTMLWindow from './HTMLWindow.js';
 
-import {$, parent, endparent, add, remove, html, newElem, newButton,newTextBox, newNumberBox, newCheckBox, newSelect} from '../common/H.js'
+import {$, parent, endparent, add, remove, html, text, newElem, newButton, newTextBox, newNumberBox, newCheckBox, newSelect, newImage} from '../common/H.js'
 
-import {ProjectEvent, ProjectAction, ProjectActionArg} from '../common/Project.js';
+import {ProjectSprite, ProjectObject, ProjectEvent, ProjectAction, ProjectActionArg} from '../common/Project.js';
 import Events from '../common/Events.js';
 
 import HTMLWindowAction from './HTMLWindowAction.js';
 import HTMLWindowCode from './HTMLWindowCode.js';
+
+import HTMLResourceSelect from './HTMLResourceSelect.js';
 
 export default class HTMLWindowObject extends HTMLWindow {
 	constructor(...args) {
@@ -52,8 +54,8 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 					var inputName = $( add( newTextBox(null, 'Name:', object.name) ), 'input');
 
-					var selectSprite = $( this.makeResourceSelect(null, 'Sprite:', 'ProjectSprite'), 'select');
-					selectSprite.value = object.sprite_index;
+					var selectSprite = new HTMLResourceSelect(this.editor, 'Sprite:', ProjectSprite);
+					selectSprite.setValue(object.sprite_index);
 
 					var inputVisible = $( add( newCheckBox(null, 'Visible', object.visible) ), 'input');
 					var inputSolid = $( add( newCheckBox(null, 'Solid', object.solid) ), 'input');
@@ -91,7 +93,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 						var eventSubtype = 0;
 
 						if (this.subtypeElement)
-							eventSubtype = this.subtypeElement.value;
+							eventSubtype = this.subtypeElement.value; // TODO Check string/int convertions
 
 						if (this.paramEvents.find(x => x.type == eventType && x.subtype == eventSubtype)) {
 							return;
@@ -223,7 +225,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 							library.items.forEach(actionType => {
 
 								// TODO add images to the buttons
-								var actionTypeButton = add( newButton(null, actionType.description, () => {
+								var actionTypeButton = add( newButton('action-type', null, () => {
 
 									var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
 									if (!event) {
@@ -264,6 +266,14 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 								actionTypeButton.title = actionType.description;
 
+								parent(actionTypeButton)
+									if (actionType.image) {
+										add( newImage(null, actionType.image) )
+									} else {
+										add( text(actionType.description) )
+									}
+									endparent()
+
 							})
 
 							endparent()
@@ -286,7 +296,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 			this.makeApplyOkButtons(
 				() => {
 					this.editor.changeResourceName(object, inputName.value);
-					this.editor.changeObjectSprite(object, parseInt(selectSprite.value));
+					this.editor.changeObjectSprite(object, selectSprite.getValue());
 					object.visible = inputVisible.checked;
 					object.solid = inputSolid.checked;
 					object.depth = parseInt(inputDepth.value);
@@ -357,6 +367,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 		parent(this.divEventSubtype);
 
+			// TODO check for string/int convertions
 			this.subtypeElement = null;
 
 			if (eventType == 'step') {
@@ -380,7 +391,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 			} else
 
 			if (eventType == 'collision') {
-				this.subtypeElement = $( add( this.makeResourceSelect(null, 'Object:', 'ProjectObject', true) ), 'select');
+				this.subtypeElement = (new HTMLResourceSelect(this.editor, 'Object:', ProjectObject)).select;
 			} else
 
 			if (eventType == 'other') {

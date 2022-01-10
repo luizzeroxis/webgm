@@ -434,10 +434,9 @@ export class Game {
 
 						var currentResult;
 						if (treeAction.type == 'executeFunction') {
-							currentResult = this.gml.builtInFunction(treeAction.function, args, applyToInstance, treeAction.relative);
+							currentResult = this.gml.builtInFunction(treeAction.function, applyToInstance, args, treeAction.relative);
 						} else {
-							// TODO send arguments and argument_relative
-							currentResult = this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance);
+							currentResult = this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance, args, treeAction.relative);
 						}
 
 						if (typeof currentResult !== "number" || currentResult < 0.5) {
@@ -885,8 +884,7 @@ export class Instance {
 		this.vars.setForce('solid', obj.solid);
 		this.vars.setForce('depth', obj.depth);
 		this.vars.setForce('persistent', obj.persistent);
-		this.vars.setForce('parent', obj.parent);
-		this.vars.setForce('mask', obj.mask);
+		this.vars.setForce('mask_index', obj.mask);
 
 		// Set by constructor
 		this.vars.setForce('x', x);

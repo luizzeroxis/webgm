@@ -88,40 +88,9 @@ export default class GML {
 				var script = _this.game.project.resources.ProjectScript.find(x => x.name == name);
 
 				if (script) {
-
-					// Store arguments
-
-					var savedArgument = _this.game.globalVars.save('argument');
-					var savedArgumentNumbered = [];
-					for (let i=0; i<16; i++) {
-						savedArgumentNumbered[i] = _this.game.globalVars.save('argument' + i.toString());
-					}
-					var savedArgumentRelative = _this.game.globalVars.save('argument_relative');
-
-					// Change arguments
-
-					_this.game.globalVars.clear('argument'); // avoid spillage
-					for (let i=0; i<16; i++) {
-						var arg = (args[i] == null) ? 0 : args[i];
-						_this.game.globalVars.setForce('argument', arg, [i]);
-						_this.game.globalVars.setForce('argument' + i.toString(), arg);
-					}
-					_this.game.globalVars.setForce('argument_relative', 0);
-
-					// Execute
-					var result = _this.execute(_this.game.preparedCodes.get(script), _this.currentInstance);
-
-					// Restore arguments
-
-					_this.game.globalVars.load('argument', savedArgument);
-					for (var i=0; i<16; i++) {
-						_this.game.globalVars.load('argument' + i.toString(), savedArgumentNumbered[i]);
-					}
-					_this.game.globalVars.load('argument_relative', savedArgumentRelative);
-
-					return result;
+					return _this.execute(_this.game.preparedCodes.get(script), _this.currentInstance, args);
 				} else {
-					return _this.builtInFunction(name, args, _this.currentInstance);
+					return _this.builtInFunction(name, _this.currentInstance, args);
 				}
 
 			},
@@ -428,7 +397,7 @@ export default class GML {
 		return match;
 	}
 
-	execute(preparedCode, instance) {
+	execute(preparedCode, instance, args, argRelative=0) {
 
 		if (preparedCode.succeeded()) {
 
@@ -436,6 +405,18 @@ export default class GML {
 			
 			var savedVars = this.vars.saveAll();
 			this.vars.clearAll();
+
+			// Save previous arguments
+			var savedArgs = this.game.globalVars.save('argument');
+			var savedArgRelative = this.game.globalVars.save('argument_relative');
+
+			// Set new arguments
+			for (let i=0; i<16; i++) {
+				var value = 0;
+				if (Array.isArray(args) && args[i] != null) {value = args[i];}
+				this.game.globalVars.set('argument', value, [i]); // This auto sets numbered arguments
+			}
+			this.game.globalVars.set('argument_relative', argRelative);
 
 			var result = 0;
 
@@ -449,12 +430,23 @@ export default class GML {
 				} else {
 					throw e;
 				}
-			}
+			} finally {
+				// Load vars/end game in case of non fatal error
+				this.vars.loadAll(savedVars);
 
-			this.vars.loadAll(savedVars);
+				// Load previous arguments
+				this.game.globalVars.load('argument', savedArgs);
 
-			if (this.game.shouldEnd) {
-				this.game.gameEnd();
+				// Load numbered arguments from arguments array
+				for (let i=0; i<16; i++) {
+					this.game.globalVars.setNoCall('argument' + i.toString(), this.game.globalVars.get('argument', [i]));
+				}
+
+				this.game.globalVars.load('argument_relative', savedArgRelative);
+
+				if (this.game.shouldEnd) {
+					this.game.gameEnd();
+				}
 			}
 
 			return result;
@@ -474,7 +466,7 @@ export default class GML {
 		return this.execute(this.prepare(gml, "Expression"), instance);
 	}
 
-	builtInFunction(name, args, instance, relative=false) {
+	builtInFunction(name, instance, args, relative=false) {
 
 		var func = BuiltInFunctions[name];
 

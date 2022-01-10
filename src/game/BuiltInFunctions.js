@@ -1,4 +1,4 @@
-import {decimalColorToHSVValues, decimalColorAndAlphaToRGBA, decimalColorToRGB, rgbValuesToDecimalColor, makeCSSFont, parseArrowString} from '../common/tools.js'
+import {decimalColorToHSVValues, decimalColorAndAlphaToRGBA, decimalColorToRGB, rgbValuesToDecimalColor, makeCSSFont, parseArrowString, forceString, forceReal} from '../common/tools.js'
 
 export default class BuiltInFunctions {
 
@@ -421,6 +421,10 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static draw_text ([x, y, string]) {
+		// TODO do this for EVERY function?
+		x = forceReal(x);
+		y = forceReal(y);
+		string = forceString(string);
 
 		this.game.ctx.fillStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 

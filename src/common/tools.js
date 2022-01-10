@@ -134,3 +134,17 @@ export var stringifyArrowValues = (values) => {
 
 	return string;
 }
+
+export var forceString = (value) => {
+	if (typeof value != 'string') {
+		return value.toString();
+	}
+	return value;
+}
+
+export var forceReal = (value) => {
+	if (typeof value != 'number') {
+		return 0;
+	}
+	return value;
+}

@@ -385,12 +385,16 @@ export default class BuiltInFunctions {
 		this.game.ctx.fillStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 		this.game.ctx.strokeStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 
-		this.game.ctx.fillRect(x1, y1, x2-x1, y2-y1);
+		this.game.ctx.save();
+		this.game.ctx.translate(0.5, 0.5)
+
 		if (outline >= 1) {
-			this.game.ctx.stroke();
+			this.game.ctx.strokeRect(x1, y1, x2-x1, y2-y1);
 		} else {
-			this.game.ctx.fill();
+			this.game.ctx.fillRect(x1, y1, x2-x1, y2-y1);
 		}
+
+		this.game.ctx.restore();
 
 		return 0;
 	}

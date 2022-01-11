@@ -13,8 +13,6 @@ import BuiltInLocals from './BuiltInLocals.js';
 import BuiltInGlobals from './BuiltInGlobals.js';
 import BuiltInConstants from './BuiltInConstants.js';
 
-import {collision2Rectangles} from '../common/tools.js';
-
 export class Game {
 
 	constructor (project, canvas, input) {
@@ -373,12 +371,12 @@ export class Game {
 		var instance = new Instance(x, y, object, this);
 		this.instances.push(instance);
 
-		var obj = this.getResourceById('ProjectObject', instance.object_index) /////////////////////////////////////////
+		var obj = this.getResourceById('ProjectObject', instance.object_index)
 
 		// TODO: This seems too simple, please compilicate it
 		var create = obj.events.find((x) => x.type == 'create');
 		if (create) {
-			this.doEvent(create, instance); /////////////////////////////////////////
+			this.doEvent(create, instance);
 		}
 
 		// TODO set id?
@@ -557,13 +555,13 @@ export class Game {
 		this.globalVars.setForce('fps', this.fps);
 
 		// Begin step
-		this.getEventsOfTypeAndSubtype('step', 'begin').every(({event, instance}) => {
-			return this.doEvent(event, instance); /////////////////
+		this.getEventsOfTypeAndSubtype('step', 'begin').forEach(({event, instance}) => {
+			this.doEvent(event, instance);
 		});
 
 		// Alarm
-		this.getEventsOfType('alarm').every(([subtype, list]) => {
-			return list.every(({event, instance}) => {
+		this.getEventsOfType('alarm').forEach(([subtype, list]) => {
+			list.forEach(({event, instance}) => {
 
 				// Update alarm (decrease by one) here, before running event
 				// Alarm stays 0 until next alarm check, where it becomes -1 forever
@@ -573,33 +571,33 @@ export class Game {
 				}
 
 				if (instance.vars.get('alarm', [subtype]) == 0) {
-					return this.doEvent(event, instance); //////////////////
+					this.doEvent(event, instance);
 				}
 
 			});
 		});
 
 		// Keyboard
-		this.getEventsOfType('keyboard').every(([subtype, list]) => {
-			return list.every(({event, instance}) => {
+		this.getEventsOfType('keyboard').forEach(([subtype, list]) => {
+			list.forEach(({event, instance}) => {
 				if (this.key[subtype]) {
-					return this.doEvent(event, instance);
+					this.doEvent(event, instance);
 				}
 			});
 		});
 
-		this.getEventsOfType('keypress').every(([subtype, list]) => {
-			return list.every(({event, instance}) => {
+		this.getEventsOfType('keypress').forEach(([subtype, list]) => {
+			list.forEach(({event, instance}) => {
 				if (this.keyPressed[subtype]) {
-					return this.doEvent(event, instance);
+					this.doEvent(event, instance);
 				}
 			});
 		});
 
-		this.getEventsOfType('keyrelease').every(([subtype, list]) => {
-			return list.every(({event, instance}) => {
+		this.getEventsOfType('keyrelease').forEach(([subtype, list]) => {
+			list.forEach(({event, instance}) => {
 				if (this.keyReleased[subtype]) {
-					return this.doEvent(event, instance);
+					this.doEvent(event, instance);
 				}
 			});
 		});
@@ -608,8 +606,8 @@ export class Game {
 		// TODO
 
 		// Step
-		this.getEventsOfTypeAndSubtype('step', 'normal').every(({event, instance}) => {
-			return this.doEvent(event, instance);
+		this.getEventsOfTypeAndSubtype('step', 'normal').forEach(({event, instance}) => {
+			this.doEvent(event, instance);
 		});
 
 		// Update instance variables and positions
@@ -656,10 +654,10 @@ export class Game {
 		});
 
 		// Collisions
-		this.getEventsOfType('collision').every(([subtype, list]) => {
-			return list.every(({event, instance}) => {
+		this.getEventsOfType('collision').forEach(([subtype, list]) => {
+			list.forEach(({event, instance}) => {
 				var others = this.instances.filter(x => x.object_index == subtype);
-				others.every(other => {
+				others.forEach(other => {
 					if (this.checkCollision(instance, other)) {
 						this.doEvent(event, instance, other);
 					}
@@ -668,8 +666,8 @@ export class Game {
 		});
 
 		// End step
-		this.getEventsOfTypeAndSubtype('step', 'end').every(({event, instance}) => {
-			return this.doEvent(event, instance);
+		this.getEventsOfTypeAndSubtype('step', 'end').forEach(({event, instance}) => {
+			this.doEvent(event, instance);
 		});
 
 		// Reset keyboard states
@@ -759,7 +757,7 @@ export class Game {
 				var drawEvent = object.events.find(x => x.type == 'draw');
 
 				if (drawEvent) {
-					this.doEvent(drawEvent, instance); ////////////////////
+					this.doEvent(drawEvent, instance); 
 				} else {
 					// No draw event, draw sprite if it has one.
 					var index = instance.vars.get('sprite_index');
@@ -802,6 +800,7 @@ export class Game {
 	checkCollision(self, other) {
 
 		// TODO masks
+		// TODO solid
 
 		var selfSprite = this.getResourceById('ProjectSprite', self.vars.get('sprite_index'));
 		var selfImage = selfSprite.images[self.vars.get('image_index')];
@@ -813,7 +812,7 @@ export class Game {
 		// selfSprite.boundingbox == 'fullimage';
 		// selfSprite.shape = 'rectangle';
 
-		var c = collision2Rectangles({
+		var c = collisionRectOnRect({
 			x1: self.vars.get('x') - selfSprite.originx,
 			y1: self.vars.get('y') - selfSprite.originy,
 			x2: self.vars.get('x') - selfSprite.originx + selfImage.image.width,
@@ -898,4 +897,13 @@ export class Instance {
 
 	}
 
+}
+
+var collisionRectOnRect = (a, b) => {
+	return (
+		a.x1 <= b.x2 &&
+		b.x1 <= a.x2 &&
+		a.y1 <= b.y2 &&
+		b.y1 <= a.y2
+	);
 }

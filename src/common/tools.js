@@ -98,15 +98,6 @@ export var makeCSSFont = (family, size, bold, italic) => {
 	return (italic ? 'italic ' : '') + (bold ? 'bold ' : '') + size + 'pt "' + family + '"';
 }
 
-export var collision2Rectangles = (a, b) => {
-	return (
-		a.x1 <= b.x2 &&
-		b.x1 <= a.x2 &&
-		a.y1 <= b.y2 &&
-		b.y1 <= a.y2
-	);
-}
-
 export var parseArrowString = (string) => {
 	var values = [];
 

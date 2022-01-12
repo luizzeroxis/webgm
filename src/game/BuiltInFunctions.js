@@ -139,14 +139,35 @@ export default class BuiltInFunctions {
 	static chr ([val]) {
 		return String.fromCharCode(val);
 	}
-	static string ([val]) {
-		return val.toString();
-	}
 	static ord ([str]) {
 		return str.charCodeAt(0);
 	}
 	static real ([str]) {
 		return parseFloat(str);
+	}
+	static string ([val]) {
+		return val.toString();
+	}
+	static string_length ([str]) {
+		return str.length;
+	}
+	static string_pos ([substr, str]) {
+		return str.indexOf(substr) + 1;
+	}
+	static string_copy ([str, index, count]) {
+		return str.slice(index - 1, index - 1 + count);
+	}
+	static string_char_at ([str, index]) {
+		return str[index - 1];
+	}
+	static string_lower ([str]) {
+		return str.toLowerCase();
+	}
+	static string_upper ([str]) {
+		return str.toUpperCase();
+	}
+	static string_repeat ([str, count]) {
+		return str.repeat(count);
 	}
 
 	// ## Dealing with dates and time
@@ -4835,14 +4856,8 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static string_char_at ([_]) {
 
-		return 0;
-	}
-	static string_copy ([_]) {
 
-		return 0;
-	}
 	static string_count ([_]) {
 
 		return 0;
@@ -4871,10 +4886,7 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static string_length ([_]) {
 
-		return 0;
-	}
 	static string_letters ([_]) {
 
 		return 0;
@@ -4883,18 +4895,9 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static string_lower ([_]) {
+	
 
-		return 0;
-	}
-	static string_pos ([_]) {
 
-		return 0;
-	}
-	static string_repeat ([_]) {
-
-		return 0;
-	}
 	static string_replace ([_]) {
 
 		return 0;
@@ -4903,10 +4906,7 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static string_upper ([_]) {
-
-		return 0;
-	}
+	
 	static string_width ([_]) {
 
 		return 0;

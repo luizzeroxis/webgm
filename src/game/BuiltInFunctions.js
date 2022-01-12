@@ -85,6 +85,16 @@ export default class BuiltInFunctions {
 		if (vals.length == 0) return 0;
 		return vals.reduce((a, b) => a+b) / vals.length;
 	}
+	static median ([...vals]) {
+		if (vals.length == 0) return 0;
+		vals.sort();
+		if (vals.length % 2 != 0) {
+			return vals[(vals.length-1) / 2];
+		} else {
+			return Math.min(vals[(vals.length / 2)], vals[(vals.length / 2)-1]);
+		}
+		return 0;
+	}
 	static min ([...vals]) {
 		return Math.min(...vals);
 	}
@@ -3350,10 +3360,6 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 
-	static median ([_]) {
-
-		return 0;
-	}
 	static merge_color ([_]) {
 
 		return 0;

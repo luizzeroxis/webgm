@@ -92,8 +92,9 @@ export default class HTMLWindowObject extends HTMLWindow {
 						var eventType = this.selectEventType.value;
 						var eventSubtype = 0;
 
-						if (this.subtypeElement)
-							eventSubtype = this.subtypeElement.value; // TODO Check string/int convertions
+						if (this.subtypeValueFunction) {
+							eventSubtype = this.subtypeValueFunction();
+						}
 
 						if (this.paramEvents.find(x => x.type == eventType && x.subtype == eventSubtype)) {
 							return;
@@ -367,37 +368,36 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 		parent(this.divEventSubtype);
 
-			// TODO check for string/int convertions
-			this.subtypeElement = null;
+			this.subtypeValueFunction = null;
 
 			if (eventType == 'step') {
-				this.subtypeElement = $( add( newSelect(null, 'Step:',
-					Object.keys(Events.listStepSubtypes).map(x => ({value: x, name: Events.listStepSubtypes[x]}))
-				)), 'select');
+				let subtypeElement = $( add( newSelect(null, 'Step:', Events.listStepSubtypes)), 'select');
+				this.subtypeValueFunction = () => subtypeElement.value;
 			} else
 
 			if (eventType == 'alarm') {
-				this.subtypeElement = $( add( newNumberBox(null, 'Alarm:', 0, 1, 0, 11) ), 'input');
+				let subtypeElement = $( add( newNumberBox(null, 'Alarm:', 0, 1, 0, 11) ), 'input');
+				this.subtypeValueFunction = () => (parseInt(subtypeElement.value));
 			} else
 
 			if (eventType == 'keyboard' || eventType == 'keypress' || eventType == 'keyrelease') {
-				this.subtypeElement = $( add( newNumberBox(null, 'Key:', 0, 1, 0) ), 'input');
+				let subtypeElement = $( add( newNumberBox(null, 'Key:', 0, 1, 0) ), 'input');
+				this.subtypeValueFunction = () => (parseInt(subtypeElement.value));
 			} else
 
 			if (eventType == 'mouse') {
-				this.subtypeElement = $( add( newSelect(null, 'Mouse:',
-					Object.keys(Events.listMouseSubtypes).map(x => ({value: x, name: Events.listMouseSubtypes[x]}))
-				)), 'select');
+				let subtypeElement = $( add( newSelect(null, 'Mouse:', Events.listMouseSubtypes)), 'select');
+				this.subtypeValueFunction = () => (parseInt(subtypeElement.value));
 			} else
 
 			if (eventType == 'collision') {
-				this.subtypeElement = (new HTMLResourceSelect(this.editor, 'Object:', ProjectObject)).select;
+				let subtypeElement = (new HTMLResourceSelect(this.editor, 'Object:', ProjectObject)).select;
+				this.subtypeValueFunction = () => (parseInt(subtypeElement.value));
 			} else
 
 			if (eventType == 'other') {
-				this.subtypeElement = $( add( newSelect(null, 'Other:',
-					Object.keys(Events.listOtherSubtypes).map(x => ({value: x, name: Events.listOtherSubtypes[x]}))
-				)), 'select');
+				let subtypeElement = $( add( newSelect(null, 'Other:', Events.listOtherSubtypes)), 'select');
+				this.subtypeValueFunction = () => (parseInt(subtypeElement.value));
 			}
 
 			endparent()

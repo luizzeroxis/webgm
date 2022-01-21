@@ -65,7 +65,7 @@ export class Project {
 		constructor() {
 			this.id = null;
 			this.name = null;
-			this.sound = null;
+			this.sound = null; // AbstractAudio
 			this.volume = 1;
 		}
 		static getName() { return 'sound'; }

@@ -26,6 +26,7 @@ import {
 } from './Project.js';
 
 import AbstractImage from './AbstractImage.js'
+import AbstractAudio from './AbstractAudio.js'
 
 import {base64ToBlob} from './tools.js'
 
@@ -54,12 +55,22 @@ export default class ProjectSerializer {
 
 		project.resources.ProjectSprite.forEach(sprite => {
 			sprite.images.forEach((image, index) => {
-				zip.file("sprites/"+sprite.id+"/"+index, image.blob);
+				if (image) {
+					zip.file("sprites/"+sprite.id+"/"+index, image.blob);
+				}
 			})
 		})
 
+		project.resources.ProjectSound.forEach(sound => {
+			if (sound.sound) {
+				zip.file("sounds/"+sound.id, sound.sound.blob);
+			}
+		})
+
 		project.resources.ProjectBackground.forEach(background => {
-			zip.file("backgrounds/"+background.id, background.image.blob);
+			if (background.image) {
+				zip.file("backgrounds/"+background.id, background.image.blob);
+			}
 		})
 
 		return zip.generateAsync({type: 'blob'});
@@ -119,6 +130,18 @@ export default class ProjectSerializer {
 						}));
 
 					})
+				})
+
+				project.resources.ProjectSound.forEach(sound => {
+
+					var file = zip.file("sounds/"+sound.id);
+					if (file == null) return;
+
+					promises.push(file.async('blob')
+						.then(blob => {
+							sound.sound = new AbstractAudio(blob);
+						}));
+
 				})
 
 				project.resources.ProjectBackground.forEach(background => {

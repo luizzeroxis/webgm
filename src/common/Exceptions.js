@@ -31,3 +31,6 @@ export class ReturnException extends WebGMException {
 }
 export class BreakException extends WebGMException {}
 export class ContinueException extends WebGMException {}
+
+// Errors used within the editor
+export class UnserializeException extends WebGMException {}

@@ -25,7 +25,7 @@ import ProjectSerializer from '../common/ProjectSerializer.js';
 
 import {Game} from '../game/Game.js';
 
-import {WebGMException} from '../common/Exceptions.js';
+import {WebGMException, UnserializeException} from '../common/Exceptions.js';
 
 import HTMLWindowPreferences from './HTMLWindowPreferences.js';
 
@@ -279,6 +279,12 @@ export default class Editor {
 			} else {
 				alert('Error Loading: File seems to be corrupt.');
 				return;
+			}
+		}).catch(e => {
+			if (e instanceof UnserializeException) {
+				alert("Error reading file: " + e.message);
+			} else {
+				throw e;
 			}
 		})
 	}

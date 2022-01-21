@@ -28,6 +28,8 @@ import {
 import AbstractImage from './AbstractImage.js'
 import AbstractAudio from './AbstractAudio.js'
 
+import {UnserializeException} from './Exceptions.js';
+
 import {base64ToBlob} from './tools.js'
 
 export default class ProjectSerializer {
@@ -82,14 +84,26 @@ export default class ProjectSerializer {
 		var zip = new JSZip();
 		var version;
 
-		return zip.loadAsync(blob)
-		.then(() => zip.file("version").async("string"))
+		return new Promise((resolve, reject) => {
+			zip.loadAsync(blob)
+			.then(() => resolve())
+			.catch(() => reject(new UnserializeException('Not a zip file.')));
+		})
+		.then(() => {
+			var file = zip.file("version");
+			if (file == null) throw new UnserializeException('"version" file does not exist in zip file.');
+			return file.async("string");
+		})
 		.then(versionString => {
 			version = parseInt(versionString);
 			console.log("ZIP version:", version);
-			if (version < 1 || version > 2) throw new Error("Unsupported version");
+			if (version < 1 || version > 2) throw new UnserializeException("Unsupported "+version.toString+" version.");
 		})
-		.then(() => zip.file("project.json").async('string'))
+		.then(() => {
+			var file = zip.file("project.json");
+			if (file == null) throw new UnserializeException('"project.json" file does not exist in zip file.');
+			return file.async("string");
+		})
 		.then(json => {
 
 			if (version == 1) {
@@ -101,15 +115,19 @@ export default class ProjectSerializer {
 
 				ProjectSerializer.initClasses();
 
-				var project = JSON.parse(json, function(key, value) {
-					if (value != null && value.$class) {
-						var obj = new (ProjectSerializer.classes[value.$class])();
-						obj = Object.assign(obj, value);
-						delete obj.$class;
-						return obj;
-					}
-					return value;
-				});
+				try {
+					var project = JSON.parse(json, function(key, value) {
+						if (value != null && value.$class) {
+							var obj = new (ProjectSerializer.classes[value.$class])();
+							obj = Object.assign(obj, value);
+							delete obj.$class;
+							return obj;
+						}
+						return value;
+					});
+				} catch (e) {
+					throw new UnserializeException('Error parsing "project.json" file.');
+				}
 
 				Project.getTypes().forEach(x => {
 					if (project.resources[x.getClassName()] == undefined)
@@ -202,7 +220,7 @@ export default class ProjectSerializer {
 		try {
 			jsonObject = JSON.parse(json);
 		} catch (e) {
-			return null;
+			throw new UnserializeException("Error parsing JSON file.");
 		}
 
 		if (!jsonObject.resources) return null;

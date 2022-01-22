@@ -31,6 +31,12 @@ export class Game {
 		this.keyPressed = {};
 		this.keyReleased = {};
 
+		this.mouse = {};
+		this.mousePressed = {};
+		this.mouseReleased = {};
+		this.mouseX = 0;
+		this.mouseY = 0;
+
 		this.globalVars = null;
 		this.constants = null;
 
@@ -89,6 +95,9 @@ export class Game {
 		// input
 		this.input.removeEventListener('keydown', this.keyDownHandler)
 		this.input.removeEventListener('keyup', this.keyUpHandler)
+		this.input.removeEventListener('mousedown', this.mouseDownHandler)
+		this.input.removeEventListener('mouseup', this.mouseUpHandler)
+		this.input.removeEventListener('mousemove', this.mouseMoveHandler)
 
 		// main loop
 		this.endMainLoop();
@@ -104,6 +113,7 @@ export class Game {
 	}
 
 	startInput() {
+		// Keyboard
 		this.keyDownHandler = (e) => {
 			this.key[e.which] = true;
 			this.keyPressed[e.which] = true;
@@ -118,7 +128,29 @@ export class Game {
 		}
 		this.input.addEventListener('keyup', this.keyUpHandler);
 
-		// TODO mouse
+		// Mouse
+		this.mouseDownHandler = (e) => {
+			this.mouse[e.button] = true;
+			this.mousePressed[e.button] = true;
+			e.preventDefault();
+		}
+		this.input.addEventListener('mousedown', this.mouseDownHandler);
+
+		this.mouseUpHandler = (e) => {
+			this.mouse[e.button] = false;
+			this.mouseReleased[e.button] = true;
+			e.preventDefault();
+		}
+		this.input.addEventListener('mouseup', this.mouseUpHandler);
+
+		this.mouseMoveHandler = (e) => {
+			this.mouseX = e.offsetX;
+			this.mouseY = e.offsetY;
+
+			this.globalVars.setForce('mouse_x', this.mouseX);
+			this.globalVars.setForce('mouse_y', this.mouseY);
+		}
+		this.input.addEventListener('mousemove', this.mouseMoveHandler);
 	}
 
 	startEngine() {
@@ -580,7 +612,7 @@ export class Game {
 		// Keyboard
 		this.getEventsOfType('keyboard').forEach(([subtype, list]) => {
 			list.forEach(({event, instance}) => {
-				if (this.key[subtype]) {
+				if (this.getKey(subtype, this.key)) {
 					this.doEvent(event, instance);
 				}
 			});
@@ -588,7 +620,7 @@ export class Game {
 
 		this.getEventsOfType('keypress').forEach(([subtype, list]) => {
 			list.forEach(({event, instance}) => {
-				if (this.keyPressed[subtype]) {
+				if (this.getKey(subtype, this.keyPressed)) {
 					this.doEvent(event, instance);
 				}
 			});
@@ -596,14 +628,42 @@ export class Game {
 
 		this.getEventsOfType('keyrelease').forEach(([subtype, list]) => {
 			list.forEach(({event, instance}) => {
-				if (this.keyReleased[subtype]) {
+				if (this.getKey(subtype, this.keyReleased)) {
 					this.doEvent(event, instance);
 				}
 			});
 		});
 
 		// Mouse
-		// TODO
+
+		// TODO other mouse events
+
+		// Global Left, Right and Middle Button
+		for (let numb=0; numb<3; ++numb) {
+			this.getEventsOfTypeAndSubtype('mouse', 50 + numb).forEach(({event, instance}) => {
+				if (this.getMouse(numb+1, this.mouse)) {
+					this.doEvent(event, instance);
+				}
+			});
+		}
+
+		// Global Left, Right and Middle Press
+		for (let numb=0; numb<3; ++numb) {
+			this.getEventsOfTypeAndSubtype('mouse', 53 + numb).forEach(({event, instance}) => {
+				if (this.getMouse(numb+1, this.mousePressed)) {
+					this.doEvent(event, instance);
+				}
+			});
+		}
+
+		// Global Left, Right and Middle Release
+		for (let numb=0; numb<3; ++numb) {
+			this.getEventsOfTypeAndSubtype('mouse', 56 + numb).forEach(({event, instance}) => {
+				if (this.getMouse(numb+1, this.mouseReleased)) {
+					this.doEvent(event, instance);
+				}
+			});
+		}
 
 		// Step
 		this.getEventsOfTypeAndSubtype('step', 'normal').forEach(({event, instance}) => {
@@ -670,9 +730,11 @@ export class Game {
 			this.doEvent(event, instance);
 		});
 
-		// Reset keyboard states
+		// Reset keyboard/mouse states
 		this.keyPressed = {};
 		this.keyReleased = {};
+		this.mousePressed = {};
+		this.mouseReleased = {};
 
 		// Delete instances
 		this.shouldDestroyInstances.forEach(x => {
@@ -826,6 +888,26 @@ export class Game {
 
 		return c;
 
+	}
+
+	getKey(key, dict) { // dict should be key, keyPressed or keyReleased
+		if (key == 0) { // vk_nokey
+			return Object.entries(dict).every(([key, value]) => !value);
+		}
+		if (key == 1) { // vk_anykey
+			return Object.entries(dict).some(([key, value]) => value);
+		}
+		return dict[key];
+	}
+
+	getMouse(numb, dict) { // dict should be mouse, mousePressed or mouseReleased
+		if (numb == -1) { // mb_any
+			return Object.entries(dict).some(([key, value]) => value);
+		}
+		if (numb == 0) { // mb_none
+			return Object.entries(dict).every(([key, value]) => !value);
+		}
+		return dict[numb - 1]; // offset to be 1-indexed
 	}
 
 	instanceDestroy (instance) {

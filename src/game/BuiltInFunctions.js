@@ -268,16 +268,26 @@ export default class BuiltInFunctions {
 	// ## The keyboard
 
 	static keyboard_check ([key]) {
-		return this.game.key[key] ? 1 : 0;
+		return this.game.getKey(key, this.game.key) ? 1 : 0;
 	}
 	static keyboard_check_pressed ([key]) {
-		return this.game.keyPressed[key] ? 1 : 0;
+		return this.game.getKey(key, this.game.keyPressed) ? 1 : 0;
 	}
 	static keyboard_check_released ([key]) {
-		return this.game.keyReleased[key] ? 1 : 0;
+		return this.game.getKey(key, this.game.keyReleased) ? 1 : 0;
 	}
 
 	// ## The mouse
+
+	static mouse_check_button ([numb]) {
+		return this.game.getMouse(numb, this.game.mouse) ? 1 : 0;
+	}
+	static mouse_check_button_pressed ([numb]) {
+		return this.game.getMouse(numb, this.game.mousePressed) ? 1 : 0;
+	}
+	static mouse_check_button_released ([numb]) {
+		return this.game.getMouse(numb, this.game.mouseReleased) ? 1 : 0;
+	}
 
 	// ## The joystick
 
@@ -3440,18 +3450,7 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static mouse_check_button ([_]) {
-
-		return 0;
-	}
-	static mouse_check_button_pressed ([_]) {
-
-		return 0;
-	}
-	static mouse_check_button_released ([_]) {
-
-		return 0;
-	}
+	
 	static mouse_clear ([_]) {
 
 		return 0;

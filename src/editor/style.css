@@ -106,6 +106,13 @@
 	resize: vertical;
 }
 
+.grid-resource.resource-object .action-type {
+	padding: 0;
+}
+.grid-resource.resource-object .action-type img {
+	display: block;
+}
+
 .arrow-interface {
 	display: grid;
 	grid-template-columns: repeat(3, max-content);

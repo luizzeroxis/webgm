@@ -1,3 +1,6 @@
+// import ActionDefaultIcon  from '../editor/img/action-default-icon.png';
+// import Action603Icon from '../editor/img/action-603-icon.png';
+
 export default class BuiltInLibraries {
 	static getList() {
 		return [
@@ -148,6 +151,7 @@ export default class BuiltInLibraries {
 					{
 						id: 603,
 						description: 'Execute Code',
+						// image: Action603Icon,
 						getListText: action => "Execute a piece of code",
 						getHintText: action => BIL.textApplyTo(action) + "execute code:\n\n" + BIL.textArg(action, 0),
 						kind: 'code',

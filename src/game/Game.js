@@ -36,6 +36,7 @@ export class Game {
 		this.mouseReleased = {};
 		this.mouseX = 0;
 		this.mouseY = 0;
+		this.mouseWheel = 0;
 
 		this.globalVars = null;
 		this.constants = null;
@@ -98,6 +99,7 @@ export class Game {
 		this.input.removeEventListener('mousedown', this.mouseDownHandler)
 		this.input.removeEventListener('mouseup', this.mouseUpHandler)
 		this.input.removeEventListener('mousemove', this.mouseMoveHandler)
+		this.input.removeEventListener('wheel', this.wheelHandler)
 
 		// main loop
 		this.endMainLoop();
@@ -129,16 +131,23 @@ export class Game {
 		this.input.addEventListener('keyup', this.keyUpHandler);
 
 		// Mouse
+
+		var toEngineButton = button => {
+			return button == 1 ? 3 // middle button
+				: button == 2 ? 2 // right button
+				: button + 1; // every other button
+		}
+
 		this.mouseDownHandler = (e) => {
-			this.mouse[e.button] = true;
-			this.mousePressed[e.button] = true;
+			this.mouse[toEngineButton(e.button)] = true;
+			this.mousePressed[toEngineButton(e.button)] = true;
 			e.preventDefault();
 		}
 		this.input.addEventListener('mousedown', this.mouseDownHandler);
 
 		this.mouseUpHandler = (e) => {
-			this.mouse[e.button] = false;
-			this.mouseReleased[e.button] = true;
+			this.mouse[toEngineButton(e.button)] = false;
+			this.mouseReleased[toEngineButton(e.button)] = true;
 			e.preventDefault();
 		}
 		this.input.addEventListener('mouseup', this.mouseUpHandler);
@@ -151,6 +160,12 @@ export class Game {
 			this.globalVars.setForce('mouse_y', this.mouseY);
 		}
 		this.input.addEventListener('mousemove', this.mouseMoveHandler);
+
+		this.wheelHandler = (e) => {
+			this.mouseWheel += e.deltaY;
+			e.preventDefault();
+		}
+		this.input.addEventListener('wheel', this.wheelHandler);
 	}
 
 	startEngine() {
@@ -638,32 +653,66 @@ export class Game {
 
 		// TODO other mouse events
 
-		// Global Left, Right and Middle Button
-		for (let numb=0; numb<3; ++numb) {
-			this.getEventsOfTypeAndSubtype('mouse', 50 + numb).forEach(({event, instance}) => {
-				if (this.getMouse(numb+1, this.mouse)) {
-					this.doEvent(event, instance);
-				}
-			});
-		}
+		var mouseSubtypes = [
+			{id: 0, kind: 'button', button: 1, dict: this.mouse}, //Left Button
+			{id: 1, kind: 'button', button: 2, dict: this.mouse}, //Right Button
+			{id: 2, kind: 'button', button: 3, dict: this.mouse}, //Middle Button
+			{id: 3, kind: 'button', button: 0, dict: this.mouse}, //No Button
+			{id: 4, kind: 'button', button: 1, dict: this.mousePressed}, //Left Press
+			{id: 5, kind: 'button', button: 2, dict: this.mousePressed}, //Right Press
+			{id: 6, kind: 'button', button: 3, dict: this.mousePressed}, //Middle Press
+			{id: 7, kind: 'button', button: 1, dict: this.mouseReleased}, //Left Release
+			{id: 8, kind: 'button', button: 2, dict: this.mouseReleased}, //Right Release
+			{id: 9, kind: 'button', button: 3, dict: this.mouseReleased}, //Middle Release
+			{id: 10, kind: 'enter-release'}, //Mouse Enter
+			{id: 11, kind: 'enter-release'}, //Mouse Leave
+			{id: 60, kind: 'wheel-up'}, //Mouse Wheel Up
+			{id: 61, kind: 'wheel-down'}, //Mouse Wheel Down
+			{id: 50, kind: 'button', button: 1, global: true, dict: this.mouse}, //Global Left Button
+			{id: 51, kind: 'button', button: 2, global: true, dict: this.mouse}, //Global Right Button
+			{id: 52, kind: 'button', button: 3, global: true, dict: this.mouse}, //Global Middle Button
+			{id: 53, kind: 'button', button: 1, global: true, dict: this.mousePressed}, //Global Left Press
+			{id: 54, kind: 'button', button: 2, global: true, dict: this.mousePressed}, //Global Right Press
+			{id: 55, kind: 'button', button: 3, global: true, dict: this.mousePressed}, //Global Middle Press
+			{id: 56, kind: 'button', button: 1, global: true, dict: this.mouseReleased}, //Global Left Release
+			{id: 57, kind: 'button', button: 2, global: true, dict: this.mouseReleased}, //Global Right Release
+			{id: 58, kind: 'button', button: 3, global: true, dict: this.mouseReleased}, //Global Middle Release
+			// TODO joystick
+		];
 
-		// Global Left, Right and Middle Press
-		for (let numb=0; numb<3; ++numb) {
-			this.getEventsOfTypeAndSubtype('mouse', 53 + numb).forEach(({event, instance}) => {
-				if (this.getMouse(numb+1, this.mousePressed)) {
-					this.doEvent(event, instance);
-				}
-			});
-		}
+		this.getEventsOfType('mouse').forEach(([subtype, list]) => {
+			list.forEach(({event, instance}) => {
+				var execute = false;
+				var eventInfo = mouseSubtypes.find(x => x.id == subtype);
+				if (eventInfo == null) return;
 
-		// Global Left, Right and Middle Release
-		for (let numb=0; numb<3; ++numb) {
-			this.getEventsOfTypeAndSubtype('mouse', 56 + numb).forEach(({event, instance}) => {
-				if (this.getMouse(numb+1, this.mouseReleased)) {
+				if (eventInfo.kind == 'button') {
+					execute = this.getMouse(eventInfo.button, eventInfo.dict);
+
+					if (execute && !eventInfo.global) {
+						// check if mouse is hovering over instance
+						if (false) { // TODO
+							execute = true;
+						}
+					}
+
+				}
+				if (eventInfo.kind == 'enter-release') {
+					// TODO not implemented
+				}
+				if (eventInfo.kind == 'wheel-up') {
+					execute = (this.mouseWheel < 0);
+				}
+				if (eventInfo.kind == 'wheel-down') {
+					execute = (this.mouseWheel > 0);
+				}
+
+				if (execute) {
 					this.doEvent(event, instance);
 				}
-			});
-		}
+
+			})
+		})
 
 		// Step
 		this.getEventsOfTypeAndSubtype('step', 'normal').forEach(({event, instance}) => {
@@ -735,6 +784,7 @@ export class Game {
 		this.keyReleased = {};
 		this.mousePressed = {};
 		this.mouseReleased = {};
+		this.mouseWheel = 0;
 
 		// Delete instances
 		this.shouldDestroyInstances.forEach(x => {
@@ -907,7 +957,7 @@ export class Game {
 		if (numb == 0) { // mb_none
 			return Object.entries(dict).every(([key, value]) => !value);
 		}
-		return dict[numb - 1]; // offset to be 1-indexed
+		return dict[numb];
 	}
 
 	instanceDestroy (instance) {

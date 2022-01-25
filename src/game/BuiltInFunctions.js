@@ -93,7 +93,6 @@ export default class BuiltInFunctions {
 		} else {
 			return Math.min(vals[(vals.length / 2)], vals[(vals.length / 2)-1]);
 		}
-		return 0;
 	}
 	static min ([...vals]) {
 		return Math.min(...vals);
@@ -287,6 +286,12 @@ export default class BuiltInFunctions {
 	}
 	static mouse_check_button_released ([numb]) {
 		return this.game.getMouse(numb, this.game.mouseReleased) ? 1 : 0;
+	}
+	static mouse_wheel_up ([]) {
+		return (this.game.mouseWheel < 0);
+	}
+	static mouse_wheel_down ([]) {
+		return (this.game.mouseWheel > 0);
 	}
 
 	// ## The joystick
@@ -3459,14 +3464,7 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static mouse_wheel_down ([_]) {
 
-		return 0;
-	}
-	static mouse_wheel_up ([_]) {
-
-		return 0;
-	}
 	static move_bounce ([_]) {
 
 		return 0;

@@ -653,41 +653,20 @@ export class Game {
 
 		// TODO other mouse events
 
-		var mouseSubtypes = [
-			{id: 0, kind: 'button', button: 1, dict: this.mouse}, //Left Button
-			{id: 1, kind: 'button', button: 2, dict: this.mouse}, //Right Button
-			{id: 2, kind: 'button', button: 3, dict: this.mouse}, //Middle Button
-			{id: 3, kind: 'button', button: 0, dict: this.mouse}, //No Button
-			{id: 4, kind: 'button', button: 1, dict: this.mousePressed}, //Left Press
-			{id: 5, kind: 'button', button: 2, dict: this.mousePressed}, //Right Press
-			{id: 6, kind: 'button', button: 3, dict: this.mousePressed}, //Middle Press
-			{id: 7, kind: 'button', button: 1, dict: this.mouseReleased}, //Left Release
-			{id: 8, kind: 'button', button: 2, dict: this.mouseReleased}, //Right Release
-			{id: 9, kind: 'button', button: 3, dict: this.mouseReleased}, //Middle Release
-			{id: 10, kind: 'enter-release'}, //Mouse Enter
-			{id: 11, kind: 'enter-release'}, //Mouse Leave
-			{id: 60, kind: 'wheel-up'}, //Mouse Wheel Up
-			{id: 61, kind: 'wheel-down'}, //Mouse Wheel Down
-			{id: 50, kind: 'button', button: 1, global: true, dict: this.mouse}, //Global Left Button
-			{id: 51, kind: 'button', button: 2, global: true, dict: this.mouse}, //Global Right Button
-			{id: 52, kind: 'button', button: 3, global: true, dict: this.mouse}, //Global Middle Button
-			{id: 53, kind: 'button', button: 1, global: true, dict: this.mousePressed}, //Global Left Press
-			{id: 54, kind: 'button', button: 2, global: true, dict: this.mousePressed}, //Global Right Press
-			{id: 55, kind: 'button', button: 3, global: true, dict: this.mousePressed}, //Global Middle Press
-			{id: 56, kind: 'button', button: 1, global: true, dict: this.mouseReleased}, //Global Left Release
-			{id: 57, kind: 'button', button: 2, global: true, dict: this.mouseReleased}, //Global Right Release
-			{id: 58, kind: 'button', button: 3, global: true, dict: this.mouseReleased}, //Global Middle Release
-			// TODO joystick
-		];
-
 		this.getEventsOfType('mouse').forEach(([subtype, list]) => {
 			list.forEach(({event, instance}) => {
 				var execute = false;
-				var eventInfo = mouseSubtypes.find(x => x.id == subtype);
+				var eventInfo = Events.listMouseSubtypes.find(x => x.id == subtype);
 				if (eventInfo == null) return;
 
 				if (eventInfo.kind == 'button') {
-					execute = this.getMouse(eventInfo.button, eventInfo.dict);
+					var dict = {
+						'mouse': this.mouse,
+						'mousePressed': this.mousePressed,
+						'mouseReleased': this.mouseReleased,
+					}[eventInfo.when]; // wacky
+
+					execute = this.getMouse(eventInfo.button, dict);
 
 					if (execute && !eventInfo.global) {
 						// check if mouse is hovering over instance

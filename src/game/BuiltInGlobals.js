@@ -26,7 +26,7 @@ export default class BuiltInGlobals {
 
 	// Game play / Instances
 
-	static instance_count = {default: ()=>new Array(0).fill(-4), readOnly: true};
+	static instance_count = {default: 0, readOnly: true};
 	static instance_id = {default: [], readOnly: true}; // WTF???
 
 	// Game play / Timing

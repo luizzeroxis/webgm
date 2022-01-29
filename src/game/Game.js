@@ -12,6 +12,7 @@ import ActionsParser from './ActionsParser.js';
 import BuiltInLocals from './BuiltInLocals.js';
 import BuiltInGlobals from './BuiltInGlobals.js';
 import BuiltInConstants from './BuiltInConstants.js';
+import Collision from './Collision.js';
 
 export class Game {
 
@@ -21,6 +22,7 @@ export class Game {
 		this.input = input;
 
 		this.dispatcher = new Dispatcher();
+		this.collision = new Collision();
 
 		this.ctx = null;
 
@@ -42,7 +44,8 @@ export class Game {
 		this.constants = null;
 
 		this.instances = [];
-		this.shouldDestroyInstances = [];
+		this.existingInstances = [];
+		this.destroyedInstances = [];
 
 		this.fps = 0;
 		this.fpsFrameCount = 0;
@@ -390,16 +393,25 @@ export class Game {
 	///// END ERROR THROWING
 
 	loadFirstRoom() {
-		this.room = this.project.resources.ProjectRoom[0];
-		this.loadRoom(this.room);
+		this.loadRoom(this.project.resources.ProjectRoom[0]);
 	}
 
 	loadRoom(room) {
 
-		//Empty room
-		//TODO: keep persistent objects
-		//TODO: save current room if it's persistent
-		this.instances = [];
+		var isFirstRoom = (this.room == null);
+
+		if (!isFirstRoom) {
+			this.existingInstances.forEach(instance => {
+				var OTHER_ROOM_END = 5;
+				this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
+			})
+
+			this.instances = this.instances.filter(instance => instance.vars.get('persistent'))
+			this.existingInstances = this.instances.slice();
+			this.destroyedInstances = [];
+		}
+
+		this.room = room;
 
 		this.canvas.width = room.width;
 		this.canvas.height = room.height;
@@ -408,35 +420,59 @@ export class Game {
 		this.globalVars.setForce('room_height', room.height);
 		this.globalVars.setForce('room_speed', room.speed);
 
+		// TODO Check if room is persistent
 		room.instances.forEach(roomInstance => {
 			this.instanceCreate(roomInstance.x, roomInstance.y, roomInstance.object_index);
 		})
 
+		if (isFirstRoom) {
+			this.instances.forEach(instance => {
+				var OTHER_GAME_START = 2;
+				this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_START), instance);
+			})
+		}
+
+		// TODO run room creation code
+
+		this.instances.forEach(instance => {
+			var OTHER_GAME_START = 4;
+			this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_START), instance);
+		})
+
 	}
 
-	instanceCreate (x, y, object) {
+	instanceCreate(x, y, object) {
 		var instance = new Instance(x, y, object, this);
 		this.instances.push(instance);
+		this.existingInstances.push(instance);
 
-		var obj = this.getResourceById('ProjectObject', instance.object_index)
+		// TODO run instance creation code
 
-		// TODO: This seems too simple, please compilicate it
-		var create = obj.events.find((x) => x.type == 'create');
-		if (create) {
-			this.doEvent(create, instance);
-		}
+		this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
 
 		// TODO set id?
 		return instance.vars.get('id');
+	}
+
+	instanceExists(instance) {
+		return (this.existingInstances.find(x => x == instance) != null);
 	}
 
 	getResourceById(type, id) {
 		return this.project.resources[type].find(x => x.id == id);
 	}
 
+	getEventOfInstance(instance, type, subtype) {
+		var object = this.getResourceById('ProjectObject', instance.object_index);
+		var event = object.events.find(x => (x.type == type) && (subtype ? (x.subtype == subtype) : true));
+		return event;
+	}
+
 	//
 
 	doEvent(event, instance, other=null) {
+		if (event == null) return;
+
 		this.currentEvent = event;
 		this.currentInstance = instance;
 		this.currentOther = other || instance;
@@ -766,10 +802,11 @@ export class Game {
 		this.mouseWheel = 0;
 
 		// Delete instances
-		this.shouldDestroyInstances.forEach(x => {
-			this.instanceDestroy(x);
+		this.destroyedInstances.forEach(instance => {
+			var index = this.instances.findIndex(x => x == instance);
+			this.instances.splice(index, 1);
 		})
-		this.shouldDestroyInstances = [];
+		this.destroyedInstances = [];
 
 		// Run main loop again, after a frame of time has passed.
 		// This means the game will slow down if a loop takes too much time.
@@ -845,7 +882,7 @@ export class Game {
 
 			// Only draw if visible
 			if (instance.vars.get('visible')) {
-				var drawEvent = object.events.find(x => x.type == 'draw');
+				var drawEvent = this.getEventOfInstance(instance, 'draw');
 
 				if (drawEvent) {
 					this.doEvent(drawEvent, instance); 
@@ -903,7 +940,7 @@ export class Game {
 		// selfSprite.boundingbox == 'fullimage';
 		// selfSprite.shape = 'rectangle';
 
-		var c = collisionRectOnRect({
+		var c = Collision.rectOnRect({
 			x1: self.vars.get('x') - selfSprite.originx,
 			y1: self.vars.get('y') - selfSprite.originy,
 			x2: self.vars.get('x') - selfSprite.originx + selfImage.image.width,
@@ -937,11 +974,6 @@ export class Game {
 			return Object.entries(dict).every(([key, value]) => !value);
 		}
 		return dict[numb];
-	}
-
-	instanceDestroy (instance) {
-		var index = this.instances.findIndex(x => x == instance);
-		this.instances.splice(index, 1);
 	}
 
 	catch(e) {
@@ -984,6 +1016,10 @@ export class Instance {
 
 		// Id
 		this.vars.setForce('id', 100001);
+
+		// Set by constructor
+		this.vars.setForce('x', x);
+		this.vars.setForce('y', y);
 		
 		// Inherited from object
 		var obj = game.getResourceById('ProjectObject', this.object_index);
@@ -995,11 +1031,7 @@ export class Instance {
 		this.vars.setForce('depth', obj.depth);
 		this.vars.setForce('persistent', obj.persistent);
 		this.vars.setForce('mask_index', obj.mask);
-
-		// Set by constructor
-		this.vars.setForce('x', x);
-		this.vars.setForce('y', y);
-
+		
 		//
 		this.vars.setForce('xprevious', x);
 		this.vars.setForce('yprevious', y);
@@ -1008,13 +1040,4 @@ export class Instance {
 
 	}
 
-}
-
-var collisionRectOnRect = (a, b) => {
-	return (
-		a.x1 <= b.x2 &&
-		b.x1 <= a.x2 &&
-		a.y1 <= b.y2 &&
-		b.y1 <= a.y2
-	);
 }

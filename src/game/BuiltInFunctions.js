@@ -673,7 +673,7 @@ export default class BuiltInFunctions {
 	static instance_destroy ([]) {
 		this.game.destroyedInstances.push(this.currentInstance);
 		var index = this.game.existingInstances.findIndex(x => x == this.currentInstance);
-		this.existingInstances.splice(index, 1);
+		this.game.existingInstances.splice(index, 1);
 
 		this.game.doEvent(this.game.getEventOfInstance(this.currentInstance, 'destroy'), this.currentInstance);
 

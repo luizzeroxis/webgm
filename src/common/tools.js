@@ -134,7 +134,7 @@ export var forceString = (value) => {
 }
 
 export var forceReal = (value) => {
-	if (typeof value != 'number') {
+	if (typeof value != 'number' || Number.isNaN(value)) {
 		return 0;
 	}
 	return value;

@@ -2,8 +2,12 @@ export default class BuiltInLocals {
 
 	// Game play / Moving around
 
-	static x = {default: 0}
-	static y = {default: 0}
+	static x = {default: 0, set (x) {
+		updateBBox(this);
+	}}
+	static y = {default: 0, set (y) {
+		updateBBox(this);
+	}}
 	static xprevious = {default: 0}
 	static yprevious = {default: 0}
 	static xstart = {default: 0}
@@ -82,15 +86,45 @@ export default class BuiltInLocals {
 			if (image) {
 				this.vars.setForce('sprite_width', image.image.width);
 				this.vars.setForce('sprite_height', image.image.height);
+
+				var bbox_l = this.vars.get('x') - sprite.originx;
+				var bbox_r = bbox_l + image.image.width;
+				var bbox_t = this.vars.get('y') - sprite.originy;
+				var bbox_b = bbox_t + image.image.height;
+
+				this.vars.setForce('bbox_left', bbox_l);
+				this.vars.setForce('bbox_right', bbox_r);
+				this.vars.setForce('bbox_top', bbox_t);
+				this.vars.setForce('bbox_bottom', bbox_b);
+
 			} else {
 				// no image index
+				this.vars.setForce('sprite_width', 1);
+				this.vars.setForce('sprite_height', 1);
+
+				var x = this.vars.get('x');
+				var y = this.vars.get('y');
+
+				this.vars.setForce('bbox_left', x);
+				this.vars.setForce('bbox_right', x);
+				this.vars.setForce('bbox_top', y);
+				this.vars.setForce('bbox_bottom', y);
 			}
 			this.vars.setForce('sprite_xoffset', sprite.originx);
 			this.vars.setForce('sprite_yoffset', sprite.originy);
 			this.vars.setForce('image_number', sprite.images.length);
 			
 		} else {
-			// no sprite indexs
+			// no sprite index
+			this.vars.setForce('sprite_width', 0);
+			this.vars.setForce('sprite_height', 0);
+			this.vars.setForce('bbox_left', -100000);
+			this.vars.setForce('bbox_right', -100000);
+			this.vars.setForce('bbox_top', -100000);
+			this.vars.setForce('bbox_bottom', -100000);
+			this.vars.setForce('sprite_xoffset', 0);
+			this.vars.setForce('sprite_yoffset', 0);
+			this.vars.setForce('image_number', 0);
 		}
 
 	}}
@@ -123,4 +157,37 @@ export default class BuiltInLocals {
 		this.vars.set('image_speed', 0);
 	}}
 
+}
+
+function updateBBox(instance) {
+	var sprite = instance.game.getResourceById('ProjectSprite', instance.vars.get('sprite_index'));
+
+	if (sprite) {
+		var image = sprite.images[instance.vars.get('image_index')];
+
+		if (image) {
+			var bbox_l = instance.vars.get('x') - sprite.originx;
+			var bbox_r = bbox_l + image.image.width;
+			var bbox_t = instance.vars.get('y') - sprite.originy;
+			var bbox_b = bbox_t + image.image.height;
+
+			instance.vars.setForce('bbox_left', bbox_l);
+			instance.vars.setForce('bbox_right', bbox_r);
+			instance.vars.setForce('bbox_top', bbox_t);
+			instance.vars.setForce('bbox_bottom', bbox_b);
+
+		} else {
+			// no image index
+			var x = instance.vars.get('x');
+			var y = instance.vars.get('y');
+
+			instance.vars.setForce('bbox_left', x);
+			instance.vars.setForce('bbox_right', x);
+			instance.vars.setForce('bbox_top', y);
+			instance.vars.setForce('bbox_bottom', y);
+		}
+		
+	} else {
+		// no sprite index
+	}
 }

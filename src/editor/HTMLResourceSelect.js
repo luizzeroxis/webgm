@@ -40,7 +40,9 @@ export default class HTMLResourceSelect {
 	}
 
 	getValue() {
-		return parseInt(this.select.value);
+		var value = parseInt(this.select.value);
+		if (Number.isNaN(value)) return -1;
+		return value;
 	}
 
 	setValue(value) {

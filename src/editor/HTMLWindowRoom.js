@@ -34,7 +34,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 						add( newElem(null, 'legend', 'Instances') )
 
-						this.selectObject = new HTMLResourceSelect(this.editor, 'Object:', ProjectObject);
+						this.selectObject = new HTMLResourceSelect(this.editor, 'Object:', ProjectObject, true);
 
 						var toolGroup = '_radio_'+uniqueID();
 						this.radioAdd = $( add( newRadioBox(null, 'Add instance', toolGroup, true) ), 'input')

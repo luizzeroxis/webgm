@@ -1,4 +1,4 @@
-import {decimalColorToHSVValues, decimalColorAndAlphaToRGBA, decimalColorToRGB, rgbValuesToDecimalColor, makeCSSFont, parseArrowString, forceString, forceReal} from '../common/tools.js'
+import {decimalColorToHSVValues, decimalColorAndAlphaToRGBA, decimalColorToRGB, rgbValuesToDecimalColor, makeCSSFont, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger} from '../common/tools.js'
 
 export default class BuiltInFunctions {
 
@@ -44,7 +44,7 @@ export default class BuiltInFunctions {
 		return Math.sign(x);
 	}
 	static round ([x]) {
-		return Math.round(x); // TODO banker's round
+		return toInteger(x);
 	}
 	static floor ([x]) {
 		return Math.floor(x);
@@ -138,10 +138,10 @@ export default class BuiltInFunctions {
 		return Math.sin(dir * Math.PI / 180) * len;
 	}
 	static is_real ([x]) {
-		return (typeof x == 'number');
+		return (typeof x == 'number') ? 1 : 0;
 	}
 	static is_string ([x]) {
-		return (typeof x == 'string');
+		return (typeof x == 'string') ? 1 : 0;
 	}
 
 	// ## String handling functions
@@ -153,7 +153,8 @@ export default class BuiltInFunctions {
 		return str.charCodeAt(0);
 	}
 	static real ([str]) {
-		return forceReal(parseFloat(str));
+		var float = parseFloat(str);
+		return (!Number.isNaN(float)) ? float : 0;
 	}
 	static string ([val]) {
 		return val.toString();
@@ -1316,7 +1317,7 @@ export default class BuiltInFunctions {
 		// TODO do this for EVERY function?
 		x = forceReal(x);
 		y = forceReal(y);
-		string = forceString(string);
+		string = asString(string);
 
 		this.game.ctx.fillStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 
@@ -2264,12 +2265,25 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static get_integer ([str, def]) {
-		var p = prompt(str, def);
-		return (!isNaN(parseInt(p, 10))) ? p : '';
+		str = forceString(str);
+		def = forceInteger(def);
+
+		var result = prompt(str, def);
+		if (result === null) return def;
+
+		var value = parseFloat(result);
+		if (Number.isNaN(value)) return def;
+
+		return toInteger(value);
 	}
 	static get_string ([str, def]) {
-		var p = prompt(str, def);
-		return p ? p : '';
+		str = forceString(str);
+		def = forceString(def);
+
+		var result = prompt(str, def);
+		if (result === null) return def;
+
+		return result;
 	}
 
 	static message_background ([_]) {

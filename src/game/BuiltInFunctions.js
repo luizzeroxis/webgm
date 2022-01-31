@@ -97,8 +97,8 @@ export default class BuiltInFunctions {
 	static arctan ([x]) {
 		return Math.atan(x);
 	}
-	static arctan2 ([x]) {
-		return Math.atan2(x);
+	static arctan2 ([y, x]) {
+		return Math.atan2(y, x);
 	}
 	static degtorad ([x]) {
 		return x * Math.PI / 180;
@@ -129,7 +129,7 @@ export default class BuiltInFunctions {
 		return Math.hypot(x2 - x1, y2 - y1);
 	}
 	static point_direction ([x1, y1, x2, y2]) {
-		return Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+		return Math.atan2(-(y2 - y1), x2 - x1) * (180 / Math.PI);
 	}
 	static lengthdir_x ([len, dir]) {
 		return Math.cos(dir * Math.PI / 180) * len;
@@ -183,13 +183,11 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static string_replace ([_]) {
-
-		return 0;
+	static string_replace ([str, substr, newstr]) {
+		return str.replace(substr, newstr);
 	}
-	static string_replace_all ([_]) {
-
-		return 0;
+	static string_replace_all ([str, substr, newstr]) {
+		return str.replaceAll(substr, newstr);
 	}
 	static string_count ([_]) {
 
@@ -424,12 +422,15 @@ export default class BuiltInFunctions {
 
 	// ## Moving around
 
-	static motion_set ([_]) {
-
+	static motion_set ([dir, speed]) {
+		this.currentInstance.vars.set('direction', dir);
+		this.currentInstance.vars.set('speed', speed);
 		return 0;
 	}
-	static motion_add ([_]) {
-
+	static motion_add ([dir, speed]) {
+		var dir_radians = dir * (Math.PI / 180);
+		this.currentInstance.vars.setAdd('hspeed', Math.cos(dir_radians) * speed);
+		this.currentInstance.vars.setAdd('vspeed', -Math.sin(dir_radians) * speed);
 		return 0;
 	}
 	static place_free ([_]) {
@@ -462,7 +463,7 @@ export default class BuiltInFunctions {
 	}
 	static move_towards_point ([x, y, sp]) {
 		this.currentInstance.vars.set('speed', sp);
-		this.currentInstance.vars.set('direction', Math.atan2(x, y) * (180 / Math.PI));
+		this.currentInstance.vars.set('direction', Math.atan2(-y, x) * (180 / Math.PI));
 		return 0;
 	}
 	static move_bounce_solid ([adv]) {

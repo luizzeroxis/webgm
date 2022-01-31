@@ -60,7 +60,12 @@ export var hexColorToDecimalColor = (hex) => {
 
 // decimal -> hsv
 export var decimalColorToHSVValues = (color) => {
-	var {r, g, b} = decimalColorToRGBValues(color);
+	return rgbValuesToHSVValues(decimalColorToRGBValues(color))
+}
+
+// rgb -> hsv
+export var rgbValuesToHSVValues = (rgb) => {
+	var {r, g, b} = rgb;
 	
 	var max = Math.max(r, g, b), min = Math.min(r, g, b);
 	var h, s, v = max;
@@ -126,16 +131,40 @@ export var stringifyArrowValues = (values) => {
 	return string;
 }
 
-export var forceString = (value) => {
+export var asString = (value) => {
 	if (typeof value != 'string') {
 		return value.toString();
 	}
 	return value;
 }
 
+export var forceString = (value) => {
+	if (typeof value != 'string') {
+		return "";
+	}
+	return value;
+}
+
 export var forceReal = (value) => {
-	if (typeof value != 'number' || Number.isNaN(value)) {
+	if (typeof value != 'number') {
 		return 0;
 	}
 	return value;
+}
+
+export var forceInteger = (value) => {
+	return toInteger(forceReal(value));
+}
+
+export var toInteger = (value) => {
+	if (Math.abs(value % 1) == 0.5) {
+		var integer = Math.trunc(value)
+		if (integer % 2 == 0) {
+			return integer;
+		} else {
+			return integer + Math.sign(integer);
+		}
+	} else {
+		return Math.round(value);
+	}
 }

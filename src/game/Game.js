@@ -22,7 +22,7 @@ export class Game {
 		this.input = input;
 
 		this.dispatcher = new Dispatcher();
-		this.collision = new Collision();
+		this.collision = new Collision(this);
 
 		this.ctx = null;
 

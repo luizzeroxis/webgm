@@ -665,8 +665,8 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static instance_create ([x, y, obj]) {
-		return this.game.instanceCreate(x, y, obj);
+	static async instance_create ([x, y, obj]) {
+		return await this.game.instanceCreate(x, y, obj);
 	}
 	static instance_copy ([_]) {
 
@@ -730,8 +730,8 @@ export default class BuiltInFunctions {
 
 	// ## Rooms
 
-	static room_goto ([numb]) {
-		this.game.loadRoom(this.game.project.ProjectRoom.find(x => x.id == numb));
+	static async room_goto ([numb]) {
+		await this.game.loadRoom(this.game.project.ProjectRoom.find(x => x.id == numb));
 		return 0;
 	}
 	static room_goto_previous ([_]) {
@@ -4910,8 +4910,24 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static action_sleep ([_]) {
+	static async action_sleep ([milliseconds, redraw]) {
+		// TODO read with redraw
+		await new Promise((resolve, reject) => {
 
+			var timeoutObject = {
+				timeout: null,
+				resolve: resolve,
+				reject: reject,
+			}
+
+			timeoutObject.timeout = setTimeout(() => {
+				// this.game.timeouts.splice(this.game.timeouts.indexOf(timeoutObject), 1);
+				resolve();
+			}, milliseconds);
+
+			// this.game.timeouts.push(timeoutObject);
+
+		})
 		return 0;
 	}
 	static action_set_timeline ([_]) {

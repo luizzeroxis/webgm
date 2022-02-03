@@ -87,6 +87,33 @@ export default class BuiltInLibraries {
 				name: 'main2',
 				items: [
 					{
+						id: 302,
+						description: 'Sleep',
+						getListText: action => "Sleep "+BIL.textArg(action, 0)+" milliseconds",
+						getHintText: action => "sleep "+BIL.textArg(action, 0)+" milliseconds; redrawing the screen: "+BIL.textArg(action, 1),
+						kind: 'normal',
+						execution: 'function',
+						executionFunction: 'action_sleep',
+
+						interfaceKind: 'normal',
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: 'milliseconds:',
+								kind: 'both',
+								default: '1000',
+							},
+							{
+								name: 'redraw:',
+								kind: 'boolean',
+								default: true,
+							}
+						]
+					},
+					{
 						id: 321,
 						description: 'Display Message',
 						getListText: action => "Display a message",
@@ -219,6 +246,8 @@ export default class BuiltInLibraries {
 	static textArg(action, i) {
 		return action.args[i].value.toString();
 	}
+
+	// TODO add textMenu or something
 
 	static textApplyTo(action) {
 		if (action.appliesTo == -1)

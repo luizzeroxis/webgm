@@ -435,8 +435,8 @@ export class Game {
 		// TODO run room creation code
 
 		this.instances.forEach(instance => {
-			var OTHER_GAME_START = 4;
-			this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_START), instance);
+			var OTHER_ROOM_START = 4;
+			this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_START), instance);
 		})
 
 	}

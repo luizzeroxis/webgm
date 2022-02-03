@@ -71,6 +71,8 @@ export class Game {
 
 		this.mapEvents = null;
 
+		this.shouldEnd = false;
+
 	}
 
 	start() {
@@ -81,8 +83,8 @@ export class Game {
 			this.startEngine();
 
 			this.loadProject()
+			.then(() => this.loadFirstRoom())
 			.then(() => {
-				this.loadFirstRoom();
 				this.startMainLoop();
 			})
 			.catch(e => {this.catch(e)});
@@ -392,19 +394,19 @@ export class Game {
 
 	///// END ERROR THROWING
 
-	loadFirstRoom() {
-		this.loadRoom(this.project.resources.ProjectRoom[0]);
+	async loadFirstRoom() {
+		await this.loadRoom(this.project.resources.ProjectRoom[0]);
 	}
 
-	loadRoom(room) {
+	async loadRoom(room) {
 
 		var isFirstRoom = (this.room == null);
 
 		if (!isFirstRoom) {
-			this.existingInstances.forEach(instance => {
+			for (let instance of this.existingInstances) {
 				var OTHER_ROOM_END = 5;
-				this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
-			})
+				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
+			}
 
 			this.instances = this.instances.filter(instance => instance.vars.get('persistent'))
 			this.existingInstances = this.instances.slice();
@@ -421,34 +423,34 @@ export class Game {
 		this.globalVars.setForce('room_speed', room.speed);
 
 		// TODO Check if room is persistent
-		room.instances.forEach(roomInstance => {
-			this.instanceCreate(roomInstance.x, roomInstance.y, roomInstance.object_index);
-		})
+		for (let roomInstance of room.instances) {
+			await this.instanceCreate(roomInstance.x, roomInstance.y, roomInstance.object_index);
+		}
 
 		if (isFirstRoom) {
-			this.instances.forEach(instance => {
+			for (let instance of this.instances) {
 				var OTHER_GAME_START = 2;
-				this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_START), instance);
-			})
+				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_START), instance);
+			}
 		}
 
 		// TODO run room creation code
 
-		this.instances.forEach(instance => {
+		for (let instance of this.instances) {
 			var OTHER_ROOM_START = 4;
-			this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_START), instance);
-		})
+			await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_START), instance);
+		}
 
 	}
 
-	instanceCreate(x, y, object) {
+	async instanceCreate(x, y, object) {
 		var instance = new Instance(x, y, object, this);
 		this.instances.push(instance);
 		this.existingInstances.push(instance);
 
 		// TODO run instance creation code
 
-		this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
+		await this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
 
 		// TODO set id?
 		return instance.vars.get('id');
@@ -470,7 +472,7 @@ export class Game {
 
 	//
 
-	doEvent(event, instance, other=null) {
+	async doEvent(event, instance, other=null) {
 		if (event == null) return;
 
 		this.currentEvent = event;
@@ -479,9 +481,9 @@ export class Game {
 
 		var parsedActions = new ActionsParser(event.actions).parse();
 
-		return parsedActions.every(treeAction => {
+		for (let treeAction of parsedActions) {
 			try {
-				this.doTreeAction(treeAction);
+				await this.doTreeAction(treeAction);
 			} catch (e) {
 				if (e instanceof ExitException) {
 					return false;
@@ -491,12 +493,11 @@ export class Game {
 					throw e;
 				}
 			}
-			return true;
-		})
+		}
 
 	}
 
-	doTreeAction(treeAction) {
+	async doTreeAction(treeAction) {
 		this.currentActionNumber = treeAction.actionNumber;
 
 		if (treeAction.appliesTo != undefined) {
@@ -509,13 +510,13 @@ export class Game {
 
 				{
 					let result = true;
-					applyToInstances.forEach(applyToInstance => {
+					for (let applyToInstance of applyToInstances) {
 
 						var args = treeAction.args.map(x => this.parseActionArg(x));
 
 						var currentResult;
 						if (treeAction.type == 'executeFunction') {
-							currentResult = this.gml.builtInFunction(treeAction.function, applyToInstance, args, treeAction.relative);
+							currentResult = await this.gml.builtInFunction(treeAction.function, applyToInstance, args, treeAction.relative);
 						} else {
 							currentResult = this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance, args, treeAction.relative);
 						}
@@ -524,26 +525,26 @@ export class Game {
 							result = false;
 						}
 
-					});
+					}
 
 					return result;
 				}
 
 			case 'if':
 				{
-					let result = this.doTreeAction(treeAction.condition);
+					let result = await this.doTreeAction(treeAction.condition);
 					if (result) {
-						this.doTreeAction(treeAction.ifTrue);
+						await this.doTreeAction(treeAction.ifTrue);
 					} else {
-						this.doTreeAction(treeAction.ifFalse);
+						await this.doTreeAction(treeAction.ifFalse);
 					}
 					break;
 				}
 
 			case 'block':
-				treeAction.actions.forEach(blockTreeAction => {
-					this.doTreeAction(blockTreeAction);
-				});
+				for (let blockTreeAction of treeAction) {
+					await this.doTreeAction(blockTreeAction);
+				}
 				break;
 
 			case 'exit':
@@ -551,8 +552,8 @@ export class Game {
 
 			case 'repeat':
 				var times = this.parseActionArg(treeAction.times);
-				for (var i=0; i<times; i++) {
-					this.doTreeAction(treeAction.treeAction);
+				for (let i=0; i<times; i++) {
+					await this.doTreeAction(treeAction.treeAction);
 				}
 				break;
 
@@ -611,7 +612,7 @@ export class Game {
 		this.fpsTimeout = null;
 	}
 
-	mainLoop() {
+	async mainLoop() {
 
 		var timeoutStepStart = performance.now() / 1000;
 		++this.fpsFrameCount;
@@ -632,19 +633,19 @@ export class Game {
 		this.mapEvents = this.getMapOfEvents();
 
 		// Draw
-		this.drawViews();
+		await this.drawViews();
 
 		// Do some stuff
 		this.globalVars.setForce('fps', this.fps);
 
 		// Begin step
-		this.getEventsOfTypeAndSubtype('step', 'begin').forEach(({event, instance}) => {
-			this.doEvent(event, instance);
-		});
+		for (let {event, instance} of this.getEventsOfTypeAndSubtype('step', 'begin')) {
+			await this.doEvent(event, instance);
+		}
 
 		// Alarm
-		this.getEventsOfType('alarm').forEach(([subtype, list]) => {
-			list.forEach(({event, instance}) => {
+		for (let [subtype, list] of this.getEventsOfType('alarm')) {
+			for (let {event, instance} of list) {
 
 				// Update alarm (decrease by one) here, before running event
 				// Alarm stays 0 until next alarm check, where it becomes -1 forever
@@ -654,43 +655,43 @@ export class Game {
 				}
 
 				if (instance.vars.get('alarm', [subtype]) == 0) {
-					this.doEvent(event, instance);
+					await this.doEvent(event, instance);
 				}
 
-			});
-		});
+			}
+		}
 
 		// Keyboard
-		this.getEventsOfType('keyboard').forEach(([subtype, list]) => {
-			list.forEach(({event, instance}) => {
+		for (let [subtype, list] of this.getEventsOfType('keyboard')) {
+			for (let {event, instance} of list) {
 				if (this.getKey(subtype, this.key)) {
-					this.doEvent(event, instance);
+					await this.doEvent(event, instance);
 				}
-			});
-		});
+			}
+		}
 
-		this.getEventsOfType('keypress').forEach(([subtype, list]) => {
-			list.forEach(({event, instance}) => {
+		for (let [subtype, list] of this.getEventsOfType('keypress')) {
+			for (let {event, instance} of list) {
 				if (this.getKey(subtype, this.keyPressed)) {
-					this.doEvent(event, instance);
+					await this.doEvent(event, instance);
 				}
-			});
-		});
+			}
+		}
 
-		this.getEventsOfType('keyrelease').forEach(([subtype, list]) => {
-			list.forEach(({event, instance}) => {
+		for (let [subtype, list] of this.getEventsOfType('keyrelease')) {
+			for (let {event, instance} of list) {
 				if (this.getKey(subtype, this.keyReleased)) {
-					this.doEvent(event, instance);
+					await this.doEvent(event, instance);
 				}
-			});
-		});
+			}
+		}
 
 		// Mouse
 
 		// TODO other mouse events
 
-		this.getEventsOfType('mouse').forEach(([subtype, list]) => {
-			list.forEach(({event, instance}) => {
+		for (let [subtype, list] of this.getEventsOfType('mouse')) {
+			for (let {event, instance} of list) {
 				var execute = false;
 				var eventInfo = Events.listMouseSubtypes.find(x => x.id == subtype);
 				if (eventInfo == null) return;
@@ -723,16 +724,16 @@ export class Game {
 				}
 
 				if (execute) {
-					this.doEvent(event, instance);
+					await this.doEvent(event, instance);
 				}
 
-			})
-		})
+			}
+		}
 
 		// Step
-		this.getEventsOfTypeAndSubtype('step', 'normal').forEach(({event, instance}) => {
-			this.doEvent(event, instance);
-		});
+		for (let {event, instance} of this.getEventsOfTypeAndSubtype('step', 'normal')) {
+			await this.doEvent(event, instance);
+		}
 
 		// Update instance variables and positions
 
@@ -778,21 +779,22 @@ export class Game {
 		});
 
 		// Collisions
-		this.getEventsOfType('collision').forEach(([subtype, list]) => {
-			list.forEach(({event, instance}) => {
+		for (let [subtype, list] of this.getEventsOfType('collision')) {
+			for (let {event, instance} of list) {
 				var others = this.instances.filter(x => x.object_index == subtype);
-				others.forEach(other => {
+				for (let other of others) {
 					if (this.checkCollision(instance, other)) {
-						this.doEvent(event, instance, other);
+						await this.doEvent(event, instance, other);
 					}
-				})
-			});
-		});
+				}
+			}
+		}
 
 		// End step
-		this.getEventsOfTypeAndSubtype('step', 'end').forEach(({event, instance}) => {
-			this.doEvent(event, instance);
-		});
+
+		for (let {event, instance} of this.getEventsOfTypeAndSubtype('step', 'end')) {
+			await this.doEvent(event, instance);
+		}
 
 		// Reset keyboard/mouse states
 		this.keyPressed = {};
@@ -808,23 +810,29 @@ export class Game {
 		})
 		this.destroyedInstances = [];
 
-		// Run main loop again, after a frame of time has passed.
-		// This means the game will slow down if a loop takes too much time.
+		if (this.shouldEnd) {
+			this.close();
+		} else {
 
-		var timeoutStepEnd = performance.now() / 1000;
-		var timeoutStepTime = timeoutStepEnd - timeoutStepStart;
-		var timeoutStepMinTime = 1 / this.globalVars.get('room_speed');
-		var timeoutWaitTime = Math.max(0, timeoutStepMinTime - timeoutStepTime);
+			// Run main loop again, after a frame of time has passed.
+			// This means the game will slow down if a loop takes too much time.
 
-		this.timeout = setTimeout(() => this.mainLoop(), timeoutWaitTime * 1000);
+			var timeoutStepEnd = performance.now() / 1000;
+			var timeoutStepTime = timeoutStepEnd - timeoutStepStart;
+			var timeoutStepMinTime = 1 / this.globalVars.get('room_speed');
+			var timeoutWaitTime = Math.max(0, timeoutStepMinTime - timeoutStepTime);
 
-		// var timeoutTotalStepTime = timeoutStepTime + timeoutWaitTime;
-		// console.log("------");
-		// console.log("StepTime", timeoutStepTime);
-		// console.log("StepMinTime", timeoutStepMinTime);
-		// console.log("WaitTime", timeoutWaitTime);
-		// console.log("TotalStepTime", timeoutTotalStepTime);
-		// console.log(1/timeoutTotalStepTime, "fps");
+			this.timeout = setTimeout(() => this.mainLoop(), timeoutWaitTime * 1000);
+
+			// var timeoutTotalStepTime = timeoutStepTime + timeoutWaitTime;
+			// console.log("------");
+			// console.log("StepTime", timeoutStepTime);
+			// console.log("StepMinTime", timeoutStepMinTime);
+			// console.log("WaitTime", timeoutWaitTime);
+			// console.log("TotalStepTime", timeoutTotalStepTime);
+			// console.log(1/timeoutTotalStepTime, "fps");
+
+		}
 	}
 
 	updateFps() {
@@ -860,7 +868,7 @@ export class Game {
 		return map;
 	}
 
-	drawViews() {
+	async drawViews() {
 		// Currently there are no views. But the following should happen for every view.
 
 		// Draw background color
@@ -877,15 +885,14 @@ export class Game {
 			(a, b) => a.vars.get('depth') - b.vars.get('depth')
 		);
 
-		instances_by_depth.forEach(instance => {
-			var object = this.getResourceById('ProjectObject', instance.object_index);
+		for (let instance of instances_by_depth) {
 
 			// Only draw if visible
 			if (instance.vars.get('visible')) {
 				var drawEvent = this.getEventOfInstance(instance, 'draw');
 
 				if (drawEvent) {
-					this.doEvent(drawEvent, instance); 
+					await this.doEvent(drawEvent, instance); 
 				} else {
 					// No draw event, draw sprite if it has one.
 					var index = instance.vars.get('sprite_index');
@@ -908,7 +915,7 @@ export class Game {
 				}
 			}
 
-		});
+		}
 	}
 
 	getEventsOfTypeAndSubtype(type, subtype) {
@@ -994,13 +1001,6 @@ export class Game {
 		this.end();
 
 		this.dispatcher.speak('close', e);
-	}
-
-	gameEnd () {
-		console.log('Stopping game.')
-		this.end();
-
-		this.dispatcher.speak('gameEnd');
 	}
 
 }

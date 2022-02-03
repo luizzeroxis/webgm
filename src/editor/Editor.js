@@ -337,6 +337,8 @@ export default class Editor {
 					this.gameCanvas.height = h;
 				}
 
+				this.game = null;
+
 				if (e) {
 					throw e;
 				}
@@ -349,8 +351,7 @@ export default class Editor {
 
 	stopGame () {
 		if (this.game) {
-			this.game.close();
-			this.game = null;
+			this.game.shouldEnd = true;
 		}
 	}
 

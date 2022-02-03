@@ -443,10 +443,6 @@ export default class GML {
 				}
 
 				this.game.globalVars.load('argument_relative', savedArgRelative);
-
-				if (this.game.shouldEnd) {
-					this.game.gameEnd();
-				}
 			}
 
 			return result;
@@ -466,13 +462,13 @@ export default class GML {
 		return this.execute(this.prepare(gml, "Expression"), instance);
 	}
 
-	builtInFunction(name, instance, args, relative=false) {
+	async builtInFunction(name, instance, args, relative=false) {
 
 		var func = BuiltInFunctions[name];
 
 		if (func) {
 			this.currentInstance = instance;
-			return func.call(this, args, relative);
+			return await func.call(this, args, relative);
 		} else {
 			throw this.game.makeNonFatalError({
 					type: 'unknown_function_or_script',

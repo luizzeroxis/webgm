@@ -184,6 +184,62 @@ export default class BuiltInLibraries {
 						kind: 'code',
 					},
 					{
+						id: 601,
+						description: 'Execute Script',
+						getListText: action => "Execute script: " + BIL.textArg(action, 0),
+						getHintText: action => (
+							BIL.textApplyTo(action)
+							+ "execute script " + BIL.textArg(action, 0)
+							+ " with arguments ("
+							+ BIL.textArg(action, 1) + ","
+							+ BIL.textArg(action, 2) + ","
+							+ BIL.textArg(action, 3) + ","
+							+ BIL.textArg(action, 4) + ","
+							+ BIL.textArg(action, 5) + ")"
+						),
+						kind: 'normal',
+						execution: 'function',
+						executionFunction: 'action_execute_script',
+
+						interfaceKind: 'normal',
+						isQuestion: false,
+						hasApplyTo: true,
+						hasRelative: false,
+
+						args: [
+							{
+								name: 'script:',
+								kind: 'script',
+								default: -1,
+							},
+							{
+								name: 'argument0:',
+								kind: 'expression',
+								default: '0',
+							},
+							{
+								name: 'argument1:',
+								kind: 'expression',
+								default: '0',
+							},
+							{
+								name: 'argument2:',
+								kind: 'expression',
+								default: '0',
+							},
+							{
+								name: 'argument3:',
+								kind: 'expression',
+								default: '0',
+							},
+							{
+								name: 'argument4:',
+								kind: 'expression',
+								default: '0',
+							},
+						]
+					},
+					{
 						id: 611,
 						description: 'Set Variable',
 						getListText: action => "Set variable " + BIL.textArg(action, 0) + " to " + BIL.textArg(action, 1),
@@ -248,6 +304,7 @@ export default class BuiltInLibraries {
 	}
 
 	// TODO add textMenu or something
+	// TODO add textResource or something
 
 	static textApplyTo(action) {
 		if (action.appliesTo == -1)

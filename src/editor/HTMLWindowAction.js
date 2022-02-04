@@ -3,6 +3,9 @@ import HTMLWindow from './HTMLWindow.js';
 import {$, parent, endparent, add, newElem, newTextBox, newCheckBox, newSelect, newColorBox} from '../common/H.js'
 import {parseArrowString, stringifyArrowValues, hexColorToDecimalColor} from '../common/tools.js'
 
+import HTMLResourceSelect from './HTMLResourceSelect.js';
+import {ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline} from '../common/Project.js';
+
 export default class HTMLWindowAction extends HTMLWindow {
 
 	constructor(...args) {
@@ -66,6 +69,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 						break;
 
 					case 'sprite':
+					case 'sound':
 					case 'background':
 					case 'path':
 					case 'script':
@@ -155,7 +159,27 @@ export default class HTMLWindowAction extends HTMLWindow {
 		}
 	}
 
-	makeResourceInterface(name, resourceTypeName, value) {}
+	makeResourceInterface(name, resourceTypeName, value) {
+		// TODO I am too lazy, this is garbage
+		var resourceType = {
+			'sprite': ProjectSprite,
+			'sound': ProjectSound,
+			'background': ProjectBackground,
+			'path': ProjectPath,
+			'script': ProjectScript,
+			'object': ProjectObject,
+			'room': ProjectRoom,
+			'font': ProjectFont,
+			'timeline': ProjectTimeline,
+		}[resourceTypeName];
+
+		var select = new HTMLResourceSelect(this.editor, name, resourceType);
+		select.setValue(value);
+
+		return {
+			getValue: () => select.getValue(),
+		}
+	}
 
 	apply() {
 

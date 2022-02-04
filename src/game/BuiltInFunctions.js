@@ -723,8 +723,10 @@ export default class BuiltInFunctions {
 
 	// ## Timing
 
-	static sleep ([_]) {
-
+	static async sleep ([numb]) {
+		await new Promise((resolve, reject) => {
+			setTimeout(resolve, numb);
+		});
 		return 0;
 	}
 
@@ -2928,8 +2930,8 @@ export default class BuiltInFunctions {
 
 	// ## Scripts
 
-	static execute_string ([str]) {
-		this.executeString(str);
+	static async execute_string ([str]) {
+		await this.executeString(str);
 		return 0;
 	}
 	static execute_file ([_]) {
@@ -5078,8 +5080,12 @@ export default class BuiltInFunctions {
 
 	// ### Code
 
-	static action_execute_script ([_]) {
+	static action_execute_script ([script, argument0, argument1, argument2, argument3, argument4]) {
+		var scriptResource = this.game.project.resources.ProjectScript.find(x => x.id == script);
 
+		if (scriptResource) {
+			return this.execute(this.game.preparedCodes.get(scriptResource), this.currentInstance, [argument0, argument1, argument2, argument3, argument4]);
+		}
 		return 0;
 	}
 

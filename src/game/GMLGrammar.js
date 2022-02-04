@@ -175,9 +175,9 @@ GameMakerLanguage {
 	Divide
 		= ExpressionMultiplyOrDivide "/" OtherExpression
 	IntegerDivision
-		= ExpressionMultiplyOrDivide #("div" ~namePart) OtherExpression
+		= ExpressionMultiplyOrDivide spaces #("div" ~namePart) OtherExpression
 	Modulo
-		= ExpressionMultiplyOrDivide #("mod" ~namePart) OtherExpression
+		= ExpressionMultiplyOrDivide spaces #("mod" ~namePart) OtherExpression
 
 	OtherExpression
 		= Parentheses

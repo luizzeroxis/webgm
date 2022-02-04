@@ -512,13 +512,16 @@ export class Game {
 					let result = true;
 					for (let applyToInstance of applyToInstances) {
 
-						var args = treeAction.args.map(x => this.parseActionArg(x));
+						var args = [];
+						for (let x of treeAction.args) {
+							args.push(await this.parseActionArg(x));
+						}
 
 						var currentResult;
 						if (treeAction.type == 'executeFunction') {
 							currentResult = await this.gml.builtInFunction(treeAction.function, applyToInstance, args, treeAction.relative);
 						} else {
-							currentResult = this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance, args, treeAction.relative);
+							currentResult = await this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance, args, treeAction.relative);
 						}
 
 						if (typeof currentResult !== "number" || currentResult < 0.5) {
@@ -551,7 +554,7 @@ export class Game {
 				throw new ExitException();
 
 			case 'repeat':
-				var times = this.parseActionArg(treeAction.times);
+				var times = await this.parseActionArg(treeAction.times);
 				for (let i=0; i<times; i++) {
 					await this.doTreeAction(treeAction.treeAction);
 				}
@@ -561,9 +564,9 @@ export class Game {
 				break;
 
 			case 'code':
-				applyToInstances.forEach(applyToInstance => {
-					this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance);
-				});
+				for (let applyToInstance of applyToInstances) {
+					await this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance);
+				}
 				break;
 		}
 	}
@@ -580,14 +583,14 @@ export class Game {
 		}
 	}
 
-	parseActionArg(arg) {
+	async parseActionArg(arg) {
 		if (arg.kind == 'both') {
 			if (arg.value[0] != `'` && arg.value[0] != `"`) {
 				return arg.value;
 			}
 		}
 		if (arg.kind == 'both' || arg.kind == 'expression') {
-			return this.gml.executeStringExpression(arg.value, this.currentInstance);
+			return await this.gml.executeStringExpression(arg.value, this.currentInstance); // TODO maybe prepare all these codes beforehand
 		}
 		return arg.value;
 	}
@@ -992,6 +995,7 @@ export class Game {
 			this.close();
 
 		} else {
+			this.close();
 			throw e;
 		}
 	}

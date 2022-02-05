@@ -293,6 +293,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 			// Add initial events
 			this.sortEvents();
 			this.updateSelectEvents();
+			this.selectEvents.selectedIndex = 0;
 			this.updateEventsMenu();
 
 			// Add initial subtypes

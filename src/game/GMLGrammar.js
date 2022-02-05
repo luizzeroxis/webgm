@@ -7,31 +7,30 @@ GameMakerLanguage {
 	Start
 		= Code
 
+	space += comment | multiComment
+
+	comment = "//" #(~eol any)*
+	multiComment = "/*" #(~"*/" any)* "*/"
+
+	eol = "\n" | "\r"
+
+	name = (letter | "_") namePart*
+	namePart = (alnum | "_")
+
 	Code
 		= Block
 		| ListOfStatements
-
-	space += comment | multiComment
-
-	comment
-		= "//" #(~eol any)*
-	multiComment
-		= "/*" #(~"*/" any)* "*/"
-
-	eol
-		= "\n"
-		| "\r"
 
 	Block
 		= "{" ListOfStatements "}"
 
 	ListOfStatements
-		= Statement*
+		= StatementWithSemicolon*
+
+	StatementWithSemicolon
+		= Statement ";"*
 
 	Statement
-		= StatementNoSemicolon ";"*
-
-	StatementNoSemicolon
 		= If
 		| While
 		| Exit
@@ -49,7 +48,7 @@ GameMakerLanguage {
 
 	BlockOrStatement
 		= Block
-		| Statement
+		| StatementWithSemicolon
 
 	If
 		= #("if" ~namePart) Expression BlockOrStatement Else?
@@ -71,11 +70,29 @@ GameMakerLanguage {
 	Function
 		= name "(" ListOf<Expression,","> ")"
 
-	name
-		= (letter | "_") namePart*
+	VarDeclare
+		= #("var" ~namePart) NonemptyListOf<name, ",">
+	GlobalVarDeclare
+		= #("globalvar" ~namePart) NonemptyListOf<name, ",">
 
-	namePart
-		= (alnum | "_")
+	Assignment
+		= Variable "=" Expression
+	AssignmentAdd
+		= Variable "+=" Expression
+	AssignmentSubtract
+		= Variable "-=" Expression
+	AssignmentMultiply
+		= Variable "*=" Expression
+	AssignmentDivide
+		= Variable "/=" Expression
+
+	// TODO add objects and arrays HERE
+	Variable
+		= name ArrayIndexes?
+	ArrayIndexes
+		= "[" Expression ArrayIndex2? "]"
+	ArrayIndex2
+		= "," Expression
 
 	Expression
 		= ExpressionUnary
@@ -188,44 +205,13 @@ GameMakerLanguage {
 
 	Parentheses
 		= "(" Expression ")"
-
 	Number
 		= digit+ "."? digit*
-
 	String
 		= "\"" #(~"\"" any)* "\""
 		| "'" #(~"'" any)* "'"
-
-	// TODO add objects and arrays HERE
-	Variable
-		= name ArrayIndexes?
-
 	VariableGet
 		= Variable
-
-	ArrayIndexes
-		= "[" Expression ArrayIndex2? "]"
-
-	ArrayIndex2
-		= "," Expression
-
-	Assignment
-		= Variable "=" Expression
-
-	AssignmentAdd
-		= Variable "+=" Expression
-	AssignmentSubtract
-		= Variable "-=" Expression
-	AssignmentMultiply
-		= Variable "*=" Expression
-	AssignmentDivide
-		= Variable "/=" Expression
-
-	VarDeclare
-		= #("var" ~namePart) NonemptyListOf<name, ",">
-
-	GlobalVarDeclare
-		= #("globalvar" ~namePart) NonemptyListOf<name, ",">
 
 }
 

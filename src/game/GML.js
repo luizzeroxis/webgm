@@ -20,7 +20,7 @@ export default class GML {
 		this.mapping = {
 			Start: {_code: 0},
 			// Block: 1,
-			Statement: 0, // StatementNoSemicolon
+			StatementWithSemicolon: 0, // Statement
 			If: {_conditionExpression: 1, _code: 2, _elseStatement: 3,
 				_conditionExpressionNode: c => c[1]},
 			// Else: 1,
@@ -31,6 +31,22 @@ export default class GML {
 			// Break: {},
 			// Continue: {},
 			Function: {_name: 0, _args: 2},
+			VarDeclare: {_names: 1},
+			GlobalVarDeclare: {_names: 1},
+			Assignment: {_variable: 0, _expression: 2,
+				_variableNode: c => c[0]},
+			AssignmentAdd: {_variable: 0, _expression: 2,
+				_variableNode: c => c[0]},
+			AssignmentSubtract: {_variable: 0, _expression: 2,
+				_variableNode: c => c[0]},
+			AssignmentMultiply: {_variable: 0, _expression: 2,
+				_variableNode: c => c[0]},
+			AssignmentDivide: {_variable: 0, _expression: 2,
+				_variableNode: c => c[0]},
+			Variable: {_name: 0, _arrayIndexes: 1},
+			ArrayIndexes: {_index1: 1, _index2: 2,
+				_index1Node: c => c[1], _index2Node: c => c[2]},
+			// ArrayIndex2: 1,
 			Not: {_a: 1,
 				_aNode: c => c[1]},
 			Negate: {_a: 1,
@@ -80,24 +96,8 @@ export default class GML {
 			// Parentheses: 1,
 			Number: function(_integer, _dot, _decimals) {return Number(this.sourceString);},
 			String: function(_0, _string, _1) {return _string.sourceString;},
-			Variable: {_name: 0, _arrayIndexes: 1},
 			VariableGet: {_variable: 0,
 				_variableNode: c => c[0]},
-			ArrayIndexes: {_index1: 1, _index2: 2,
-				_index1Node: c => c[1], _index2Node: c => c[2]},
-			// ArrayIndex2: 1,
-			Assignment: {_variable: 0, _expression: 2,
-				_variableNode: c => c[0]},
-			AssignmentAdd: {_variable: 0, _expression: 2,
-				_variableNode: c => c[0]},
-			AssignmentSubtract: {_variable: 0, _expression: 2,
-				_variableNode: c => c[0]},
-			AssignmentMultiply: {_variable: 0, _expression: 2,
-				_variableNode: c => c[0]},
-			AssignmentDivide: {_variable: 0, _expression: 2,
-				_variableNode: c => c[0]},
-			VarDeclare: {_names: 1},
-			GlobalVarDeclare: {_names: 1},
 		};
 
 		this.astActions = {
@@ -159,6 +159,87 @@ export default class GML {
 				} else {
 					return this.builtInFunction(name, this.currentInstance, args);
 				}
+			},
+			VarDeclare: async ({_names}) => {
+				for (let name of _names) { // is _names always an array of strings?
+					if (!this.vars.exists(name)) {
+						this.vars.set(name, null);
+					} // TODO check what if the variable exists
+				}
+			},
+			GlobalVarDeclare: async ({_names}) => {
+				for (let name of _names) {
+					if (!this.game.globalVars.exists(name)) {
+						this.game.globalVars.set(name, 0);
+					}
+				}
+			},
+			Assignment: async ({_variable, _variableNode, _expression}) => {
+				var varInfo = await this.interpretASTNode(_variable);
+				var value = await this.interpretASTNode(_expression);
+				this.varSet(varInfo, value, _variableNode);
+			},
+			// Note: In GM, assignment operations don't error out when they should, and they have weird behaviour. It's replicated here.
+			AssignmentAdd: async ({_variable, _variableNode, _expression}) => {
+				var varInfo = await this.interpretASTNode(_variable);
+				var value = await this.interpretASTNode(_expression);
+				this.varModify(varInfo, old => {
+					if (typeof old === typeof value) {
+						return old + value; // Works for both numbers (addition) and strings (concatenation).
+					}
+					return old;
+				}, _variableNode);
+			},
+			AssignmentSubtract: async ({_variable, _variableNode, _expression}) => {
+				var varInfo = await this.interpretASTNode(_variable);
+				var value = await this.interpretASTNode(_expression);
+				this.varModify(varInfo, old => {
+					if (typeof old === 'number' && typeof value == 'number') {
+						return old - value;
+					}
+					return old;
+				}, _variableNode);
+			},
+			AssignmentMultiply: async ({_variable, _variableNode, _expression}) => {
+				var varInfo = await this.interpretASTNode(_variable);
+				var value = await this.interpretASTNode(_expression);
+				this.varModify(varInfo, old => {
+					if (typeof old === 'number' && typeof value == 'string') {
+						// Yeah, wtf. *= repeats the string like in Python, but only if the original value was a real and the new one a string. I have no idea why.
+						return value.repeat(old);
+					}
+					if (typeof old === 'number' && typeof value == 'number') {
+						return old * value;
+					}
+					return old;
+				}, _variableNode);
+			},
+			AssignmentDivide: async ({_variable, _variableNode, _expression}) => {
+				var varInfo = await this.interpretASTNode(_variable);
+				var value = await this.interpretASTNode(_expression);
+				this.varModify(varInfo, old => {
+					if (typeof old === 'number' && typeof value == 'number') {
+						return old / value;
+					}
+					return old;
+				}, _variableNode);
+			},
+			Variable: async ({_name, _arrayIndexes}) => {
+				var varInfo = {};
+				varInfo.name = _name; // no need to interpret?
+				varInfo.object = null;
+				varInfo.indexes = await this.interpretASTNode(_arrayIndexes);
+				return varInfo;
+			},
+			ArrayIndexes: async ({_index1, _index1Node, _index2, _index2Node}) => {
+				var indexes = [];
+
+				indexes.push(this.arrayIndexValidate(await this.interpretASTNode(_index1), _index1Node));
+				if (_index2 != null) {
+					indexes.push(this.arrayIndexValidate(await this.interpretASTNode(_index2), _index2Node));
+				}
+
+				return indexes;
 			},
 			Not: async ({_a, _aNode}) => {
 				var a = this.toBool(this.checkIsNumber(await this.interpretASTNode(_a),
@@ -288,91 +369,10 @@ export default class GML {
 				var b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments to mod.", _bNode);
 				return a % b; // TODO check negative numbers
 			},
-			Variable: async ({_name, _arrayIndexes}) => {
-				var varInfo = {};
-				varInfo.name = _name; // no need to interpret?
-				varInfo.object = null;
-				varInfo.indexes = await this.interpretASTNode(_arrayIndexes);
-				return varInfo;
-			},
 			VariableGet: async ({_variable, _variableNode}) => {
 				var varInfo = await this.interpretASTNode(_variable);
 				var value = this.varGet(varInfo, _variableNode);
 				return value;
-			},
-			ArrayIndexes: async ({_index1, _index1Node, _index2, _index2Node}) => {
-				var indexes = [];
-
-				indexes.push(this.arrayIndexValidate(await this.interpretASTNode(_index1), _index1Node));
-				if (_index2 != null) {
-					indexes.push(this.arrayIndexValidate(await this.interpretASTNode(_index2), _index2Node));
-				}
-
-				return indexes;
-			},
-			Assignment: async ({_variable, _variableNode, _expression}) => {
-				var varInfo = await this.interpretASTNode(_variable);
-				var value = await this.interpretASTNode(_expression);
-				this.varSet(varInfo, value, _variableNode);
-			},
-			// Note: In GM, assignment operations don't error out when they should, and they have weird behaviour. It's replicated here.
-			AssignmentAdd: async ({_variable, _variableNode, _expression}) => {
-				var varInfo = await this.interpretASTNode(_variable);
-				var value = await this.interpretASTNode(_expression);
-				this.varModify(varInfo, old => {
-					if (typeof old === typeof value) {
-						return old + value; // Works for both numbers (addition) and strings (concatenation).
-					}
-					return old;
-				}, _variableNode);
-			},
-			AssignmentSubtract: async ({_variable, _variableNode, _expression}) => {
-				var varInfo = await this.interpretASTNode(_variable);
-				var value = await this.interpretASTNode(_expression);
-				this.varModify(varInfo, old => {
-					if (typeof old === 'number' && typeof value == 'number') {
-						return old - value;
-					}
-					return old;
-				}, _variableNode);
-			},
-			AssignmentMultiply: async ({_variable, _variableNode, _expression}) => {
-				var varInfo = await this.interpretASTNode(_variable);
-				var value = await this.interpretASTNode(_expression);
-				this.varModify(varInfo, old => {
-					if (typeof old === 'number' && typeof value == 'string') {
-						// Yeah, wtf. *= repeats the string like in Python, but only if the original value was a real and the new one a string. I have no idea why.
-						return value.repeat(old);
-					}
-					if (typeof old === 'number' && typeof value == 'number') {
-						return old * value;
-					}
-					return old;
-				}, _variableNode);
-			},
-			AssignmentDivide: async ({_variable, _variableNode, _expression}) => {
-				var varInfo = await this.interpretASTNode(_variable);
-				var value = await this.interpretASTNode(_expression);
-				this.varModify(varInfo, old => {
-					if (typeof old === 'number' && typeof value == 'number') {
-						return old / value;
-					}
-					return old;
-				}, _variableNode);
-			},
-			VarDeclare: async ({_names}) => {
-				for (let name of _names) { // is _names always an array of strings?
-					if (!this.vars.exists(name)) {
-						this.vars.set(name, null);
-					} // TODO check what if the variable exists
-				}
-			},
-			GlobalVarDeclare: async ({_names}) => {
-				for (let name of _names) {
-					if (!this.game.globalVars.exists(name)) {
-						this.game.globalVars.set(name, 0);
-					}
-				}
 			},
 		}
 

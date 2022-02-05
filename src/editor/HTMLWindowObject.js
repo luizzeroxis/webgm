@@ -66,23 +66,25 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 				parent( add( newElem(null, 'div') ) ) // Events area
 
-					// // Events
+					// Event select
 
 					this.selectEvents = $( add( newSelect('events', 'Events:') ), 'select');
 					this.selectEvents.size = 2;
 
-					// Update actions select when changing events
 					this.selectEvents.onchange = () => {
-						this.updateEventsMenu();
 						this.updateSelectActions();
+						this.updateActionsMenu();
 					}
 
-					// // Add event
+					// Event type select
 
 					this.selectEventType = $( add( newSelect(null, 'Event type:', Events.listEventTypes) ), 'select');
 
-					// Update event subtype div when changing type
-					this.selectEventType.onchange = () => this.updateDivEventSubtype();
+					this.selectEventType.onchange = () => {
+						this.updateDivEventSubtype();
+					}
+
+					// Event subtype div
 
 					this.divEventSubtype = add( html('div') );
 
@@ -107,9 +109,11 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 						this.sortEvents();
 
-						this.selectEvents.value = event.getNameId();
 						this.updateSelectEvents();
+						this.selectEvents.value = event.getNameId();
+						this.updateEventsMenu();
 						this.updateSelectActions();
+						this.updateActionsMenu();
 
 					}) )
 
@@ -123,13 +127,17 @@ export default class HTMLWindowObject extends HTMLWindow {
 						if (!confirm("Are you sure you want to remove the event with all its actions?"))
 							return;
 
+						// Close action windows related to event
+						this.paramEvents[index].actions.forEach(action => {
+							var w = this.htmlActionWindows.find(x => x.id = action);
+							if (w) {w.close();}
+						})
+
 						this.paramEvents.splice(index, 1);
 
-						remove(this.selectEventsOptions[this.selectEvents.value])
+						this.updateSelectEvents();
 						this.updateEventsMenu();
-
-						this.selectActions.textContent = '';
-
+						this.updateSelectActions();
 						this.updateActionsMenu();
 
 					}) )
@@ -143,10 +151,12 @@ export default class HTMLWindowObject extends HTMLWindow {
 					this.selectActions = $( add( newSelect('actions', 'Actions:') ), 'select');
 					this.selectActions.size = 2;
 
-					this.selectActions.onchange = () => this.updateActionsMenu();
+					this.selectActions.onchange = () => {
+						this.updateActionsMenu();
+					}
 
 					this.buttonActionEdit = add( newButton(null, 'Edit action', () => {
-						var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
+						var event = this.getSelectedEvent();
 						if (!event) return;
 
 						var actionIndex = this.selectActions.selectedIndex;
@@ -159,7 +169,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 					}) )
 
 					this.buttonActionDelete = add( newButton(null, 'Delete action', () => {
-						var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
+						var event = this.getSelectedEvent();
 						if (!event) return;
 
 						var actionIndex = this.selectActions.selectedIndex;
@@ -174,15 +184,12 @@ export default class HTMLWindowObject extends HTMLWindow {
 						event.actions.splice(actionIndex, 1);
 
 						this.updateSelectActions();
-
-						this.selectActions.selectedIndex = Math.min(actionIndex, event.actions.length-1);
-
 						this.updateActionsMenu();
 
 					}) )
 
 					this.buttonActionUp = add( newButton(null, '▲', () => {
-						var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
+						var event = this.getSelectedEvent();
 						if (!event) return;
 
 						var actionIndex = this.selectActions.selectedIndex;
@@ -191,9 +198,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 						event.actions.splice(actionIndex-1, 0, event.actions.splice(actionIndex, 1)[0]);
 
 						this.updateSelectActions();
-
 						this.selectActions.selectedIndex = actionIndex-1;
-
 						this.updateActionsMenu();
 					}) )
 
@@ -207,9 +212,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 						event.actions.splice(actionIndex+1, 0, event.actions.splice(actionIndex, 1)[0]);
 
 						this.updateSelectActions();
-
 						this.selectActions.selectedIndex = actionIndex+1;
-
 						this.updateActionsMenu();
 					}) )
 
@@ -228,7 +231,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 								// TODO add images to the buttons
 								var actionTypeButton = add( newButton('action-type', null, () => {
 
-									var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
+									var event = this.getSelectedEvent();
 									if (!event) {
 										alert("You need to select or add an event before you can add actions.");
 										return;
@@ -248,8 +251,10 @@ export default class HTMLWindowObject extends HTMLWindow {
 									action.not = false;
 
 									if (actionType.kind == 'normal' && actionType.interfaceKind == 'normal') {
+										// If kind and interface are normal, arguments come from the action type itself
 										action.args = actionType.args.map(arg => new ProjectActionArg(arg.kind, arg.default));
 									} else {
+										// Otherwise, the arguments come from a predefined list 
 										action.args = this.getActionTypeInfo()
 											.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind)
 											.args.map(arg => new ProjectActionArg(arg.kind, arg.default));
@@ -286,13 +291,16 @@ export default class HTMLWindowObject extends HTMLWindow {
 				endparent();
 
 			// Add initial events
+			this.sortEvents();
 			this.updateSelectEvents();
-
-			// Select first event
-			this.updateSelectActions();
+			this.updateEventsMenu();
 
 			// Add initial subtypes
 			this.updateDivEventSubtype();
+
+			// Select first event
+			this.updateSelectActions();
+			this.updateActionsMenu();
 
 			this.makeApplyOkButtons(
 				() => {
@@ -336,6 +344,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 	updateSelectEvents() {
 
+		var index = this.selectEvents.selectedIndex;
 		this.selectEvents.textContent = '';
 		this.selectEventsOptions = {};
 
@@ -346,9 +355,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 			})
 			endparent();
 
-		this.selectEvents.selectedIndex = 0;
-
-		this.updateEventsMenu();
+		this.selectEvents.selectedIndex = Math.min(index, this.paramEvents.length-1);;
 
 	}
 
@@ -391,7 +398,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 			} else
 
 			if (eventType == 'collision') {
-				let subtypeElement = (new HTMLResourceSelect(this.editor, 'Object:', ProjectObject)).select;
+				let subtypeElement = (new HTMLResourceSelect(this.editor, 'Object:', ProjectObject, true)).select;
 				this.subtypeValueFunction = () => (parseInt(subtypeElement.value));
 			} else
 
@@ -406,9 +413,11 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 	updateSelectActions() {
 
+		var index = this.selectActions.selectedIndex;
 		this.selectActions.textContent = '';
+		this.selectActionsOptions = {};
 
-		var event = this.paramEvents.find(event => this.selectEvents.value == event.getNameId());
+		var event = this.getSelectedEvent();
 
 		if (event) {
 			parent(this.selectActions);
@@ -421,7 +430,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 				})
 				endparent()
 
-			this.selectActions.selectedIndex = 0;
+			this.selectActions.selectedIndex = Math.min(index, event.actions.length-1);
 		}
 
 		this.updateActionsMenu();

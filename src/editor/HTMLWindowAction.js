@@ -196,6 +196,9 @@ export default class HTMLWindowAction extends HTMLWindow {
 		if (this.actionTypeIsQuestion)
 			this.action.not = this.inputNot.checked;
 
+		// Update action in event in object
+		this.object.updateSelectActions();
+
 	}
 
 	close() {

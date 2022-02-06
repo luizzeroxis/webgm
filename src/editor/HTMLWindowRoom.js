@@ -263,7 +263,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 	}
 
 	addInstance(e) {
-		if (this.selectObject.getValue()) return;
+		if (this.selectObject.getValue() == -1) return;
 
 		var i = new ProjectInstance(this.currentPos.x, this.currentPos.y, this.selectObject.getValue());
 		this.paramInstances.push(i);

@@ -62,9 +62,9 @@ export class Game {
 		this.room = null;
 
 		this.currentEvent = null;
-		this.currentInstance = null;
-		this.currentOther = null;
-		this.currentActionNumber = null;
+		this.currentEventInstance = null;
+		this.currentEventOther = null;
+		this.currentEventActionNumber = null;
 
 		this.timeout = null;
 		this.fpsTimeout = null;
@@ -359,9 +359,9 @@ export class Game {
 
 	makeErrorOptions(isFatal, options, extraText, object=null, event=null, actionNumber=null) {
 
-		var _object = object==null ? this.getResourceById('ProjectObject', this.currentInstance.object_index) : object;
+		var _object = object==null ? this.getResourceById('ProjectObject', this.currentEventInstance.object_index) : object;
 		var _event = event==null ? this.currentEvent : event;
-		var _actionNumber = actionNumber==null ? this.currentActionNumber : actionNumber;
+		var _actionNumber = actionNumber==null ? this.currentEventActionNumber : actionNumber;
 
 		var base = {text:
 			`\n___________________________________________\n`
@@ -475,9 +475,13 @@ export class Game {
 	async doEvent(event, instance, other=null) {
 		if (event == null) return;
 
+		var previousEvent = this.currentEvent;
+		var previousInstance = this.currentEventInstance;
+		var previousOther = this.currentEventOther;
+
 		this.currentEvent = event;
-		this.currentInstance = instance;
-		this.currentOther = other || instance;
+		this.currentEventInstance = instance;
+		this.currentEventOther = other || instance;
 
 		var parsedActions = new ActionsParser(event.actions).parse();
 
@@ -486,7 +490,7 @@ export class Game {
 				await this.doTreeAction(treeAction);
 			} catch (e) {
 				if (e instanceof ExitException) {
-					return false;
+					break;
 				} if (e instanceof NonFatalErrorException) {
 					this.showError(e);
 				} else {
@@ -495,13 +499,21 @@ export class Game {
 			}
 		}
 
+		this.currentEvent = previousEvent;
+		this.currentEventInstance = previousInstance;
+		this.currentEventOther = previousOther;
+
 	}
 
 	async doTreeAction(treeAction) {
-		this.currentActionNumber = treeAction.actionNumber;
+		this.currentEventActionNumber = treeAction.actionNumber;
 
 		if (treeAction.appliesTo != undefined) {
 			var applyToInstances = this.getApplyToInstances(treeAction.appliesTo);
+			var otherInstance = this.currentEventOther;
+			if (treeAction.appliesTo == -2) { // other
+				otherInstance = this.currentEventInstance;
+			}
 		}
 
 		switch (treeAction.type) {
@@ -521,7 +533,7 @@ export class Game {
 						if (treeAction.type == 'executeFunction') {
 							currentResult = await this.gml.builtInFunction(treeAction.function, applyToInstance, args, treeAction.relative);
 						} else {
-							currentResult = await this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance, args, treeAction.relative);
+							currentResult = await this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance, otherInstance, args, treeAction.relative);
 						}
 
 						if (typeof currentResult !== "number" || currentResult < 0.5) {
@@ -565,7 +577,7 @@ export class Game {
 
 			case 'code':
 				for (let applyToInstance of applyToInstances) {
-					await this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance);
+					await this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance, otherInstance);
 				}
 				break;
 		}
@@ -575,9 +587,9 @@ export class Game {
 		// -1 = self, -2 = other, 0>= = object index
 		switch (appliesTo) {
 			case -1:
-				return [this.currentInstance];
+				return [this.currentEventInstance];
 			case -2:
-				return [this.currentOther];
+				return [this.currentEventOther];
 			default:
 				return this.instances.filter(x => x.object_index == appliesTo);
 		}
@@ -590,7 +602,7 @@ export class Game {
 			}
 		}
 		if (arg.kind == 'both' || arg.kind == 'expression') {
-			return await this.gml.executeStringExpression(arg.value, this.currentInstance); // TODO maybe prepare all these codes beforehand
+			return await this.gml.executeStringExpression(arg.value, this.currentEventInstance, this.currentEventOther); // TODO maybe prepare all these codes beforehand
 		}
 		return arg.value;
 	}

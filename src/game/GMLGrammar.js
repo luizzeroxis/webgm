@@ -88,7 +88,9 @@ GameMakerLanguage {
 
 	// TODO add objects and arrays HERE
 	Variable
-		= name ArrayIndexes?
+		= Object? name ArrayIndexes?
+	Object
+		= (VariableGet | Parentheses) "."
 	ArrayIndexes
 		= "[" Expression ArrayIndex2? "]"
 	ArrayIndex2

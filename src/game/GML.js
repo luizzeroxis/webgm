@@ -3,6 +3,7 @@ import ohm, {extras as ohmExtras} from 'ohm-js';
 import VariableHolder from '../common/VariableHolder.js';
 
 import {ExitException, ReturnException, BreakException, ContinueException} from '../common/Exceptions.js';
+import {ProjectObject} from '../common/Project.js';
 
 import GMLGrammar from './GMLGrammar.js';
 import BuiltInFunctions from './BuiltInFunctions.js';
@@ -43,7 +44,8 @@ export default class GML {
 				_variableNode: c => c[0]},
 			AssignmentDivide: {_variable: 0, _expression: 2,
 				_variableNode: c => c[0]},
-			Variable: {_name: 0, _arrayIndexes: 1},
+			Variable: {_object: 0, _name: 1, _arrayIndexes: 2,
+				_objectNode: c => c[0]},
 			ArrayIndexes: {_index1: 1, _index2: 2,
 				_index1Node: c => c[1], _index2Node: c => c[2]},
 			// ArrayIndex2: 1,
@@ -155,7 +157,7 @@ export default class GML {
 				var script = this.game.project.resources.ProjectScript.find(x => x.name == name);
 
 				if (script) {
-					return this.execute(this.game.preparedCodes.get(script), this.currentInstance, args);
+					return this.execute(this.game.preparedCodes.get(script), this.currentInstance, this.currentOther, args);
 				} else {
 					return this.builtInFunction(name, this.currentInstance, args);
 				}
@@ -224,10 +226,14 @@ export default class GML {
 					return old;
 				}, _variableNode);
 			},
-			Variable: async ({_name, _arrayIndexes}) => {
+			Variable: async ({_object, _objectNode, _name, _arrayIndexes}) => {
 				var varInfo = {};
 				varInfo.name = _name; // no need to interpret?
-				varInfo.object = null;
+				varInfo.object = await this.interpretASTNode(_object);
+				if (varInfo.object != null) {
+					this.checkIsNumber(varInfo.object,
+						"Wrong type of variable index ("+varInfo.object.toString()+" is not a number to be an object)", _objectNode);
+				}
 				varInfo.indexes = await this.interpretASTNode(_arrayIndexes);
 				return varInfo;
 			},
@@ -388,11 +394,15 @@ export default class GML {
 		return match;
 	}
 
-	async execute(preparedCode, instance, args, argRelative=0) {
+	async execute(preparedCode, instance, other, args, argRelative=0) {
 
 		if (preparedCode.succeeded()) {
 
+			var previousInstance = this.currentInstance;
+			var previousOther = this.currentOther;
+
 			this.currentInstance = instance;
+			this.currentOther = other;
 			
 			var savedVars = this.vars.saveAll();
 			this.vars.clearAll();
@@ -424,6 +434,10 @@ export default class GML {
 					throw e;
 				}
 			} finally {
+
+				this.currentInstance = previousInstance;
+				this.currentOther = previousOther;
+
 				// Load vars/end game in case of non fatal error
 				this.vars.loadAll(savedVars);
 
@@ -447,12 +461,12 @@ export default class GML {
 
 	}
 
-	async executeString(gml, instance) {
-		return await this.execute(this.prepare(gml), instance);
+	async executeString(gml, instance, other) {
+		return await this.execute(this.prepare(gml), instance, other);
 	}
 
-	async executeStringExpression(gml, instance) {
-		return await this.execute(this.prepare(gml, "Expression"), instance);
+	async executeStringExpression(gml, instance, other) {
+		return await this.execute(this.prepare(gml, "Expression"), instance, other);
 	}
 
 	async builtInFunction(name, instance, args, relative=false) {
@@ -474,34 +488,114 @@ export default class GML {
 
 	varGet(varInfo, node) {
 
-		if (this.game.constants[varInfo.name] != null)
-			return this.game.constants[varInfo.name];
+		if (varInfo.object == null) {
 
-		if (this.vars.exists(varInfo.name))
-			return this.vars.get(varInfo.name, varInfo.indexes);
-		if (this.game.globalVars.exists(varInfo.name))
-			return this.game.globalVars.get(varInfo.name, varInfo.indexes);
-		if (this.currentInstance.vars.exists(varInfo.name))
-			return this.currentInstance.vars.get(varInfo.name, varInfo.indexes);
+			if (this.game.constants[varInfo.name] != null)
+				return this.game.constants[varInfo.name];
+			if (this.vars.exists(varInfo.name))
+				return this.vars.get(varInfo.name, varInfo.indexes);
+			if (this.game.globalVars.exists(varInfo.name))
+				return this.game.globalVars.get(varInfo.name, varInfo.indexes);
 
-		throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
+			if (this.currentInstance.vars.exists(varInfo.name))
+				return this.currentInstance.vars.get(varInfo.name, varInfo.indexes);
+
+			throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
+
+		} else {
+
+			var instances = this.objectReferenceToInstances(varInfo.object);
+
+			if (instances == null) {
+				throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
+
+			} else if (instances == "global") {
+				// TODO: "global." vars should be in this.game.globalVars.
+				// There is a list that contains all "global." vars that have been "globalvar"'d.
+				// This would be checked when getting/setting vars with a dot and when "globalvar" declarations are called.
+				throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
+
+			} else {
+				if (instances.length > 0) {
+					if (instances[0].vars.exists(varInfo.name))
+						return instances[0].vars.get(varInfo.name, varInfo.indexes);
+				}
+				throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
+			}
+		}
 
 	}
 
 	varSet(varInfo, value, node) {
 
-		if (this.game.constants[varInfo.name] != null)
-			throw this.makeErrorInGMLNode("Variable name expected. (it's a constant!)", node);
+		if (varInfo.object == null) {
 
-		if (this.vars.exists(varInfo.name))
-			return this.vars.set(varInfo.name, value, varInfo.indexes);
-		if (this.game.globalVars.exists(varInfo.name))
-			return this.game.globalVars.set(varInfo.name, value, varInfo.indexes);
-		if (this.currentInstance.vars.exists(varInfo.name))
-			return this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
+			if (this.game.constants[varInfo.name] != null)
+				throw this.makeErrorInGMLNode("Variable name expected. (it's a constant)", node);
+			if (this.vars.exists(varInfo.name))
+				return this.vars.set(varInfo.name, value, varInfo.indexes);
+			if (this.game.globalVars.exists(varInfo.name))
+				return this.game.globalVars.set(varInfo.name, value, varInfo.indexes);
 
-		this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
+			this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
 
+		} else {
+
+			var instances = this.objectReferenceToInstances(varInfo.object);
+			if (instances === null) {
+				throw this.makeErrorInGMLNode("Cannot assign to the variable", node);
+
+			} else if (instances == "global") {
+				// TODO: "global." vars should be in this.game.globalVars.
+				// There is a list that contains all "global." vars that have been "globalvar"'d.
+				// This would be checked when getting/setting vars with a dot and when "globalvar" declarations are called.
+				throw this.makeErrorInGMLNode("Cannot assign to the variable", node);
+
+			} else {
+				for (let instance of instances) {
+					instance.vars.set(varInfo.name, value, varInfo.indexes);
+				}
+
+			}
+
+		}
+
+	}
+
+	/*
+	Converts an object reference (such as values before a dot in variable names) into a list of instances that corresponds to it. It can return:
+	- An array of instances
+	- "global"
+	- null
+	*/
+	objectReferenceToInstances(object) {
+
+		if (object >= 0 && object <= 100000) { // object index
+			let instances = this.game.instances.filter(instance => instance.object_index == object);
+			return instances;
+
+		} else if (object > 100000) { // instance id
+			let instance = this.game.instances.find(instance => instance.id == object);
+			return instance ? [instance] : [];
+
+		} else if (object == -1 || object == -7) { // self or local
+			return [this.currentInstance];
+
+		} else if (object == -2) { // other
+			return [this.currentOther];
+
+		} else if (object == -3) { // all
+			return this.game.instances;
+
+		} else if (object == -4) { // noone
+			return null;
+
+		} else if (object == -5) { // global
+			return "global";
+
+		} else {
+			return null;
+		}
 	}
 
 	varModify(varInfo, valueFunc, node) {

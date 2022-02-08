@@ -2931,7 +2931,7 @@ export default class BuiltInFunctions {
 	// ## Scripts
 
 	static async execute_string ([str]) {
-		await this.executeString(str);
+		await this.executeString(str, this.currentInstance, this.currentOther);
 		return 0;
 	}
 	static execute_file ([_]) {
@@ -5084,7 +5084,8 @@ export default class BuiltInFunctions {
 		var scriptResource = this.game.project.resources.ProjectScript.find(x => x.id == script);
 
 		if (scriptResource) {
-			return this.execute(this.game.preparedCodes.get(scriptResource), this.currentInstance, [argument0, argument1, argument2, argument3, argument4]);
+			return this.execute(this.game.preparedCodes.get(scriptResource), this.currentInstance, this.currentOther,
+				[argument0, argument1, argument2, argument3, argument4]);
 		}
 		return 0;
 	}

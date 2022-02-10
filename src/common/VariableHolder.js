@@ -18,6 +18,7 @@ export default class VariableHolder {
 			}
 			this.builtInList[name].dimensions = this.builtInClass[name].dimensions;
 			if (this.builtInClass[name].dimensions == undefined) {
+				// TODO 1d only
 				this.builtInClass[name].dimensions = 0;
 				if (Array.isArray(this.builtInList[name].value)) {
 					this.builtInClass[name].dimensions = 1;

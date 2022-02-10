@@ -1,6 +1,6 @@
 import HTMLWindow from './HTMLWindow.js';
 
-import {$, parent, endparent, add, remove, html, text, newElem, newButton, newTextBox, newNumberBox, newCheckBox, newSelect, newImage} from '../common/H.js'
+import {$, parent, endparent, add, html, text, newElem, newButton, newTextBox, newNumberBox, newCheckBox, newSelect, newImage} from '../common/H.js'
 
 import {ProjectSprite, ProjectObject, ProjectEvent, ProjectAction, ProjectActionArg} from '../common/Project.js';
 import Events from '../common/Events.js';
@@ -356,7 +356,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 			})
 			endparent();
 
-		this.selectEvents.selectedIndex = Math.min(index, this.paramEvents.length-1);;
+		this.selectEvents.selectedIndex = Math.min(index, this.paramEvents.length-1);
 
 	}
 

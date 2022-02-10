@@ -3,7 +3,6 @@ import ohm, {extras as ohmExtras} from 'ohm-js';
 import VariableHolder from '../common/VariableHolder.js';
 
 import {ExitException, ReturnException, BreakException, ContinueException} from '../common/Exceptions.js';
-import {ProjectObject} from '../common/Project.js';
 
 import GMLGrammar from './GMLGrammar.js';
 import BuiltInFunctions from './BuiltInFunctions.js';

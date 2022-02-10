@@ -625,25 +625,19 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static instance_exists ([obj]) {
-
-		var i;
-		if (obj < 0) { // is keyword
-			if (obj == -1) {
-				i = this.game.existingInstances.find(x => x == this.currentInstance);
-			} else
-			//other: -2,
-			if (obj == -3) {
-				i = (this.game.existingInstances.length > 0);
-			} else {
-				i = false;
-			}
-		} else if (obj < 100000) { // is object
-			i = this.game.existingInstances.find(x => x.object_index == obj);
-		} else { // is id
-			i = this.game.existingInstances.find(x => x.id == obj);
+		if (obj == -7) { // local
+			return 0;
 		}
 
-		return (i ? 1 : 0);
+		var instances = this.objectReferenceToInstances(obj);
+
+		if (Array.isArray(instances)) {
+			if (instances.filter(x => x.exists).length > 0) {
+				return 1;
+			}
+		}
+
+		return 0;
 	}
 	static instance_number ([_]) {
 

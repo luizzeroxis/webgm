@@ -399,10 +399,19 @@ export class Game {
 		var isFirstRoom = (this.room == null);
 
 		if (!isFirstRoom) {
-			for (let instance of this.instances) {
-				if (!instance.exists) continue;
-				var OTHER_ROOM_END = 5;
-				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
+			// If one instance calls a step stop exception, then the entire chain stops
+			try {
+				for (let instance of this.instances) {
+					if (!instance.exists) continue;
+					var OTHER_ROOM_END = 5;
+					await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
+				}
+			} catch (e) {
+				if (e instanceof StepStopException) {
+					this.stepStopAction = null;
+				} else {
+					throw e;
+				}
 			}
 
 			this.instances = this.instances.filter(instance => instance.vars.get('persistent'))
@@ -1024,16 +1033,25 @@ export class Game {
 	}
 
 	async gameEnd() {
-		for (let instance of this.instances) {
-			if (!instance.exists) continue;
-			var OTHER_ROOM_END = 5;
-			await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
-		}
+		// If one instance calls a step stop exception, then even the other event type doesn't run
+		try {
+			for (let instance of this.instances) {
+				if (!instance.exists) continue;
+				var OTHER_ROOM_END = 5;
+				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
+			}
 
-		for (let instance of this.instances) {
-			if (!instance.exists) continue;
-			var OTHER_GAME_END = 3;
-			await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_END), instance);
+			for (let instance of this.instances) {
+				if (!instance.exists) continue;
+				var OTHER_GAME_END = 3;
+				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_END), instance);
+			}
+		} catch (e) {
+			if (e instanceof StepStopException) {
+				this.stepStopAction = null;
+			} else {
+				throw e;
+			}
 		}
 
 		this.close();

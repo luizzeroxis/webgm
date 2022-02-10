@@ -449,6 +449,8 @@ export class Game {
 			await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_START), instance);
 		}
 
+		await this.drawViews();
+
 	}
 
 	async instanceCreate(x, y, object) {
@@ -668,14 +670,11 @@ export class Game {
 			(now all instances are set to their new positions) 
 			Collision events 
 			End step events 
-			Draw events // LIE!!!!!!!!1111111
+			Draw events
 		*/
 
 		// Get all events
 		this.mapEvents = this.getMapOfEvents();
-
-		// Draw
-		await this.drawViews();
 
 		// Do some stuff
 		this.globalVars.setForce('fps', this.fps);
@@ -847,6 +846,9 @@ export class Game {
 			if (!instance.exists) continue;
 			await this.doEvent(event, instance);
 		}
+
+		// Draw
+		await this.drawViews();
 
 		// Reset keyboard/mouse states
 		this.clearIO();

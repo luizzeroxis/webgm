@@ -673,12 +673,8 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static instance_destroy ([]) {
-		this.game.destroyedInstances.push(this.currentInstance);
-		var index = this.game.existingInstances.findIndex(x => x == this.currentInstance);
-		this.game.existingInstances.splice(index, 1);
-
 		this.game.doEvent(this.game.getEventOfInstance(this.currentInstance, 'destroy'), this.currentInstance);
-
+		this.currentInstance.exists = false;
 		return 0;
 	}
 	static instance_change ([_]) {
@@ -733,7 +729,17 @@ export default class BuiltInFunctions {
 	// ## Rooms
 
 	static async room_goto ([numb]) {
-		await this.game.loadRoom(this.game.project.ProjectRoom.find(x => x.id == numb));
+		var room = this.game.project.resources.ProjectRoom.find(x => x.id == numb);
+		if (room == null) {
+			throw this.game.makeFatalError({
+					type: 'unexisting_room_number',
+					numb: numb,
+				}, `Unexisting room number: ` + numb.toString());
+		}
+		this.game.stepStopAction = async () => {
+			await this.game.loadRoom(room);
+			this.game.continueMainLoop();
+		}
 		return 0;
 	}
 	static room_goto_previous ([_]) {
@@ -757,7 +763,9 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static game_end ([]) {
-		this.game.shouldEnd = true;
+		this.game.stepStopAction = async () => {
+			await this.game.gameEnd();
+		};
 		return 0;
 	}
 	static game_restart ([_]) {
@@ -2256,6 +2264,7 @@ export default class BuiltInFunctions {
 	// ## Pop-up messages and questions
 
 	static show_message ([message]) {
+		this.game.clearIO();
 		alert(message);
 		return 0;
 	}

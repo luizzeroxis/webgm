@@ -1,6 +1,6 @@
 import Dispatcher from '../common/Dispatcher.js'
 
-import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException} from '../common/Exceptions.js';
+import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from '../common/Exceptions.js';
 
 import {Project} from '../common/Project.js';
 
@@ -44,8 +44,6 @@ export class Game {
 		this.constants = null;
 
 		this.instances = [];
-		this.existingInstances = [];
-		this.destroyedInstances = [];
 
 		this.fps = 0;
 		this.fpsFrameCount = 0;
@@ -71,25 +69,23 @@ export class Game {
 
 		this.mapEvents = null;
 
-		this.shouldEnd = false;
+		this.stepStopAction = null;
 
 	}
 
-	start() {
+	async start() {
 
 		try {
 			this.startCanvas();
 			this.startInput();
 			this.startEngine();
 
-			this.loadProject()
-			.then(() => this.loadFirstRoom())
-			.then(() => {
-				this.startMainLoop();
-			})
-			.catch(e => {this.catch(e)});
+			await this.loadProject();
+			await this.loadFirstRoom();
+			
+			this.startMainLoop();
 		} catch (e) {
-			this.catch(e);
+			await this.catch(e);
 		}
 		
 	}
@@ -403,14 +399,13 @@ export class Game {
 		var isFirstRoom = (this.room == null);
 
 		if (!isFirstRoom) {
-			for (let instance of this.existingInstances) {
+			for (let instance of this.instances) {
+				if (!instance.exists) continue;
 				var OTHER_ROOM_END = 5;
 				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
 			}
 
 			this.instances = this.instances.filter(instance => instance.vars.get('persistent'))
-			this.existingInstances = this.instances.slice();
-			this.destroyedInstances = [];
 		}
 
 		this.room = room;
@@ -422,6 +417,8 @@ export class Game {
 		this.globalVars.setForce('room_height', room.height);
 		this.globalVars.setForce('room_speed', room.speed);
 
+		this.clearIO();
+
 		// TODO Check if room is persistent
 		for (let roomInstance of room.instances) {
 			await this.instanceCreate(roomInstance.x, roomInstance.y, roomInstance.object_index);
@@ -429,6 +426,7 @@ export class Game {
 
 		if (isFirstRoom) {
 			for (let instance of this.instances) {
+				if (!instance.exists) continue;
 				var OTHER_GAME_START = 2;
 				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_START), instance);
 			}
@@ -437,6 +435,7 @@ export class Game {
 		// TODO run room creation code
 
 		for (let instance of this.instances) {
+			if (!instance.exists) continue;
 			var OTHER_ROOM_START = 4;
 			await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_START), instance);
 		}
@@ -446,7 +445,6 @@ export class Game {
 	async instanceCreate(x, y, object) {
 		var instance = new Instance(x, y, object, this);
 		this.instances.push(instance);
-		this.existingInstances.push(instance);
 
 		// TODO run instance creation code
 
@@ -454,10 +452,6 @@ export class Game {
 
 		// TODO set id?
 		return instance.vars.get('id');
-	}
-
-	instanceExists(instance) {
-		return (this.existingInstances.find(x => x == instance) != null);
 	}
 
 	getResourceById(type, id) {
@@ -488,6 +482,11 @@ export class Game {
 		for (let treeAction of parsedActions) {
 			try {
 				await this.doTreeAction(treeAction);
+
+				if (this.stepStopAction != null) {
+					throw new StepStopException(this.stepStopAction);
+				}
+
 			} catch (e) {
 				if (e instanceof ExitException) {
 					break;
@@ -523,6 +522,7 @@ export class Game {
 				{
 					let result = true;
 					for (let applyToInstance of applyToInstances) {
+						if (!applyToInstance.exists) continue;
 
 						var args = [];
 						for (let x of treeAction.args) {
@@ -577,6 +577,7 @@ export class Game {
 
 			case 'code':
 				for (let applyToInstance of applyToInstances) {
+					if (!applyToInstance.exists) continue;
 					await this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance, otherInstance);
 				}
 				break;
@@ -591,7 +592,7 @@ export class Game {
 			case -2:
 				return [this.currentEventOther];
 			default:
-				return this.instances.filter(x => x.object_index == appliesTo);
+				return this.instances.filter(x => x.exists && x.object_index == appliesTo);
 		}
 	}
 
@@ -611,7 +612,7 @@ export class Game {
 
 	startMainLoop() {
 		if (this.timeout == null) {
-			this.timeout = setTimeout(() => this.mainLoop(), 0);
+			this.mainLoopForTimeout();
 		}
 
 		if (this.fpsTimeout == null) {
@@ -627,10 +628,27 @@ export class Game {
 		this.fpsTimeout = null;
 	}
 
+	// Call if you used StepStopException
+	continueMainLoop() {
+		this.mainLoopForTimeout();
+	}
+
+	async mainLoopForTimeout() {
+		try {
+			await this.mainLoop();
+		} catch (e) {
+			await this.catch(e);
+		}
+	}
+
 	async mainLoop() {
 
 		var timeoutStepStart = performance.now() / 1000;
 		++this.fpsFrameCount;
+
+		if (this.stepStopAction != null) {
+			throw new StepStopException(this.stepStopAction);
+		}
 
 		/*
 			Begin step events 
@@ -644,7 +662,7 @@ export class Game {
 			Draw events // LIE!!!!!!!!1111111
 		*/
 
-				// Get all events
+		// Get all events
 		this.mapEvents = this.getMapOfEvents();
 
 		// Draw
@@ -655,12 +673,14 @@ export class Game {
 
 		// Begin step
 		for (let {event, instance} of this.getEventsOfTypeAndSubtype('step', 'begin')) {
+			if (!instance.exists) continue;
 			await this.doEvent(event, instance);
 		}
 
 		// Alarm
 		for (let [subtype, list] of this.getEventsOfType('alarm')) {
 			for (let {event, instance} of list) {
+				if (!instance.exists) continue;
 
 				// Update alarm (decrease by one) here, before running event
 				// Alarm stays 0 until next alarm check, where it becomes -1 forever
@@ -679,6 +699,7 @@ export class Game {
 		// Keyboard
 		for (let [subtype, list] of this.getEventsOfType('keyboard')) {
 			for (let {event, instance} of list) {
+				if (!instance.exists) continue;
 				if (this.getKey(subtype, this.key)) {
 					await this.doEvent(event, instance);
 				}
@@ -687,6 +708,7 @@ export class Game {
 
 		for (let [subtype, list] of this.getEventsOfType('keypress')) {
 			for (let {event, instance} of list) {
+				if (!instance.exists) continue;
 				if (this.getKey(subtype, this.keyPressed)) {
 					await this.doEvent(event, instance);
 				}
@@ -695,6 +717,7 @@ export class Game {
 
 		for (let [subtype, list] of this.getEventsOfType('keyrelease')) {
 			for (let {event, instance} of list) {
+				if (!instance.exists) continue;
 				if (this.getKey(subtype, this.keyReleased)) {
 					await this.doEvent(event, instance);
 				}
@@ -707,6 +730,7 @@ export class Game {
 
 		for (let [subtype, list] of this.getEventsOfType('mouse')) {
 			for (let {event, instance} of list) {
+				if (!instance.exists) continue;
 				var execute = false;
 				var eventInfo = Events.listMouseSubtypes.find(x => x.id == subtype);
 				if (eventInfo == null) return;
@@ -747,12 +771,14 @@ export class Game {
 
 		// Step
 		for (let {event, instance} of this.getEventsOfTypeAndSubtype('step', 'normal')) {
+			if (!instance.exists) continue;
 			await this.doEvent(event, instance);
 		}
 
 		// Update instance variables and positions
 
-		this.instances.forEach(instance => {
+		for (let instance of this.instances) {
+			if (!instance.exists) continue;
 
 			instance.vars.set('xprevious', instance.vars.get('x'));
 			instance.vars.set('yprevious', instance.vars.get('y'));
@@ -791,11 +817,12 @@ export class Game {
 
 			// TODO paths??
 
-		});
+		}
 
 		// Collisions
 		for (let [subtype, list] of this.getEventsOfType('collision')) {
 			for (let {event, instance} of list) {
+				if (!instance.exists) continue;
 				var others = this.instances.filter(x => x.object_index == subtype);
 				for (let other of others) {
 					if (this.checkCollision(instance, other)) {
@@ -808,46 +835,34 @@ export class Game {
 		// End step
 
 		for (let {event, instance} of this.getEventsOfTypeAndSubtype('step', 'end')) {
+			if (!instance.exists) continue;
 			await this.doEvent(event, instance);
 		}
 
 		// Reset keyboard/mouse states
-		this.keyPressed = {};
-		this.keyReleased = {};
-		this.mousePressed = {};
-		this.mouseReleased = {};
-		this.mouseWheel = 0;
+		this.clearIO();
 
 		// Delete instances
-		this.destroyedInstances.forEach(instance => {
-			var index = this.instances.findIndex(x => x == instance);
-			this.instances.splice(index, 1);
-		})
-		this.destroyedInstances = [];
+		this.instances = this.instances.filter(instance => instance.exists);
 
-		if (this.shouldEnd) {
-			this.close();
-		} else {
+		// Run main loop again, after a frame of time has passed.
+		// This means the game will slow down if a loop takes too much time.
 
-			// Run main loop again, after a frame of time has passed.
-			// This means the game will slow down if a loop takes too much time.
+		var timeoutStepEnd = performance.now() / 1000;
+		var timeoutStepTime = timeoutStepEnd - timeoutStepStart;
+		var timeoutStepMinTime = 1 / this.globalVars.get('room_speed');
+		var timeoutWaitTime = Math.max(0, timeoutStepMinTime - timeoutStepTime);
 
-			var timeoutStepEnd = performance.now() / 1000;
-			var timeoutStepTime = timeoutStepEnd - timeoutStepStart;
-			var timeoutStepMinTime = 1 / this.globalVars.get('room_speed');
-			var timeoutWaitTime = Math.max(0, timeoutStepMinTime - timeoutStepTime);
+		this.timeout = setTimeout(() => this.mainLoopForTimeout(), timeoutWaitTime * 1000);
 
-			this.timeout = setTimeout(() => this.mainLoop(), timeoutWaitTime * 1000);
+		// var timeoutTotalStepTime = timeoutStepTime + timeoutWaitTime;
+		// console.log("------");
+		// console.log("StepTime", timeoutStepTime);
+		// console.log("StepMinTime", timeoutStepMinTime);
+		// console.log("WaitTime", timeoutWaitTime);
+		// console.log("TotalStepTime", timeoutTotalStepTime);
+		// console.log(1/timeoutTotalStepTime, "fps");
 
-			// var timeoutTotalStepTime = timeoutStepTime + timeoutWaitTime;
-			// console.log("------");
-			// console.log("StepTime", timeoutStepTime);
-			// console.log("StepMinTime", timeoutStepMinTime);
-			// console.log("WaitTime", timeoutWaitTime);
-			// console.log("TotalStepTime", timeoutTotalStepTime);
-			// console.log(1/timeoutTotalStepTime, "fps");
-
-		}
 	}
 
 	updateFps() {
@@ -858,7 +873,8 @@ export class Game {
 	getMapOfEvents() {
 		var map = new Map();
 
-		this.instances.forEach(instance => {
+		for (let instance of this.instances) {
+			if (!instance.exists) continue;
 			var object = this.getResourceById('ProjectObject', instance.object_index);
 
 			object.events.forEach(event => {
@@ -878,7 +894,7 @@ export class Game {
 				eventInstancePairs.push({event: event, instance: instance});
 
 			})
-		})
+		}
 
 		return map;
 	}
@@ -896,11 +912,12 @@ export class Game {
 
 		// Draw instances
 
-		var instances_by_depth = [...this.instances].sort(
-			(a, b) => a.vars.get('depth') - b.vars.get('depth')
-		);
+		var instances_by_depth = this.instances
+			.filter(x => x.exists)
+			.sort((a, b) => a.vars.get('depth') - b.vars.get('depth'));
 
 		for (let instance of instances_by_depth) {
+			if (!instance.exists) continue;
 
 			// Only draw if visible
 			if (instance.vars.get('visible')) {
@@ -998,14 +1015,43 @@ export class Game {
 		return dict[numb];
 	}
 
-	catch(e) {
+	clearIO() {
+		this.keyPressed = {};
+		this.keyReleased = {};
+		this.mousePressed = {};
+		this.mouseReleased = {};
+		this.mouseWheel = 0;
+	}
+
+	async gameEnd() {
+		for (let instance of this.instances) {
+			if (!instance.exists) continue;
+			var OTHER_ROOM_END = 5;
+			await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
+		}
+
+		for (let instance of this.instances) {
+			if (!instance.exists) continue;
+			var OTHER_GAME_END = 3;
+			await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_END), instance);
+		}
+
+		this.close();
+	}
+
+	async catch(e) {
 		if (e instanceof EngineException) {
 			this.close(e);
 		} else if (e instanceof ProjectErrorException) {
-
 			this.showError(e);
 			this.close();
-
+		} else if (e instanceof StepStopException) {
+			this.stepStopAction = null;
+			try {
+				await e.fn();
+			} catch (e) {
+				await this.catch(e);
+			}
 		} else {
 			this.close();
 			throw e;
@@ -1027,6 +1073,8 @@ export class Instance {
 
 		this.object_index = object_index;
 		this.game = game;
+
+		this.exists = true;
 
 		this.vars = new VariableHolder(this, BuiltInLocals);
 

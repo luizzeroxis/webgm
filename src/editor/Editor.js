@@ -351,7 +351,7 @@ export default class Editor {
 
 	stopGame () {
 		if (this.game) {
-			this.game.shouldEnd = true;
+			this.game.stepStopAction = async () => await this.game.gameEnd();
 		}
 	}
 

@@ -7,9 +7,9 @@ import {Project} from '../common/Project.js';
 import VariableHolder from '../common/VariableHolder.js';
 import Events from '../common/Events.js';
 
+import Instance from './Instance.js';
 import GML from './GML.js';
 import ActionsParser from './ActionsParser.js';
-import BuiltInLocals from './BuiltInLocals.js';
 import BuiltInGlobals from './BuiltInGlobals.js';
 import BuiltInConstants from './BuiltInConstants.js';
 import Collision from './Collision.js';
@@ -73,6 +73,7 @@ export class Game {
 
 	}
 
+	// Starts the game.
 	async start() {
 
 		try {
@@ -90,7 +91,60 @@ export class Game {
 		
 	}
 
-	end() {
+	// Ends the game properly, calling events and such.
+	async end() {
+
+		// If one instance calls a step stop exception, then even the other event type doesn't run
+		try {
+			for (let instance of this.instances) {
+				if (!instance.exists) continue;
+				var OTHER_ROOM_END = 5;
+				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
+			}
+
+			for (let instance of this.instances) {
+				if (!instance.exists) continue;
+				var OTHER_GAME_END = 3;
+				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_END), instance);
+			}
+		} catch (e) {
+			if (e instanceof StepStopException) {
+				this.stepStopAction = null;
+			} else {
+				throw e;
+			}
+		}
+
+		this.close();
+	}
+
+	// // Internals
+
+	// Function to deal with exceptions when called during the main loop or room loading.
+	async catch(e) {
+		if (e instanceof EngineException) {
+			this.close(e);
+		} else if (e instanceof ProjectErrorException) {
+			this.showError(e);
+			this.close();
+		} else if (e instanceof StepStopException) {
+			this.stepStopAction = null;
+			try {
+				await e.fn();
+			} catch (e) {
+				await this.catch(e);
+			}
+		} else {
+			this.close();
+			throw e;
+		}
+	}
+
+	// Stops the game as soon as possible.
+	close(e) {
+		// main loop
+		this.endMainLoop();
+
 		// canvas
 		this.canvas.classList.remove("no-cursor");
 
@@ -102,10 +156,10 @@ export class Game {
 		this.input.removeEventListener('mousemove', this.mouseMoveHandler)
 		this.input.removeEventListener('wheel', this.wheelHandler)
 
-		// main loop
-		this.endMainLoop();
+		this.dispatcher.speak('close', e);
 	}
 
+	// Called by start, inits the canvas.
 	startCanvas() {
 		this.ctx = this.canvas.getContext('2d');
 		this.ctx.imageSmoothingEnabled = false;
@@ -115,6 +169,7 @@ export class Game {
 		}
 	}
 
+	// Called by start, inits the input system.
 	startInput() {
 		// Keyboard
 		this.keyDownHandler = (e) => {
@@ -169,6 +224,7 @@ export class Game {
 		this.input.addEventListener('wheel', this.wheelHandler);
 	}
 
+	// Called by start, inits general engine stuff.
 	startEngine() {
 		this.globalVars = new VariableHolder(this, BuiltInGlobals)
 		this.constants = BuiltInConstants.getList();
@@ -182,6 +238,9 @@ export class Game {
 
 	}
 
+	// // Project loading
+
+	// Makes sure all resources are loaded, and parses GML code.
 	loadProject() {
 		var promises = [
 			this.loadSprites(),
@@ -194,10 +253,12 @@ export class Game {
 		return Promise.all(promises);
 	}
 
+	// Return a list of promises of loading sprite images.
 	loadSprites() {
 		var promises = [];
 		this.project.resources.ProjectSprite.forEach(sprite => {
 			sprite.images.forEach((image, imageNumber) => {
+				image.load();
 				promises.push(image.promise
 					.catch(e => {
 						throw new EngineException("Could not load image " + imageNumber.toString() + " in sprite " + sprite.name);
@@ -207,9 +268,13 @@ export class Game {
 		return Promise.all(promises);
 	}
 
+	// Returns a list of promises of loading background images.
 	loadBackgrounds() {} // TODO
+
+	// Returns a list of promises of loading sounds.
 	loadSounds() {} // TODO
 
+	// Prepares all GML code, parsing it and checking for errors.
 	loadGML() {
 		this.gml = new GML(this);
 
@@ -219,6 +284,7 @@ export class Game {
 		this.loadGMLRooms();
 	}
 
+	// Prepares all GML inside of scripts.
 	loadGMLScripts() {
 		this.project.resources.ProjectScript.every(script => {
 			return this.prepareGML(script.code, script, matchResult => {
@@ -238,8 +304,10 @@ export class Game {
 		})
 	}
 
+	// Prepares all GML inside time lines.
 	loadGMLTimelines() {} // TODO
 
+	// Prepares all GML inside objects.
 	loadGMLObjects() {
 		this.project.resources.ProjectObject.every(object => {
 			return object.events.every(event => {
@@ -282,6 +350,7 @@ export class Game {
 		})
 	}
 
+	// Prepares all GML inside rooms.
 	loadGMLRooms() {
 		this.project.resources.ProjectRoom.every(room => {
 
@@ -320,6 +389,7 @@ export class Game {
 		})
 	}
 
+	// Prepares a GML code string. mapKey is the key used to access it later in the preparedCodes map.
 	prepareGML(gml, mapKey, failureFunction) {
 		var preparedCode = this.gml.prepare(gml);
 
@@ -332,295 +402,23 @@ export class Game {
 		}
 	}
 
-	///// START ERROR THROWING
+	// // Game running
 
-	// TODO put all info in the exception itself, then show error on catch
-	// TODO make the message more like the one from GM
-
-	makeError(isFatal, ...args) {
-		if (isFatal) {
-			return this.makeFatalError(...args);
-		} else {
-			return this.makeNonFatalError(...args);
-		}
-	}
-
-	makeFatalError(...args) {
-		return new FatalErrorException(this.makeErrorOptions(true, ...args));
-	}
-
-	makeNonFatalError(...args) {
-		return new NonFatalErrorException(this.makeErrorOptions(false, ...args));
-	}
-
-	makeErrorOptions(isFatal, options, extraText, object=null, event=null, actionNumber=null) {
-
-		var _object = object==null ? this.getResourceById('ProjectObject', this.currentEventInstance.object_index) : object;
-		var _event = event==null ? this.currentEvent : event;
-		var _actionNumber = actionNumber==null ? this.currentEventActionNumber : actionNumber;
-
-		var base = {text:
-			`\n___________________________________________\n`
-			+ (isFatal ? `FATAL ` : ``) + `ERROR in\n`
-			+ `action number ` + _actionNumber.toString() + `\n`
-			+ `of ` + Events.getEventName(_event) + ` Event\n`
-			+ `for object ` + _object.name + `:\n\n`
-			+ extraText,
-
-			location: 'object',
-			locationActionNumber: _actionNumber,
-			locationEvent: _event,
-			locationObject: _object,
-		};
-
-		return Object.assign(base, options);
-	}
-
-	showError(exception) {
-		console.log(exception.text);
-		this.showErrorBox(exception.text);
-	}
-
-	showErrorBox(message) {
-		this.endMainLoop();
-		alert(message);
-		this.startMainLoop();
-	}
-
-
-	///// END ERROR THROWING
-
+	// Loads the first room of the game.
 	async loadFirstRoom() {
 		await this.loadRoom(this.project.resources.ProjectRoom[0]);
 	}
 
-	async loadRoom(room) {
-
-		var isFirstRoom = (this.room == null);
-
-		if (!isFirstRoom) {
-			// If one instance calls a step stop exception, then the entire chain stops
-			try {
-				for (let instance of this.instances) {
-					if (!instance.exists) continue;
-					var OTHER_ROOM_END = 5;
-					await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
-				}
-			} catch (e) {
-				if (e instanceof StepStopException) {
-					this.stepStopAction = null;
-				} else {
-					throw e;
-				}
-			}
-
-			this.instances = this.instances.filter(instance => instance.vars.get('persistent'))
-		}
-
-		this.room = room;
-
-		this.canvas.width = room.width;
-		this.canvas.height = room.height;
-
-		this.globalVars.setForce('room_width', room.width);
-		this.globalVars.setForce('room_height', room.height);
-		this.globalVars.setForce('room_speed', room.speed);
-
-		this.clearIO();
-
-		// TODO Check if room is persistent
-		for (let roomInstance of room.instances) {
-			await this.instanceCreate(roomInstance.x, roomInstance.y, roomInstance.object_index);
-		}
-
-		if (isFirstRoom) {
-			for (let instance of this.instances) {
-				if (!instance.exists) continue;
-				var OTHER_GAME_START = 2;
-				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_START), instance);
-			}
-		}
-
-		// TODO run room creation code
-
-		for (let instance of this.instances) {
-			if (!instance.exists) continue;
-			var OTHER_ROOM_START = 4;
-			await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_START), instance);
-		}
-
-		await this.drawViews();
-
-	}
-
-	async instanceCreate(x, y, object) {
-		var instance = new Instance(x, y, object, this);
-		this.instances.push(instance);
-
-		// TODO run instance creation code
-
-		await this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
-
-		// TODO set id?
-		return instance.vars.get('id');
-	}
-
-	getResourceById(type, id) {
-		return this.project.resources[type].find(x => x.id == id);
-	}
-
-	getEventOfInstance(instance, type, subtype) {
-		var object = this.getResourceById('ProjectObject', instance.object_index);
-		var event = object.events.find(x => (x.type == type) && (subtype ? (x.subtype == subtype) : true));
-		return event;
-	}
-
-	//
-
-	async doEvent(event, instance, other=null) {
-		if (event == null) return;
-
-		var previousEvent = this.currentEvent;
-		var previousInstance = this.currentEventInstance;
-		var previousOther = this.currentEventOther;
-
-		this.currentEvent = event;
-		this.currentEventInstance = instance;
-		this.currentEventOther = other || instance;
-
-		var parsedActions = new ActionsParser(event.actions).parse();
-
-		for (let treeAction of parsedActions) {
-			try {
-				await this.doTreeAction(treeAction);
-
-				if (this.stepStopAction != null) {
-					throw new StepStopException(this.stepStopAction);
-				}
-
-			} catch (e) {
-				if (e instanceof ExitException) {
-					break;
-				} if (e instanceof NonFatalErrorException) {
-					this.showError(e);
-				} else {
-					throw e;
-				}
-			}
-		}
-
-		this.currentEvent = previousEvent;
-		this.currentEventInstance = previousInstance;
-		this.currentEventOther = previousOther;
-
-	}
-
-	async doTreeAction(treeAction) {
-		this.currentEventActionNumber = treeAction.actionNumber;
-
-		if (treeAction.appliesTo != undefined) {
-			var applyToInstances = this.getApplyToInstances(treeAction.appliesTo);
-			var otherInstance = this.currentEventOther;
-			if (treeAction.appliesTo == -2) { // other
-				otherInstance = this.currentEventInstance;
-			}
-		}
-
-		switch (treeAction.type) {
-			case 'executeFunction':
-			case 'executeCode':
-
-				{
-					let result = true;
-					for (let applyToInstance of applyToInstances) {
-						if (!applyToInstance.exists) continue;
-
-						var args = [];
-						for (let x of treeAction.args) {
-							args.push(await this.parseActionArg(x));
-						}
-
-						var currentResult;
-						if (treeAction.type == 'executeFunction') {
-							currentResult = await this.gml.builtInFunction(treeAction.function, applyToInstance, args, treeAction.relative);
-						} else {
-							currentResult = await this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance, otherInstance, args, treeAction.relative);
-						}
-
-						if (typeof currentResult !== "number" || currentResult < 0.5) {
-							result = false;
-						}
-
-					}
-
-					return result;
-				}
-
-			case 'if':
-				{
-					let result = await this.doTreeAction(treeAction.condition);
-					if (result) {
-						await this.doTreeAction(treeAction.ifTrue);
-					} else {
-						await this.doTreeAction(treeAction.ifFalse);
-					}
-					break;
-				}
-
-			case 'block':
-				for (let blockTreeAction of treeAction) {
-					await this.doTreeAction(blockTreeAction);
-				}
-				break;
-
-			case 'exit':
-				throw new ExitException();
-
-			case 'repeat':
-				var times = await this.parseActionArg(treeAction.times);
-				for (let i=0; i<times; i++) {
-					await this.doTreeAction(treeAction.treeAction);
-				}
-				break;
-
-			case 'variable': // TODO
-				break;
-
-			case 'code':
-				for (let applyToInstance of applyToInstances) {
-					if (!applyToInstance.exists) continue;
-					await this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance, otherInstance);
-				}
-				break;
+	// Run a step and set timeout for next step. With error catching.
+	async mainLoopForTimeout() {
+		try {
+			await this.mainLoop();
+		} catch (e) {
+			await this.catch(e);
 		}
 	}
 
-	getApplyToInstances(appliesTo) {
-		// -1 = self, -2 = other, 0>= = object index
-		switch (appliesTo) {
-			case -1:
-				return [this.currentEventInstance];
-			case -2:
-				return [this.currentEventOther];
-			default:
-				return this.instances.filter(x => x.exists && x.object_index == appliesTo);
-		}
-	}
-
-	async parseActionArg(arg) {
-		if (arg.kind == 'both') {
-			if (arg.value[0] != `'` && arg.value[0] != `"`) {
-				return arg.value;
-			}
-		}
-		if (arg.kind == 'both' || arg.kind == 'expression') {
-			return await this.gml.executeStringExpression(arg.value, this.currentEventInstance, this.currentEventOther); // TODO maybe prepare all these codes beforehand
-		}
-		return arg.value;
-	}
-
-	//
-
+	// Start running game steps.
 	startMainLoop() {
 		if (this.timeout == null) {
 			this.mainLoopForTimeout();
@@ -631,6 +429,7 @@ export class Game {
 		}
 	}
 
+	// Stop running game steps.
 	endMainLoop() {
 		clearTimeout(this.timeout);
 		this.timeout = null;
@@ -639,19 +438,14 @@ export class Game {
 		this.fpsTimeout = null;
 	}
 
-	// Call if you used StepStopException
+	// Continue running game steps, in case you stopped it by using StepStopException.
 	continueMainLoop() {
 		this.mainLoopForTimeout();
 	}
 
-	async mainLoopForTimeout() {
-		try {
-			await this.mainLoop();
-		} catch (e) {
-			await this.catch(e);
-		}
-	}
+	// // Running steps and events
 
+	// Run a step and set timeout for next step. Don't call this directly, use mainLoopForTimeout.
 	async mainLoop() {
 
 		var timeoutStepStart = performance.now() / 1000;
@@ -875,41 +669,8 @@ export class Game {
 		// console.log(1/timeoutTotalStepTime, "fps");
 
 	}
-
-	updateFps() {
-		this.fps = this.fpsFrameCount;
-		this.fpsFrameCount = 0;
-	}
-
-	getMapOfEvents() {
-		var map = new Map();
-
-		for (let instance of this.instances) {
-			if (!instance.exists) continue;
-			var object = this.getResourceById('ProjectObject', instance.object_index);
-
-			object.events.forEach(event => {
-
-				var subtypes = map.get(event.type);
-				if (subtypes == undefined) {
-					subtypes = new Map();
-					map.set(event.type, subtypes);
-				}
-
-				var eventInstancePairs = subtypes.get(event.subtype);
-				if (eventInstancePairs == undefined) {
-					eventInstancePairs = [];
-					subtypes.set(event.subtype, eventInstancePairs);
-				}
-
-				eventInstancePairs.push({event: event, instance: instance});
-
-			})
-		}
-
-		return map;
-	}
-
+	
+	// Draw all the views of the current room.
 	async drawViews() {
 		// Currently there are no views. But the following should happen for every view.
 
@@ -961,20 +722,224 @@ export class Game {
 		}
 	}
 
-	getEventsOfTypeAndSubtype(type, subtype) {
-		var subtypes = this.mapEvents.get(type);
-		if (!subtypes) return [];
-		var list = subtypes.get(subtype);
-		if (!list) return [];
-		return list;
+	// Execute a event.
+	async doEvent(event, instance, other=null) {
+		if (event == null) return;
+
+		var previousEvent = this.currentEvent;
+		var previousInstance = this.currentEventInstance;
+		var previousOther = this.currentEventOther;
+
+		this.currentEvent = event;
+		this.currentEventInstance = instance;
+		this.currentEventOther = other || instance;
+
+		var parsedActions = new ActionsParser(event.actions).parse();
+
+		for (let treeAction of parsedActions) {
+			try {
+				await this.doTreeAction(treeAction);
+
+				if (this.stepStopAction != null) {
+					throw new StepStopException(this.stepStopAction);
+				}
+
+			} catch (e) {
+				if (e instanceof ExitException) {
+					break;
+				} if (e instanceof NonFatalErrorException) {
+					this.showError(e);
+				} else {
+					throw e;
+				}
+			}
+		}
+
+		this.currentEvent = previousEvent;
+		this.currentEventInstance = previousInstance;
+		this.currentEventOther = previousOther;
+
 	}
 
-	getEventsOfType(type) {
-		var subtypes = this.mapEvents.get(type);
-		if (!subtypes) return [];
-		return [...subtypes.entries()];
+	// Execute a node of the parsed actions tree.
+	async doTreeAction(treeAction) {
+		this.currentEventActionNumber = treeAction.actionNumber;
+
+		if (treeAction.appliesTo != undefined) {
+			var applyToInstances = this.getApplyToInstances(treeAction.appliesTo);
+			var otherInstance = this.currentEventOther;
+			if (treeAction.appliesTo == -2) { // other
+				otherInstance = this.currentEventInstance;
+			}
+		}
+
+		switch (treeAction.type) {
+			case 'executeFunction':
+			case 'executeCode':
+
+				{
+					let result = true;
+					for (let applyToInstance of applyToInstances) {
+						if (!applyToInstance.exists) continue;
+
+						var args = [];
+						for (let x of treeAction.args) {
+							args.push(await this.parseActionArg(x));
+						}
+
+						var currentResult;
+						if (treeAction.type == 'executeFunction') {
+							currentResult = await this.gml.builtInFunction(treeAction.function, applyToInstance, args, treeAction.relative);
+						} else {
+							currentResult = await this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance, otherInstance, args, treeAction.relative);
+						}
+
+						if (typeof currentResult !== "number" || currentResult < 0.5) {
+							result = false;
+						}
+
+					}
+
+					return result;
+				}
+
+			case 'if':
+				{
+					let result = await this.doTreeAction(treeAction.condition);
+					if (result) {
+						await this.doTreeAction(treeAction.ifTrue);
+					} else {
+						await this.doTreeAction(treeAction.ifFalse);
+					}
+					break;
+				}
+
+			case 'block':
+				for (let blockTreeAction of treeAction) {
+					await this.doTreeAction(blockTreeAction);
+				}
+				break;
+
+			case 'exit':
+				throw new ExitException();
+
+			case 'repeat':
+				var times = await this.parseActionArg(treeAction.times);
+				for (let i=0; i<times; i++) {
+					await this.doTreeAction(treeAction.treeAction);
+				}
+				break;
+
+			case 'variable': // TODO
+				break;
+
+			case 'code':
+				for (let applyToInstance of applyToInstances) {
+					if (!applyToInstance.exists) continue;
+					await this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance, otherInstance);
+				}
+				break;
+		}
 	}
 
+	// Interpret a action argument to it's final value.
+	async parseActionArg(arg) {
+		if (arg.kind == 'both') {
+			if (arg.value[0] != `'` && arg.value[0] != `"`) {
+				return arg.value;
+			}
+		}
+		if (arg.kind == 'both' || arg.kind == 'expression') {
+			return await this.gml.executeStringExpression(arg.value, this.currentEventInstance, this.currentEventOther); // TODO maybe prepare all these codes beforehand
+		}
+		return arg.value;
+	}
+
+	// Update the fps counter.
+	updateFps() {
+		this.fps = this.fpsFrameCount;
+		this.fpsFrameCount = 0;
+	}
+
+	// // Actions execution
+
+	// Loads a room. Only use this inside the stepStopAction function, or at the beginning of the game.
+	async loadRoom(room) {
+
+		var isFirstRoom = (this.room == null);
+
+		if (!isFirstRoom) {
+			// If one instance calls a step stop exception, then the entire chain stops
+			try {
+				for (let instance of this.instances) {
+					if (!instance.exists) continue;
+					var OTHER_ROOM_END = 5;
+					await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
+				}
+			} catch (e) {
+				if (e instanceof StepStopException) {
+					this.stepStopAction = null;
+				} else {
+					throw e;
+				}
+			}
+
+			this.instances = this.instances.filter(instance => instance.vars.get('persistent'))
+		}
+
+		this.room = room;
+
+		this.canvas.width = room.width;
+		this.canvas.height = room.height;
+
+		this.globalVars.setForce('room', room.id);
+		this.globalVars.setForce('room_width', room.width);
+		this.globalVars.setForce('room_height', room.height);
+		this.globalVars.setForce('room_speed', room.speed);
+
+		// TODO set background and views variables
+
+		this.clearIO();
+
+		// TODO Check if room is persistent
+		for (let roomInstance of room.instances) {
+			await this.instanceCreate(roomInstance.x, roomInstance.y, roomInstance.object_index);
+		}
+
+		if (isFirstRoom) {
+			for (let instance of this.instances) {
+				if (!instance.exists) continue;
+				var OTHER_GAME_START = 2;
+				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_START), instance);
+			}
+		}
+
+		// TODO run room creation code
+
+		for (let instance of this.instances) {
+			if (!instance.exists) continue;
+			var OTHER_ROOM_START = 4;
+			await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_START), instance);
+		}
+
+		await this.drawViews();
+
+	}
+
+	// Create an instance in the room.
+	async instanceCreate(x, y, object) {
+		var instance = new Instance(x, y, object, this);
+		this.instances.push(instance);
+
+		// TODO run instance creation code
+
+		await this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
+
+		// TODO set id?
+		return instance.vars.get('id');
+	}
+
+	// Check if two instances are colliding.
 	checkCollision(self, other) {
 
 		// TODO masks
@@ -1006,7 +971,8 @@ export class Game {
 
 	}
 
-	getKey(key, dict) { // dict should be key, keyPressed or keyReleased
+	// Get state of a key. dict should be key, keyPressed or keyReleased.
+	getKey(key, dict) {
 		if (key == 0) { // vk_nokey
 			return Object.entries(dict).every(([key, value]) => !value);
 		}
@@ -1016,7 +982,8 @@ export class Game {
 		return dict[key];
 	}
 
-	getMouse(numb, dict) { // dict should be mouse, mousePressed or mouseReleased
+	// Get state of a mouse button. dict should be mouse, mousePressed or mouseReleased.
+	getMouse(numb, dict) {
 		if (numb == -1) { // mb_any
 			return Object.entries(dict).some(([key, value]) => value);
 		}
@@ -1026,6 +993,7 @@ export class Game {
 		return dict[numb];
 	}
 
+	// Clears the state of per step input variables.
 	clearIO() {
 		this.keyPressed = {};
 		this.keyReleased = {};
@@ -1034,94 +1002,135 @@ export class Game {
 		this.mouseWheel = 0;
 	}
 
-	async gameEnd() {
-		// If one instance calls a step stop exception, then even the other event type doesn't run
-		try {
-			for (let instance of this.instances) {
-				if (!instance.exists) continue;
-				var OTHER_ROOM_END = 5;
-				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
-			}
+	// // Helper functions
 
-			for (let instance of this.instances) {
-				if (!instance.exists) continue;
-				var OTHER_GAME_END = 3;
-				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_END), instance);
-			}
-		} catch (e) {
-			if (e instanceof StepStopException) {
-				this.stepStopAction = null;
-			} else {
-				throw e;
-			}
-		}
-
-		this.close();
+	// Get event of type and subtype (optional) of an instance.
+	getEventOfInstance(instance, type, subtype) {
+		var object = this.getResourceById('ProjectObject', instance.object_index);
+		var event = object.events.find(x => (x.type == type) && (subtype ? (x.subtype == subtype) : true));
+		return event;
 	}
 
-	async catch(e) {
-		if (e instanceof EngineException) {
-			this.close(e);
-		} else if (e instanceof ProjectErrorException) {
-			this.showError(e);
-			this.close();
-		} else if (e instanceof StepStopException) {
-			this.stepStopAction = null;
-			try {
-				await e.fn();
-			} catch (e) {
-				await this.catch(e);
-			}
+	// Returns a map containg all event-instance pairs that exist currently. It is structured like so:
+	// Map(<event type>, Map(<event subtype>, {event, instance}))
+	getMapOfEvents() {
+		var map = new Map();
+
+		for (let instance of this.instances) {
+			if (!instance.exists) continue;
+			var object = this.getResourceById('ProjectObject', instance.object_index);
+
+			object.events.forEach(event => {
+
+				var subtypes = map.get(event.type);
+				if (subtypes == undefined) {
+					subtypes = new Map();
+					map.set(event.type, subtypes);
+				}
+
+				var eventInstancePairs = subtypes.get(event.subtype);
+				if (eventInstancePairs == undefined) {
+					eventInstancePairs = [];
+					subtypes.set(event.subtype, eventInstancePairs);
+				}
+
+				eventInstancePairs.push({event: event, instance: instance});
+
+			})
+		}
+
+		return map;
+	}
+
+	// From the map of events, get a list of event-instance pairs of that type and subtype.
+	getEventsOfTypeAndSubtype(type, subtype) {
+		var subtypes = this.mapEvents.get(type);
+		if (!subtypes) return [];
+		var list = subtypes.get(subtype);
+		if (!list) return [];
+		return list;
+	}
+
+	// From the map of events, get a list of event-instance pairs of that type, regardless of subtype.
+	getEventsOfType(type) {
+		var subtypes = this.mapEvents.get(type);
+		if (!subtypes) return [];
+		return [...subtypes.entries()];
+	}
+
+	// Get a project resource by its type and id.
+	getResourceById(type, id) {
+		return this.project.resources[type].find(x => x.id == id);
+	}
+
+	// Interpret apply to option, returns a list of instances that should be applied to.
+	getApplyToInstances(appliesTo) {
+		// -1 = self, -2 = other, 0>= = object index
+		switch (appliesTo) {
+			case -1:
+				return [this.currentEventInstance];
+			case -2:
+				return [this.currentEventOther];
+			default:
+				return this.instances.filter(x => x.exists && x.object_index == appliesTo);
+		}
+	}
+
+	// // Game error checking and throwing
+
+	// TODO put all info in the exception itself, then show error on catch
+	// TODO make the message more like the one from GM
+
+	// Make a fatal error exception.
+	makeFatalError(...args) {
+		return new FatalErrorException(this.makeErrorOptions(true, ...args));
+	}
+
+	// Make a non fatal error exception.
+	makeNonFatalError(...args) {
+		return new NonFatalErrorException(this.makeErrorOptions(false, ...args));
+	}
+
+	// Make a fatal or non fatal error exception.
+	makeError(isFatal, ...args) {
+		if (isFatal) {
+			return this.makeFatalError(...args);
 		} else {
-			this.close();
-			throw e;
+			return this.makeNonFatalError(...args);
 		}
 	}
 
-	close(e) {
-		console.log('Closing game.');
-		this.end();
+	// Make the object to be sent to a ProjectErrorException to be the exception's properties.
+	// options can be an object to add additional properties to the exception.
+	// extraText will be added after the main information.
+	// object, event and actionNumber can be null to use the current values.
+	makeErrorOptions(isFatal, options, extraText, object=null, event=null, actionNumber=null) {
 
-		this.dispatcher.speak('close', e);
+		var _object = object==null ? this.getResourceById('ProjectObject', this.currentEventInstance.object_index) : object;
+		var _event = event==null ? this.currentEvent : event;
+		var _actionNumber = actionNumber==null ? this.currentEventActionNumber : actionNumber;
+
+		var base = {text:
+			`\n___________________________________________\n`
+			+ (isFatal ? `FATAL ` : ``) + `ERROR in\n`
+			+ `action number ` + _actionNumber.toString() + `\n`
+			+ `of ` + Events.getEventName(_event) + ` Event\n`
+			+ `for object ` + _object.name + `:\n\n`
+			+ extraText,
+
+			location: 'object',
+			locationActionNumber: _actionNumber,
+			locationEvent: _event,
+			locationObject: _object,
+		};
+
+		return Object.assign(base, options);
 	}
 
-}
-
-export class Instance {
-
-	constructor (x, y, object_index, game) {
-
-		this.object_index = object_index;
-		this.game = game;
-
-		this.exists = true;
-
-		this.vars = new VariableHolder(this, BuiltInLocals);
-
-		// Id
-		this.vars.setForce('id', 100001);
-
-		// Set by constructor
-		this.vars.setForce('x', x);
-		this.vars.setForce('y', y);
-		
-		// Inherited from object
-		var obj = game.getResourceById('ProjectObject', this.object_index);
-
-		this.vars.setForce('object_index', obj.id);
-		this.vars.setForce('sprite_index', obj.sprite_index);
-		this.vars.setForce('visible', obj.visible);
-		this.vars.setForce('solid', obj.solid);
-		this.vars.setForce('depth', obj.depth);
-		this.vars.setForce('persistent', obj.persistent);
-		this.vars.setForce('mask_index', obj.mask);
-		
-		//
-		this.vars.setForce('xprevious', x);
-		this.vars.setForce('yprevious', y);
-		this.vars.setForce('xstart', x);
-		this.vars.setForce('ystart', y);
-
+	// Display a error messsage using the text property.
+	showError(exception) {
+		console.log(exception.text);
+		alert(exception.text);
 	}
 
 }

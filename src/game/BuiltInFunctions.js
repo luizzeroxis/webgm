@@ -758,7 +758,7 @@ export default class BuiltInFunctions {
 	}
 	static game_end ([]) {
 		this.game.stepStopAction = async () => {
-			await this.game.gameEnd();
+			await this.game.end();
 		};
 		return 0;
 	}

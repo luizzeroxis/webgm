@@ -20,16 +20,18 @@ export default class AbstractImage {
 	}
 
 	load() {
-		this.promise = new Promise((resolve, reject) => {
-			this.image.onload = (e) => {
-				resolve();
-			};
-			this.image.onerror = (e) => {
-				reject(new WebGMException("Could not load image"));
-			};
-		});
+		if (this.promise == null) {
+			this.promise = new Promise((resolve, reject) => {
+				this.image.onload = (e) => {
+					resolve();
+				};
+				this.image.onerror = (e) => {
+					reject(new WebGMException("Could not load image"));
+				};
+			});
 
-		this.image.src = this.src;
+			this.image.src = this.src;
+		}
 	}
 
 	toJSON() {

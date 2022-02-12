@@ -20,16 +20,18 @@ export default class AbstractAudio {
 	}
 
 	load() {
-		this.promise = new Promise((resolve, reject) => {
-			this.audio.onload = (e) => {
-				resolve();
-			};
-			this.audio.onerror = (e) => {
-				reject(new WebGMException("Could not load audio"));
-			};
-		});
+		if (this.promise == null) {
+			this.promise = new Promise((resolve, reject) => {
+				this.audio.onload = (e) => {
+					resolve();
+				};
+				this.audio.onerror = (e) => {
+					reject(new WebGMException("Could not load audio"));
+				};
+			});
 
-		this.audio.src = this.src;
+			this.audio.src = this.src;
+		}
 	}
 
 	toJSON() {

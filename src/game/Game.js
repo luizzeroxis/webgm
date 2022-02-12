@@ -831,6 +831,16 @@ export class Game {
 				break;
 
 			case 'variable': // TODO
+				for (let applyToInstance of applyToInstances) {
+					if (!applyToInstance.exists) continue;
+
+					var name = treeAction.name.value;
+					var value = treeAction.value.value; 
+					var assignSymbol = treeAction.relative ? " += " : " = ";
+
+					// TODO check in which instance is this executed
+					await this.gml.execute(this.prepare(name + assignSymbol + value), applyToInstance, otherInstance);
+				}
 				break;
 
 			case 'code':

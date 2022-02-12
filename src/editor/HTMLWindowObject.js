@@ -476,7 +476,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 			{kind: 'repeat', htmlclass: HTMLWindowAction, hasApplyTo: false, args: [
 				{name: 'times:', kind: 'expression', default: "1"},
 			]},
-			{kind: 'variable', htmlclass: HTMLWindowAction, hasApplyTo: true, args: [
+			{kind: 'variable', htmlclass: HTMLWindowAction, hasApplyTo: true, hasRelative: true, args: [
 				{name: 'variable:', kind: 'string', default: ""},
 				{name: 'value:', kind: 'expression', default: "0"},
 			]},

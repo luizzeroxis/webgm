@@ -715,8 +715,8 @@ export default class BuiltInFunctions {
 
 	static async sleep ([numb]) {
 		await new Promise((resolve, reject) => {
-			setTimeout(resolve, numb);
-		});
+			setTimeout(() => resolve(), numb);
+		})
 		return 0;
 	}
 
@@ -4920,22 +4920,7 @@ export default class BuiltInFunctions {
 	}
 	static async action_sleep ([milliseconds, redraw]) {
 		// TODO read with redraw
-		await new Promise((resolve, reject) => {
-
-			var timeoutObject = {
-				timeout: null,
-				resolve: resolve,
-				reject: reject,
-			}
-
-			timeoutObject.timeout = setTimeout(() => {
-				// this.game.timeouts.splice(this.game.timeouts.indexOf(timeoutObject), 1);
-				resolve();
-			}, milliseconds);
-
-			// this.game.timeouts.push(timeoutObject);
-
-		})
+		await BuiltInFunctions.sleep.call(this, [milliseconds]);
 		return 0;
 	}
 	static action_set_timeline ([_]) {

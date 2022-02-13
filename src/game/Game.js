@@ -783,8 +783,8 @@ export class Game {
 						if (!applyToInstance.exists) continue;
 
 						var args = [];
-						for (let x of treeAction.args) {
-							args.push(await this.parseActionArg(x));
+						for (let [i, x] of treeAction.args.entries()) {
+							args.push(await this.parseActionArg(x, i));
 						}
 
 						var currentResult;
@@ -824,7 +824,7 @@ export class Game {
 				throw new ExitException();
 
 			case 'repeat':
-				var times = await this.parseActionArg(treeAction.times);
+				var times = await this.parseActionArg(treeAction.times, 0);
 				for (let i=0; i<times; i++) {
 					await this.doTreeAction(treeAction.treeAction);
 				}
@@ -838,8 +838,17 @@ export class Game {
 					var value = treeAction.value.value; 
 					var assignSymbol = treeAction.relative ? " += " : " = ";
 
-					// TODO check in which instance is this executed
-					await this.gml.execute(this.prepare(name + assignSymbol + value), applyToInstance, otherInstance);
+					var matchResult = this.gml.prepare(name + assignSymbol + value);
+					if (!matchResult.succeeded()) {
+						throw this.makeFatalError({
+								type: 'compilation',
+								matchResult: matchResult,
+							},
+							`COMPILATION ERROR in code action\n` + matchResult.message + `\n`,
+						);
+					}
+
+					await this.gml.execute(matchResult, applyToInstance, otherInstance);
 				}
 				break;
 
@@ -853,14 +862,27 @@ export class Game {
 	}
 
 	// Interpret a action argument to it's final value.
-	async parseActionArg(arg) {
+	async parseActionArg(arg, argNumber) {
 		if (arg.kind == 'both') {
 			if (arg.value[0] != `'` && arg.value[0] != `"`) {
 				return arg.value;
 			}
 		}
 		if (arg.kind == 'both' || arg.kind == 'expression') {
-			return await this.gml.executeStringExpression(arg.value, this.currentEventInstance, this.currentEventOther); // TODO maybe prepare all these codes beforehand
+			// TODO check if this is really what gm is doing
+			// TODO maybe prepare all these codes beforehand
+
+			var matchResult = this.gml.prepare(arg.value, "Expression");
+			if (!matchResult.succeeded()) {
+				throw this.makeFatalError({
+						type: 'compilation',
+						matchResult: matchResult,
+					},
+					`COMPILATION ERROR in argument `+ argNumber.toString() +`\n` + matchResult.message + `\n`,
+				);
+			}
+			
+			return await this.gml.execute(matchResult, this.currentEventInstance, this.currentEventOther);
 		}
 		return arg.value;
 	}
@@ -1010,6 +1032,22 @@ export class Game {
 		this.mousePressed = {};
 		this.mouseReleased = {};
 		this.mouseWheel = 0;
+	}
+
+	// Prepare and execute GML string.
+	async executeString(gml, instance, other) {
+		var matchResult = this.gml.prepare(gml);
+		if (!matchResult.succeeded()) {
+			throw new NonFatalErrorException({
+					type: 'compilation',
+					location: 'executeString',
+					matchResult: matchResult,
+					text: `COMPILATION ERROR in string to be executed\n` + matchResult.message + `\n`
+				},
+			);
+		}
+
+		return await this.gml.execute(matchResult, instance, other);
 	}
 
 	// // Helper functions

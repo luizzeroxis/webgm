@@ -459,15 +459,7 @@ export default class GML {
 		}
 
 	}
-
-	async executeString(gml, instance, other) {
-		return await this.execute(this.prepare(gml), instance, other);
-	}
-
-	async executeStringExpression(gml, instance, other) {
-		return await this.execute(this.prepare(gml, "Expression"), instance, other);
-	}
-
+	
 	async builtInFunction(name, instance, args, relative=false) {
 
 		var func = BuiltInFunctions[name];

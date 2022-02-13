@@ -723,7 +723,7 @@ export default class BuiltInFunctions {
 	// ## Rooms
 
 	static async room_goto ([numb]) {
-		var room = this.game.project.resources.ProjectRoom.find(x => x.id == numb);
+		var room = this.game.getResourceById('ProjectRoom', numb);
 		if (room == null) {
 			throw this.game.makeFatalError({
 					type: 'unexisting_room_number',
@@ -736,25 +736,28 @@ export default class BuiltInFunctions {
 		}
 		return 0;
 	}
-	static room_goto_previous ([_]) {
-
-		return 0;
+	static room_goto_previous ([]) {
+		return BuiltInFunctions.room_goto.call(this, [BuiltInFunctions.room_previous.call(this, [this.game.room.id])]);
 	}
-	static room_goto_next ([_]) {
-
-		return 0;
+	static room_goto_next ([]) {
+		return BuiltInFunctions.room_goto.call(this, [BuiltInFunctions.room_next.call(this, [this.game.room.id])]);
 	}
-	static room_previous ([_]) {
-
-		return 0;
+	static room_previous ([numb]) {
+		var index = this.game.project.resources.ProjectRoom.findIndex(x => x.id == numb);
+		if (index == null || index == 0) {
+			return -1;
+		}
+		return this.game.project.resources.ProjectRoom[index-1].id;
 	}
-	static room_next ([_]) {
-
-		return 0;
+	static room_next ([numb]) {
+		var index = this.game.project.resources.ProjectRoom.findIndex(x => x.id == numb);
+		if (index == null || index == this.game.project.resources.ProjectRoom.length - 1) {
+			return -1;
+		}
+		return this.game.project.resources.ProjectRoom[index+1].id;
 	}
-	static room_restart ([_]) {
-
-		return 0;
+	static room_restart ([]) {
+		return BuiltInFunctions.room_goto.call(this, [this.game.room.id]);
 	}
 	static game_end ([]) {
 		this.game.stepStopAction = async () => {
@@ -2934,7 +2937,7 @@ export default class BuiltInFunctions {
 	// ## Scripts
 
 	static async execute_string ([str]) {
-		await this.executeString(str, this.currentInstance, this.currentOther);
+		await this.game.executeString(str, this.currentInstance, this.currentOther);
 		return 0;
 	}
 	static execute_file ([_]) {
@@ -5095,7 +5098,23 @@ export default class BuiltInFunctions {
 
 	// ### Variables
 
-	static action_if_variable ([_]) {
+	static action_if_variable ([variable, value, operation]) {
+		if (typeof variable !== typeof value) {
+			throw this.game.makeNonFatalError({
+					type: 'cannot_compare_arguments',
+					a: variable,
+					b: value,
+				}, `Cannot compare arguments. (` + variable.toString() +` has a different type than ` + value.toString() + `)`);
+		}
+
+		switch (operation) {
+			case 0: // equal to
+				return (variable == value) ? 1 : 0;
+			case 1: // smaller than
+				return (variable < value) ? 1 : 0;
+			case 2: // larger than
+				return (variable > value) ? 1 : 0;
+		}
 
 		return 0;
 	}

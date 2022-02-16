@@ -1,5 +1,10 @@
 //The editor class
 
+import MenuArea from './areas/MenuArea.js';
+import ResourcesArea from './areas/ResourcesArea.js';
+import WindowsArea from './areas/WindowsArea.js';
+import GameArea from './areas/GameArea.js';
+
 import {
 	Project,
 	ProjectAction,
@@ -17,8 +22,7 @@ import {
 import Dispatcher from '../common/Dispatcher.js'
 import BuiltInLibraries from '../common/BuiltInLibraries.js'
 
-
-import {$, parent, endparent, add, html, newElem, newButton, newCanvas, newImage, setAttributeExceptNull} from '../common/H.js'
+import {$, parent, endparent, add, html, newElem} from '../common/H.js'
 
 import VirtualFileSystem from '../common/VirtualFileSystem.js';
 import ProjectSerializer from '../common/ProjectSerializer.js';
@@ -26,8 +30,6 @@ import ProjectSerializer from '../common/ProjectSerializer.js';
 import {Game} from '../game/Game.js';
 
 import {WebGMException, UnserializeException} from '../common/Exceptions.js';
-
-import HTMLWindowPreferences from './HTMLWindowPreferences.js';
 
 import HTMLWindowSprite from './HTMLWindowSprite.js';
 import HTMLWindowSound from './HTMLWindowSound.js';
@@ -39,11 +41,6 @@ import HTMLWindowTimeline from './HTMLWindowTimeline.js';
 import HTMLWindowObject from './HTMLWindowObject.js';
 import HTMLWindowRoom from './HTMLWindowRoom.js';
 
-import HTMLWindowGameInformation from './HTMLWindowGameInformation.js';
-import HTMLWindowGlobalGameSettings from './HTMLWindowGlobalGameSettings.js';
-
-import HTMLResource from './HTMLResource.js';
-
 import './style.css';
 
 import DefaultProjectFontIcon from './img/default-ProjectFont-icon.png';
@@ -53,11 +50,19 @@ import DefaultProjectScriptIcon from './img/default-ProjectScript-icon.png';
 import DefaultProjectSoundIcon from './img/default-ProjectSound-icon.png';
 import DefaultProjectTimelineIcon from './img/default-ProjectTimeline-icon.png';
 
-import GameInformationIcon from './img/game-information-icon.png';
-import GameSettingsIcon from './img/global-game-settings-icon.png';
-// import ExtensionPackagesIcon from './img/extension-packages-icon.png';
-
 export default class Editor {
+
+	static resourceTypesInfo = [
+		{class: ProjectSprite,     windowClass: HTMLWindowSprite,     resourceIcon: null                      },
+		{class: ProjectSound,      windowClass: HTMLWindowSound,      resourceIcon: DefaultProjectSoundIcon   },
+		{class: ProjectBackground, windowClass: HTMLWindowBackground, resourceIcon: null                      },
+		{class: ProjectPath,       windowClass: HTMLWindowPath,       resourceIcon: DefaultProjectPathIcon    },
+		{class: ProjectScript,     windowClass: HTMLWindowScript,     resourceIcon: DefaultProjectScriptIcon  },
+		{class: ProjectFont,       windowClass: HTMLWindowFont,       resourceIcon: DefaultProjectFontIcon    },
+		{class: ProjectTimeline,   windowClass: HTMLWindowTimeline,   resourceIcon: DefaultProjectTimelineIcon},
+		{class: ProjectObject,     windowClass: HTMLWindowObject,     resourceIcon: null                      },
+		{class: ProjectRoom,       windowClass: HTMLWindowRoom,       resourceIcon: DefaultProjectRoomIcon    },
+	];
 
 	constructor() {
 
@@ -86,22 +91,22 @@ export default class Editor {
 
 		parent( add( html('div', {class: 'grid'}) ) )
 
-			this.makeMenuArea();
-			this.makeResourcesArea();
-			this.makeWindowsArea();
-			this.makeGameArea();
+			this.menuArea = new MenuArea(this);
+			this.resourcesArea = new ResourcesArea(this);
+			this.windowsArea = new WindowsArea(this);
+			this.gameArea = new GameArea();
 
 			endparent()
 
 		//
 		this.dispatcher.listen({
 			createResource: i => {
-				this.addResourceToResourcesArea(i);
-				this.openResourceWindow(i);
+				this.resourcesArea.add(i);
+				this.windowsArea.openResource(i);
 			},
 			deleteResource: i => {
-				this.deleteResourceFromResourcesArea(i);
-				this.deleteResourceWindow(i)
+				this.resourcesArea.delete(i);
+				this.windowsArea.deleteId(i);
 			},
 		});
 
@@ -133,14 +138,14 @@ export default class Editor {
 
 	// Resource management
 
-	createResource (type) {
+	createResource(type) {
 
 		var resource = new type();
 		resource.id = this.project.counter[type.getClassName()];
 		resource.name = type.getName() + this.project.counter[type.getClassName()];
 
 		this.project.counter[type.getClassName()]++;
-		this.project.resources[type.getClassName()].push( resource );
+		this.project.resources[type.getClassName()].push(resource);
 
 		this.dispatcher.speak('createResource', resource);
 
@@ -148,7 +153,7 @@ export default class Editor {
 
 	}
 
-	deleteResource (resource) {
+	deleteResource(resource) {
 
 		if (confirm('You are about to delete '+resource.name+'. This will be permanent. Continue?')) {
 			var index = this.project.resources[resource.constructor.getClassName()].findIndex(x => x == resource);
@@ -181,81 +186,15 @@ export default class Editor {
 		this.dispatcher.speak('changeObjectSprite', object);
 	}
 
-	// Menu area
-	makeMenuArea() {
-		parent( add( newElem('menu', 'div') ) )
-
-			add( newButton(null, 'New', () => {
-				if (!confirm("Clear current project and start anew?")) return;
-				this.newProject();
-			}) )
-
-			add ( this.newButtonOpenFile(null, 'Open', file => {
-				this.openProjectFromFile(file);
-			}, 'application/zip,application/json') )
-
-			add( newButton(null, 'Save', () => {
-				this.saveProject();
-			}) )
-
-			add( newButton(null, 'Preferences', () => {
-				this.openWindow(HTMLWindowPreferences, 'preferences');
-			}) )
-
-			this.runButton = add( newButton(null, 'Run', () => {
-				this.runGame();
-			}) )
-
-			this.stopButton = add( newButton(null, 'Stop', () => {
-				this.stopGame();
-			}) )
-			this.stopButton.disabled = true;
-
-			endparent()
-	}
-
-	newButtonOpenFile(classes, content, onselectfile, accept, multiple=false) {
-		var e = html('button', {class: classes}, {
-			click: e => {
-				VirtualFileSystem.openDialog(accept)
-				.then(file => {
-					return onselectfile(file);
-				})
-			},
-			dragover: e => {
-				e.preventDefault();
-			},
-			drop: e => {
-				e.preventDefault();
-
-				if (multiple) {
-					// flatMap - if item is not file, don't add to list, if it is, get as file
-					onselectfile(e.dataTransfer.items.flatMap(item => item.kind != 'file' ? [] : [item.getAsFile()]));
-				} else {
-					var item = e.dataTransfer.items[0];
-					if (item != undefined && item.kind == 'file')
-						onselectfile(item.getAsFile());
-				}
-
-			},
-		}, content);
-		return e;
-	}
-
+	// Called from MenuArea
 	newProject() {
 		this.project = new Project();
 
-		this.updateResourcesArea();
-		this.updateWindowsArea();
+		this.resourcesArea.refresh();
+		this.windowsArea.clear();
 	}
 
-	openProject() {
-		VirtualFileSystem.openDialog('application/zip,application/json')
-		.then(file => {
-			this.openProjectFromFile(file);
-		})
-	}
-
+	// Called from MenuArea
 	openProjectFromFile(file) {
 
 		var promise;
@@ -271,8 +210,8 @@ export default class Editor {
 			if (project) {
 				this.project = project;
 
-				this.updateResourcesArea();
-				this.updateWindowsArea();
+				this.resourcesArea.refresh();
+				this.windowsArea.clear();
 
 				this.projectName = file.name.substring(0, file.name.lastIndexOf('.'));
 
@@ -289,6 +228,7 @@ export default class Editor {
 		})
 	}
 
+	// Called from MenuArea
 	saveProject() {
 
 		ProjectSerializer.serializeZIP(this.project)
@@ -298,6 +238,7 @@ export default class Editor {
 		
 	}
 
+	// Called from MenuArea
 	runGame() {
 
 		this.stopGame();
@@ -307,14 +248,14 @@ export default class Editor {
 			return;
 		}
 
-		this.runButton.disabled = true;
-		this.stopButton.disabled = false;
+		this.menuArea.runButton.disabled = true;
+		this.menuArea.stopButton.disabled = false;
 
 		if (this.preferences.scrollToGameOnRun) {
 			this.gameArea.scrollIntoView();
 		}
 		if (this.preferences.focusCanvasOnRun) {
-			this.gameCanvas.focus({preventScroll: true});
+			this.gameArea.focus();
 		}
 
 		this.game = new Game(this.project, $('.canvas'), $('.canvas'));
@@ -326,15 +267,11 @@ export default class Editor {
 					alert("An error has ocurred when trying to run the game:\n" + e.message);
 				}
 
-				this.runButton.disabled = false;
-				this.stopButton.disabled = true;
-
-				// Haxs for cleaning canvas
+				this.menuArea.runButton.disabled = false;
+				this.menuArea.stopButton.disabled = true;
 
 				if (this.preferences.clearCanvasOnStop) {
-					var h = this.gameCanvas.height;
-					this.gameCanvas.height = 0;
-					this.gameCanvas.height = h;
+					this.gameArea.clearCanvas();
 				}
 
 				this.game = null;
@@ -349,224 +286,15 @@ export default class Editor {
 				
 	}
 
+	// Called from MenuArea and runGame
 	stopGame () {
 		if (this.game) {
 			this.game.stepStopAction = async () => await this.game.end();
 		}
 	}
 
-	// Resources area
-	makeResourcesArea() {
-
-		this.htmlResources = [];
-		this.htmlResourceTypes = {};
-
-		this.resourcesArea = parent( add( html('div', {class: "resources"}) ) )
-			parent( add ( newElem(null, 'ul') ) )
-
-				Project.getTypes().forEach(type => {
-
-					parent( add( newElem(null, 'li') ) )
-						add ( newElem(null, 'span', type.getScreenGroupName()) )
-						add ( newButton('right', 'Create', () => {
-							this.createResource(type);
-						}) )
-						this.htmlResourceTypes[type.name] = add ( newElem("resource", 'ul') )
-						endparent()
-
-				})
-
-				parent( add( newElem(null, 'li') ) );
-					add( newImage('icon', GameInformationIcon) );
-					add( newElem('name', 'span', 'Game Information') )
-
-					parent( add( newElem('right', 'div') ) )
-						add( newButton(null, 'Edit', () => this.openWindow(HTMLWindowGameInformation,
-							'game-information', this.project.gameInformation)) )
-						endparent();
-
-					endparent();
-
-				parent( add( newElem(null, 'li') ) );
-					add( newImage('icon', GameSettingsIcon) );
-					add( newElem('name', 'span', 'Global Game Settings') )
-
-					parent( add( newElem('right', 'div') ) )
-						add( newButton(null, 'Edit', () => this.openWindow(HTMLWindowGlobalGameSettings,
-							'global-game-settings', this.project.globalGameSettings )) )
-						endparent();
-
-					endparent();
-
-				// parent( add( newElem(null, 'li') ) );
-				// 	add( newImage('icon', ExtensionPackagesIcon) );
-				// 	add( newElem('name', 'span', 'Extension packages') )
-
-				// 	parent( add( newElem('right', 'div') ) )
-				// 		add( newButton(null, 'Edit', () => this.openWindow(HTMLWindowExtensionPackages,
-				// 			'extension-packages', this.project.extensionPackages)) )
-				// 		endparent();
-
-				// 	endparent();
-
-				endparent()
-
-			endparent()
-
-	}
-
-	updateResourcesArea() {
-
-		Project.getTypes().forEach(type => {
-
-			this.htmlResourceTypes[type.name].textContent = '';
-			this.project.resources[type.getClassName()].forEach(resource => {
-				this.addResourceToResourcesArea(resource);
-			})
-
-		})
-
-	}
-
-	addResourceToResourcesArea(resource) {
-
-		parent(this.htmlResourceTypes[resource.constructor.name]);
-			var r = new HTMLResource(resource, this);
-
-			r.htmlEditButton.onclick = () => this.openResourceWindow(resource)
-			r.htmlDeleteButton.onclick = () => this.deleteResource(resource)
-
-			this.htmlResources.push(r);
-			endparent();
-
-	}
-
-	deleteResourceFromResourcesArea(resource) {
-
-		var index = this.htmlResources.findIndex(x => x.id == resource);
-		if (index>=0) {
-			this.htmlResources[index].remove();
-			this.htmlResources.splice(index, 1);
-		}
-
-	}
-
-	getResourceIconSrc(resource) {
-		if (resource.constructor == ProjectSprite) {
-			if (resource.images.length > 0) {
-				return resource.images[0].image.src;
-			}
-		} else
-		if (resource.constructor == ProjectBackground) {
-			if (resource.image) {
-				return resource.image.image.src;
-			}
-		} else
-		if (resource.constructor == ProjectObject) {
-			if (resource.sprite_index >= 0) {
-				var sprite = this.project.resources.ProjectSprite.find(x => x.id == resource.sprite_index);
-				if (sprite) {
-					if (sprite.images.length > 0) {
-						return sprite.images[0].image.src;
-					}
-				}
-			}
-		} else {
-			var icons = {
-				[ProjectFont.name]: DefaultProjectFontIcon,
-				[ProjectPath.name]: DefaultProjectPathIcon,
-				[ProjectRoom.name]: DefaultProjectRoomIcon,
-				[ProjectScript.name]: DefaultProjectScriptIcon,
-				[ProjectSound.name]: DefaultProjectSoundIcon,
-				[ProjectTimeline.name]: DefaultProjectTimelineIcon,
-			}
-
-			return icons[resource.constructor.name]; //not lol, just sad
-		}
-		return null;
-	}
-
-	setImageSrcRemovable(image, src) { //delet this
-		setAttributeExceptNull(image, 'src', src);
-	}
-
-	// Windows area
-	makeWindowsArea() {
-		this.htmlWindows = [];
-		this.htmlWindowsArea = add( html('div', {class: "windows"}) )
-	}
-
-	updateWindowsArea() {
-		this.htmlWindowsArea.textContent = '';
-		delete this.htmlWindows;
-		this.htmlWindows = [];
-	}
-
-	openWindow(windowclass, id, ...clientargs) {
-		if (this.htmlWindows.find(x => x.id == id)) {
-			this.focusWindow(id);
-			return null;
-		} else {
-
-			parent(this.htmlWindowsArea)
-				var w = new windowclass(id, this);
-				w.makeClient(...clientargs);
-				endparent()
-
-			this.htmlWindows.unshift(w);
-			this.organizeWindows();
-			return w;
-		}
-	}
-
-	openResourceWindow(resource) {
-		var windowMakers = {};
-		windowMakers[ProjectSprite.name] = HTMLWindowSprite;
-		windowMakers[ProjectSound.name]  = HTMLWindowSound;
-		windowMakers[ProjectBackground.name] = HTMLWindowBackground;
-		windowMakers[ProjectPath.name] = HTMLWindowPath;
-		windowMakers[ProjectScript.name] = HTMLWindowScript;
-		windowMakers[ProjectFont.name]   = HTMLWindowFont;
-		windowMakers[ProjectTimeline.name]   = HTMLWindowTimeline;
-		windowMakers[ProjectObject.name] = HTMLWindowObject;
-		windowMakers[ProjectRoom.name]   = HTMLWindowRoom;
-
-		this.openWindow(windowMakers[resource.constructor.name], resource, resource);
-	}
-
-	focusWindow(id) {
-		var index = this.htmlWindows.findIndex(x => x.id == id);
-
-		// splice returns a array of removed elements
-		this.htmlWindows.unshift(this.htmlWindows.splice(index, 1)[0]);
-
-		this.organizeWindows();
-	}
-
-	organizeWindows() {
-		this.htmlWindows.forEach((window, i) => {
-			window.html.style.order = i;
-		})
-	}
-
-	deleteWindow(w) {
-		var index = this.htmlWindows.findIndex(x => x == w);
-		if (index>=0) {
-			this.htmlWindows[index].remove();
-			this.htmlWindows.splice(index, 1);
-			return true;
-		}
-		return false;
-	}
-
-	deleteResourceWindow(resource) {
-		var index = this.htmlWindows.findIndex(x => x.id == resource);
-		if (index>=0) {
-			this.htmlWindows[index].remove();
-			this.htmlWindows.splice(index, 1);
-		}
-	}
-
+	// getActionType(action)
+	// getActionType(actionTypeLibrary, actionTypeId)
 	getActionType(...args) {
 		var actionTypeLibrary, actionTypeId;
 
@@ -581,20 +309,6 @@ export default class Editor {
 		var library = this.libraries.find(x => x.name == actionTypeLibrary);
 		var actionType = library.items.find(x => x.id == actionTypeId);
 		return actionType;
-	}
-
-/*	getActionType(actionTypeLibrary, actionTypeId) {
-		var library = this.libraries.find(x => x.name == actionTypeLibrary);
-		var actionType = library.items.find(x => x.id == actionTypeId);
-		return actionType;
-	}*/
-
-	// Game area
-	makeGameArea() {
-		this.gameArea = parent( add( html('div', {class: 'game'}) ) )
-			this.gameCanvas = add( newCanvas("canvas", 640, 480) )
-			this.gameCanvas.setAttribute('tabindex', 0);
-			endparent()
 	}
 
 }

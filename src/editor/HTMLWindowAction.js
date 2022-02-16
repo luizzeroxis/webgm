@@ -106,7 +106,8 @@ export default class HTMLWindowAction extends HTMLWindow {
 					this.apply()
 				},
 				() => {
-					this.close()
+					this.object.deleteActionWindow(this);
+					this.close();
 				},
 			);
 			
@@ -201,7 +202,4 @@ export default class HTMLWindowAction extends HTMLWindow {
 
 	}
 
-	close() {
-		this.object.deleteActionWindow(this);
-	}
 }

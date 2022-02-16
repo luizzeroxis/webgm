@@ -1,5 +1,7 @@
-import {parent, endparent, add, remove, newElem, newButton, newImage} from '../common/H.js'
-import {ProjectObject} from '../common/Project.js';
+import {parent, endparent, add, remove, newElem, newButton, newImage, setAttributeExceptNull} from '../common/H.js'
+import {ProjectSprite, ProjectSound, ProjectBackground, ProjectObject} from '../common/Project.js';
+import Editor from './Editor.js';
+import DefaultProjectSoundIcon from './img/default-ProjectSound-icon.png';
 
 export default class HTMLResource {
 
@@ -15,8 +17,8 @@ export default class HTMLResource {
 			this.htmlIcon.width = 16;
 			this.htmlIcon.height = 16;
 
-			this.editor.setImageSrcRemovable(this.htmlIcon, this.editor.getResourceIconSrc(this.resource));
-
+			this.updateIcon();
+			
 			this.htmlName = add( newElem('name', 'span') )
 			this.htmlName.textContent = this.resource.name;
 
@@ -39,16 +41,48 @@ export default class HTMLResource {
 				} else {
 					if (i != this.resource) return;
 				}
-				this.editor.setImageSrcRemovable(this.htmlIcon, this.editor.getResourceIconSrc(this.resource))
+				this.updateIcon();
 			},
 			changeBackgroundImage: i => {
 				if (i != this.resource) return;
-				this.editor.setImageSrcRemovable(this.htmlIcon, this.editor.getResourceIconSrc(this.resource))
+				this.updateIcon();
 			},
 			changeObjectSprite: i => {
-				this.editor.setImageSrcRemovable(this.htmlIcon, this.editor.getResourceIconSrc(this.resource))
+				this.updateIcon();
 			}
 		})
+	}
+
+	updateIcon() {
+		var src;
+
+		if (this.resource.constructor == ProjectSprite) {
+			if (this.resource.images.length > 0) {
+				src = this.resource.images[0].image.src;
+			}
+		} else
+		if (this.resource.constructor == ProjectSound) {
+			src = DefaultProjectSoundIcon; // TODO: different icon for different kinds of sounds
+		} else
+		if (this.resource.constructor == ProjectBackground) {
+			if (this.resource.image) {
+				src = this.resource.image.image.src;
+			}
+		} else
+		if (this.resource.constructor == ProjectObject) {
+			if (this.resource.sprite_index >= 0) {
+				var sprite = this.editor.project.resources.ProjectSprite.find(x => x.id == this.resource.sprite_index);
+				if (sprite) {
+					if (sprite.images.length > 0) {
+						src = sprite.images[0].image.src;
+					}
+				}
+			}
+		} else {
+			src = Editor.resourceTypesInfo.find(x => x.class == this.resource.constructor).resourceIcon;
+		}
+
+		setAttributeExceptNull(this.htmlIcon, 'src', src);
 	}
 	
 	remove() {

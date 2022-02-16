@@ -22,7 +22,7 @@ export default class HTMLWindowGlobalGameSettings extends HTMLWindow {
 					globalGameSettings.colorOutsideRoom = this.inputColor.value;
 					globalGameSettings.displayCursor = this.inputDisplayCursor.checked;
 				},
-				() => this.editor.deleteWindow(this)
+				() => this.close()
 			);
 			endparent();
 	}

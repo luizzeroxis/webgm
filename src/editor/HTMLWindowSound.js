@@ -52,9 +52,7 @@ export default class HTMLWindowSound extends HTMLWindow {
 					sound.volume = parseFloat(inputVolume.value);
 					//
 				},
-				() => {
-					this.editor.deleteResourceWindow(sound);
-				}
+				() => this.close()
 			);
 			endparent();
 

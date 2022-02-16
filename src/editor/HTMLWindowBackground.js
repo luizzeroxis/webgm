@@ -74,7 +74,7 @@ export default class HTMLWindowBackground extends HTMLWindow {
 					this.editor.changeResourceName(background, inputName.value);
 					this.editor.changeBackgroundImage(background, paramImage);
 				},
-				() => this.editor.deleteWindow(this)
+				() => this.close()
 			);
 			endparent();
 	}

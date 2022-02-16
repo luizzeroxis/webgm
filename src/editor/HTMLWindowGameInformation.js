@@ -20,7 +20,7 @@ export default class HTMLWindowGameInformation extends HTMLWindow {
 					gameInformation.text = this.textareaText.value;
 					// changes here
 				},
-				() => this.editor.deleteWindow(this)
+				() => this.close()
 			);
 			endparent();
 	}

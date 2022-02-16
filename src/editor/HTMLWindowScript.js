@@ -28,7 +28,7 @@ export default class HTMLWindowScript extends HTMLWindow {
 					script.code = this.codeEditor.getValue();
 				},
 				() => {
-					this.editor.deleteWindow(this);
+					this.close()
 				}
 			);
 

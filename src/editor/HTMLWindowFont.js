@@ -41,7 +41,7 @@ export default class HTMLWindowFont extends HTMLWindow {
 					font.italic = this.inputItalic.checked;
 					// changes here
 				},
-				() => this.editor.deleteWindow(this)
+				() => this.close()
 			);
 			endparent();
 	}

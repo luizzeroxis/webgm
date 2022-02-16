@@ -24,7 +24,7 @@ export default class HTMLWindowTimeline extends HTMLWindow {
 				() => {
 					// changes here
 				},
-				() => this.editor.deleteWindow(this)
+				() => this.close()
 			);
 			endparent();
 	}

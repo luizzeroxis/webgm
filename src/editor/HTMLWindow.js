@@ -37,7 +37,7 @@ export default class HTMLWindow {
 	}
 
 	close() {
-		this.editor.deleteWindow(this);
+		this.editor.windowsArea.delete(this);
 	}
 
 	remove() {

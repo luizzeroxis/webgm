@@ -228,7 +228,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 					room.instances = this.paramInstances;
 				},
 				() => {
-					this.editor.deleteWindow(this);
+					this.close()
 				}
 			);
 			endparent();

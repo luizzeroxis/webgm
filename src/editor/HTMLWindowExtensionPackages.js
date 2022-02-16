@@ -17,7 +17,7 @@ export default class HTMLWindowExtensionPackages extends HTMLWindow {
 				() => {
 					// changes here
 				},
-				() => this.editor.deleteWindow(this)
+				() => this.close()
 			);
 			endparent();
 	}

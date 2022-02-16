@@ -498,7 +498,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 		var actionTypeInfoItem = actionTypeInfo.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind);
 
 		if (actionTypeInfoItem.htmlclass) {
-			var w = this.editor.openWindow(actionTypeInfoItem.htmlclass, action, action, this);
+			var w = this.editor.windowsArea.open(actionTypeInfoItem.htmlclass, action, action, this);
 			if (w) {
 				this.htmlActionWindows.push(w);
 			}
@@ -509,7 +509,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 	deleteActionWindow(w) {
 		var index = this.htmlActionWindows.findIndex(x => x == w);
 		if (index>=0) {
-			this.editor.deleteWindow(w);
+			w.close();
 			this.htmlActionWindows.splice(index, 1);
 		}
 	}
@@ -517,7 +517,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 	close() {
 		super.close();
 		this.htmlActionWindows.forEach(w => {
-			this.editor.deleteWindow(w);
+			w.close();
 		})
 	}
 }

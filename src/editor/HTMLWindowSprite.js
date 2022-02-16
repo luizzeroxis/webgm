@@ -86,9 +86,7 @@ export default class HTMLWindowSprite extends HTMLWindow {
 					this.editor.changeSpriteImages(sprite, paramImages);
 					this.editor.changeSpriteOrigin(sprite, parseInt(inputOriginX.value), parseInt(inputOriginY.value));
 				},
-				() => {
-					this.editor.deleteWindow(this);
-				}
+				() => this.close()
 			);
 
 			endparent();

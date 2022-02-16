@@ -93,7 +93,7 @@ export default class ResourcesArea {
 		Project.getTypes().forEach(type => {
 			this.resourceTypes[type.name].textContent = '';
 			this.editor.project.resources[type.getClassName()].forEach(resource => {
-				this.resourcesArea.add(resource);
+				this.add(resource);
 			})
 		})
 	}

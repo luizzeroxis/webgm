@@ -1,14 +1,11 @@
-import HTMLWindow from './HTMLWindow.js';
-
-import {$, parent, endparent, add, html, text, newElem, newButton, newTextBox, newNumberBox, newCheckBox, newSelect, newImage} from '../common/H.js'
-
-import {ProjectSprite, ProjectObject, ProjectEvent, ProjectAction, ProjectActionArg} from '../common/Project.js';
 import Events from '../common/Events.js';
-
-import HTMLWindowAction from './HTMLWindowAction.js';
-import HTMLWindowCode from './HTMLWindowCode.js';
+import {$, parent, endparent, add, html, text, newElem, newButton, newTextBox, newNumberBox, newCheckBox, newSelect, newImage} from '../common/H.js'
+import {ProjectSprite, ProjectObject, ProjectEvent, ProjectAction, ProjectActionArg} from '../common/Project.js';
 
 import HTMLResourceSelect from './HTMLResourceSelect.js';
+import HTMLWindow from './HTMLWindow.js';
+import HTMLWindowAction from './HTMLWindowAction.js';
+import HTMLWindowCode from './HTMLWindowCode.js';
 
 export default class HTMLWindowObject extends HTMLWindow {
 	constructor(...args) {

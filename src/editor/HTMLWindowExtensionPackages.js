@@ -1,6 +1,6 @@
-import HTMLWindow from './HTMLWindow.js';
-
 import {parent, endparent} from '../common/H.js'
+
+import HTMLWindow from './HTMLWindow.js';
 
 export default class HTMLWindowExtensionPackages extends HTMLWindow {
 

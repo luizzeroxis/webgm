@@ -1,5 +1,8 @@
 import JSZip from 'jszip';
 
+import AbstractAudio from './AbstractAudio.js'
+import AbstractImage from './AbstractImage.js'
+import {UnserializeException} from './Exceptions.js';
 import {
 	Project,
 	ProjectSprite,
@@ -24,12 +27,6 @@ import {
 	ProjectGlobalGameSettings,
 	ProjectExtensionPackages
 } from './Project.js';
-
-import AbstractImage from './AbstractImage.js'
-import AbstractAudio from './AbstractAudio.js'
-
-import {UnserializeException} from './Exceptions.js';
-
 import {base64ToBlob} from './tools.js'
 
 export default class ProjectSerializer {

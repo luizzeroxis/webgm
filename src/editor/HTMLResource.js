@@ -1,5 +1,6 @@
 import {parent, endparent, add, remove, newElem, newButton, newImage, setAttributeExceptNull} from '../common/H.js'
 import {ProjectSprite, ProjectSound, ProjectBackground, ProjectObject} from '../common/Project.js';
+
 import Editor from './Editor.js';
 import DefaultProjectSoundIcon from './img/default-ProjectSound-icon.png';
 

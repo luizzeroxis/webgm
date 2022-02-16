@@ -1,18 +1,15 @@
 import Dispatcher from '../common/Dispatcher.js'
-
-import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from '../common/Exceptions.js';
-
-import {Project} from '../common/Project.js';
-
-import VariableHolder from '../common/VariableHolder.js';
 import Events from '../common/Events.js';
+import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from '../common/Exceptions.js';
+import {Project} from '../common/Project.js';
+import VariableHolder from '../common/VariableHolder.js';
 
-import Instance from './Instance.js';
-import GML from './GML.js';
 import ActionsParser from './ActionsParser.js';
-import BuiltInGlobals from './BuiltInGlobals.js';
 import BuiltInConstants from './BuiltInConstants.js';
+import BuiltInGlobals from './BuiltInGlobals.js';
 import Collision from './Collision.js';
+import GML from './GML.js';
+import Instance from './Instance.js';
 
 export class Game {
 

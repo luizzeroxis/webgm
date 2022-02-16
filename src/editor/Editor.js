@@ -1,10 +1,9 @@
 //The editor class
 
-import MenuArea from './areas/MenuArea.js';
-import ResourcesArea from './areas/ResourcesArea.js';
-import WindowsArea from './areas/WindowsArea.js';
-import GameArea from './areas/GameArea.js';
-
+import BuiltInLibraries from '../common/BuiltInLibraries.js'
+import Dispatcher from '../common/Dispatcher.js'
+import {WebGMException, UnserializeException} from '../common/Exceptions.js';
+import {$, parent, endparent, add, html, newElem} from '../common/H.js'
 import {
 	Project,
 	ProjectAction,
@@ -18,37 +17,31 @@ import {
 	ProjectObject,
 	ProjectRoom
 } from '../common/Project.js';
-
-import Dispatcher from '../common/Dispatcher.js'
-import BuiltInLibraries from '../common/BuiltInLibraries.js'
-
-import {$, parent, endparent, add, html, newElem} from '../common/H.js'
-
-import VirtualFileSystem from '../common/VirtualFileSystem.js';
 import ProjectSerializer from '../common/ProjectSerializer.js';
-
+import VirtualFileSystem from '../common/VirtualFileSystem.js';
 import {Game} from '../game/Game.js';
 
-import {WebGMException, UnserializeException} from '../common/Exceptions.js';
-
-import HTMLWindowSprite from './HTMLWindowSprite.js';
-import HTMLWindowSound from './HTMLWindowSound.js';
+import GameArea from './areas/GameArea.js';
+import MenuArea from './areas/MenuArea.js';
+import ResourcesArea from './areas/ResourcesArea.js';
+import WindowsArea from './areas/WindowsArea.js';
 import HTMLWindowBackground from './HTMLWindowBackground.js';
-import HTMLWindowPath from './HTMLWindowPath.js';
-import HTMLWindowScript from './HTMLWindowScript.js';
 import HTMLWindowFont from './HTMLWindowFont.js';
-import HTMLWindowTimeline from './HTMLWindowTimeline.js';
 import HTMLWindowObject from './HTMLWindowObject.js';
+import HTMLWindowPath from './HTMLWindowPath.js';
 import HTMLWindowRoom from './HTMLWindowRoom.js';
-
-import './style.css';
-
+import HTMLWindowScript from './HTMLWindowScript.js';
+import HTMLWindowSound from './HTMLWindowSound.js';
+import HTMLWindowSprite from './HTMLWindowSprite.js';
+import HTMLWindowTimeline from './HTMLWindowTimeline.js';
 import DefaultProjectFontIcon from './img/default-ProjectFont-icon.png';
 import DefaultProjectPathIcon from './img/default-ProjectPath-icon.png';
 import DefaultProjectRoomIcon from './img/default-ProjectRoom-icon.png';
 import DefaultProjectScriptIcon from './img/default-ProjectScript-icon.png';
 import DefaultProjectSoundIcon from './img/default-ProjectSound-icon.png';
 import DefaultProjectTimelineIcon from './img/default-ProjectTimeline-icon.png';
+
+import './style.css';
 
 export default class Editor {
 

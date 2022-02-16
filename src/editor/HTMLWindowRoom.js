@@ -1,12 +1,9 @@
-import HTMLWindow from './HTMLWindow.js';
-
-import {$, parent, endparent, add, newElem, newCanvas, newTextBox, newNumberBox, newCheckBox, newRadioBox, newColorBox, uniqueID} from '../common/H.js'
-
-import {ProjectObject, ProjectInstance} from '../common/Project.js'
 import AbstractImage from '../common/AbstractImage.js'
+import {$, parent, endparent, add, newElem, newCanvas, newTextBox, newNumberBox, newCheckBox, newRadioBox, newColorBox, uniqueID} from '../common/H.js'
+import {ProjectObject, ProjectInstance} from '../common/Project.js'
 
 import HTMLResourceSelect from './HTMLResourceSelect.js';
-
+import HTMLWindow from './HTMLWindow.js';
 import DefaultInstanceIcon from './img/default-instance-icon.png';
 
 export default class HTMLWindowRoom extends HTMLWindow {

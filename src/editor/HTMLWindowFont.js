@@ -1,6 +1,6 @@
-import HTMLWindow from './HTMLWindow.js';
-
 import {$, parent, endparent, add, newElem, newTextBox, newNumberBox, newCheckBox} from '../common/H.js'
+
+import HTMLWindow from './HTMLWindow.js';
 
 export default class HTMLWindowFont extends HTMLWindow {
 

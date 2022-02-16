@@ -1,5 +1,4 @@
 import {parent, endparent, add, newElem} from '../../common/H.js'
-
 import Editor from '../Editor.js';
 
 export default class WindowsArea {

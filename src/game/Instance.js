@@ -1,4 +1,5 @@
 import VariableHolder from '../common/VariableHolder.js';
+
 import BuiltInLocals from './BuiltInLocals.js';
 
 export default class Instance {

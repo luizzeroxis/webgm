@@ -1,7 +1,6 @@
 import {parent, endparent, add, html, newElem, newButton} from '../../common/H.js'
-
-import HTMLWindowPreferences from '../HTMLWindowPreferences.js';
 import VirtualFileSystem from '../../common/VirtualFileSystem.js';
+import HTMLWindowPreferences from '../HTMLWindowPreferences.js';
 
 export default class MenuArea {
 

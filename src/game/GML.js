@@ -1,11 +1,10 @@
 import ohm, {extras as ohmExtras} from 'ohm-js';
 
+import {ExitException, ReturnException, BreakException, ContinueException} from '../common/Exceptions.js';
 import VariableHolder from '../common/VariableHolder.js';
 
-import {ExitException, ReturnException, BreakException, ContinueException} from '../common/Exceptions.js';
-
-import GMLGrammar from './GMLGrammar.js';
 import BuiltInFunctions from './BuiltInFunctions.js';
+import GMLGrammar from './GMLGrammar.js';
 
 export default class GML {
 

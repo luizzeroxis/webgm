@@ -1,11 +1,9 @@
-import HTMLWindow from './HTMLWindow.js';
-
 import {$, parent, endparent, add, newElem, newRadioBox, uniqueID} from '../common/H.js'
-
 import {ProjectObject} from '../common/Project.js';
 
-import HTMLResourceSelect from './HTMLResourceSelect.js';
 import HTMLCodeEditor from './HTMLCodeEditor.js';
+import HTMLResourceSelect from './HTMLResourceSelect.js';
+import HTMLWindow from './HTMLWindow.js';
 
 export default class HTMLWindowCode extends HTMLWindow {
 

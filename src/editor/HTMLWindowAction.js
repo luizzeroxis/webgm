@@ -1,10 +1,9 @@
-import HTMLWindow from './HTMLWindow.js';
-
 import {$, parent, endparent, add, newElem, newTextBox, newCheckBox, newSelect, newColorBox} from '../common/H.js'
+import {ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline} from '../common/Project.js';
 import {parseArrowString, stringifyArrowValues, hexColorToDecimalColor} from '../common/tools.js'
 
 import HTMLResourceSelect from './HTMLResourceSelect.js';
-import {ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline} from '../common/Project.js';
+import HTMLWindow from './HTMLWindow.js';
 
 export default class HTMLWindowAction extends HTMLWindow {
 

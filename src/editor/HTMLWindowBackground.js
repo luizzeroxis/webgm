@@ -1,9 +1,8 @@
-import HTMLWindow from './HTMLWindow.js';
-
-import {$, parent, endparent, add, newElem, newButton, newTextBox, newImage} from '../common/H.js'
-
-import VirtualFileSystem from '../common/VirtualFileSystem.js'
 import AbstractImage from '../common/AbstractImage.js'
+import {$, parent, endparent, add, newElem, newButton, newTextBox, newImage} from '../common/H.js'
+import VirtualFileSystem from '../common/VirtualFileSystem.js'
+
+import HTMLWindow from './HTMLWindow.js';
 
 export default class HTMLWindowBackground extends HTMLWindow {
 	

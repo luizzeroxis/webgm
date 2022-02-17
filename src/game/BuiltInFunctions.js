@@ -2260,18 +2260,18 @@ export default class BuiltInFunctions {
 
 	// ## Pop-up messages and questions
 
-	static show_message ([message]) {
+	static show_message ([str]) {
 		this.game.clearIO();
-		alert(message);
+		alert(str);
 		return 0;
 	}
 	static show_message_ext ([_]) {
 
 		return 0;
 	}
-	static show_question ([_]) {
-
-		return 0;
+	static show_question ([str]) {
+		this.game.clearIO();
+		return confirm(str) ? 1 : 0;
 	}
 	static get_integer ([str, def]) {
 		str = forceString(str);
@@ -2431,9 +2431,9 @@ export default class BuiltInFunctions {
 
 	// ## Sprites
 
-	static sprite_exists ([_]) {
-
-		return 0;
+	static sprite_exists ([ind]) {
+		var sprite = this.game.getResourceById('ProjectSprite', ind);
+		return sprite ? 1 : 0;
 	}
 	static sprite_get_name ([_]) {
 
@@ -2486,10 +2486,9 @@ export default class BuiltInFunctions {
 
 	// ## Sounds
 
-
-	static sound_exists ([_]) {
-
-		return 0;
+	static sound_exists ([ind]) {
+		var sound = this.game.getResourceById('ProjectSound', ind);
+		return sound ? 1 : 0;
 	}
 	static sound_get_name ([_]) {
 
@@ -2514,9 +2513,9 @@ export default class BuiltInFunctions {
 
 	// ## Backgrounds
 
-	static background_exists ([_]) {
-
-		return 0;
+	static background_exists ([ind]) {
+		var background = this.game.getResourceById('ProjectBackground', ind);
+		return background ? 1 : 0;
 	}
 	static background_get_name ([_]) {
 
@@ -2537,9 +2536,9 @@ export default class BuiltInFunctions {
 
 	// ## Fonts
 
-	static font_exists ([_]) {
-
-		return 0;
+	static font_exists ([ind]) {
+		var font = this.game.getResourceById('ProjectFont', ind);
+		return font ? 1 : 0;
 	}
 	static font_get_name ([_]) {
 
@@ -2568,9 +2567,9 @@ export default class BuiltInFunctions {
 
 	// ## Paths
 
-	static path_exists ([_]) {
-
-		return 0;
+	static path_exists ([ind]) {
+		var path = this.game.getResourceById('ProjectPath', ind);
+		return path ? 1 : 0;
 	}
 	static path_get_name ([_]) {
 
@@ -2623,9 +2622,9 @@ export default class BuiltInFunctions {
 
 	// ## Scripts
 
-	static script_exists ([_]) {
-
-		return 0;
+	static script_exists ([ind]) {
+		var script = this.game.getResourceById('ProjectScript', ind);
+		return script ? 1 : 0;
 	}
 	static script_get_name ([_]) {
 
@@ -2638,9 +2637,9 @@ export default class BuiltInFunctions {
 
 	// ## Time lines
 
-	static timeline_exists ([_]) {
-
-		return 0;
+	static timeline_exists ([ind]) {
+		var timeline = this.game.getResourceById('ProjectTimeline', ind);
+		return timeline ? 1 : 0;
 	}
 	static timeline_get_name ([_]) {
 
@@ -2649,9 +2648,9 @@ export default class BuiltInFunctions {
 
 	// ## Objects
 
-	static object_exists ([_]) {
-
-		return 0;
+	static object_exists ([ind]) {
+		var object = this.game.getResourceById('ProjectObject', ind);
+		return object ? 1 : 0;
 	}
 	static object_get_name ([_]) {
 
@@ -2692,9 +2691,9 @@ export default class BuiltInFunctions {
 
 	// ## Rooms
 
-	static room_exists ([_]) {
-
-		return 0;
+	static room_exists ([ind]) {
+		var room = this.game.getResourceById('ProjectRoom', ind);
+		return room ? 1 : 0;
 	}
 	static room_get_name ([_]) {
 
@@ -4711,48 +4710,70 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static action_set_motion ([_]) {
-
+	static action_set_motion ([direction, speed], relative) {
+		if (!relative) {
+			BuiltInFunctions.motion_set.call(this, [direction, speed]);
+		} else {
+			BuiltInFunctions.motion_add.call(this, [direction, speed]);
+		}
 		return 0;
 	}
 	static action_move_point ([_]) {
 
 		return 0;
 	}
-	static action_set_hspeed ([_]) {
-
+	static action_set_hspeed ([horSpeed], relative) {
+		if (!relative) {
+			this.currentInstance.vars.set('hspeed', horSpeed);
+		} else {
+			this.currentInstance.vars.setAdd('hspeed', horSpeed);
+		}
 		return 0;
 	}
-	static action_set_vspeed ([_]) {
-
+	static action_set_vspeed ([vertSpeed], relative) {
+		if (!relative) {
+			this.currentInstance.vars.set('vspeed', vertSpeed);
+		} else {
+			this.currentInstance.vars.setAdd('vspeed', vertSpeed);
+		}
 		return 0;
 	}
 	static action_set_gravity ([_]) {
 
 		return 0;
 	}
-	static action_reverse_xdir ([_]) {
-
+	static action_reverse_xdir ([]) {
+		this.currentInstance.vars.setMultiply('hspeed', -1);
 		return 0;
 	}
-	static action_reverse_ydir ([_]) {
-
+	static action_reverse_ydir ([]) {
+		this.currentInstance.vars.setMultiply('vspeed', -1);
 		return 0;
 	}
-	static action_set_friction ([_]) {
-
+	static action_set_friction ([friction], relative) {
+		if (!relative) {
+			this.currentInstance.vars.set('friction', friction);
+		} else {
+			this.currentInstance.vars.setAdd('friction', friction);
+		}
 		return 0;
 	}
 
 	// ### Jump
 
-	static action_move_to ([x, y]) {
-		this.currentInstance.vars.set('x', x);
-		this.currentInstance.vars.set('y', y);
+	static action_move_to ([x, y], relative) {
+		if (!relative) {
+			this.currentInstance.vars.set('x', x);
+			this.currentInstance.vars.set('y', y);
+		} else {
+			this.currentInstance.vars.setAdd('x', x);
+			this.currentInstance.vars.setAdd('y', y);
+		}
 		return 0;
 	}
-	static action_move_start ([_]) {
-
+	static action_move_start ([]) {
+		this.currentInstance.vars.set('x', this.currentInstance.vars.get('xstart'));
+		this.currentInstance.vars.set('y', this.currentInstance.vars.get('ystart'));
 		return 0;
 	}
 	static action_move_random ([_]) {

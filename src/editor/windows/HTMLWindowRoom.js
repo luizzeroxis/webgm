@@ -1,10 +1,9 @@
-import AbstractImage from '../common/AbstractImage.js'
-import {$, parent, endparent, add, newElem, newCanvas, newTextBox, newNumberBox, newCheckBox, newRadioBox, newColorBox, uniqueID} from '../common/H.js'
-import {ProjectObject, ProjectInstance} from '../common/Project.js'
-
-import HTMLResourceSelect from './HTMLResourceSelect.js';
-import HTMLWindow from './HTMLWindow.js';
-import DefaultInstanceIcon from './img/default-instance-icon.png';
+import AbstractImage from '../../common/AbstractImage.js'
+import {$, parent, endparent, add, newElem, newCanvas, newTextBox, newNumberBox, newCheckBox, newRadioBox, newColorBox, uniqueID} from '../../common/H.js'
+import {ProjectObject, ProjectInstance} from '../../common/Project.js'
+import HTMLResourceSelect from '../HTMLResourceSelect.js';
+import HTMLWindow from '../HTMLWindow.js';
+import DefaultInstanceIcon from '../img/default-instance-icon.png';
 
 export default class HTMLWindowRoom extends HTMLWindow {
 	constructor(...args) {
@@ -241,7 +240,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 			);
 			endparent();
 
-		this.editor.dispatcher.listen({
+		this.listeners = this.editor.dispatcher.listen({
 			changeObjectSprite: i => {
 				this.updateCanvasPreview();
 			},
@@ -404,4 +403,10 @@ export default class HTMLWindowRoom extends HTMLWindow {
 		this.ctx.restore();
 		
 	}
+
+	remove() {
+		super.remove();
+		this.editor.dispatcher.stopListening(this.listeners);
+	}
+
 }

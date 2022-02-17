@@ -1,6 +1,5 @@
-import {parent, endparent, add, newElem} from '../common/H.js'
-
-import HTMLWindow from './HTMLWindow.js';
+import {parent, endparent, add, newElem} from '../../common/H.js'
+import HTMLWindow from '../HTMLWindow.js';
 
 export default class HTMLWindowPath extends HTMLWindow {
 

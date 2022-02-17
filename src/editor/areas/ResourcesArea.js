@@ -1,10 +1,10 @@
 import {parent, endparent, add, newElem, newButton, newImage} from '../../common/H.js'
 import {Project} from '../../common/Project.js';
 import HTMLResource from '../HTMLResource.js';
-import HTMLWindowGameInformation from '../HTMLWindowGameInformation.js';
-import HTMLWindowGlobalGameSettings from '../HTMLWindowGlobalGameSettings.js';
 import GameInformationIcon from '../img/game-information-icon.png';
 import GameSettingsIcon from '../img/global-game-settings-icon.png';
+import HTMLWindowGameInformation from '../windows/HTMLWindowGameInformation.js';
+import HTMLWindowGlobalGameSettings from '../windows/HTMLWindowGlobalGameSettings.js';
 // import ExtensionPackagesIcon from './img/extension-packages-icon.png';
 
 export default class ResourcesArea {

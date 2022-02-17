@@ -3,7 +3,7 @@
 import BuiltInLibraries from '../common/BuiltInLibraries.js'
 import Dispatcher from '../common/Dispatcher.js'
 import {WebGMException, UnserializeException} from '../common/Exceptions.js';
-import {$, parent, endparent, add, html, newElem} from '../common/H.js'
+import {parent, endparent, add, html, newElem} from '../common/H.js'
 import {
 	Project,
 	ProjectAction,
@@ -25,21 +25,21 @@ import GameArea from './areas/GameArea.js';
 import MenuArea from './areas/MenuArea.js';
 import ResourcesArea from './areas/ResourcesArea.js';
 import WindowsArea from './areas/WindowsArea.js';
-import HTMLWindowBackground from './HTMLWindowBackground.js';
-import HTMLWindowFont from './HTMLWindowFont.js';
-import HTMLWindowObject from './HTMLWindowObject.js';
-import HTMLWindowPath from './HTMLWindowPath.js';
-import HTMLWindowRoom from './HTMLWindowRoom.js';
-import HTMLWindowScript from './HTMLWindowScript.js';
-import HTMLWindowSound from './HTMLWindowSound.js';
-import HTMLWindowSprite from './HTMLWindowSprite.js';
-import HTMLWindowTimeline from './HTMLWindowTimeline.js';
 import DefaultProjectFontIcon from './img/default-ProjectFont-icon.png';
 import DefaultProjectPathIcon from './img/default-ProjectPath-icon.png';
 import DefaultProjectRoomIcon from './img/default-ProjectRoom-icon.png';
 import DefaultProjectScriptIcon from './img/default-ProjectScript-icon.png';
 import DefaultProjectSoundIcon from './img/default-ProjectSound-icon.png';
 import DefaultProjectTimelineIcon from './img/default-ProjectTimeline-icon.png';
+import HTMLWindowBackground from './windows/HTMLWindowBackground.js';
+import HTMLWindowFont from './windows/HTMLWindowFont.js';
+import HTMLWindowObject from './windows/HTMLWindowObject.js';
+import HTMLWindowPath from './windows/HTMLWindowPath.js';
+import HTMLWindowRoom from './windows/HTMLWindowRoom.js';
+import HTMLWindowScript from './windows/HTMLWindowScript.js';
+import HTMLWindowSound from './windows/HTMLWindowSound.js';
+import HTMLWindowSprite from './windows/HTMLWindowSprite.js';
+import HTMLWindowTimeline from './windows/HTMLWindowTimeline.js';
 
 import './style.css';
 
@@ -241,7 +241,7 @@ export default class Editor {
 			this.gameArea.focus();
 		}
 
-		this.game = new Game(this.project, $('.canvas'), $('.canvas'));
+		this.game = new Game(this.project, this.gameArea.canvas, this.gameArea.canvas);
 
 		this.game.dispatcher.listen({
 			close: e => {

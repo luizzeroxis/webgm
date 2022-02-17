@@ -1,8 +1,7 @@
-import AbstractAudio from '../common/AbstractAudio.js';
-import {$, parent, endparent, add, newElem, newButton, newTextBox, newSlider} from '../common/H.js'
-import VirtualFileSystem from '../common/VirtualFileSystem.js';
-
-import HTMLWindow from './HTMLWindow.js';
+import AbstractAudio from '../../common/AbstractAudio.js';
+import {$, parent, endparent, add, newElem, newButton, newTextBox, newSlider} from '../../common/H.js'
+import VirtualFileSystem from '../../common/VirtualFileSystem.js';
+import HTMLWindow from '../HTMLWindow.js';
 
 export default class HTMLWindowSound extends HTMLWindow {
 	constructor(...args) {

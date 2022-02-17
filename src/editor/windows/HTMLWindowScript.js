@@ -1,7 +1,6 @@
-import {$, parent, endparent, add, newElem, newTextBox} from '../common/H.js'
-
-import HTMLCodeEditor from './HTMLCodeEditor.js';
-import HTMLWindow from './HTMLWindow.js';
+import {$, parent, endparent, add, newElem, newTextBox} from '../../common/H.js'
+import HTMLCodeEditor from '../HTMLCodeEditor.js';
+import HTMLWindow from '../HTMLWindow.js';
 
 export default class HTMLWindowScript extends HTMLWindow {
 	constructor(...args) {

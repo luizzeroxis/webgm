@@ -1,6 +1,5 @@
-import {$, parent, endparent, add, newCheckBox, newColorBox} from '../common/H.js'
-
-import HTMLWindow from './HTMLWindow.js';
+import {$, parent, endparent, add, newCheckBox, newColorBox} from '../../common/H.js'
+import HTMLWindow from '../HTMLWindow.js';
 
 export default class HTMLWindowGlobalGameSettings extends HTMLWindow {
 

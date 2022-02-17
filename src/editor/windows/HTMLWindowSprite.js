@@ -1,8 +1,7 @@
-import AbstractImage from '../common/AbstractImage.js';
-import {$, parent, endparent, add, newElem, newButton, newTextBox, newNumberBox, newImage} from '../common/H.js'
-import VirtualFileSystem from '../common/VirtualFileSystem.js';
-
-import HTMLWindow from './HTMLWindow.js';
+import AbstractImage from '../../common/AbstractImage.js';
+import {$, parent, endparent, add, newElem, newButton, newTextBox, newNumberBox, newImage} from '../../common/H.js'
+import VirtualFileSystem from '../../common/VirtualFileSystem.js';
+import HTMLWindow from '../HTMLWindow.js';
 
 export default class HTMLWindowSprite extends HTMLWindow {
 

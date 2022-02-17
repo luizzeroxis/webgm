@@ -260,8 +260,8 @@ export class Project {
 	}
 
 		export class ProjectInstance {
-			constructor(x, y, object_index) {
-				this.id = null;
+			constructor(id, x, y, object_index) {
+				this.id = id;
 				this.x = x;
 				this.y = y;
 				this.object_index = object_index;

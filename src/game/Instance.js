@@ -4,7 +4,7 @@ import BuiltInLocals from './BuiltInLocals.js';
 
 export default class Instance {
 
-	constructor (x, y, object_index, game) {
+	constructor (id, x, y, object_index, game) {
 
 		this.object_index = object_index;
 		this.game = game;
@@ -14,7 +14,7 @@ export default class Instance {
 		this.vars = new VariableHolder(this, BuiltInLocals);
 
 		// Id
-		this.vars.setForce('id', 100001);
+		this.vars.setForce('id', id);
 
 		// Set by constructor
 		this.vars.setForce('x', x);

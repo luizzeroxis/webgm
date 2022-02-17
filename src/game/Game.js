@@ -41,6 +41,7 @@ export class Game {
 		this.constants = null;
 
 		this.instances = [];
+		this.lastId = null;
 
 		this.fps = 0;
 		this.fpsFrameCount = 0;
@@ -232,6 +233,8 @@ export class Game {
 		Project.getTypes().forEach(type => {
 			this.project.resources[type.getClassName()].forEach(x => {this.constants[x.name] = x.id});
 		});
+
+		this.lastId = this.project.lastId;
 
 	}
 
@@ -932,7 +935,7 @@ export class Game {
 
 		// TODO Check if room is persistent
 		for (let roomInstance of room.instances) {
-			await this.instanceCreate(roomInstance.x, roomInstance.y, roomInstance.object_index);
+			await this.instanceCreate(roomInstance.id, roomInstance.x, roomInstance.y, roomInstance.object_index);
 		}
 
 		if (isFirstRoom) {
@@ -956,15 +959,19 @@ export class Game {
 	}
 
 	// Create an instance in the room.
-	async instanceCreate(x, y, object) {
-		var instance = new Instance(x, y, object, this);
+	async instanceCreate(id, x, y, object) {
+		if (id == null) {
+			this.lastId += 1;
+			id = this.lastId;
+		}
+
+		var instance = new Instance(id, x, y, object, this);
 		this.instances.push(instance);
 
 		// TODO run instance creation code
 
 		await this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
 
-		// TODO set id?
 		return instance.vars.get('id');
 	}
 

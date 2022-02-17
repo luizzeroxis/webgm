@@ -18,7 +18,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 				parent( add( newElem(null, 'div') ) )
 
 					this.paramInstances = room.instances.map(instance => {
-						return new ProjectInstance(instance.x, instance.y, instance.object_index);
+						return new ProjectInstance(instance.id, instance.x, instance.y, instance.object_index);
 					});
 
 					// left area
@@ -72,13 +72,9 @@ export default class HTMLWindowRoom extends HTMLWindow {
 					parent( add( newElem(null, 'div', 'Object: ') ) )
 						this.spanObject = add( newElem(null, 'span', '') );
 						endparent()
-					// parent( add( newElem(null, 'div', 'Id: ') ) )
-					// 	this.spanId = add( newElem(null, 'span', '') );
-					// 	endparent()
-					/* Having ids in the room editor would mean saving the counter imediately,
-					 * since you can have multiple rooms at the same time. This violates a
-					 * principle of this project, which is that you have to press 'ok' or 'apply'
-					 * to save the changes. Sorry GM, but this is where I draw the line. */
+					parent( add( newElem(null, 'div', 'ID: ') ) )
+						this.spanId = add( newElem(null, 'span', '') );
+						endparent()
 
 					// updates
 					this.inputWidth.onchange = () => this.updateCanvasPreview();
@@ -180,13 +176,18 @@ export default class HTMLWindowRoom extends HTMLWindow {
 						this.spanX.textContent = snappedPos.x;
 						this.spanY.textContent = snappedPos.y;
 						this.spanObject.textContent = '';
-						//this.spanId.textContent = '';
+						this.spanId.textContent = '';
 
 						{
 							let hover = this.getInstanceAtPosition(pos);
 							if (hover) {
 								this.spanObject.textContent = this.editor.project.resources.ProjectObject
 									.find(x => x.id == hover.object_index).name;
+								if (hover.id != null) {
+									this.spanId.textContent = hover.id;
+								} else {
+									this.spanId.textContent = "(not applied)";
+								}
 							}
 						}
 
@@ -222,6 +223,16 @@ export default class HTMLWindowRoom extends HTMLWindow {
 					room.speed = parseInt(this.inputSpeed.value);
 
 					room.backgroundColor = this.inputBackgroundColor.value;
+
+					// In GM, these ids are saved instantly. Even if you close and don't save the room, it still uses the ids. In this project, ideally resource editors would only change the project when you press ok or apply. Because of that, we create the ProjectInstances without ids, and only when saving we fill in the ids.
+
+					for (let instance of this.paramInstances) {
+						if (instance.id == null) {
+							this.editor.project.lastId += 1;
+							instance.id = this.editor.project.lastId;
+						}
+					}
+
 					room.instances = this.paramInstances;
 				},
 				() => {
@@ -262,7 +273,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 	addInstance(e) {
 		if (this.selectObject.getValue() == -1) return;
 
-		var i = new ProjectInstance(this.currentPos.x, this.currentPos.y, this.selectObject.getValue());
+		var i = new ProjectInstance(null, this.currentPos.x, this.currentPos.y, this.selectObject.getValue());
 		this.paramInstances.push(i);
 		return i;
 	}
@@ -302,7 +313,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 				w = sprite.images[0].image.width;
 				h = sprite.images[0].image.height;
 			} else {
-				// On GM, if there's no images, it just defaults to 32x32. A possible improviment would be to either simply show the default image anyway, or use the grid size. Right now I'll just use 32x32 anyway.
+				// On GM, if there's no images, it just defaults to 32x32. A possible improvement would be to either simply show the default image anyway, or use the grid size. Right now I'll just use 32x32 anyway.
 			}
 		} else {
 			w = this.defaultInstanceImage.image.width;

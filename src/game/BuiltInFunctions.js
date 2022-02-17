@@ -660,7 +660,7 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static async instance_create ([x, y, obj]) {
-		return await this.game.instanceCreate(x, y, obj);
+		return await this.game.instanceCreate(null, x, y, obj);
 	}
 	static instance_copy ([_]) {
 

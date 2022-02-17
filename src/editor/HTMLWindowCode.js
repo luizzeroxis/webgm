@@ -42,6 +42,7 @@ export default class HTMLWindowCode extends HTMLWindow {
 					this.apply()
 				},
 				() => {
+					this.object.deleteActionWindow(this);
 					this.close();
 				}
 			);
@@ -60,8 +61,5 @@ export default class HTMLWindowCode extends HTMLWindow {
 			null
 		);
 	}
-
-	close() {
-		this.object.deleteActionWindow(this);
-	}
+	
 }

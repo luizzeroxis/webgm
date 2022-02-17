@@ -2936,17 +2936,24 @@ export default class BuiltInFunctions {
 
 	// ## Scripts
 
-	static async execute_string ([str]) {
-		await this.game.executeString(str, this.currentInstance, this.currentOther);
+	static async execute_string ([str, ...args]) {
+		await this.game.executeString(str, this.currentInstance, this.currentOther, args);
 		return 0;
 	}
 	static execute_file ([_]) {
 
 		return 0;
 	}
-	static script_execute ([_]) {
-
-		return 0;
+	static script_execute ([scr, ...args]) {
+		var script = this.game.getResourceById('ProjectScript', scr);
+		if (script) {
+			return this.execute(this.game.preparedCodes.get(script), this.currentInstance, this.currentOther, args);
+		} else {
+			throw this.game.makeNonFatalError({
+					type: 'trying_to_execute_non_existing_script',
+					scriptIndex: scr,
+				}, `Trying to execute non-existing script. (` + scr.toString() +`)`);
+		}
 	}
 
 	// ## Time lines

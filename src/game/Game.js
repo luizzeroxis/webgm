@@ -1039,7 +1039,7 @@ export class Game {
 	}
 
 	// Prepare and execute GML string.
-	async executeString(gml, instance, other) {
+	async executeString(gml, instance, other, args) {
 		var matchResult = this.gml.prepare(gml);
 		if (!matchResult.succeeded()) {
 			throw new NonFatalErrorException({
@@ -1051,7 +1051,7 @@ export class Game {
 			);
 		}
 
-		return await this.gml.execute(matchResult, instance, other);
+		return await this.gml.execute(matchResult, instance, other, args);
 	}
 
 	// // Helper functions

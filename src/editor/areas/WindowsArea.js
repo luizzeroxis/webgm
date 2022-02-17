@@ -9,6 +9,15 @@ export default class WindowsArea {
 		this.html = add( newElem('windows', 'div') )
 
 		this.windows = [];
+
+		this.editor.dispatcher.listen({
+			createResource: i => {
+				this.openResource(i);
+			},
+			deleteResource: i => {
+				this.deleteId(i);
+			},
+		});
 	}
 
 	// Open a new window or focus on a existing one. windowClass is class that extends HTMLWindow. It will send id and the editor as arguments, then call makeClient with ...clientArgs. If a window with the same id is opened, it will focus on it, and return null. Otherwise it returns the newly created instance.

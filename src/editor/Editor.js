@@ -92,16 +92,6 @@ export default class Editor {
 			endparent()
 
 		//
-		this.dispatcher.listen({
-			createResource: i => {
-				this.resourcesArea.add(i);
-				this.windowsArea.openResource(i);
-			},
-			deleteResource: i => {
-				this.resourcesArea.delete(i);
-				this.windowsArea.deleteId(i);
-			},
-		});
 
 	}
 

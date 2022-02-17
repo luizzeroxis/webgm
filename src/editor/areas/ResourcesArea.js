@@ -66,6 +66,15 @@ export default class ResourcesArea {
 				endparent()
 
 			endparent()
+
+		this.editor.dispatcher.listen({
+			createResource: i => {
+				this.add(i);
+			},
+			deleteResource: i => {
+				this.delete(i);
+			},
+		});
 	}
 
 	// Add resource to resources tree in the proper type.

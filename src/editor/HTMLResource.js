@@ -31,27 +31,43 @@ export default class HTMLResource {
 				endparent()
 			endparent()
 
-		this.editor.dispatcher.listen({
+		this.listeners = this.editor.dispatcher.listen({
 			changeResourceName: i => {
 				if (i !== this.resource) return;
 				this.htmlName.textContent = i.name;
 			},
-			changeSpriteImages: i => {
-				if (resource.constructor == ProjectObject) {
-					if (i.id != resource.sprite_index) return;
-				} else {
-					if (i != this.resource) return;
-				}
-				this.updateIcon();
-			},
-			changeBackgroundImage: i => {
-				if (i != this.resource) return;
-				this.updateIcon();
-			},
-			changeObjectSprite: i => {
-				this.updateIcon();
-			}
 		})
+
+		if (this.resource.constructor == ProjectSprite || this.resource.constructor == ProjectObject) {
+			this.listeners = {...this.listeners, ...this.editor.dispatcher.listen({
+				changeSpriteImages: i => {
+					if (this.resource.constructor == ProjectObject) {
+						if (i.id != this.resource.sprite_index) return;
+					} else {
+						if (i != this.resource) return;
+					}
+					this.updateIcon();
+				},
+			})}
+		}
+
+		if (this.resource.constructor == ProjectBackground) {
+			this.listeners = {...this.listeners, ...this.editor.dispatcher.listen({
+				changeBackgroundImage: i => {
+					if (i != this.resource) return;
+					this.updateIcon();
+				},
+			})}
+		}
+
+		if (this.resource.constructor == ProjectObject) {
+			this.listeners = {...this.listeners, ...this.editor.dispatcher.listen({
+				changeObjectSprite: i => {
+					if (i != this.resource) return;
+					this.updateIcon();
+				}
+			})}
+		}
 	}
 
 	updateIcon() {
@@ -88,5 +104,6 @@ export default class HTMLResource {
 	
 	remove() {
 		remove(this.html);
+		this.editor.dispatcher.stopListening(this.listeners);
 	}
 }

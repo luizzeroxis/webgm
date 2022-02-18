@@ -25,6 +25,8 @@ export default class GML {
 			// Else: 1,
 			While: {_conditionExpression: 1, _code: 2,
 				_conditionExpressionNode: c => c[1]},
+			With: {_objectExpression: 1, _code: 2,
+				_objectExpressionNode: c => c[1]},
 			// Exit: {},
 			Return: {_value: 1},
 			// Break: {},
@@ -135,6 +137,41 @@ export default class GML {
 						}
 					}
 				}
+			},
+			With: async ({_objectExpression, _objectExpressionNode, _code}) => {
+				var object = await this.interpretASTNode(_objectExpression);
+				this.checkIsNumber(object, 'Object id expected ("' + object.toString() + '" is not a number)', _objectExpressionNode);
+
+				var instances = this.objectReferenceToInstances(object);
+
+				if (instances == null) return;
+				if (instances == "global") {
+					throw this.makeErrorInGMLNode("Cannot use global in with statement.", _objectExpressionNode);
+				}
+
+				var previousInstance = this.currentInstance;
+				var previousOther = this.currentOther;
+
+				for (let instance of instances) {
+					this.currentInstance = instance;
+					this.currentOther = previousInstance;
+					
+					try {
+						await this.interpretASTNode(_code);
+					} catch (e) {
+						if (e instanceof BreakException) {
+							break;
+						} if (e instanceof ContinueException) {
+							continue;
+						} else {
+							throw e;
+						}
+					}
+				}
+
+				this.currentInstance = previousInstance;
+				this.currentOther = previousOther;
+
 			},
 			Exit: async () => {
 				throw new ExitException();

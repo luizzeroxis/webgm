@@ -3,7 +3,7 @@
 import BuiltInLibraries from '../common/BuiltInLibraries.js'
 import Dispatcher from '../common/Dispatcher.js'
 import {WebGMException, UnserializeException} from '../common/Exceptions.js';
-import {parent, endparent, add, html, newElem} from '../common/H.js'
+import {parent, endparent, add, newElem, setOnFileDrop} from '../common/H.js'
 import {
 	Project,
 	ProjectAction,
@@ -80,18 +80,23 @@ export default class Editor {
 
 		//Areas
 
-		add( newElem(null, 'div', 'Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!') )
+		this.html = parent( add( newElem('editor', 'div') ))
 
-		parent( add( html('div', {class: 'grid'}) ) )
+			add( newElem(null, 'div', 'Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!') )
 
-			this.menuArea = new MenuArea(this);
-			this.resourcesArea = new ResourcesArea(this);
-			this.windowsArea = new WindowsArea(this);
-			this.gameArea = new GameArea();
+			parent( add( newElem('grid', 'div') ) )
+
+				this.menuArea = new MenuArea(this);
+				this.resourcesArea = new ResourcesArea(this);
+				this.windowsArea = new WindowsArea(this);
+				this.gameArea = new GameArea();
+
+				endparent()
 
 			endparent()
 
-		//
+		// Open file if dropped in the editor body
+		setOnFileDrop(this.html, file => this.openProjectFromFile(file));
 
 	}
 

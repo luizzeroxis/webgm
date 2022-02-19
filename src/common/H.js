@@ -219,3 +219,29 @@ export var setAttributeExceptNull = (element, attr, value) => {
 		element.removeAttribute(attr);
 	}
 }
+
+// Make a element be able to receive drops of files from anywhere.
+export var setOnFileDrop = (element, onSelectFile, multiple=false) => {
+
+	element.addEventListener('dragover', e => {
+		e.stopPropagation();
+		e.preventDefault();
+	})
+
+	element.addEventListener('drop', async e => {
+		e.stopPropagation();
+		if (multiple) {
+			if (!await onSelectFile(e.dataTransfer.files)) {
+				e.preventDefault();
+			}
+		} else {
+			var file = e.dataTransfer.files[0];
+			if (file != undefined) {
+				if (!await onSelectFile(file)) {
+					e.preventDefault();
+				}
+			}
+		}
+	})
+
+}

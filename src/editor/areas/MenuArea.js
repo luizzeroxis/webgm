@@ -1,4 +1,4 @@
-import {parent, endparent, add, html, newElem, newButton} from '../../common/H.js'
+import {parent, endparent, add, newElem, newButton} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js';
 import HTMLWindowPreferences from '../windows/HTMLWindowPreferences.js';
 
@@ -14,9 +14,12 @@ export default class MenuArea {
 				this.editor.newProject();
 			}) )
 
-			add ( this.newButtonOpenFile(null, 'Open', file => {
-				this.editor.openProjectFromFile(file);
-			}, 'application/zip,application/json') )
+			add ( newButton(null, 'Open', () => {
+				VirtualFileSystem.openDialog('application/zip,application/json')
+				.then(file => {
+					this.editor.openProjectFromFile(file);
+				})
+			}) )
 
 			add( newButton(null, 'Save', () => {
 				this.editor.saveProject();
@@ -36,34 +39,6 @@ export default class MenuArea {
 			this.stopButton.disabled = true;
 
 			endparent()
-	}
-
-	// TODO move to separate file
-	newButtonOpenFile(classes, content, onSelectFile, accept, multiple=false) {
-		var e = html('button', {class: classes}, {
-			click: e => {
-				VirtualFileSystem.openDialog(accept)
-				.then(file => {
-					return onSelectFile(file);
-				})
-			},
-			dragover: e => {
-				e.preventDefault();
-			},
-			drop: e => {
-				e.preventDefault();
-
-				if (multiple) {
-					onSelectFile(e.dataTransfer.files);
-				} else {
-					var file = e.dataTransfer.files[0];
-					if (file != undefined)
-						onSelectFile(file);
-				}
-
-			},
-		}, content);
-		return e;
 	}
 
 }

@@ -54,6 +54,16 @@ export default class HTMLWindowSprite extends HTMLWindow {
 
 						var inputOriginX = $( add( newNumberBox(null, 'X:', paramOriginX, 1, 0) ), 'input');
 						var inputOriginY = $( add( newNumberBox(null, 'Y:', paramOriginY, 1, 0) ), 'input');
+						
+						add( newButton(null, 'Center', () => {
+							var w=16, h=16;
+							if (sprite.images.length > 0) {
+								w = Math.floor(sprite.images[0].image.width / 2);
+								h = Math.floor(sprite.images[0].image.height / 2);
+							}
+							inputOriginX.value = w;
+							inputOriginY.value = h;
+						}) )
 
 						endparent()
 

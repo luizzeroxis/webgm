@@ -24,29 +24,42 @@ export default class HTMLWindowSprite extends HTMLWindow {
 
 					var inputName = $( add( newTextBox(null, 'Name:', paramName) ), 'input');
 
-					add( newButton(null, 'Load Sprite', () => {
+					this.buttonLoadSprite = add( newButton(null, 'Load Sprite', () => {
 
-						VirtualFileSystem.openDialog('image/*')
-						.then(file => {
-							this.loadSpriteFromFile(file);
+						VirtualFileSystem.openDialog('image/*', true)
+						.then(files => {
+							this.loadSpriteFromFiles(files);
 						});
 
 					}) )
 
 					parent( add( newElem(null, 'div', 'Width: ')) )
-						this.divWidth = add( newElem(null, 'span', '32') )
+						this.divWidth = add( newElem(null, 'span') )
 						endparent()
 
 					parent( add( newElem(null, 'div', 'Height: ')) )
-						this.divHeight = add( newElem(null, 'span', '32') )
+						this.divHeight = add( newElem(null, 'span') )
 						endparent()
 
-					if (sprite.images.length > 0) {
-						sprite.images[0].promise.then(() => {
-							this.divWidth.textContent = sprite.images[0].image.width;
-							this.divHeight.textContent = sprite.images[0].image.height;
-						})
-					}
+					parent( add( newElem(null, 'div', 'Number of subimages: ')) )
+						this.divSubimages = add( newElem(null, 'span') )
+						endparent()
+
+					this.showSubimage = 0;
+
+					parent( add( newElem(null, 'div', 'Show: ')) )
+
+						this.buttonShowSubimageLeft = add( newButton(null, '◀', () => {
+							this.showSubimage -= 1;
+							this.updateShow();
+						}) )
+						this.divShowSubimage = add( newElem(null, 'span') )
+						this.buttonShowSubimageRight = add( newButton(null, '▶', () => {
+							this.showSubimage += 1;
+							this.updateShow();
+						}) )
+
+						endparent()
 
 					parent( add( newElem(null, 'fieldset') ) )
 
@@ -57,9 +70,9 @@ export default class HTMLWindowSprite extends HTMLWindow {
 						
 						add( newButton(null, 'Center', () => {
 							var w=16, h=16;
-							if (sprite.images.length > 0) {
-								w = Math.floor(sprite.images[0].image.width / 2);
-								h = Math.floor(sprite.images[0].image.height / 2);
+							if (this.paramImages.length > 0) {
+								w = Math.floor(this.paramImages[0].image.width / 2);
+								h = Math.floor(this.paramImages[0].image.height / 2);
 							}
 							inputOriginX.value = w;
 							inputOriginY.value = h;
@@ -71,11 +84,9 @@ export default class HTMLWindowSprite extends HTMLWindow {
 
 				parent( add( newElem('preview', 'div') ) )
 					this.imgSprite = add( newImage() )
-
-					if (sprite.images.length > 0) {
-						this.imgSprite.src = sprite.images[0].image.src;
-					}
 					endparent()
+
+				this.updateAsImages();
 
 				endparent()
 
@@ -91,26 +102,66 @@ export default class HTMLWindowSprite extends HTMLWindow {
 			endparent();
 
 		// Open file if dropped in the window body
-		setOnFileDrop(this.html, file => this.loadSpriteFromFile(file));
+		setOnFileDrop(this.html, files => this.loadSpriteFromFiles(files), true);
 
 	}
 
-	loadSpriteFromFile(file) {
-		var image = new AbstractImage(file);
+	loadSpriteFromFiles(files) {
+		this.buttonLoadSprite.disabled = true;
 
-		this.imgSprite.src = image.image.src;
+		var images = [];
 
-		image.promise.then(() => {
-			this.paramImages[0] = image;
-			this.divWidth.textContent = this.paramImages[0].image.width;
-			this.divHeight.textContent = this.paramImages[0].image.height;
+		for (let file of files) {
+			images.push(new AbstractImage(file));
+		}
+
+		// Update preview to show images being loaded
+		// this.updateAsImages(images);
+
+		Promise.all(images.map(x => x.promise)).then(() => {
+			this.paramImages = images;
+			this.updateAsImages();
 		}).catch(e => {
-			if (this.sprite.images.length > 0) {
-				this.imgSprite.src = this.sprite.images[0].image.src;
-			} else {
-				this.imgSprite.removeAttribute('src');
-			}
+			// this.updateAsImages();
 			alert("Error when opening image");
+
+		}).finally(() => {
+			this.buttonLoadSprite.disabled = false;
 		})
+
 	}
+
+	updateAsImages() {
+		this.showSubimage = 0;
+
+		if (this.paramImages.length > 0) {
+
+			this.paramImages[0].promise.then(() => {
+				this.divWidth.textContent = this.paramImages[0].image.width;
+				this.divHeight.textContent = this.paramImages[0].image.height;
+			})
+
+		} else {
+			this.imgSprite.removeAttribute('src');
+			this.divWidth.textContent = '32';
+			this.divHeight.textContent = '32';
+		}
+
+		this.divSubimages.textContent = this.paramImages.length.toString();
+
+		this.updateShow();
+
+	}
+
+	updateShow() {
+
+		if (this.paramImages.length > 0) {
+			this.imgSprite.src = this.paramImages[this.showSubimage].image.src;
+		}
+
+		this.divShowSubimage.textContent = this.showSubimage.toString();
+		this.buttonShowSubimageLeft.disabled = (this.showSubimage == 0);
+		this.buttonShowSubimageRight.disabled = (this.showSubimage >= this.paramImages.length - 1);
+	}
+
 }

@@ -6,13 +6,21 @@ export default class VirtualFileSystem {
 
 	}
 
-	static openDialog(accept) {
+	static openDialog(accept, multiple=false) {
 
 		return new Promise((resolve, reject) => {
 			var f = newElem(null, 'input');
 			f.accept = accept;
 			f.type = 'file';
-			f.onchange = () => resolve(f.files[0]);
+			if (multiple) {
+				f.multiple = true;
+			}
+			f.onchange = () => {
+				if (multiple)
+					resolve(f.files);
+				else
+					resolve(f.files[0]);
+			}
 			f.click();
 		})
 		

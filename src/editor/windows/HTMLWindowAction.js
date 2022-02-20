@@ -15,6 +15,8 @@ export default class HTMLWindowAction extends HTMLWindow {
 		this.action = action;
 		this.object = object;
 
+		this.removables = [];
+
 		this.actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
 
 		this.htmlTitle.textContent = this.actionType.description;
@@ -173,6 +175,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 		}[resourceTypeName];
 
 		var select = new HTMLResourceSelect(this.editor, name, resourceType);
+		this.removables.push(select);
 		select.setValue(value);
 
 		return {
@@ -198,6 +201,13 @@ export default class HTMLWindowAction extends HTMLWindow {
 		// Update action in event in object
 		this.object.updateSelectActions();
 
+	}
+
+	remove() {
+		super.remove();
+		for (let removable of this.removables) {
+			removable.remove();
+		}
 	}
 
 }

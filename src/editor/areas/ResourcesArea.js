@@ -100,7 +100,10 @@ export default class ResourcesArea {
 
 	refresh() {
 		Project.getTypes().forEach(type => {
-			this.resourceTypes[type.name].textContent = '';
+			for (let resource of this.resources) {
+				resource.remove();
+			}
+			// this.resourceTypes[type.name].textContent = '';
 			this.editor.project.resources[type.getClassName()].forEach(resource => {
 				this.add(resource);
 			})

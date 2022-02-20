@@ -51,8 +51,8 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 					var inputName = $( add( newTextBox(null, 'Name:', object.name) ), 'input');
 
-					var selectSprite = new HTMLResourceSelect(this.editor, 'Sprite:', ProjectSprite);
-					selectSprite.setValue(object.sprite_index);
+					this.selectSprite = new HTMLResourceSelect(this.editor, 'Sprite:', ProjectSprite);
+					this.selectSprite.setValue(object.sprite_index);
 
 					var inputVisible = $( add( newCheckBox(null, 'Visible', object.visible) ), 'input');
 					var inputSolid = $( add( newCheckBox(null, 'Solid', object.solid) ), 'input');
@@ -83,6 +83,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 					// Event subtype div
 
+					this.selectCollisionObject = null;
 					this.divEventSubtype = add( html('div') );
 
 					// Add event button
@@ -303,7 +304,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 			this.makeApplyOkButtons(
 				() => {
 					this.editor.changeResourceName(object, inputName.value);
-					this.editor.changeObjectSprite(object, selectSprite.getValue());
+					this.editor.changeObjectSprite(object, this.selectSprite.getValue());
 					object.visible = inputVisible.checked;
 					object.solid = inputSolid.checked;
 					object.depth = parseInt(inputDepth.value);
@@ -368,6 +369,11 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 	updateDivEventSubtype() {
 
+		if (this.selectCollisionObject) {
+			this.selectCollisionObject.remove();
+			this.selectCollisionObject = null;
+		}
+
 		this.divEventSubtype.textContent = '';
 		var eventType = this.selectEventType.value;
 
@@ -396,7 +402,8 @@ export default class HTMLWindowObject extends HTMLWindow {
 			} else
 
 			if (eventType == 'collision') {
-				let subtypeElement = (new HTMLResourceSelect(this.editor, 'Object:', ProjectObject, true)).select;
+				this.selectCollisionObject = new HTMLResourceSelect(this.editor, 'Object:', ProjectObject, true);
+				let subtypeElement = selectCollisionObject.select;
 				this.subtypeValueFunction = () => (parseInt(subtypeElement.value));
 			} else
 
@@ -516,5 +523,13 @@ export default class HTMLWindowObject extends HTMLWindow {
 		this.htmlActionWindows.forEach(w => {
 			w.close();
 		})
+	}
+
+	remove() {
+		super.remove();
+		this.selectSprite.remove();
+		if (this.selectCollisionObject) {
+			this.selectCollisionObject.remove();
+		}
 	}
 }

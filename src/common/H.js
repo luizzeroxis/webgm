@@ -43,7 +43,9 @@ export function add(element) {
 
 //Remove element from its parent.
 export function remove(element) {
-	return element.parentElement.removeChild(element);
+	if (element.parentElement) {
+		return element.parentElement.removeChild(element);
+	}
 }
 
 //Makes a new element.

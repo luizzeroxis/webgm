@@ -406,6 +406,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 	remove() {
 		super.remove();
+		this.selectObject.remove();
 		this.editor.dispatcher.stopListening(this.listeners);
 	}
 

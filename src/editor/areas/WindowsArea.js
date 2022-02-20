@@ -65,7 +65,9 @@ export default class WindowsArea {
 
 	// Remove all windows.
 	clear() {
-		this.html.textContent = '';
+		for (let w of this.windows) {
+			w.remove();
+		}
 		this.windows = [];
 	}
 

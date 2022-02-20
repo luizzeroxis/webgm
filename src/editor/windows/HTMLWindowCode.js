@@ -60,5 +60,10 @@ export default class HTMLWindowCode extends HTMLWindow {
 			null
 		);
 	}
+
+	remove() {
+		super.remove();
+		this.selectObject.remove();
+	}
 	
 }

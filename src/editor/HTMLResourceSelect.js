@@ -5,10 +5,10 @@ export default class HTMLResourceSelect {
 
 		this.editor = editor;
 
-		this.e = add( newSelect(null, labelContent) );
+		this.html = add( newSelect(null, labelContent) );
 
 		var selectOptions = {};
-		this.select = parent($(this.e, 'select'))
+		this.select = parent($(this.html, 'select'))
 
 			if (!noNone) {
 				add( html('option', {value: -1}, null, '<none>') );
@@ -18,7 +18,7 @@ export default class HTMLResourceSelect {
 			})
 			endparent();
 
-		this.editor.dispatcher.listen({
+		this.listeners = this.editor.dispatcher.listen({
 			createResource: i => {
 				if (i.constructor != resourceType) return;
 				parent(this.select)
@@ -48,4 +48,10 @@ export default class HTMLResourceSelect {
 	setValue(value) {
 		this.select.value = value;
 	}
+
+	remove() {
+		remove(this.html);
+		this.editor.dispatcher.stopListening(this.listeners);
+	}
+	
 }

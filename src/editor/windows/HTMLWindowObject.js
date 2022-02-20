@@ -403,7 +403,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 			if (eventType == 'collision') {
 				this.selectCollisionObject = new HTMLResourceSelect(this.editor, 'Object:', ProjectObject, true);
-				let subtypeElement = selectCollisionObject.select;
+				let subtypeElement = this.selectCollisionObject.select;
 				this.subtypeValueFunction = () => (parseInt(subtypeElement.value));
 			} else
 

@@ -156,6 +156,19 @@ export var forceInteger = (value) => {
 	return toInteger(forceReal(value));
 }
 
+export var forceBool = (value) => {
+	return (forceReal(value) > 0.5) ? 1 : 0;
+}
+
+export var forceUnit = (value) => {
+	return Math.max(0, Math.min(forceReal(value), 1));
+}
+
+export var forceChar = (value) => {
+	var string = forceString(value);
+	return string != '' ? string[0] : '\0';
+}
+
 export var toInteger = (value) => {
 	if (Math.abs(value % 1) == 0.5) {
 		var integer = Math.trunc(value)

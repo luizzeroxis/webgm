@@ -1,3 +1,5 @@
+import {forceString, forceReal, forceInteger, forceBool, forceUnit, forceChar} from './tools.js';
+
 export default class VariableHolder {
 
 	constructor(caller, builtInClass) {
@@ -14,7 +16,11 @@ export default class VariableHolder {
 				}
 				this.builtInList[name] = {value: value};
 			} else {
-				this.builtInList[name] = {value: this.builtInClass[name].default || 0};
+				if (this.builtInClass[name].default != null) {
+					this.builtInList[name] = {value: this.builtInClass[name].default};
+				} else {
+					this.builtInList[name] = {};
+				}
 			}
 			this.builtInList[name].dimensions = this.builtInClass[name].dimensions;
 			if (this.builtInClass[name].dimensions == undefined) {
@@ -42,7 +48,11 @@ export default class VariableHolder {
 
 		if (varInfo != null) {
 			variable = varInfo.reference;
-			// .get?
+			if (varInfo.list == this.builtInList) {
+				if (this.caller != null && this.builtInClass[name].get) {
+					return this.builtInClass[name].get.call(this.caller, indexes);
+				}
+			}
 		} else {
 			// Variable doesn't exist, error
 			throw new Error("Variable doesn't exist");
@@ -117,9 +127,27 @@ export default class VariableHolder {
 				if (this.builtInClass[name].readOnly && !overrideReadOnly) {
 					throw new Error("Cannot assign to the variable (it's read only!)");
 				}
-				// This is more like a warning that it has been set, can't really control it
+
+				if (this.builtInClass[name].type != null) {
+					if (this.builtInClass[name].type == 'string') {
+						value = forceString(value);
+					} else if (this.builtInClass[name].type == 'real') {
+						value = forceReal(value);
+					} else if (this.builtInClass[name].type == 'integer') {
+						value = forceInteger(value);
+					} else if (this.builtInClass[name].type == 'bool') {
+						value = forceBool(value);
+					} else if (this.builtInClass[name].type == 'unit') {
+						value = forceUnit(value);
+					} else if (this.builtInClass[name].type == 'char') {
+						value = forceChar(value);
+					}
+				}
+
+				// Value returned by function replaces the value to be set
 				if (callSet && this.caller != null && this.builtInClass[name].set) {
-					this.builtInClass[name].set.call(this.caller, value, indexes);
+					var newValue = this.builtInClass[name].set.call(this.caller, value, indexes);
+					if (newValue != null) value = newValue;
 				}
 			}
 
@@ -212,6 +240,11 @@ export default class VariableHolder {
 	setAdd(name, value, indexes, overrideReadOnly, callSet=true) {
 		var oldValue = this.get(name, indexes);
 		return this.set(name, oldValue + value, indexes, overrideReadOnly, callSet);
+	}
+
+	setMultiply(name, value, indexes, overrideReadOnly, callSet=true) {
+		var oldValue = this.get(name, indexes);
+		return this.set(name, oldValue * value, indexes, overrideReadOnly, callSet);
 	}
 
 	save(name) {

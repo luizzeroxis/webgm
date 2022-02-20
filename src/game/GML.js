@@ -194,7 +194,7 @@ export default class GML {
 				if (script) {
 					return this.execute(this.game.preparedCodes.get(script), this.currentInstance, this.currentOther, args);
 				} else {
-					return this.builtInFunction(name, this.currentInstance, args);
+					return this.builtInFunction(name, this.currentInstance, this.currentOther, args);
 				}
 			},
 			VarDeclare: async ({_names}) => {
@@ -452,7 +452,7 @@ export default class GML {
 				if (Array.isArray(args) && args[i] != null) {value = args[i];}
 				this.game.globalVars.set('argument', value, [i]); // This auto sets numbered arguments
 			}
-			this.game.globalVars.set('argument_relative', argRelative);
+			this.game.globalVars.setForce('argument_relative', argRelative);
 
 			var result = 0;
 
@@ -496,13 +496,24 @@ export default class GML {
 
 	}
 	
-	async builtInFunction(name, instance, args, relative=false) {
+	async builtInFunction(name, instance, other, args, relative=false) {
 
 		var func = BuiltInFunctions[name];
 
 		if (func) {
+			var previousInstance = this.currentInstance;
+			var previousOther = this.currentOther;
+
 			this.currentInstance = instance;
-			return await func.call(this, args, relative);
+			this.currentOther = other;
+
+			var result = await func.call(this, args, relative);
+
+			this.currentInstance = previousInstance;
+			this.currentOther = previousOther;
+
+			return result;
+
 		} else {
 			throw this.game.makeNonFatalError({
 					type: 'unknown_function_or_script',

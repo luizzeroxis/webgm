@@ -582,9 +582,6 @@ export class Game {
 		for (let instance of this.instances) {
 			if (!instance.exists) continue;
 
-			instance.vars.set('xprevious', instance.vars.get('x'));
-			instance.vars.set('yprevious', instance.vars.get('y'));
-
 			instance.vars.setAdd('x', instance.vars.get('hspeed'));
 			instance.vars.setAdd('y', instance.vars.get('vspeed'));
 
@@ -643,6 +640,18 @@ export class Game {
 
 		// Draw
 		await this.drawViews();
+
+		// Update some instance variables
+		for (let instance of this.instances) {
+			instance.vars.set('xprevious', instance.vars.get('x'));
+			instance.vars.set('yprevious', instance.vars.get('y'));
+
+			var i = instance.vars.get('image_index') + instance.vars.get('image_speed');
+			if (i >= instance.vars.get('image_number')) {
+				i -= instance.vars.get('image_number');
+			}
+			instance.vars.set('image_index', i);
+		}
 
 		// Reset keyboard/mouse states
 		this.clearIO();
@@ -703,7 +712,7 @@ export class Game {
 					if (index >= 0) {
 						var sprite = this.getResourceById('ProjectSprite', index);
 						if (sprite) {
-							var image = sprite.images[instance.vars.get('image_index')];
+							var image = sprite.images[instance.getImageIndex()];
 							if (image) {
 								this.ctx.save();
 								this.ctx.translate(-sprite.originx, -sprite.originy);
@@ -789,7 +798,7 @@ export class Game {
 
 						var currentResult;
 						if (treeAction.type == 'executeFunction') {
-							currentResult = await this.gml.builtInFunction(treeAction.function, applyToInstance, args, treeAction.relative);
+							currentResult = await this.gml.builtInFunction(treeAction.function, applyToInstance, otherInstance, args, treeAction.relative);
 						} else {
 							currentResult = await this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance, otherInstance, args, treeAction.relative);
 						}
@@ -924,7 +933,7 @@ export class Game {
 		this.canvas.width = room.width;
 		this.canvas.height = room.height;
 
-		this.globalVars.setForce('room', room.id);
+		this.globalVars.setNoCall('room', room.id);
 		this.globalVars.setForce('room_width', room.width);
 		this.globalVars.setForce('room_height', room.height);
 		this.globalVars.setForce('room_speed', room.speed);
@@ -982,10 +991,10 @@ export class Game {
 		// TODO solid
 
 		var selfSprite = this.getResourceById('ProjectSprite', self.vars.get('sprite_index'));
-		var selfImage = selfSprite.images[self.vars.get('image_index')];
+		var selfImage = selfSprite.images[self.getImageIndex()];
 
 		var otherSprite = this.getResourceById('ProjectSprite', other.vars.get('sprite_index'));
-		var otherImage = otherSprite.images[other.vars.get('image_index')];
+		var otherImage = otherSprite.images[other.getImageIndex()];
 
 		// TODO collision masks, will assume rectangle now
 		// selfSprite.boundingbox == 'fullimage';

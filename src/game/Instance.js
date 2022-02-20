@@ -25,10 +25,10 @@ export default class Instance {
 
 		this.vars.setForce('object_index', obj.id);
 		this.vars.setForce('sprite_index', obj.sprite_index);
-		this.vars.setForce('visible', obj.visible);
-		this.vars.setForce('solid', obj.solid);
+		this.vars.setForce('visible', obj.visible ? 1 : 0);
+		this.vars.setForce('solid', obj.solid ? 1 : 0);
 		this.vars.setForce('depth', obj.depth);
-		this.vars.setForce('persistent', obj.persistent);
+		this.vars.setForce('persistent', obj.persistent ? 1 : 0);
 		this.vars.setForce('mask_index', obj.mask);
 		
 		//
@@ -37,6 +37,10 @@ export default class Instance {
 		this.vars.setForce('xstart', x);
 		this.vars.setForce('ystart', y);
 
+	}
+
+	getImageIndex() {
+		return Math.floor(this.vars.get('image_index') % this.vars.get('image_number'));
 	}
 
 }

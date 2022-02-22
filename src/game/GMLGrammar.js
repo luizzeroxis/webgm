@@ -34,6 +34,7 @@ GameMakerLanguage {
 		= If
 		| Repeat
 		| While
+		| DoUntil
 		| For
 		| With
 		| Exit
@@ -63,6 +64,9 @@ GameMakerLanguage {
 
 	While
 		= #("while" ~namePart) Expression BlockOrStatement
+
+	DoUntil
+		= #("do" ~namePart) BlockOrStatement spaces #("until" ~namePart) Expression
 
 	For
 		= #("for" ~namePart) "(" BlockOrStatement Expression ";"? BlockOrStatement ")" BlockOrStatement

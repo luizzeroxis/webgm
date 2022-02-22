@@ -1,6 +1,7 @@
 import ohm, {extras as ohmExtras} from 'ohm-js';
 
 import {ExitException, ReturnException, BreakException, ContinueException} from '../common/Exceptions.js';
+import {toInteger} from '../common/tools.js';
 import VariableHolder from '../common/VariableHolder.js';
 
 import BuiltInFunctions from './BuiltInFunctions.js';
@@ -23,6 +24,8 @@ export default class GML {
 			If: {_conditionExpression: 1, _code: 2, _elseStatement: 3,
 				_conditionExpressionNode: c => c[1]},
 			// Else: 1,
+			Repeat: {_timesExpression: 1, _code: 2,
+				_timesExpressionNode: c => c[1]},
 			While: {_conditionExpression: 1, _code: 2,
 				_conditionExpressionNode: c => c[1]},
 			For: {_initStatement: 2, _conditionExpression: 3, _iterationStatement: 5, _code: 7,
@@ -119,6 +122,27 @@ export default class GML {
 					await this.interpretASTNode(_elseStatement);
 				}
 			},
+			Repeat: async ({_timesExpression, _timesExpressionNode, _code}) => {
+				var times = await this.interpretASTNode(_timesExpression);
+				this.checkIsNumber(times, 'Repeat count must be a number ("' + times.toString() + '")', _timesExpressionNode);
+
+				times = toInteger(times);
+
+				for (let i=0; i<times; ++i) {
+					try {
+						await this.interpretASTNode(_code);
+					} catch (e) {
+						if (e instanceof BreakException) {
+							break;
+						} if (e instanceof ContinueException) {
+							continue;
+						} else {
+							throw e;
+						}
+					}
+				}
+
+			},
 			While: async ({_conditionExpression, _conditionExpressionNode, _code}) => {
 				while (true) {
 
@@ -192,11 +216,11 @@ export default class GML {
 						} else {
 							throw e;
 						}
+					} finally {
+						this.currentInstance = previousInstance;
+						this.currentOther = previousOther;
 					}
 				}
-
-				this.currentInstance = previousInstance;
-				this.currentOther = previousOther;
 
 			},
 			Exit: async () => {

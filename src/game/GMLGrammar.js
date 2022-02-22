@@ -32,6 +32,7 @@ GameMakerLanguage {
 
 	Statement
 		= If
+		| Repeat
 		| While
 		| For
 		| With
@@ -56,6 +57,9 @@ GameMakerLanguage {
 		= #("if" ~namePart) Expression BlockOrStatement Else?
 	Else
 		= #("else" ~namePart) BlockOrStatement
+
+	Repeat
+		= #("repeat" ~namePart) Expression BlockOrStatement
 
 	While
 		= #("while" ~namePart) Expression BlockOrStatement

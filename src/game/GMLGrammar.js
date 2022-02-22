@@ -33,6 +33,7 @@ GameMakerLanguage {
 	Statement
 		= If
 		| While
+		| For
 		| With
 		| Exit
 		| Return
@@ -58,6 +59,9 @@ GameMakerLanguage {
 
 	While
 		= #("while" ~namePart) Expression BlockOrStatement
+
+	For
+		= #("for" ~namePart) "(" BlockOrStatement Expression ";"? BlockOrStatement ")" BlockOrStatement
 
 	With
 		= #("with" ~namePart) Expression BlockOrStatement

@@ -25,6 +25,8 @@ export default class GML {
 			// Else: 1,
 			While: {_conditionExpression: 1, _code: 2,
 				_conditionExpressionNode: c => c[1]},
+			For: {_initStatement: 2, _conditionExpression: 3, _iterationStatement: 5, _code: 7,
+				_conditionExpressionNode: c => c[3]},
 			With: {_objectExpression: 1, _code: 2,
 				_objectExpressionNode: c => c[1]},
 			// Exit: {},
@@ -137,6 +139,30 @@ export default class GML {
 						}
 					}
 				}
+			},
+			For: async ({_initStatement, _conditionExpression, _conditionExpressionNode, _iterationStatement, _code}) => {
+				await this.interpretASTNode(_initStatement);
+
+				while (true) {
+					var condition = await this.interpretASTNode(_conditionExpression);
+					this.checkIsNumber(condition, 'Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpressionNode);
+
+					if (!this.toBool(condition)) break;
+
+					try {
+						await this.interpretASTNode(_code);
+					} catch (e) {
+						if (e instanceof BreakException) {
+							break;
+						} if (e instanceof ContinueException) {
+							continue;
+						} else {
+							throw e;
+						}
+					}
+					await this.interpretASTNode(_iterationStatement);
+				}
+
 			},
 			With: async ({_objectExpression, _objectExpressionNode, _code}) => {
 				var object = await this.interpretASTNode(_objectExpression);

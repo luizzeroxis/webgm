@@ -411,11 +411,37 @@ export class Game {
 
 	// Run a step and set timeout for next step. With error catching.
 	async mainLoopForTimeout() {
+
 		try {
+			var timeoutStepStart = performance.now();
 			await this.mainLoop();
+			var timeoutStepEnd = performance.now();
+
+			this.setMainLoopTimeout((timeoutStepEnd - timeoutStepStart) / 1000);
 		} catch (e) {
 			await this.catch(e);
 		}
+
+	}
+
+	setMainLoopTimeout(timeoutStepTime) {
+		// Run main loop again, after a frame of time has passed.
+		// This means the game will slow down if a loop takes too much time.
+
+		// var timeoutStepEnd = performance.now() / 1000;
+		// var timeoutStepTime = timeoutStepEnd - timeoutStepStart;
+		var timeoutStepMinTime = 1 / this.globalVars.get('room_speed');
+		var timeoutWaitTime = Math.max(0, timeoutStepMinTime - timeoutStepTime);
+
+		this.timeout = setTimeout(() => this.mainLoopForTimeout(), timeoutWaitTime * 1000);
+
+		// var timeoutTotalStepTime = timeoutStepTime + timeoutWaitTime;
+		// console.log("------");
+		// console.log("StepTime", timeoutStepTime);
+		// console.log("StepMinTime", timeoutStepMinTime);
+		// console.log("WaitTime", timeoutWaitTime);
+		// console.log("TotalStepTime", timeoutTotalStepTime);
+		// console.log(1/timeoutTotalStepTime, "fps");
 	}
 
 	// Start running game steps.
@@ -443,12 +469,19 @@ export class Game {
 		this.mainLoopForTimeout();
 	}
 
+	async mainLoopOnce() {
+		try {
+			await this.mainLoop();
+		} catch (e) {
+			await this.catch(e);
+		}
+	}
+
 	// // Running steps and events
 
 	// Run a step and set timeout for next step. Don't call this directly, use mainLoopForTimeout.
 	async mainLoop() {
 
-		var timeoutStepStart = performance.now() / 1000;
 		++this.fpsFrameCount;
 
 		if (this.stepStopAction != null) {
@@ -658,24 +691,6 @@ export class Game {
 
 		// Delete instances
 		this.instances = this.instances.filter(instance => instance.exists);
-
-		// Run main loop again, after a frame of time has passed.
-		// This means the game will slow down if a loop takes too much time.
-
-		var timeoutStepEnd = performance.now() / 1000;
-		var timeoutStepTime = timeoutStepEnd - timeoutStepStart;
-		var timeoutStepMinTime = 1 / this.globalVars.get('room_speed');
-		var timeoutWaitTime = Math.max(0, timeoutStepMinTime - timeoutStepTime);
-
-		this.timeout = setTimeout(() => this.mainLoopForTimeout(), timeoutWaitTime * 1000);
-
-		// var timeoutTotalStepTime = timeoutStepTime + timeoutWaitTime;
-		// console.log("------");
-		// console.log("StepTime", timeoutStepTime);
-		// console.log("StepMinTime", timeoutStepMinTime);
-		// console.log("WaitTime", timeoutWaitTime);
-		// console.log("TotalStepTime", timeoutTotalStepTime);
-		// console.log(1/timeoutTotalStepTime, "fps");
 
 	}
 	

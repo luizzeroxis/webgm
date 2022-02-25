@@ -993,22 +993,6 @@ export class Game {
 		return instance.vars.get('id');
 	}
 
-	// Check if for every type there is an item. If so, return the list of items in the order of the list of types. If not, return null.
-	checkCorresponds(items, types, isItemOfType) {
-		if (!isItemOfType) isItemOfType = (item, type) => item == type;
-
-		var sortedItems = [];
-
-		for (let type of types) {
-			var index = items.findIndex(x => isItemOfType(x, type));
-			if (index == -1) return null;
-			sortedItems.push(items[index]);
-			items.splice(index, 1);
-		}
-
-		return sortedItems;
-	}
-
 	// Check if two instances are colliding.
 	collisionInstanceOnInstance(instanceA, instanceB, x, y) {
 
@@ -1032,16 +1016,17 @@ export class Game {
 		// spriteA.shape = 'rectangle';
 
 		var collisions = [
-			{shapes: ['precise', 'precise'], func: this.collisionRectangleOnRectangle},
-			{shapes: ['rectangle', 'rectangle'], func: this.collisionRectangleOnRectangle},
-			{shapes: ['precise', 'rectangle'], func: this.collisionRectangleOnRectangle},
+			{shape1: 'precise', shape2: 'precise', func: this.collisionRectangleOnRectangle},
+			{shape1: 'rectangle', shape2: 'rectangle', func: this.collisionRectangleOnRectangle},
+			{shape1: 'precise', shape2: 'rectangle', func: this.collisionRectangleOnRectangle},
 		];
 
 		for (let collision of collisions) {
-			let cols = this.checkCorresponds([colA, colB], collision.shapes,
-				(item, type) => item.sprite.shape == type);
-			if (cols) {
-				return collision.func(...cols, x, y);
+			if (colA.sprite.shape == collision.shape1 && colB.sprite.shape == collision.shape2) {
+				return collision.func(colA, colB, x, y);
+			} else
+			if (colA.sprite.shape == collision.shape2 && colB.sprite.shape == collision.shape1) {
+				return collision.func(colB, colA, x, y);
 			}
 		}
 

@@ -113,20 +113,7 @@ GameMakerLanguage {
 		= "," Expression
 
 	Expression
-		= ExpressionUnary
-		| ExpressionBooleanComparison
-
-	ExpressionUnary
-		= Not
-		| Negate
-		| NegateBitwise
-
-	Not
-		= "!" Expression
-	Negate
-		= "-" Expression
-	NegateBitwise
-		= "~" Expression
+		= ExpressionBooleanComparison
 
 	ExpressionBooleanComparison
 		= And
@@ -135,11 +122,11 @@ GameMakerLanguage {
 		| ExpressionComparison
 
 	And
-		= Expression "&&" ExpressionComparison
+		= ExpressionBooleanComparison "&&" ExpressionComparison
 	Or
-		= Expression "||" ExpressionComparison	
+		= ExpressionBooleanComparison "||" ExpressionComparison	
 	Xor
-		= Expression "^^" ExpressionComparison
+		= ExpressionBooleanComparison "^^" ExpressionComparison
 
 	ExpressionComparison
 		= Less
@@ -151,19 +138,19 @@ GameMakerLanguage {
 		| ExpressionBitwise
 
 	Less
-		= Expression "<" ExpressionBitwise
+		= ExpressionComparison "<" ExpressionBitwise
 	LessOrEqual
-		= Expression "<=" ExpressionBitwise
+		= ExpressionComparison "<=" ExpressionBitwise
 	Equal
-		= Expression equalSymbol ExpressionBitwise
+		= ExpressionComparison equalSymbol ExpressionBitwise
 	equalSymbol
 		= "=" "="?
 	Different
-		= Expression "!=" ExpressionBitwise
+		= ExpressionComparison "!=" ExpressionBitwise
 	Greater
-		= Expression ">" ExpressionBitwise
+		= ExpressionComparison ">" ExpressionBitwise
 	GreaterOrEqual
-		= Expression ">=" ExpressionBitwise
+		= ExpressionComparison ">=" ExpressionBitwise
 
 	ExpressionBitwise
 		= BitwiseAnd
@@ -172,11 +159,11 @@ GameMakerLanguage {
 		| ExpressionBitwiseShift
 
 	BitwiseAnd
-		= Expression "&" ExpressionBitwiseShift
+		= ExpressionBitwise "&" ExpressionBitwiseShift
 	BitwiseOr
-		= Expression "|" ExpressionBitwiseShift
+		= ExpressionBitwise "|" ExpressionBitwiseShift
 	BitwiseXor
-		= Expression "^" ExpressionBitwiseShift
+		= ExpressionBitwise "^" ExpressionBitwiseShift
 
 	ExpressionBitwiseShift
 		= BitwiseShiftLeft
@@ -184,9 +171,9 @@ GameMakerLanguage {
 		| ExpressionAddOrSubtract
 
 	BitwiseShiftLeft
-		= Expression "<<" ExpressionAddOrSubtract
+		= ExpressionBitwiseShift "<<" ExpressionAddOrSubtract
 	BitwiseShiftRight
-		= Expression ">>" ExpressionAddOrSubtract
+		= ExpressionBitwiseShift ">>" ExpressionAddOrSubtract
 
 	ExpressionAddOrSubtract
 		= Add
@@ -194,32 +181,45 @@ GameMakerLanguage {
 		| ExpressionMultiplyOrDivide
 
 	Add
-		= Expression "+" ExpressionMultiplyOrDivide
+		= ExpressionAddOrSubtract "+" ExpressionMultiplyOrDivide
 	Subtract
-		= Expression "-" ExpressionMultiplyOrDivide
+		= ExpressionAddOrSubtract "-" ExpressionMultiplyOrDivide
 
 	ExpressionMultiplyOrDivide
 		= Multiply
 		| Divide
 		| IntegerDivision
 		| Modulo
-		| OtherExpression
+		| ExpressionUnary
 
 	Multiply
-		= ExpressionMultiplyOrDivide "*" OtherExpression
+		= ExpressionMultiplyOrDivide "*" ExpressionUnary
 	Divide
-		= ExpressionMultiplyOrDivide "/" OtherExpression
+		= ExpressionMultiplyOrDivide "/" ExpressionUnary
 	IntegerDivision
-		= ExpressionMultiplyOrDivide spaces #("div" ~namePart) OtherExpression
+		= ExpressionMultiplyOrDivide spaces #("div" ~namePart) ExpressionUnary
 	Modulo
-		= ExpressionMultiplyOrDivide spaces #("mod" ~namePart) OtherExpression
+		= ExpressionMultiplyOrDivide spaces #("mod" ~namePart) ExpressionUnary
+
+	ExpressionUnary
+		= Not
+		| Negate
+		| NegateBitwise
+		| OtherExpression
+
+	Not
+		= "!" OtherExpression
+	Negate
+		= "-" OtherExpression
+	NegateBitwise
+		= "~" OtherExpression
 
 	OtherExpression
-		= Parentheses
-		| Function
+		= Function
 		| Number
 		| String
 		| VariableGet
+		| Parentheses
 
 	Parentheses
 		= "(" Expression ")"

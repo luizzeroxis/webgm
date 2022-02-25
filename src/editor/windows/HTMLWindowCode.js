@@ -59,6 +59,9 @@ export default class HTMLWindowCode extends HTMLWindow {
 			this.radioAppliesToObject.checked ? this.selectObject.getValue() :
 			null
 		);
+
+		// Update action in event in object
+		this.object.updateSelectActions();
 	}
 
 	remove() {

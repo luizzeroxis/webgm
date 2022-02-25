@@ -7,7 +7,6 @@ import VariableHolder from '../common/VariableHolder.js';
 import ActionsParser from './ActionsParser.js';
 import BuiltInConstants from './BuiltInConstants.js';
 import BuiltInGlobals from './BuiltInGlobals.js';
-import Collision from './Collision.js';
 import GML from './GML.js';
 import Instance from './Instance.js';
 
@@ -19,7 +18,6 @@ export class Game {
 		this.input = input;
 
 		this.dispatcher = new Dispatcher();
-		this.collision = new Collision(this);
 
 		this.ctx = null;
 
@@ -657,7 +655,8 @@ export class Game {
 				if (!instance.exists) continue;
 				var others = this.instances.filter(x => x.object_index == subtype);
 				for (let other of others) {
-					if (this.checkCollision(instance, other)) {
+					if (this.collisionInstanceOnInstance(instance, other)) {
+						// TODO collision shenanigans
 						await this.doEvent(event, instance, other);
 					}
 				}
@@ -999,36 +998,92 @@ export class Game {
 		return instance.vars.get('id');
 	}
 
+	// Check if for every type there is an item. If so, return the list of items in the order of the list of types. If not, return null.
+	checkCorresponds(items, types, isItemOfType) {
+		if (!isItemOfType) isItemOfType = (item, type) => item == type;
+
+		var sortedItems = [];
+
+		for (let type of types) {
+			var index = items.findIndex(x => isItemOfType(x, type));
+			if (index == -1) return null;
+			sortedItems.push(items[index]);
+			items.splice(index, 1);
+		}
+
+		return sortedItems;
+	}
+
 	// Check if two instances are colliding.
-	checkCollision(self, other) {
+	collisionInstanceOnInstance(instanceA, instanceB, x, y) {
 
 		// TODO masks
 		// TODO solid
 
-		var selfSprite = this.getResourceById('ProjectSprite', self.vars.get('sprite_index'));
-		var selfImage = selfSprite.images[self.getImageIndex()];
+		var colA = {
+			instance: instanceA,
+			sprite: this.getResourceById('ProjectSprite', instanceA.vars.get('sprite_index'))
+		};
+		var colB = {
+			instance: instanceB,
+			sprite: this.getResourceById('ProjectSprite', instanceB.vars.get('sprite_index'))
+		};
 
-		var otherSprite = this.getResourceById('ProjectSprite', other.vars.get('sprite_index'));
-		var otherImage = otherSprite.images[other.getImageIndex()];
+		if (colA.sprite == null || colA.sprite.images.length == 0) return false;
+		if (colB.sprite == null || colB.sprite.images.length == 0) return false;
 
 		// TODO collision masks, will assume rectangle now
-		// selfSprite.boundingbox == 'fullimage';
-		// selfSprite.shape = 'rectangle';
+		// spriteA.boundingBox == 'fullimage';
+		// spriteA.shape = 'rectangle';
 
-		var c = Collision.rectOnRect({
-			x1: self.vars.get('x') - selfSprite.originx,
-			y1: self.vars.get('y') - selfSprite.originy,
-			x2: self.vars.get('x') - selfSprite.originx + selfImage.image.width,
-			y2: self.vars.get('y') - selfSprite.originy + selfImage.image.height
-		}, {
-			x1: other.vars.get('x') - otherSprite.originx,
-			y1: other.vars.get('y') - otherSprite.originy,
-			x2: other.vars.get('x') - otherSprite.originx + otherImage.image.width,
-			y2: other.vars.get('y') - otherSprite.originy + otherImage.image.height
-		})
+		var collisions = [
+			{shapes: ['precise', 'precise'], func: this.collisionRectangleOnRectangle},
+			{shapes: ['rectangle', 'rectangle'], func: this.collisionRectangleOnRectangle},
+			{shapes: ['precise', 'rectangle'], func: this.collisionRectangleOnRectangle},
+		];
 
-		return c;
+		for (let collision of collisions) {
+			let cols = this.checkCorresponds([colA, colB], collision.shapes,
+				(item, type) => item.sprite.shape == type);
+			if (cols) {
+				return collision.func(...cols, x, y);
+			}
+		}
 
+		return false;
+
+	}
+
+	collisionRectangleOnRectangle(a, b, aX, aY, bX, bY) {
+		aX = (aX == null) ? a.instance.vars.get('x') : aX;
+		aY = (aY == null) ? a.instance.vars.get('y') : aY;
+		let aX1 = aX - a.sprite.originx;
+		let aY1 = aY - a.sprite.originy
+		let aImage = a.sprite.images[a.instance.getImageIndex()]
+
+		bX = (bX == null) ? b.instance.vars.get('x') : bX;
+		bY = (bY == null) ? b.instance.vars.get('y') : bY;
+		let bX1 = bX - b.sprite.originx
+		let bY1 = bY - b.sprite.originy
+		let bImage = b.sprite.images[b.instance.getImageIndex()]
+
+		return (
+			aX1 <= bX1 + bImage.image.width &&
+			bX1 <= aX1 + aImage.image.width &&
+			aY1 <= bY1 + bImage.image.height &&
+			bY1 <= aY1 + aImage.image.height
+		);
+	}
+
+	collisionInstanceOnInstances(instance, otherInstances, x, y, solidOnly=false) {
+		// place_free / place_empty / place_meeting
+		for (let otherInstance of otherInstances) {
+			if (!otherInstance.exists) continue;
+			if (solidOnly && (otherInstance.vars.get('solid') == 0)) continue;
+			var c = this.collisionInstanceOnInstance(instance, otherInstance, x, y);
+			if (c) return true;
+		}
+		return false;
 	}
 
 	// Get state of a key. dict should be key, keyPressed or keyReleased.

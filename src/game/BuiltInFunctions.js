@@ -433,23 +433,33 @@ export default class BuiltInFunctions {
 		this.currentInstance.vars.setAdd('vspeed', -Math.sin(dir_radians) * speed);
 		return 0;
 	}
-	static place_free ([_]) {
-
-		return 0;
+	static place_free ([x, y]) {
+		return !this.game.collisionInstanceOnInstances(this.currentInstance, this.game.instances, x, y, true) ? 1 : 0;
 	}
-	static place_empty ([_]) {
-
-		return 0;
+	static place_empty ([x, y]) {
+		return !this.game.collisionInstanceOnInstances(this.currentInstance, this.game.instances, x, y, false) ? 1 : 0;
 	}
-	static place_meeting ([_]) {
-
-		return 0;
+	static place_meeting ([x, y, obj]) {
+		var instances = this.objectReferenceToInstances(obj);
+		if (!Array.isArray(instances)) {return 0;}
+		return this.game.collisionInstanceOnInstances(this.currentInstance, instances, x, y, false) ? 1 : 0;
 	}
 	static place_snapped ([hsnap, vsnap]) {
 		return (this.currentInstance.vars.get('x') % hsnap == 0) && (this.currentInstance.vars.get('y') % vsnap == 0)
 	}
-	static move_random ([_]) {
+	static move_random ([hsnap, vsnap]) {
+		hsnap = hsnap <= 0 ? 1 : hsnap;
+		vsnap = vsnap <= 0 ? 1 : vsnap;
 
+		// This COULD run forever!
+		var x, y;
+		do {
+			x = Math.floor((Math.random() * this.game.room.width) / hsnap) * hsnap;
+			y = Math.floor((Math.random() * this.game.room.height) / vsnap) * vsnap;
+		} while (this.game.collisionInstanceOnInstances(this.currentInstance, this.game.instances, x, y, true))
+
+		this.currentInstance.vars.set('x', x);
+		this.currentInstance.vars.set('y', y);
 		return 0;
 	}
 	static move_snap ([hsnap, vsnap]) {

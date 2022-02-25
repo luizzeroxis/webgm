@@ -653,8 +653,9 @@ export class Game {
 		for (let [subtype, list] of this.getEventsOfType('collision')) {
 			for (let {event, instance} of list) {
 				if (!instance.exists) continue;
-				var others = this.instances.filter(x => x.object_index == subtype);
-				for (let other of others) {
+				for (let other of this.instances) {
+					if (!other.exists) continue;
+					if (!other.object_index == subtype) continue;
 					if (this.collisionInstanceOnInstance(instance, other)) {
 						// TODO collision shenanigans
 						await this.doEvent(event, instance, other);
@@ -675,6 +676,7 @@ export class Game {
 
 		// Update some instance variables
 		for (let instance of this.instances) {
+			if (!instance.exists) continue;
 			instance.vars.set('xprevious', instance.vars.get('x'));
 			instance.vars.set('yprevious', instance.vars.get('y'));
 
@@ -722,21 +724,14 @@ export class Game {
 					await this.doEvent(drawEvent, instance); 
 				} else {
 					// No draw event, draw sprite if it has one.
-					var index = instance.vars.get('sprite_index');
-					if (index >= 0) {
-						var sprite = this.getResourceById('ProjectSprite', index);
-						if (sprite) {
-							var image = sprite.images[instance.getImageIndex()];
-							if (image) {
-								this.ctx.save();
-								this.ctx.translate(-sprite.originx, -sprite.originy);
-								this.ctx.drawImage(image.image, instance.vars.get('x'), instance.vars.get('y'));
-								this.ctx.restore();
-							} else {
-								// no image index
-							}
-						} else {
-							// no sprite indexs
+
+					if (instance.sprite) {
+						var image = instance.sprite.images[instance.getImageIndex()];
+						if (image) {
+							this.ctx.save();
+							this.ctx.translate(-instance.sprite.originx, -instance.sprite.originy);
+							this.ctx.drawImage(image.image, instance.vars.get('x'), instance.vars.get('y'));
+							this.ctx.restore();
 						}
 					}
 				}
@@ -939,7 +934,7 @@ export class Game {
 				}
 			}
 
-			this.instances = this.instances.filter(instance => instance.vars.get('persistent'))
+			this.instances = this.instances.filter(instance => instance.exists && instance.vars.get('persistent'))
 		}
 
 		this.room = room;
@@ -1022,11 +1017,11 @@ export class Game {
 
 		var colA = {
 			instance: instanceA,
-			sprite: this.getResourceById('ProjectSprite', instanceA.vars.get('sprite_index'))
+			sprite: instanceA.sprite,
 		};
 		var colB = {
 			instance: instanceB,
-			sprite: this.getResourceById('ProjectSprite', instanceB.vars.get('sprite_index'))
+			sprite: instanceB.sprite,
 		};
 
 		if (colA.sprite == null || colA.sprite.images.length == 0) return false;
@@ -1054,6 +1049,17 @@ export class Game {
 
 	}
 
+	collisionInstanceOnInstances(instance, otherInstances, x, y, solidOnly=false) {
+		// place_free / place_empty / place_meeting
+		for (let otherInstance of otherInstances) {
+			if (!otherInstance.exists) continue;
+			if (solidOnly && (otherInstance.vars.get('solid') == 0)) continue;
+			var c = this.collisionInstanceOnInstance(instance, otherInstance, x, y);
+			if (c) return true;
+		}
+		return false;
+	}
+
 	collisionRectangleOnRectangle(a, b, aX, aY, bX, bY) {
 		aX = (aX == null) ? a.instance.vars.get('x') : aX;
 		aY = (aY == null) ? a.instance.vars.get('y') : aY;
@@ -1073,17 +1079,6 @@ export class Game {
 			aY1 <= bY1 + bImage.image.height &&
 			bY1 <= aY1 + aImage.image.height
 		);
-	}
-
-	collisionInstanceOnInstances(instance, otherInstances, x, y, solidOnly=false) {
-		// place_free / place_empty / place_meeting
-		for (let otherInstance of otherInstances) {
-			if (!otherInstance.exists) continue;
-			if (solidOnly && (otherInstance.vars.get('solid') == 0)) continue;
-			var c = this.collisionInstanceOnInstance(instance, otherInstance, x, y);
-			if (c) return true;
-		}
-		return false;
 	}
 
 	// Get state of a key. dict should be key, keyPressed or keyReleased.
@@ -1137,9 +1132,7 @@ export class Game {
 
 	// Get event of type and subtype (optional) of an instance.
 	getEventOfInstance(instance, type, subtype) {
-		var object = this.getResourceById('ProjectObject', instance.object_index);
-		var event = object.events.find(x => (x.type == type) && (subtype ? (x.subtype == subtype) : true));
-		return event;
+		return instance.object.events.find(x => (x.type == type) && (subtype ? (x.subtype == subtype) : true));
 	}
 
 	// Returns a map containg all event-instance pairs that exist currently. It is structured like so:
@@ -1149,9 +1142,8 @@ export class Game {
 
 		for (let instance of this.instances) {
 			if (!instance.exists) continue;
-			var object = this.getResourceById('ProjectObject', instance.object_index);
 
-			object.events.forEach(event => {
+			instance.object.events.forEach(event => {
 
 				var subtypes = map.get(event.type);
 				if (subtypes == undefined) {
@@ -1237,7 +1229,7 @@ export class Game {
 	// object, event and actionNumber can be null to use the current values.
 	makeErrorOptions(isFatal, options, extraText, object=null, event=null, actionNumber=null) {
 
-		var _object = object==null ? this.getResourceById('ProjectObject', this.currentEventInstance.object_index) : object;
+		var _object = object==null ? this.currentEventInstance.object : object;
 		var _event = event==null ? this.currentEvent : event;
 		var _actionNumber = actionNumber==null ? this.currentEventActionNumber : actionNumber;
 

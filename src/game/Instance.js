@@ -20,18 +20,20 @@ export default class Instance {
 		this.vars.setForce('x', x);
 		this.vars.setForce('y', y);
 		
-		// Inherited from object
-		var obj = game.getResourceById('ProjectObject', this.object_index);
-
-		this.vars.setForce('object_index', obj.id);
-		this.vars.setForce('sprite_index', obj.sprite_index);
-		this.vars.setForce('visible', obj.visible ? 1 : 0);
-		this.vars.setForce('solid', obj.solid ? 1 : 0);
-		this.vars.setForce('depth', obj.depth);
-		this.vars.setForce('persistent', obj.persistent ? 1 : 0);
-		this.vars.setForce('mask_index', obj.mask);
+		// Caching of data
+		this.object = game.getResourceById('ProjectObject', this.object_index);
+		this.sprite = game.getResourceById('ProjectSprite', this.object.sprite_index);
 		
-		//
+		// Inherited from object
+		this.vars.setForce('object_index', this.object.id);
+		this.vars.setForce('sprite_index', this.object.sprite_index);
+		this.vars.setForce('visible', this.object.visible ? 1 : 0);
+		this.vars.setForce('solid', this.object.solid ? 1 : 0);
+		this.vars.setForce('depth', this.object.depth);
+		this.vars.setForce('persistent', this.object.persistent ? 1 : 0);
+		this.vars.setForce('mask_index', this.object.mask);
+		
+		// Started up variables
 		this.vars.setForce('xprevious', x);
 		this.vars.setForce('yprevious', y);
 		this.vars.setForce('xstart', x);

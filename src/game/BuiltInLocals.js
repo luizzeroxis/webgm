@@ -78,18 +78,19 @@ export default class BuiltInLocals {
 	static visible = {type: 'bool', default: 1}
 
 	static sprite_index = {type: 'integer', default: -1, set (sprite_index) {
-		var sprite = this.game.getResourceById('ProjectSprite', sprite_index);
+		// Update sprite cache
+		this.sprite = this.game.getResourceById('ProjectSprite', sprite_index);
 
-		if (sprite) {
-			var image = sprite.images[this.getImageIndex()];
+		if (this.sprite) {
+			var image = this.sprite.images[this.getImageIndex()];
 
 			if (image) {
 				this.vars.setForce('sprite_width', image.image.width);
 				this.vars.setForce('sprite_height', image.image.height);
 
-				var bbox_l = this.vars.get('x') - sprite.originx;
+				var bbox_l = this.vars.get('x') - this.sprite.originx;
 				var bbox_r = bbox_l + image.image.width;
-				var bbox_t = this.vars.get('y') - sprite.originy;
+				var bbox_t = this.vars.get('y') - this.sprite.originy;
 				var bbox_b = bbox_t + image.image.height;
 
 				this.vars.setForce('bbox_left', bbox_l);
@@ -110,9 +111,9 @@ export default class BuiltInLocals {
 				this.vars.setForce('bbox_top', y);
 				this.vars.setForce('bbox_bottom', y);
 			}
-			this.vars.setForce('sprite_xoffset', sprite.originx);
-			this.vars.setForce('sprite_yoffset', sprite.originy);
-			this.vars.setForce('image_number', sprite.images.length);
+			this.vars.setForce('sprite_xoffset', this.sprite.originx);
+			this.vars.setForce('sprite_yoffset', this.sprite.originy);
+			this.vars.setForce('image_number', this.sprite.images.length);
 			
 		} else {
 			// no sprite index
@@ -160,15 +161,13 @@ export default class BuiltInLocals {
 }
 
 function updateBBox(instance) {
-	var sprite = instance.game.getResourceById('ProjectSprite', instance.vars.get('sprite_index'));
-
-	if (sprite) {
-		var image = sprite.images[instance.getImageIndex()];
+	if (instance.sprite) {
+		var image = instance.sprite.images[instance.getImageIndex()];
 
 		if (image) {
-			var bbox_l = instance.vars.get('x') - sprite.originx;
+			var bbox_l = instance.vars.get('x') - instance.sprite.originx;
 			var bbox_r = bbox_l + image.image.width;
-			var bbox_t = instance.vars.get('y') - sprite.originy;
+			var bbox_t = instance.vars.get('y') - instance.sprite.originy;
 			var bbox_b = bbox_t + image.image.height;
 
 			instance.vars.setForce('bbox_left', bbox_l);

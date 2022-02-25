@@ -87,7 +87,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 					this.divEventSubtype = add( html('div') );
 
 					// Add event button
-					this.buttonEventAdd = add( newButton(null, 'Add event', () => {
+					this.buttonEventAdd = add( newButton(null, 'Add Event', () => {
 
 						var eventType = this.selectEventType.value;
 						var eventSubtype = 0;
@@ -96,9 +96,9 @@ export default class HTMLWindowObject extends HTMLWindow {
 							eventSubtype = this.subtypeValueFunction();
 						}
 
-						if (this.paramEvents.find(x => x.type == eventType && x.subtype == eventSubtype)) {
+						// Don't continue if there's an event with the exact same type and subtype
+						if (this.paramEvents.find(x => x.type == eventType && x.subtype == eventSubtype))
 							return;
-						}
 
 						var event = new ProjectEvent();
 						event.type = eventType;
@@ -116,7 +116,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 					}) )
 
 					// Delete event button
-					this.buttonEventDelete = add( newButton(null, 'Delete event', () => {
+					this.buttonEventDelete = add( newButton(null, 'Delete', () => {
 
 						var index = this.paramEvents.findIndex(event => this.selectEvents.value == event.getNameId());
 						if (index < 0) return;
@@ -137,6 +137,37 @@ export default class HTMLWindowObject extends HTMLWindow {
 						this.updateEventsMenu();
 						this.updateSelectActions();
 						this.updateActionsMenu();
+
+					}) )
+
+					// Change event button
+
+					this.buttonEventChange = add( newButton(null, 'Change', () => {
+
+						var event = this.getSelectedEvent();
+						if (!event) return;
+
+						var eventType = this.selectEventType.value;
+						var eventSubtype = 0;
+
+						if (this.subtypeValueFunction) {
+							eventSubtype = this.subtypeValueFunction();
+						}
+
+						// Don't continue if there's an event with the exact same type and subtype
+						if (this.paramEvents.find(x => x.type == eventType && x.subtype == eventSubtype))
+							return;
+
+						event.type = eventType;
+						event.subtype = eventSubtype;
+
+						this.sortEvents();
+
+						this.updateSelectEvents();
+						this.selectEvents.value = event.getNameId();
+						// this.updateEventsMenu();
+						// this.updateSelectActions();
+						// this.updateActionsMenu();
 
 					}) )
 
@@ -360,8 +391,10 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 	updateEventsMenu() {
 		if (this.selectEvents.selectedIndex < 0) {
+			this.buttonEventChange.disabled = true;
 			this.buttonEventDelete.disabled = true;
 		} else {
+			this.buttonEventChange.disabled = false;
 			this.buttonEventDelete.disabled = false;
 		}
 

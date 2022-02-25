@@ -682,11 +682,11 @@ export default class GML {
 	objectReferenceToInstances(object) {
 
 		if (object >= 0 && object <= 100000) { // object index
-			let instances = this.game.instances.filter(instance => instance.object_index == object);
+			let instances = this.game.instances.filter(instance => instance.exists && instance.object_index == object);
 			return instances;
 
 		} else if (object > 100000) { // instance id
-			let instance = this.game.instances.find(instance => instance.id == object);
+			let instance = this.game.instances.find(instance => instance.exists && instance.id == object);
 			return instance ? [instance] : [];
 
 		} else if (object == -1 || object == -7) { // self or local
@@ -696,7 +696,7 @@ export default class GML {
 			return [this.currentOther];
 
 		} else if (object == -3) { // all
-			return this.game.instances;
+			return this.game.instances.filter(instance => instance.exists);
 
 		} else if (object == -4) { // noone
 			return null;

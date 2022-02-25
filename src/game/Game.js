@@ -655,7 +655,7 @@ export class Game {
 				if (!instance.exists) continue;
 				for (let other of this.instances) {
 					if (!other.exists) continue;
-					if (!other.object_index == subtype) continue;
+					if (!(other.object_index == subtype)) continue;
 					if (this.collisionInstanceOnInstance(instance, other)) {
 						// TODO collision shenanigans
 						await this.doEvent(event, instance, other);

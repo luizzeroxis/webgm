@@ -52,6 +52,7 @@ export class Game {
 
 		this.gml = null;
 		this.gmlCache = new Map();
+		this.actionsCache = new Map();
 
 		this.room = null;
 
@@ -246,6 +247,7 @@ export class Game {
 			this.loadSounds(), // TODO
 		];
 
+		this.loadActions();
 		this.loadGML();
 
 		return Promise.all(promises);
@@ -271,6 +273,26 @@ export class Game {
 
 	// Returns a list of promises of loading sounds.
 	loadSounds() {} // TODO
+
+	// Parse all action lists in events and timeline moments into action trees.
+	loadActions() {
+		this.loadActionsTimelines(); // TODO
+		this.loadActionsObjects();
+	}
+
+	// Parse all action lists in timelines.
+	loadActionsTimelines() {} // TODO
+
+	// Parse all action lists in objects.
+	loadActionsObjects() {
+		this.project.resources.ProjectObject.every(object => {
+			return object.events.every(event => {
+				var parsedActions = new ActionsParser().parse(event.actions);
+				this.actionsCache.set(event, parsedActions);
+				return true;
+			})
+		})
+	}
 
 	// Compile all GML code, parsing it and checking for errors.
 	loadGML() {
@@ -768,7 +790,7 @@ export class Game {
 		this.currentEventInstance = instance;
 		this.currentEventOther = other || instance;
 
-		var parsedActions = new ActionsParser(event.actions).parse();
+		var parsedActions = this.actionsCache.get(event);
 
 		for (let treeAction of parsedActions) {
 			try {

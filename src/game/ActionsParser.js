@@ -1,11 +1,9 @@
 export default class ActionsParser {
 
-	constructor(actions) {
+	parse(actions) {
 		this.actions = actions;
 		this.actionNumber = 0;
-	}
 
-	parse() {
 		var tree = [];
 
 		while (this.actionNumber < this.actions.length) {
@@ -97,7 +95,7 @@ export default class ActionsParser {
 			case 'code':
 				{
 					let treeAction = {type: 'code', code: action.args[0],
-						appliesTo: action.appliesTo, relative: action.relative,
+						appliesTo: action.appliesTo,
 						action: action, actionNumber: this.actionNumber-1};
 					return treeAction;
 				}

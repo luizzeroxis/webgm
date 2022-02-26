@@ -2956,7 +2956,7 @@ export default class BuiltInFunctions {
 	static script_execute ([scr, ...args]) {
 		var script = this.game.getResourceById('ProjectScript', scr);
 		if (script) {
-			return this.execute(this.game.preparedCodes.get(script), this.currentInstance, this.currentOther, args);
+			return this.execute(this.game.gmlCache.get(script), this.currentInstance, this.currentOther, args);
 		} else {
 			throw this.game.makeNonFatalError({
 					type: 'trying_to_execute_non_existing_script',
@@ -5113,7 +5113,7 @@ export default class BuiltInFunctions {
 		var scriptResource = this.game.project.resources.ProjectScript.find(x => x.id == script);
 
 		if (scriptResource) {
-			return this.execute(this.game.preparedCodes.get(scriptResource), this.currentInstance, this.currentOther,
+			return this.execute(this.game.gmlCache.get(scriptResource), this.currentInstance, this.currentOther,
 				[argument0, argument1, argument2, argument3, argument4]);
 		}
 		return 0;

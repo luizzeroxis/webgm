@@ -51,7 +51,7 @@ export class Game {
 		this.drawVAlign = 0;
 
 		this.gml = null;
-		this.preparedCodes = new Map();
+		this.gmlCache = new Map();
 
 		this.room = null;
 
@@ -272,7 +272,7 @@ export class Game {
 	// Returns a list of promises of loading sounds.
 	loadSounds() {} // TODO
 
-	// Prepares all GML code, parsing it and checking for errors.
+	// Compile all GML code, parsing it and checking for errors.
 	loadGML() {
 		this.gml = new GML(this);
 
@@ -282,10 +282,10 @@ export class Game {
 		this.loadGMLRooms();
 	}
 
-	// Prepares all GML inside of scripts.
+	// Compile all GML inside of scripts.
 	loadGMLScripts() {
 		this.project.resources.ProjectScript.every(script => {
-			return this.prepareGML(script.code, script, matchResult => {
+			return this.compileGMLAndCache(script.code, script, matchResult => {
 
 				throw new FatalErrorException({
 					type: 'compilation',
@@ -302,10 +302,10 @@ export class Game {
 		})
 	}
 
-	// Prepares all GML inside time lines.
+	// Compile all GML inside time lines.
 	loadGMLTimelines() {} // TODO
 
-	// Prepares all GML inside objects.
+	// Compile all GML inside objects.
 	loadGMLObjects() {
 		this.project.resources.ProjectObject.every(object => {
 			return object.events.every(event => {
@@ -313,7 +313,7 @@ export class Game {
 
 					if (action.typeKind == 'code') {
 						
-						return this.prepareGML(action.args[0].value, action, matchResult => {
+						return this.compileGMLAndCache(action.args[0].value, action, matchResult => {
 
 							throw this.makeFatalError({
 									type: 'compilation',
@@ -328,7 +328,7 @@ export class Game {
 
 					} else if (action.typeKind == 'normal' && action.typeExecution == 'code') {
 
-						return this.prepareGML(action.args[0].value, action, matchResult => {
+						return this.compileGMLAndCache(action.args[0].value, action, matchResult => {
 
 							throw this.makeFatalError({
 									type: 'compilation',
@@ -348,12 +348,12 @@ export class Game {
 		})
 	}
 
-	// Prepares all GML inside rooms.
+	// Compile all GML inside rooms.
 	loadGMLRooms() {
 		this.project.resources.ProjectRoom.every(room => {
 
 			if (!room.instances.every(instance => {
-				return this.prepareGML(instance.creationCode, instance, matchResult => {
+				return this.compileGMLAndCache(instance.creationCode, instance, matchResult => {
 
 					throw new FatalErrorException({
 						type: 'compilation',
@@ -370,7 +370,7 @@ export class Game {
 				});
 			})) return false;
 
-			return this.prepareGML(room.creationCode, room, matchResult => {
+			return this.compileGMLAndCache(room.creationCode, room, matchResult => {
 
 				throw new FatalErrorException({
 					type: 'compilation',
@@ -387,15 +387,14 @@ export class Game {
 		})
 	}
 
-	// Prepares a GML code string. mapKey is the key used to access it later in the preparedCodes map.
-	prepareGML(gml, mapKey, failureFunction) {
-		var preparedCode = this.gml.prepare(gml);
-
-		if (preparedCode.succeeded()) {
-			this.preparedCodes.set(mapKey, preparedCode);
+	// Compiles a GML code string and stores the result in a cache. mapKey is used when accessing gmlCache.
+	compileGMLAndCache(code, mapKey, failureFunction) {
+		var result = this.gml.compile(code);
+		if (result.succeeded) {
+			this.gmlCache.set(mapKey, result.ast);
 			return true;
 		} else {
-			failureFunction(preparedCode);
+			failureFunction(result.matchResult);
 			return false;
 		}
 	}
@@ -809,7 +808,7 @@ export class Game {
 						if (treeAction.type == 'executeFunction') {
 							currentResult = await this.gml.builtInFunction(treeAction.function, applyToInstance, otherInstance, args, treeAction.relative);
 						} else {
-							currentResult = await this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance, otherInstance, args, treeAction.relative);
+							currentResult = await this.gml.execute(this.gmlCache.get(treeAction.action), applyToInstance, otherInstance, args, treeAction.relative);
 						}
 
 						if (typeof currentResult !== "number" || currentResult < 0.5) {
@@ -856,24 +855,24 @@ export class Game {
 					var value = treeAction.value.value; 
 					var assignSymbol = treeAction.relative ? " += " : " = ";
 
-					var matchResult = this.gml.prepare(name + assignSymbol + value);
-					if (!matchResult.succeeded()) {
+					var result = this.gml.compile(name + assignSymbol + value);
+					if (!result.succeeded) {
 						throw this.makeFatalError({
 								type: 'compilation',
-								matchResult: matchResult,
+								matchResult: result.matchResult,
 							},
-							`COMPILATION ERROR in code action\n` + matchResult.message + `\n`,
+							`COMPILATION ERROR in code action\n` + result.matchResult.message + `\n`,
 						);
 					}
 
-					await this.gml.execute(matchResult, applyToInstance, otherInstance);
+					await this.gml.execute(result.ast, applyToInstance, otherInstance);
 				}
 				break;
 
 			case 'code':
 				for (let applyToInstance of applyToInstances) {
 					if (!applyToInstance.exists) continue;
-					await this.gml.execute(this.preparedCodes.get(treeAction.action), applyToInstance, otherInstance);
+					await this.gml.execute(this.gmlCache.get(treeAction.action), applyToInstance, otherInstance);
 				}
 				break;
 		}
@@ -888,19 +887,19 @@ export class Game {
 		}
 		if (arg.kind == 'both' || arg.kind == 'expression') {
 			// TODO check if this is really what gm is doing
-			// TODO maybe prepare all these codes beforehand
+			// TODO maybe compile all these codes beforehand
 
-			var matchResult = this.gml.prepare(arg.value, "Expression");
-			if (!matchResult.succeeded()) {
+			var result = this.gml.compile(arg.value, "Expression");
+			if (!result.succeeded) {
 				throw this.makeFatalError({
 						type: 'compilation',
-						matchResult: matchResult,
+						matchResult: result.matchResult,
 					},
-					`COMPILATION ERROR in argument `+ argNumber.toString() +`\n` + matchResult.message + `\n`,
+					`COMPILATION ERROR in argument `+ argNumber.toString() +`\n` + result.matchResult.message + `\n`,
 				);
 			}
 			
-			return await this.gml.execute(matchResult, this.currentEventInstance, this.currentEventOther);
+			return await this.gml.execute(result.ast, this.currentEventInstance, this.currentEventOther);
 		}
 		return arg.value;
 	}
@@ -1097,20 +1096,20 @@ export class Game {
 		this.mouseWheel = 0;
 	}
 
-	// Prepare and execute GML string.
+	// Compile and execute GML string.
 	async executeString(gml, instance, other, args) {
-		var matchResult = this.gml.prepare(gml);
-		if (!matchResult.succeeded()) {
+		var result = this.gml.compile(gml);
+		if (!result.succeeded) {
 			throw new NonFatalErrorException({
 					type: 'compilation',
 					location: 'executeString',
-					matchResult: matchResult,
-					text: `COMPILATION ERROR in string to be executed\n` + matchResult.message + `\n`
+					matchResult: result.matchResult,
+					text: `COMPILATION ERROR in string to be executed\n` + result.matchResult.message + `\n`
 				},
 			);
 		}
 
-		return await this.gml.execute(matchResult, instance, other, args);
+		return await this.gml.execute(result.ast, instance, other, args);
 	}
 
 	// // Helper functions

@@ -265,7 +265,7 @@ export default class GML {
 				var script = this.game.project.resources.ProjectScript.find(x => x.name == name);
 
 				if (script) {
-					return this.execute(this.game.preparedCodes.get(script), this.currentInstance, this.currentOther, args);
+					return this.execute(this.game.gmlCache.get(script), this.currentInstance, this.currentOther, args);
 				} else {
 					return this.builtInFunction(name, this.currentInstance, this.currentOther, args);
 				}
@@ -492,80 +492,77 @@ export default class GML {
 
 	}
 
-	prepare(code, startRule) {
+	compile(code, startRule) {
 		//var trace = this.grammar.trace(code).toString();
 		//console.log(trace);
 
-		var match = this.grammar.match(code, startRule);
+		var matchResult = this.grammar.match(code, startRule);
 		//console.log(match);
 
-		return match;
+		if (matchResult.succeeded()) {
+			var ast = ohmExtras.toAST(matchResult, this.mapping);
+			// console.log(ast);
+			return {succeeded: true, ast: ast};
+		}
+
+		return {succeeded: false, matchResult: matchResult}; // TODO maybe not store this idk
 	}
 
-	async execute(preparedCode, instance, other, args, argRelative=0) {
+	async execute(ast, instance, other, args, argRelative=0) {
 
-		if (preparedCode.succeeded()) {
+		var previousInstance = this.currentInstance;
+		var previousOther = this.currentOther;
 
-			var previousInstance = this.currentInstance;
-			var previousOther = this.currentOther;
+		this.currentInstance = instance;
+		this.currentOther = other;
+		
+		var savedVars = this.vars.saveAll();
+		this.vars.clearAll();
 
-			this.currentInstance = instance;
-			this.currentOther = other;
-			
-			var savedVars = this.vars.saveAll();
-			this.vars.clearAll();
+		// Save previous arguments
+		var savedArgs = this.game.globalVars.save('argument');
+		var savedArgRelative = this.game.globalVars.save('argument_relative');
 
-			// Save previous arguments
-			var savedArgs = this.game.globalVars.save('argument');
-			var savedArgRelative = this.game.globalVars.save('argument_relative');
-
-			// Set new arguments
-			for (let i=0; i<16; i++) {
-				var value = 0;
-				if (Array.isArray(args) && args[i] != null) {value = args[i];}
-				this.game.globalVars.set('argument', value, [i]); // This auto sets numbered arguments
-			}
-			this.game.globalVars.setForce('argument_relative', argRelative);
-
-			var result = 0;
-
-			try {
-				var ast = ohmExtras.toAST(preparedCode, this.mapping);
-				// console.log(ast);
-				result = await this.interpretASTNode(ast);
-			} catch (e) {
-				if (e instanceof ExitException || e instanceof BreakException || e instanceof ContinueException) {
-					// Nothing lol
-				} else if (e instanceof ReturnException) {
-					result = e.value;
-				} else {
-					throw e;
-				}
-			} finally {
-
-				this.currentInstance = previousInstance;
-				this.currentOther = previousOther;
-
-				// Load vars/end game in case of non fatal error
-				this.vars.loadAll(savedVars);
-
-				// Load previous arguments
-				this.game.globalVars.load('argument', savedArgs);
-
-				// Load numbered arguments from arguments array
-				for (let i=0; i<16; i++) {
-					this.game.globalVars.setNoCall('argument' + i.toString(), this.game.globalVars.get('argument', [i]));
-				}
-
-				this.game.globalVars.load('argument_relative', savedArgRelative);
-			}
-
-			return result;
-
-		} else {
-			console.log(preparedCode.message)
-			console.log("Some error was found in the GML!");
+		// Set new arguments
+		for (let i=0; i<16; i++) {
+			var value = 0;
+			if (Array.isArray(args) && args[i] != null) {value = args[i];}
+			this.game.globalVars.set('argument', value, [i]); // This auto sets numbered arguments
 		}
+		this.game.globalVars.setForce('argument_relative', argRelative);
+
+		var result = 0;
+
+		try {
+			result = await this.interpretASTNode(ast);
+		} catch (e) {
+			if (e instanceof ExitException || e instanceof BreakException || e instanceof ContinueException) {
+				// Nothing lol
+			} else if (e instanceof ReturnException) {
+				result = e.value;
+			} else {
+				throw e;
+			}
+		} finally {
+
+			this.currentInstance = previousInstance;
+			this.currentOther = previousOther;
+
+			// Load vars/end game in case of non fatal error
+			this.vars.loadAll(savedVars);
+
+			// Load previous arguments
+			this.game.globalVars.load('argument', savedArgs);
+
+			// Load numbered arguments from arguments array
+			for (let i=0; i<16; i++) {
+				this.game.globalVars.setNoCall('argument' + i.toString(), this.game.globalVars.get('argument', [i]));
+			}
+
+			this.game.globalVars.load('argument_relative', savedArgRelative);
+		}
+
+		return result;
 
 	}
 	

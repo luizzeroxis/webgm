@@ -742,7 +742,7 @@ export default class BuiltInFunctions {
 		}
 		this.game.stepStopAction = async () => {
 			await this.game.loadRoom(room);
-			this.game.continueMainLoop();
+			this.game.startMainLoop();
 		}
 		return 0;
 	}

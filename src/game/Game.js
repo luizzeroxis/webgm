@@ -41,6 +41,7 @@ export class Game {
 		this.instances = [];
 		this.lastId = null;
 
+		this.lastFPSCheck = null;
 		this.fps = 0;
 		this.fpsFrameCount = 0;
 
@@ -62,7 +63,6 @@ export class Game {
 		this.currentEventActionNumber = null;
 
 		this.timeout = null;
-		this.fpsTimeout = null;
 
 		this.mapEvents = null;
 
@@ -447,62 +447,63 @@ export class Game {
 
 	// Run a step and set timeout for next step. With error catching.
 	async mainLoopForTimeout() {
+		var timeoutStepStart = performance.now();
+
+		// If one second has passed since last fps update, update it
+		if ((timeoutStepStart - this.lastFPSCheck) >= 1000) {
+			this.lastFPSCheck += 1000; // When it takes more than a second, it rolls over to the next check
+			this.fps = this.fpsFrameCount;
+			this.fpsFrameCount = 0;
+		}
 
 		try {
-			var timeoutStepStart = performance.now();
 			await this.mainLoop();
+
+			++this.fpsFrameCount;
+
+			// Run main loop again, after a frame of time has passed.
+			// This means the game will slow down if a loop takes too much time.
+			
+			var timeoutStepMinTime = 1000 / this.globalVars.get('room_speed');
+
 			var timeoutStepEnd = performance.now();
 
-			this.setMainLoopTimeout((timeoutStepEnd - timeoutStepStart) / 1000);
+			var timeoutStepTime = (timeoutStepEnd - timeoutStepStart);
+			var timeoutWaitTime = timeoutStepMinTime - timeoutStepTime;
+
+			this.timeout = setTimeout(() => this.mainLoopForTimeout(), timeoutWaitTime);
+
+			// var timeoutTotalStepTime = timeoutStepTime + timeoutWaitTime;
+			// console.log("------");
+			// console.log("StepTime", timeoutStepTime);
+			// console.log("StepMinTime", timeoutStepMinTime);
+			// console.log("WaitTime", timeoutWaitTime);
+			// console.log("TotalStepTime", timeoutTotalStepTime);
+			// console.log(1/timeoutTotalStepTime, "fps");
+
 		} catch (e) {
 			await this.catch(e);
 		}
 
 	}
 
-	setMainLoopTimeout(timeoutStepTime) {
-		// Run main loop again, after a frame of time has passed.
-		// This means the game will slow down if a loop takes too much time.
-
-		// var timeoutStepEnd = performance.now() / 1000;
-		// var timeoutStepTime = timeoutStepEnd - timeoutStepStart;
-		var timeoutStepMinTime = 1 / this.globalVars.get('room_speed');
-		var timeoutWaitTime = Math.max(0, timeoutStepMinTime - timeoutStepTime);
-
-		this.timeout = setTimeout(() => this.mainLoopForTimeout(), timeoutWaitTime * 1000);
-
-		// var timeoutTotalStepTime = timeoutStepTime + timeoutWaitTime;
-		// console.log("------");
-		// console.log("StepTime", timeoutStepTime);
-		// console.log("StepMinTime", timeoutStepMinTime);
-		// console.log("WaitTime", timeoutWaitTime);
-		// console.log("TotalStepTime", timeoutTotalStepTime);
-		// console.log(1/timeoutTotalStepTime, "fps");
-	}
-
 	// Start running game steps.
 	startMainLoop() {
-		if (this.timeout == null) {
-			this.mainLoopForTimeout();
+		this.lastFPSCheck = performance.now();
+		this.fps = 0;
+		this.fpsFrameCount = 0;
+
+		if (this.timeout != null) {
+			this.endMainLoop();
 		}
 
-		if (this.fpsTimeout == null) {
-			this.fpsTimeout = setInterval(() => this.updateFps(), 1000);
-		}
+		this.mainLoopForTimeout();
 	}
 
 	// Stop running game steps.
 	endMainLoop() {
 		clearTimeout(this.timeout);
 		this.timeout = null;
-
-		clearInterval(this.fpsTimeout);
-		this.fpsTimeout = null;
-	}
-
-	// Continue running game steps, in case you stopped it by using StepStopException.
-	continueMainLoop() {
-		this.mainLoopForTimeout();
 	}
 
 	async mainLoopOnce() {
@@ -517,8 +518,6 @@ export class Game {
 
 	// Run a step and set timeout for next step. Don't call this directly, use mainLoopForTimeout.
 	async mainLoop() {
-
-		++this.fpsFrameCount;
 
 		if (this.stepStopAction != null) {
 			throw new StepStopException(this.stepStopAction);
@@ -926,12 +925,6 @@ export class Game {
 			return await this.gml.execute(result.ast, this.currentEventInstance, this.currentEventOther);
 		}
 		return arg.value;
-	}
-
-	// Update the fps counter.
-	updateFps() {
-		this.fps = this.fpsFrameCount;
-		this.fpsFrameCount = 0;
 	}
 
 	// // Actions execution

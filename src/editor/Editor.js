@@ -68,10 +68,13 @@ export default class Editor {
 
 		//Preferences
 		this.preferences = {
+			theme: 'auto',
 			scrollToGameOnRun: true,
 			focusCanvasOnRun: true,
 			clearCanvasOnStop: true,
 		}
+
+		this.autoTheme = 'light';
 
 		this.loadPreferences();
 
@@ -98,6 +101,15 @@ export default class Editor {
 		// Open file if dropped in the editor body
 		setOnFileDrop(this.html, file => this.openProjectFromFile(file));
 
+		// Update theme if on auto to match system
+		var media = window.matchMedia('(prefers-color-scheme: dark)');
+		media.addEventListener('change', e => this.updateAutoTheme(e));
+		this.updateAutoTheme(media);
+	}
+
+	updateAutoTheme(mediaQueryList) {
+		this.autoTheme = mediaQueryList.matches ? 'dark' : 'light';
+		this.applyTheme();
 	}
 
 	loadPreferences() {
@@ -106,6 +118,7 @@ export default class Editor {
 			preferences = JSON.parse(window.localStorage.getItem('preferences'));
 			if (preferences != null) {
 				this.preferences = Object.assign(this.preferences, preferences);
+				this.applyPreferences();
 			}
 		} catch (e) {
 			// SyntaxError
@@ -118,10 +131,32 @@ export default class Editor {
 		var preferences = JSON.stringify(this.preferences);
 		try {
 			window.localStorage.setItem('preferences', preferences);
+			this.applyPreferences();
 		} catch (e) {
 			// SecurityError
 			console.log('Could not save preferences', this.preferences);
 		}
+	}
+
+	applyPreferences() {
+		this.applyTheme();
+	}
+
+	applyTheme() {
+
+		var theme = this.preferences.theme;
+		if (theme == 'auto') {
+			theme = this.autoTheme;
+		}
+
+		if (theme == 'dark') {
+			document.documentElement.classList.remove('light');
+			document.documentElement.classList.add('dark');
+		} else {
+			document.documentElement.classList.remove('dark');
+			document.documentElement.classList.add('light');
+		}
+
 	}
 
 	// Resource management

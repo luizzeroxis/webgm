@@ -167,13 +167,13 @@ export function newRadioBox(classes, labelcontent, groupname, checked) {
 }
 
 // <select> <option /> </select>
-export function newSelect(classes, labelcontent, options) {
+export function newSelect(classes, labelcontent, options, value) {
 	var theid = '_id_'+uniqueID();
 
 	var e = parent( html('div', {class: classes}) )
 		add( html('label', {for: theid}, null, labelcontent) )
 
-		parent( add( html('select', {id: theid}) ) )
+		var select = parent( add( html('select', {id: theid}) ) )
 			
 			if (options) {
 				options.forEach(x => {
@@ -182,6 +182,8 @@ export function newSelect(classes, labelcontent, options) {
 			}
 
 			endparent()
+
+		select.value = value;
 		endparent()
 
 	return e;

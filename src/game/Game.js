@@ -317,7 +317,6 @@ export class Game {
 
 							throw this.makeFatalError({
 									type: 'compilation',
-									locationIsActionTypeLibrary: false,
 									matchResult: matchResult,
 								},
 								`COMPILATION ERROR in code action:\n` + matchResult.message + `\n`,
@@ -332,14 +331,32 @@ export class Game {
 
 							throw this.makeFatalError({
 									type: 'compilation',
-									locationIsActionTypeLibrary: true,
 									matchResult: matchResult,
 								},
-								`COMPILATION ERROR in code action (this was inside the action type in a library):\n` + matchResult.message + `\n`,
+								`COMPILATION ERROR in code action (in action type in a library):\n` + matchResult.message + `\n`,
 								object, event, actionNumber
 							);
 
 						});
+
+					} else if (action.typeKind == 'variable') {
+
+						var name = action.args[0].value;
+						var value = action.args[1].value;
+						var assignSymbol = action.relative ? " += " : " = ";
+						var code = name + assignSymbol + value;
+
+						return this.compileGMLAndCache(code, action, matchResult => {
+
+							throw this.makeFatalError({
+									type: 'compilation',
+									matchResult: matchResult,
+								},
+								`COMPILATION ERROR in code action (in variable set):\n` + matchResult.message + `\n`,
+								object, event, actionNumber
+							);
+
+						})
 
 					}
 					return true;
@@ -850,22 +867,7 @@ export class Game {
 			case 'variable': // TODO
 				for (let applyToInstance of applyToInstances) {
 					if (!applyToInstance.exists) continue;
-
-					var name = treeAction.name.value;
-					var value = treeAction.value.value; 
-					var assignSymbol = treeAction.relative ? " += " : " = ";
-
-					var result = this.gml.compile(name + assignSymbol + value);
-					if (!result.succeeded) {
-						throw this.makeFatalError({
-								type: 'compilation',
-								matchResult: result.matchResult,
-							},
-							`COMPILATION ERROR in code action\n` + result.matchResult.message + `\n`,
-						);
-					}
-
-					await this.gml.execute(result.ast, applyToInstance, otherInstance);
+					await this.gml.execute(this.gmlCache.get(treeAction.action), applyToInstance, otherInstance);
 				}
 				break;
 

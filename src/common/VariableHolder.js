@@ -1,3 +1,4 @@
+import {VariableException} from './Exceptions.js';
 import {forceString, forceReal, forceInteger, forceBool, forceUnit, forceChar} from './tools.js';
 
 export default class VariableHolder {
@@ -56,8 +57,8 @@ export default class VariableHolder {
 				}
 			}
 		} else {
-			// Variable doesn't exist, error
-			throw new Error("Variable doesn't exist");
+			// This should never happen
+			throw new Error('Variable does not exist, did you forget to check beforehand?');
 		}
 
 		// Get difference between dimensions of variable and amount of indexes
@@ -83,7 +84,7 @@ export default class VariableHolder {
 
 			// If there are still indexes left, then it's just wrong.
 			if (difference != 0) {
-				throw new Error("Index out of bounds (more indexes than dimensions!)");
+				throw new VariableException({type: 'index_not_in_bounds'});
 			}
 		}
 
@@ -93,12 +94,12 @@ export default class VariableHolder {
 			if (!Array.isArray(variable.value)) {
 				// If index is 0, keep same variable reference, even if it's not an array
 				if (index != 0) {
-					throw new Error("Index out of bounds");
+					throw new VariableException({type: 'index_not_in_bounds'});
 				}
 			} else {
 				// Index should be inside size
 				if (index >= variable.value.length) {
-					throw new Error("Index out of bounds");
+					throw new VariableException({type: 'index_not_in_bounds'});
 				}
 				// Sometimes the variable is undefined because indexes have been jumped.
 				if (variable.value[index] == undefined) {
@@ -127,38 +128,6 @@ export default class VariableHolder {
 		return variable.value;
 	}
 
-	setBuiltIn(name, value) {
-		this.builtInList[name].value = value;
-	}
-
-	setBuiltInArray(name, indexes, value) {
-		var variable = this.builtInList[name];
-		for (var index of indexes) {
-			variable = variable.value[index];
-		}
-		variable.value = value;
-	}
-
-	setBuiltInCall(name, value) {
-		// Value returned by function replaces the value to be set
-		var newValue = this.builtInClass[name].set.call(this.caller, value);
-		if (newValue != null) value = newValue;
-
-		this.builtInList[name].value = value;
-	}
-
-	setBuiltInArrayCall(name, indexes, value) {
-		// Value returned by function replaces the value to be set
-		var newValue = this.builtInClass[name].set.call(this.caller, value, indexes);
-		if (newValue != null) value = newValue;
-
-		var variable = this.builtInList[name];
-		for (var index of indexes) {
-			variable = variable.value[index];
-		}
-		variable.value = value;
-	}
-
 	set(name, value, indexes, overrideReadOnly, callSet=true) {
 
 		if (indexes == null) {
@@ -173,7 +142,7 @@ export default class VariableHolder {
 
 			if (varInfo.list == this.builtInList) {
 				if (this.builtInClass[name].readOnly && !overrideReadOnly) {
-					throw new Error("Cannot assign to the variable (it's read only!)");
+					throw new VariableException({type: 'read_only'});
 				}
 
 				if (this.builtInClass[name].type != null) {
@@ -252,6 +221,38 @@ export default class VariableHolder {
 		// Actually set variable
 		variable.value = value;
 
+	}
+
+	setBuiltIn(name, value) {
+		this.builtInList[name].value = value;
+	}
+
+	setBuiltInArray(name, indexes, value) {
+		var variable = this.builtInList[name];
+		for (var index of indexes) {
+			variable = variable.value[index];
+		}
+		variable.value = value;
+	}
+
+	setBuiltInCall(name, value) {
+		// Value returned by function replaces the value to be set
+		var newValue = this.builtInClass[name].set.call(this.caller, value);
+		if (newValue != null) value = newValue;
+
+		this.builtInList[name].value = value;
+	}
+
+	setBuiltInArrayCall(name, indexes, value) {
+		// Value returned by function replaces the value to be set
+		var newValue = this.builtInClass[name].set.call(this.caller, value, indexes);
+		if (newValue != null) value = newValue;
+
+		var variable = this.builtInList[name];
+		for (var index of indexes) {
+			variable = variable.value[index];
+		}
+		variable.value = value;
 	}
 
 	clear(name) {

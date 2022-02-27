@@ -1,6 +1,6 @@
 import ohm, {extras as ohmExtras} from 'ohm-js';
 
-import {ExitException, ReturnException, BreakException, ContinueException} from '../common/Exceptions.js';
+import {ExitException, ReturnException, BreakException, ContinueException, VariableException} from '../common/Exceptions.js';
 import {toInteger} from '../common/tools.js';
 import VariableHolder from '../common/VariableHolder.js';
 
@@ -596,39 +596,52 @@ export default class GML {
 
 	varGet(varInfo, node) {
 
-		if (varInfo.object == null) {
+		try {
 
-			if (this.game.constants[varInfo.name] != null)
-				return this.game.constants[varInfo.name];
-			if (this.vars.exists(varInfo.name))
-				return this.vars.get(varInfo.name, varInfo.indexes);
-			if (this.game.globalVars.exists(varInfo.name))
-				return this.game.globalVars.get(varInfo.name, varInfo.indexes);
+			if (varInfo.object == null) {
 
-			if (this.currentInstance.vars.exists(varInfo.name))
-				return this.currentInstance.vars.get(varInfo.name, varInfo.indexes);
+				if (this.game.constants[varInfo.name] != null)
+					return this.game.constants[varInfo.name];
+				if (this.vars.exists(varInfo.name))
+					return this.vars.get(varInfo.name, varInfo.indexes);
+				if (this.game.globalVars.exists(varInfo.name))
+					return this.game.globalVars.get(varInfo.name, varInfo.indexes);
 
-			throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
+				if (this.currentInstance.vars.exists(varInfo.name))
+					return this.currentInstance.vars.get(varInfo.name, varInfo.indexes);
 
-		} else {
-
-			var instances = this.objectReferenceToInstances(varInfo.object);
-
-			if (instances == null) {
-				throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
-
-			} else if (instances == "global") {
-				// TODO: "global." vars should be in this.game.globalVars.
-				// There is a list that contains all "global." vars that have been "globalvar"'d.
-				// This would be checked when getting/setting vars with a dot and when "globalvar" declarations are called.
 				throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
 
 			} else {
-				if (instances.length > 0) {
-					if (instances[0].vars.exists(varInfo.name))
-						return instances[0].vars.get(varInfo.name, varInfo.indexes);
+
+				var instances = this.objectReferenceToInstances(varInfo.object);
+
+				if (instances == null) {
+					throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
+
+				} else if (instances == "global") {
+					// TODO: "global." vars should be in this.game.globalVars.
+					// There is a list that contains all "global." vars that have been "globalvar"'d.
+					// This would be checked when getting/setting vars with a dot and when "globalvar" declarations are called.
+					throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
+
+				} else {
+					if (instances.length > 0) {
+						if (instances[0].vars.exists(varInfo.name))
+							return instances[0].vars.get(varInfo.name, varInfo.indexes);
+					}
+					throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
 				}
-				throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
+			}
+
+		} catch (e) {
+			if (e instanceof VariableException) {
+				switch (e.type) {
+					case 'index_not_in_bounds':
+						throw this.makeErrorInGMLNode("Unknown variable "+varInfo.name+" or array index out of bounds (it's out of bounds.)", node);
+				}
+			} else {
+				throw e;
 			}
 		}
 
@@ -636,36 +649,49 @@ export default class GML {
 
 	varSet(varInfo, value, node) {
 
-		if (varInfo.object == null) {
+		try {
 
-			if (this.game.constants[varInfo.name] != null)
-				throw this.makeErrorInGMLNode("Variable name expected. (it's a constant)", node);
-			if (this.vars.exists(varInfo.name))
-				return this.vars.set(varInfo.name, value, varInfo.indexes);
-			if (this.game.globalVars.exists(varInfo.name))
-				return this.game.globalVars.set(varInfo.name, value, varInfo.indexes);
+			if (varInfo.object == null) {
 
-			this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
+				if (this.game.constants[varInfo.name] != null)
+					throw this.makeErrorInGMLNode("Variable name expected. (it's a constant)", node);
+				if (this.vars.exists(varInfo.name))
+					return this.vars.set(varInfo.name, value, varInfo.indexes);
+				if (this.game.globalVars.exists(varInfo.name))
+					return this.game.globalVars.set(varInfo.name, value, varInfo.indexes);
 
-		} else {
-
-			var instances = this.objectReferenceToInstances(varInfo.object);
-			if (instances === null) {
-				throw this.makeErrorInGMLNode("Cannot assign to the variable", node);
-
-			} else if (instances == "global") {
-				// TODO: "global." vars should be in this.game.globalVars.
-				// There is a list that contains all "global." vars that have been "globalvar"'d.
-				// This would be checked when getting/setting vars with a dot and when "globalvar" declarations are called.
-				throw this.makeErrorInGMLNode("Cannot assign to the variable", node);
+				this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
 
 			} else {
-				for (let instance of instances) {
-					instance.vars.set(varInfo.name, value, varInfo.indexes);
+
+				var instances = this.objectReferenceToInstances(varInfo.object);
+				if (instances === null) {
+					throw this.makeErrorInGMLNode("Cannot assign to the variable", node);
+
+				} else if (instances == "global") {
+					// TODO: "global." vars should be in this.game.globalVars.
+					// There is a list that contains all "global." vars that have been "globalvar"'d.
+					// This would be checked when getting/setting vars with a dot and when "globalvar" declarations are called.
+					throw this.makeErrorInGMLNode("Cannot assign to the variable", node);
+
+				} else {
+					for (let instance of instances) {
+						instance.vars.set(varInfo.name, value, varInfo.indexes);
+					}
+
 				}
 
 			}
 
+		} catch (e) {
+			if (e instanceof VariableException) {
+				switch (e.type) {
+					case 'read_only':
+						throw this.makeErrorInGMLNode("Cannot assign to the variable ("+varInfo.name+" is read only)", node);
+				}
+			} else {
+				throw e;
+			}
 		}
 
 	}

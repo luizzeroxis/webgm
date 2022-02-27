@@ -1,6 +1,15 @@
 export class WebGMException extends Error {
-	constructor(...args) {
-		super(...args);
+	constructor(messageOrObject) {
+		if (typeof messageOrObject != 'object') {
+			super(messageOrObject);
+		} else {
+			if (messageOrObject.text) {
+				super(messageOrObject.text)
+			} else {
+				super(JSON.stringify(messageOrObject))
+			}
+			Object.assign(this, messageOrObject);
+		}
 		this.name = this.constructor.name;
 	}
 }
@@ -9,12 +18,7 @@ export class WebGMException extends Error {
 export class EngineException extends WebGMException {}
 
 // Errors in the user project
-export class ProjectErrorException extends WebGMException {
-	constructor(object) {
-		super(JSON.stringify(object)/*, options*/);
-		Object.assign(this, object);
-	}
-}
+export class ProjectErrorException extends WebGMException {}
 
 // Errors in the game that are fatal
 export class FatalErrorException extends ProjectErrorException {}
@@ -31,6 +35,9 @@ export class ReturnException extends WebGMException {
 }
 export class BreakException extends WebGMException {}
 export class ContinueException extends WebGMException {}
+
+// Used when there's an error in getting or setting variables
+export class VariableException extends WebGMException {}
 
 // Used when calling functions that require stopping the current step
 export class StepStopException extends WebGMException {

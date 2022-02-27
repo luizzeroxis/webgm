@@ -8,24 +8,24 @@ export default class BuiltInGlobals {
 
 	static argument = {default: ()=>new Array(16).fill(0), set (value, indexes) {
 		var index = indexes.at(-1) || 0;
-		this.globalVars.setNoCall('argument' + index.toString(), value);
+		this.globalVars.setBuiltIn('argument' + index.toString(), value);
 	}};
-	static argument0 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [0]) }};
-	static argument1 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [1]) }};
-	static argument2 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [2]) }};
-	static argument3 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [3]) }};
-	static argument4 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [4]) }};
-	static argument5 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [5]) }};
-	static argument6 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [6]) }};
-	static argument7 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [7]) }};
-	static argument8 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [8]) }};
-	static argument9 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [9]) }};
-	static argument10 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [10]) }};
-	static argument11 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [11]) }};
-	static argument12 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [12]) }};
-	static argument13 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [13]) }};
-	static argument14 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [14]) }};
-	static argument15 = {default: 0, set (value) { this.globalVars.setNoCall('argument', value, [15]) }};
+	static argument0 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [0], value) }};
+	static argument1 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [1], value) }};
+	static argument2 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [2], value) }};
+	static argument3 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [3], value) }};
+	static argument4 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [4], value) }};
+	static argument5 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [5], value) }};
+	static argument6 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [6], value) }};
+	static argument7 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [7], value) }};
+	static argument8 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [8], value) }};
+	static argument9 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [9], value) }};
+	static argument10 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [10], value) }};
+	static argument11 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [11], value) }};
+	static argument12 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [12], value) }};
+	static argument13 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [13], value) }};
+	static argument14 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [14], value) }};
+	static argument15 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [15], value) }};
 	static argument_relative = {default: 0, readOnly: true};
 
 	// Game play / Instances
@@ -78,7 +78,7 @@ export default class BuiltInGlobals {
 
 	static score = {type: 'integer', default: 0};
 	static lives = {type: 'integer', default: -1, set (value) {
-		var previous = this.globalVars.get('lives');
+		var previous = this.globalVars.getBuiltIn('lives');
 		if (value <= 0 && previous > 0) {
 			// TODO value is still not set here!! do something about that!!!
 			// TODO run no more lives event

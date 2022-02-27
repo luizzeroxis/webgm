@@ -423,14 +423,15 @@ export default class BuiltInFunctions {
 	// ## Moving around
 
 	static motion_set ([dir, speed]) {
-		this.currentInstance.vars.set('direction', dir);
-		this.currentInstance.vars.set('speed', speed);
+		this.currentInstance.setDirectionAndSpeed(dir, speed);
 		return 0;
 	}
 	static motion_add ([dir, speed]) {
 		var dir_radians = dir * (Math.PI / 180);
-		this.currentInstance.vars.setAdd('hspeed', Math.cos(dir_radians) * speed);
-		this.currentInstance.vars.setAdd('vspeed', -Math.sin(dir_radians) * speed);
+		this.currentInstance.setHspeedAndVspeed(
+			this.currentInstance.vars.getBuiltIn('hspeed') + Math.cos(dir_radians) * speed,
+			this.currentInstance.vars.getBuiltIn('vspeed') + -Math.sin(dir_radians) * speed
+		);
 		return 0;
 	}
 	static place_free ([x, y]) {
@@ -445,7 +446,7 @@ export default class BuiltInFunctions {
 		return this.game.collisionInstanceOnInstances(this.currentInstance, instances, x, y, false) ? 1 : 0;
 	}
 	static place_snapped ([hsnap, vsnap]) {
-		return (this.currentInstance.vars.get('x') % hsnap == 0) && (this.currentInstance.vars.get('y') % vsnap == 0)
+		return (this.currentInstance.vars.getBuiltIn('x') % hsnap == 0) && (this.currentInstance.vars.getBuiltIn('y') % vsnap == 0)
 	}
 	static move_random ([hsnap, vsnap]) {
 		hsnap = hsnap <= 0 ? 1 : hsnap;
@@ -458,13 +459,13 @@ export default class BuiltInFunctions {
 			y = Math.floor((Math.random() * this.game.room.height) / vsnap) * vsnap;
 		} while (this.game.collisionInstanceOnInstances(this.currentInstance, this.game.instances, x, y, true))
 
-		this.currentInstance.vars.set('x', x);
-		this.currentInstance.vars.set('y', y);
+		this.currentInstance.vars.setBuiltInCall('x', x);
+		this.currentInstance.vars.setBuiltInCall('y', y);
 		return 0;
 	}
 	static move_snap ([hsnap, vsnap]) {
-		this.currentInstance.vars.set('x', Math.floor(this.currentInstance.vars.get('x') / hsnap) * hsnap);
-		this.currentInstance.vars.set('y', Math.floor(this.currentInstance.vars.get('y') / vsnap) * vsnap);
+		this.currentInstance.vars.setBuiltInCall('x', Math.floor(this.currentInstance.vars.getBuiltIn('x') / hsnap) * hsnap);
+		this.currentInstance.vars.setBuiltInCall('y', Math.floor(this.currentInstance.vars.getBuiltIn('y') / vsnap) * vsnap);
 		return 0;
 	}
 	static move_wrap ([_]) {
@@ -472,8 +473,7 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static move_towards_point ([x, y, sp]) {
-		this.currentInstance.vars.set('speed', sp);
-		this.currentInstance.vars.set('direction', Math.atan2(-y, x) * (180 / Math.PI));
+		this.currentInstance.setDirectionAndSpeed(sp, Math.atan2(-y, x) * (180 / Math.PI));
 		return 0;
 	}
 	static move_bounce_solid ([adv]) {
@@ -4708,14 +4708,10 @@ export default class BuiltInFunctions {
 		var chosenAngle = possibleAngles[Math.floor( Math.random() * possibleAngles.length )];
 		
 		if (chosenAngle != null) {
-			this.currentInstance.vars.set('direction', chosenAngle);
-			if (!relative) {
-				this.currentInstance.vars.set('speed', speed);
-			} else {
-				this.currentInstance.vars.setAdd('speed', speed);
-			}
+			speed = (!relative ? speed : this.currentInstance.vars.getBuiltIn('speed') + speed);
+			this.currentInstance.setDirectionAndSpeed(chosenAngle, speed);
 		} else {
-			this.currentInstance.vars.set('speed', 0);
+			this.currentInstance.vars.setBuiltIn('speed', 0);
 		}
 
 		return 0;
@@ -4733,19 +4729,13 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static action_set_hspeed ([horSpeed], relative) {
-		if (!relative) {
-			this.currentInstance.vars.set('hspeed', horSpeed);
-		} else {
-			this.currentInstance.vars.setAdd('hspeed', horSpeed);
-		}
+		horSpeed = (!relative ? horSpeed : this.currentInstance.vars.getBuiltIn('hspeed') + horSpeed);
+		this.currentInstance.vars.setBuiltInCall('hspeed', horSpeed);
 		return 0;
 	}
 	static action_set_vspeed ([vertSpeed], relative) {
-		if (!relative) {
-			this.currentInstance.vars.set('vspeed', vertSpeed);
-		} else {
-			this.currentInstance.vars.setAdd('vspeed', vertSpeed);
-		}
+		vertSpeed = (!relative ? vertSpeed : this.currentInstance.vars.getBuiltIn('vspeed') + vertSpeed);
+		this.currentInstance.vars.setBuiltInCall('vspeed', vertSpeed);
 		return 0;
 	}
 	static action_set_gravity ([_]) {
@@ -4753,37 +4743,31 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static action_reverse_xdir ([]) {
-		this.currentInstance.vars.setMultiply('hspeed', -1);
+		this.currentInstance.vars.setBuiltInCall('hspeed', this.currentInstance.vars.getBuiltIn('hspeed') * -1);
 		return 0;
 	}
 	static action_reverse_ydir ([]) {
-		this.currentInstance.vars.setMultiply('vspeed', -1);
+		this.currentInstance.vars.setBuiltInCall('vspeed', this.currentInstance.vars.getBuiltIn('vspeed') * -1);
 		return 0;
 	}
 	static action_set_friction ([friction], relative) {
-		if (!relative) {
-			this.currentInstance.vars.set('friction', friction);
-		} else {
-			this.currentInstance.vars.setAdd('friction', friction);
-		}
+		friction = (!relative ? friction : this.currentInstance.vars.getBuiltIn('friction') + friction);
+		this.currentInstance.vars.setBuiltIn('friction', friction);
 		return 0;
 	}
 
 	// ### Jump
 
 	static action_move_to ([x, y], relative) {
-		if (!relative) {
-			this.currentInstance.vars.set('x', x);
-			this.currentInstance.vars.set('y', y);
-		} else {
-			this.currentInstance.vars.setAdd('x', x);
-			this.currentInstance.vars.setAdd('y', y);
-		}
+		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
+		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
+		this.currentInstance.vars.setBuiltInCall('x', x);
+		this.currentInstance.vars.setBuiltInCall('y', y);
 		return 0;
 	}
 	static action_move_start ([]) {
-		this.currentInstance.vars.set('x', this.currentInstance.vars.get('xstart'));
-		this.currentInstance.vars.set('y', this.currentInstance.vars.get('ystart'));
+		this.currentInstance.vars.setBuiltInCall('x', this.currentInstance.vars.getBuiltIn('xstart'));
+		this.currentInstance.vars.setBuiltInCall('y', this.currentInstance.vars.getBuiltIn('ystart'));
 		return 0;
 	}
 	static action_move_random ([_]) {
@@ -4800,20 +4784,20 @@ export default class BuiltInFunctions {
 		var vertical = (direction == 1 || direction == 2);
 
 		if (horizontal) {
-			if (this.currentInstance.vars.get('x') >= this.game.room.width) {
-				this.currentInstance.vars.set('x', this.currentInstance.vars.get('x') - this.game.room.width);
+			if (this.currentInstance.vars.getBuiltIn('x') >= this.game.room.width) {
+				this.currentInstance.vars.setBuiltInCall('x', this.currentInstance.vars.getBuiltIn('x') - this.game.room.width);
 			}
-			if (this.currentInstance.vars.get('x') < 0) {
-				this.currentInstance.vars.set('x', this.game.room.width + this.currentInstance.vars.get('x'));
+			if (this.currentInstance.vars.getBuiltIn('x') < 0) {
+				this.currentInstance.vars.setBuiltInCall('x', this.game.room.width + this.currentInstance.vars.getBuiltIn('x'));
 			}
 		}
 
 		if (vertical) {
-			if (this.currentInstance.vars.get('y') >= this.game.room.height) {
-				this.currentInstance.vars.set('y', this.currentInstance.vars.get('y') - this.game.room.height);
+			if (this.currentInstance.vars.getBuiltIn('y') >= this.game.room.height) {
+				this.currentInstance.vars.setBuiltInCall('y', this.currentInstance.vars.getBuiltIn('y') - this.game.room.height);
 			}
-			if (this.currentInstance.vars.get('y') < 0) {
-				this.currentInstance.vars.set('y', this.game.room.height + this.currentInstance.vars.get('y'));
+			if (this.currentInstance.vars.getBuiltIn('y') < 0) {
+				this.currentInstance.vars.setBuiltInCall('y', this.game.room.height + this.currentInstance.vars.getBuiltIn('y'));
 			}
 		}
 		

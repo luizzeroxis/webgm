@@ -527,9 +527,9 @@ export default class GML {
 		for (let i=0; i<16; i++) {
 			var value = 0;
 			if (Array.isArray(args) && args[i] != null) {value = args[i];}
-			this.game.globalVars.set('argument', value, [i]); // This auto sets numbered arguments
+			this.game.globalVars.setBuiltInArrayCall('argument', [i], value); // This auto sets numbered arguments
 		}
-		this.game.globalVars.setForce('argument_relative', argRelative);
+		this.game.globalVars.setBuiltIn('argument_relative', argRelative);
 
 		var result = 0;
 
@@ -556,7 +556,7 @@ export default class GML {
 
 			// Load numbered arguments from arguments array
 			for (let i=0; i<16; i++) {
-				this.game.globalVars.setNoCall('argument' + i.toString(), this.game.globalVars.get('argument', [i]));
+				this.game.globalVars.setBuiltIn('argument' + i.toString(), this.game.globalVars.getBuiltInArray('argument', [i]));
 			}
 
 			this.game.globalVars.load('argument_relative', savedArgRelative);

@@ -209,8 +209,8 @@ export class Game {
 			this.mouseX = e.offsetX;
 			this.mouseY = e.offsetY;
 
-			this.globalVars.setForce('mouse_x', this.mouseX);
-			this.globalVars.setForce('mouse_y', this.mouseY);
+			this.globalVars.setBuiltIn('mouse_x', this.mouseX);
+			this.globalVars.setBuiltIn('mouse_y', this.mouseY);
 		}
 		this.input.addEventListener('mousemove', this.mouseMoveHandler);
 
@@ -464,7 +464,7 @@ export class Game {
 			// Run main loop again, after a frame of time has passed.
 			// This means the game will slow down if a loop takes too much time.
 			
-			var timeoutStepMinTime = 1000 / this.globalVars.get('room_speed');
+			var timeoutStepMinTime = 1000 / this.globalVars.getBuiltIn('room_speed');
 
 			var timeoutStepEnd = performance.now();
 
@@ -539,7 +539,7 @@ export class Game {
 		this.mapEvents = this.getMapOfEvents();
 
 		// Do some stuff
-		this.globalVars.setForce('fps', this.fps);
+		this.globalVars.setBuiltIn('fps', this.fps);
 
 		// Begin step
 		for (let {event, instance} of this.getEventsOfTypeAndSubtype('step', 'begin')) {
@@ -553,13 +553,13 @@ export class Game {
 				if (!instance.exists) continue;
 
 				// Update alarm (decrease by one) here, before running event
-				// Alarm stays 0 until next alarm check, where it becomes -1 forever
+				// Alarm stays 0 until next alarm check, where it becomes -1 forever (that's doom as heck)
 
-				if (instance.vars.get('alarm', [subtype]) >= 0) {
-					instance.vars.setAdd('alarm', -1, [subtype]);
+				var alarm = instance.vars.getBuiltInArray('alarm', [subtype]);
+				if (alarm >= 0) {
+					instance.vars.setBuiltInArray('alarm', [subtype], alarm - 1);
 				}
-
-				if (instance.vars.get('alarm', [subtype]) == 0) {
+				if (instance.vars.getBuiltInArray('alarm', [subtype]) == 0) {
 					await this.doEvent(event, instance);
 				}
 
@@ -650,39 +650,42 @@ export class Game {
 		for (let instance of this.instances) {
 			if (!instance.exists) continue;
 
-			instance.vars.setAdd('x', instance.vars.get('hspeed'));
-			instance.vars.setAdd('y', instance.vars.get('vspeed'));
+			var hspeedOld = instance.vars.getBuiltIn('hspeed');
+			var vspeedOld = instance.vars.getBuiltIn('vspeed');
 
-			if (instance.vars.get('friction') != 0) {
-				var direction = instance.vars.get('direction') * (Math.PI / 180);
+			var hspeedNew = hspeedOld;
+			var vspeedNew = vspeedOld;
 
-				var hspeedOld = instance.vars.get('hspeed');
+			instance.vars.setBuiltInCall('x', instance.vars.getBuiltIn('x') + hspeedOld);
+			instance.vars.setBuiltInCall('y', instance.vars.getBuiltIn('y') + vspeedOld);
+
+			if (instance.vars.getBuiltIn('friction') != 0) {
+				var direction = instance.vars.getBuiltIn('direction') * (Math.PI / 180);
+
 				if (hspeedOld != 0) {
-					var hspeedNew = hspeedOld - Math.cos(direction) * instance.vars.get('friction');
+					hspeedNew = hspeedOld - Math.cos(direction) * instance.vars.getBuiltIn('friction');
 					if (Math.sign(hspeedNew) != Math.sign(hspeedOld)) { // If changed sign, that is, going in the opposite direction, don't do that
 						hspeedNew = 0;
 					}
-					instance.vars.set('hspeed', hspeedNew);
 				}
 
-				var vspeedOld = instance.vars.get('vspeed');
 				if (vspeedOld != 0) {
-					var vspeedNew = vspeedOld - -Math.sin(direction) * instance.vars.get('friction');
+					vspeedNew = vspeedOld - -Math.sin(direction) * instance.vars.getBuiltIn('friction');
 					if (Math.sign(vspeedNew) != Math.sign(vspeedOld)) {
 						vspeedNew = 0;
 					}
-					instance.vars.set('vspeed', vspeedNew);
 				}
 
 			}
 
-			// gravity
-			if (instance.vars.get('gravity') != 0) {
-				instance.vars.setAdd('hspeed', Math.cos(instance.vars.get('gravity_direction') * (Math.PI / 180)) * instance.vars.get('gravity'));
-				instance.vars.setAdd('vspeed', -Math.sin(instance.vars.get('gravity_direction') * (Math.PI / 180)) * instance.vars.get('gravity'));
+			if (instance.vars.getBuiltIn('gravity') != 0) {
+				hspeedNew += Math.cos(instance.vars.getBuiltIn('gravity_direction') * (Math.PI / 180)) * instance.vars.getBuiltIn('gravity');
+				vspeedNew += -Math.sin(instance.vars.getBuiltIn('gravity_direction') * (Math.PI / 180)) * instance.vars.getBuiltIn('gravity');
 			}
 
-			// TODO paths??
+			instance.setHspeedAndVspeed(hspeedNew, vspeedNew);
+
+			// TODO paths?
 
 		}
 
@@ -714,14 +717,14 @@ export class Game {
 		// Update some instance variables
 		for (let instance of this.instances) {
 			if (!instance.exists) continue;
-			instance.vars.set('xprevious', instance.vars.get('x'));
-			instance.vars.set('yprevious', instance.vars.get('y'));
+			instance.vars.setBuiltIn('xprevious', instance.vars.getBuiltIn('x'));
+			instance.vars.setBuiltIn('yprevious', instance.vars.getBuiltIn('y'));
 
-			var i = instance.vars.get('image_index') + instance.vars.get('image_speed');
-			if (i >= instance.vars.get('image_number')) {
-				i -= instance.vars.get('image_number');
+			var i = instance.vars.getBuiltIn('image_index') + instance.vars.getBuiltIn('image_speed');
+			if (i >= instance.vars.getBuiltIn('image_number')) {
+				i -= instance.vars.getBuiltIn('image_number');
 			}
-			instance.vars.set('image_index', i);
+			instance.vars.setBuiltIn('image_index', i);
 		}
 
 		// Reset keyboard/mouse states
@@ -748,13 +751,13 @@ export class Game {
 
 		var instances_by_depth = this.instances
 			.filter(x => x.exists)
-			.sort((a, b) => a.vars.get('depth') - b.vars.get('depth'));
+			.sort((a, b) => a.vars.getBuiltIn('depth') - b.vars.getBuiltIn('depth'));
 
 		for (let instance of instances_by_depth) {
 			if (!instance.exists) continue;
 
 			// Only draw if visible
-			if (instance.vars.get('visible')) {
+			if (instance.vars.getBuiltIn('visible')) {
 				var drawEvent = this.getEventOfInstance(instance, 'draw');
 
 				if (drawEvent) {
@@ -767,7 +770,7 @@ export class Game {
 						if (image) {
 							this.ctx.save();
 							this.ctx.translate(-instance.sprite.originx, -instance.sprite.originy);
-							this.ctx.drawImage(image.image, instance.vars.get('x'), instance.vars.get('y'));
+							this.ctx.drawImage(image.image, instance.vars.getBuiltIn('x'), instance.vars.getBuiltIn('y'));
 							this.ctx.restore();
 						}
 					}
@@ -950,7 +953,7 @@ export class Game {
 				}
 			}
 
-			this.instances = this.instances.filter(instance => instance.exists && instance.vars.get('persistent'))
+			this.instances = this.instances.filter(instance => instance.exists && instance.vars.getBuiltIn('persistent'))
 		}
 
 		this.room = room;
@@ -958,10 +961,10 @@ export class Game {
 		this.canvas.width = room.width;
 		this.canvas.height = room.height;
 
-		this.globalVars.setNoCall('room', room.id);
-		this.globalVars.setForce('room_width', room.width);
-		this.globalVars.setForce('room_height', room.height);
-		this.globalVars.setForce('room_speed', room.speed);
+		this.globalVars.setBuiltIn('room', room.id);
+		this.globalVars.setBuiltIn('room_width', room.width);
+		this.globalVars.setBuiltIn('room_height', room.height);
+		this.globalVars.setBuiltIn('room_speed', room.speed);
 
 		// TODO set background and views variables
 
@@ -1006,7 +1009,7 @@ export class Game {
 
 		await this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
 
-		return instance.vars.get('id');
+		return instance.vars.getBuiltIn('id');
 	}
 
 	// Check if two instances are colliding.
@@ -1054,7 +1057,7 @@ export class Game {
 		// place_free / place_empty / place_meeting
 		for (let otherInstance of otherInstances) {
 			if (!otherInstance.exists) continue;
-			if (solidOnly && (otherInstance.vars.get('solid') == 0)) continue;
+			if (solidOnly && (otherInstance.vars.getBuiltIn('solid') == 0)) continue;
 			var c = this.collisionInstanceOnInstance(instance, otherInstance, x, y);
 			if (c) return true;
 		}
@@ -1062,14 +1065,14 @@ export class Game {
 	}
 
 	collisionRectangleOnRectangle(a, b, aX, aY, bX, bY) {
-		aX = (aX == null) ? a.instance.vars.get('x') : aX;
-		aY = (aY == null) ? a.instance.vars.get('y') : aY;
+		aX = (aX == null) ? a.instance.vars.getBuiltIn('x') : aX;
+		aY = (aY == null) ? a.instance.vars.getBuiltIn('y') : aY;
 		let aX1 = aX - a.sprite.originx;
 		let aY1 = aY - a.sprite.originy
 		let aImage = a.sprite.images[a.instance.getImageIndex()]
 
-		bX = (bX == null) ? b.instance.vars.get('x') : bX;
-		bY = (bY == null) ? b.instance.vars.get('y') : bY;
+		bX = (bX == null) ? b.instance.vars.getBuiltIn('x') : bX;
+		bY = (bY == null) ? b.instance.vars.getBuiltIn('y') : bY;
 		let bX1 = bX - b.sprite.originx
 		let bY1 = bY - b.sprite.originy
 		let bImage = b.sprite.images[b.instance.getImageIndex()]

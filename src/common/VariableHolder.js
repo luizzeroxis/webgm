@@ -37,6 +37,7 @@ export default class VariableHolder {
 		return (this.getVariableInfo(name) != null);
 	}
 
+	// Get variable value. Use when you don't know what kinda variable it is (e.g. from GML).
 	get(name, indexes) {
 
 		if (indexes == null) {
@@ -49,8 +50,9 @@ export default class VariableHolder {
 		if (varInfo != null) {
 			variable = varInfo.reference;
 			if (varInfo.list == this.builtInList) {
-				if (this.caller != null && this.builtInClass[name].get) {
-					return this.builtInClass[name].get.call(this.caller, indexes);
+				var builtIn = this.builtInClass[name];
+				if (this.caller != null && builtIn.get) {
+					return builtIn.get.call(this.caller, indexes);
 				}
 			}
 		} else {
@@ -109,6 +111,52 @@ export default class VariableHolder {
 
 		return variable.value;
 
+	}
+
+	// Get built in variable that isn't an array. Meant to be used by the code, doesn't do any checks. Also doesn't call .get.
+	getBuiltIn(name) {
+		return this.builtInList[name].value;
+	}
+
+	// Get built in variable that is an array. Meant to be used by the code, doesn't do any checks. Also doesn't call .get.
+	getBuiltInArray(name, indexes) {
+		var variable = this.builtInList[name];
+		for (var index of indexes) {
+			variable = variable.value[index];
+		}
+		return variable.value;
+	}
+
+	setBuiltIn(name, value) {
+		this.builtInList[name].value = value;
+	}
+
+	setBuiltInArray(name, indexes, value) {
+		var variable = this.builtInList[name];
+		for (var index of indexes) {
+			variable = variable.value[index];
+		}
+		variable.value = value;
+	}
+
+	setBuiltInCall(name, value) {
+		// Value returned by function replaces the value to be set
+		var newValue = this.builtInClass[name].set.call(this.caller, value);
+		if (newValue != null) value = newValue;
+
+		this.builtInList[name].value = value;
+	}
+
+	setBuiltInArrayCall(name, indexes, value) {
+		// Value returned by function replaces the value to be set
+		var newValue = this.builtInClass[name].set.call(this.caller, value, indexes);
+		if (newValue != null) value = newValue;
+
+		var variable = this.builtInList[name];
+		for (var index of indexes) {
+			variable = variable.value[index];
+		}
+		variable.value = value;
 	}
 
 	set(name, value, indexes, overrideReadOnly, callSet=true) {
@@ -227,24 +275,6 @@ export default class VariableHolder {
 		} else {
 			return null;
 		}
-	}
-
-	setForce(name, value, indexes) {
-		return this.set(name, value, indexes, true);
-	}
-
-	setNoCall(name, value, indexes, overrideReadOnly) {
-		return this.set(name, value, indexes, overrideReadOnly, false);
-	}
-
-	setAdd(name, value, indexes, overrideReadOnly, callSet=true) {
-		var oldValue = this.get(name, indexes);
-		return this.set(name, oldValue + value, indexes, overrideReadOnly, callSet);
-	}
-
-	setMultiply(name, value, indexes, overrideReadOnly, callSet=true) {
-		var oldValue = this.get(name, indexes);
-		return this.set(name, oldValue * value, indexes, overrideReadOnly, callSet);
 	}
 
 	save(name) {

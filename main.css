@@ -1,3 +1,24 @@
+:root {
+	color-scheme: light dark;
+	--area-border: #444;
+	--window-border: #aaa;
+	--titlebar-background: #aaa;
+	--grid-resource-cell: #ccc;
+	--game-canvas-border: #888;
+}
+
+:root.dark {
+	color-scheme: dark;
+	--area-border: #bbb;
+	--window-border: #555;
+	--titlebar-background: #555;
+	--grid-resource-cell: #333;
+	--game-canvas-border: #777;
+}
+:root.light {
+	color-scheme: light;
+}
+
 .grid {
 	display: grid;
 	grid-template-columns: 300px auto;
@@ -17,7 +38,7 @@
 }
 
 .menu, .resources, .windows, .game {
-	border: 1px solid #444;
+	border: 1px solid var(--area-border);
 	padding: 8px;
 }
 
@@ -43,11 +64,11 @@
 }
 
 .window {
-	border: 1px solid #aaa;
+	border: 1px solid var(--window-border);
 }
 
 .titlebar {
-	background-color: #aaa;
+	background-color: var(--titlebar-background);
 	overflow: auto;
 }
 
@@ -56,7 +77,6 @@
 }
 
 .client {
-	background-color: white;
 	padding: 8px;
 }
 
@@ -66,7 +86,7 @@
 	grid-template-columns: 1fr;
 }
 .grid-resource > div {
-	border: 1px solid #ccc;
+	border: 1px solid var(--grid-resource-cell);
 	padding: 8px;
 }
 
@@ -137,25 +157,8 @@
 
 .game canvas {
 	display: block;
-	border: 1px solid #888;
+	border: 1px solid var(--game-canvas-border);
 	margin: 0 auto;
-}
-
-.modal {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	background-color: rgba(0,0,0,0.5);
-}
-
-.modalwindow {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	background-color: initial;
 }
 
 .icon {

@@ -183,7 +183,10 @@ export function newSelect(classes, labelcontent, options, value) {
 
 			endparent()
 
-		select.value = value;
+		if (value != null) {
+			select.value = value;
+		}
+		
 		endparent()
 
 	return e;

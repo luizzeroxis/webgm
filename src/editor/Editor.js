@@ -69,6 +69,7 @@ export default class Editor {
 		//Preferences
 		this.preferences = {
 			theme: 'auto',
+			defaultActionLibraryTab: 'move',
 			scrollToGameOnRun: true,
 			focusCanvasOnRun: true,
 			clearCanvasOnStop: true,

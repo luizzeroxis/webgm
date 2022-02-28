@@ -1,4 +1,4 @@
-import {$, parent, endparent, add, newElem, newTextBox, newCheckBox, newSelect, newColorBox} from '../../common/H.js'
+import {$, parent, endparent, add, newElem, newTextBox, newCheckBox, newRadioBox, newSelect, newColorBox, uniqueID} from '../../common/H.js'
 import {ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline} from '../../common/Project.js';
 import {parseArrowString, stringifyArrowValues, hexColorToDecimalColor} from '../../common/tools.js'
 import HTMLResourceSelect from '../HTMLResourceSelect.js';
@@ -25,7 +25,6 @@ export default class HTMLWindowAction extends HTMLWindow {
 		var actionTypeInfoItem = actionTypeInfo.find(x => x.kind == this.actionType.kind && x.interfaceKind == this.actionType.interfaceKind);
 
 		parent(this.htmlClient)
-			add( newElem(null, 'div') )
 
 			this.actionTypeHasApplyTo = this.actionType.hasApplyTo;
 			if (this.actionType.hasApplyTo == undefined) {
@@ -33,7 +32,27 @@ export default class HTMLWindowAction extends HTMLWindow {
 			}
 
 			if (this.actionTypeHasApplyTo) {
-				//
+
+				parent( add( newElem(null, 'fieldset') ) )
+
+					add( newElem(null, 'legend', 'Applies to') )
+
+					var appliesToGroup = '_radio_'+uniqueID();
+					this.radioAppliesToSelf = $( add( newRadioBox(null, 'Self',
+						appliesToGroup, (action.appliesTo == -1)) ), 'input')
+					this.radioAppliesToOther = $( add( newRadioBox(null, 'Other',
+						appliesToGroup, (action.appliesTo == -2)) ), 'input')
+					this.radioAppliesToObject = $( add( newRadioBox(null, 'Object:',
+						appliesToGroup, (action.appliesTo >= 0)) ), 'input')
+
+					this.selectObject = new HTMLResourceSelect(this.editor, null, ProjectObject);
+					this.removables.push(this.selectObject);
+
+					if (action.appliesTo >= 0)
+						this.selectObject.setValue(action.appliesTo);
+
+					endparent()
+
 			}
 
 			this.actionTypeArgs = this.actionType.args;
@@ -189,8 +208,14 @@ export default class HTMLWindowAction extends HTMLWindow {
 			this.action.args[i] = {kind: this.actionTypeArgs[i].kind, value: this.argsInterfaces[i].getValue()};
 		}
 
-		if (this.actionTypeHasApplyTo)
-			this.action.appliesTo = -1;
+		if (this.actionTypeHasApplyTo) {
+			this.action.appliesTo = (
+				this.radioAppliesToSelf.checked ? -1 :
+				this.radioAppliesToOther.checked ? -2 :
+				this.radioAppliesToObject.checked ? this.selectObject.getValue() :
+				null
+			);
+		}
 
 		if (this.actionTypeHasRelative)
 			this.action.relative = this.inputRelative.checked;

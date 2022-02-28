@@ -821,6 +821,9 @@ export class Game {
 
 	// Execute a node of the parsed actions tree.
 	async doTreeAction(treeAction) {
+
+		if (treeAction == null) return;
+
 		this.currentEventActionNumber = treeAction.actionNumber;
 
 		if (treeAction.appliesTo != undefined) {

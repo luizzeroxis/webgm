@@ -229,6 +229,27 @@ export default class BuiltInLibraries {
 						]
 					},
 					{
+						id: 605,
+						description: 'Comment',
+						listText: [i, a[0]],
+						hintText: ["COMMENT: ", a[0]],
+						kind: 'normal',
+						execution: 'nothing',
+
+						interfaceKind: 'normal',
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: 'comment:',
+								kind: 'string',
+								default: '',
+							},
+						],
+					},
+					{
 						id: 611,
 						description: 'Set Variable',
 						listText: ["Set variable ", a[0], " to ", a[1]],

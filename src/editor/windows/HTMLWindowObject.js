@@ -481,11 +481,15 @@ export default class HTMLWindowObject extends HTMLWindow {
 				event.actions.forEach((action, i) => {
 
 					var actionType = this.editor.getActionType(action);
-
+					var listText = this.getActionListText(action, actionType);
+					var hintText = this.getActionHintText(action, actionType);
+					
 					this.selectActionsOptions[i] = add( html('option',
-						{/*value: action.getNameId(),*/ title: this.getActionHintText(action, actionType)},
-						null, this.getActionListText(action, actionType)
-					) )
+						{
+							/*value: action.getNameId(),*/
+							class: (listText.bold ? 'bold ' : '') + (listText.italic ? 'italic ' : ''),
+							title: hintText.text
+						}, null, listText.text) )
 
 				})
 				endparent()
@@ -550,22 +554,21 @@ export default class HTMLWindowObject extends HTMLWindow {
 	}
 
 	getActionListText(action, actionType) {
-		if (actionType.listText)
-			return this.parseActionListOrHintText(actionType.listText, action, actionType);
-
-		return actionType.getListText(action);
+		return this.parseActionListOrHintText(actionType.listText, action, actionType);
 	}
 
 	getActionHintText(action, actionType) {
-		if (actionType.hintText)
-			return this.parseActionListOrHintText(actionType.hintText, action, actionType);
-
-		return actionType.getHintText(action);
+		return this.parseActionListOrHintText(actionType.hintText, action, actionType);
 	}
 
 	parseActionListOrHintText(textArray, action, actionType) {
 
-		return textArray.reduce((previous, part) => {
+		var result = {
+			bold: false,
+			italic: false,
+		};
+
+		result.text = textArray.reduce((previous, part) => {
 			if (typeof part == 'string') return previous + part;
 			switch (part.type) {
 				case 'a': {
@@ -598,12 +601,17 @@ export default class HTMLWindowObject extends HTMLWindow {
 					return previous + 'for object ' + (resource ? resource.name : '<undefined>') + ': ';
 				}
 
-				// case 'i':
-				// case 'b':
+				case 'i':
+					result.italic = true;
+					break;
+				case 'b':
+					result.bold = true;
+					break;
 			}
 			return previous;
 		}, '')
 
+		return result;
 	}
 
 	openActionWindow(action) {

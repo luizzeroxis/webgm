@@ -33,6 +33,8 @@ export default class ActionsParser {
 					} else if (action.typeExecution == 'code') {
 						treeAction.type = 'executeCode';
 						treeAction.code = action.typeExecutionCode;
+					} else {
+						return null;
 					}
 
 					if (action.typeIsQuestion) {

@@ -19,6 +19,13 @@
 	color-scheme: light;
 }
 
+.bold {
+	font-weight: bold;
+}
+.italic {
+	font-style: italic;
+}
+
 .tab {
 	display: inline-block;
 }

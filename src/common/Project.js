@@ -209,7 +209,7 @@ export class Project {
 					this.typeLibrary = null;
 					this.typeId = null;
 					this.typeKind = null;  // normal, begin group, end group, else, exit, repeat, variable, code
-					this.typeExecution = null; // none, function, code
+					this.typeExecution = null; // nothing, function, code
 					this.typeExecutionFunction = null;
 					this.typeExecutionCode = null;
 					this.typeIsQuestion = null;

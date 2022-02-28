@@ -316,9 +316,9 @@ export class Game {
 					locationScript: script,
 					matchResult: matchResult,
 					text:
-						`\n___________________________________________\n`
-						+ `COMPILATION ERROR in Script: ` + script.name + `\n\n`
-						+ matchResult.message + `\n`,
+						'\n___________________________________________\n'
+						+ 'COMPILATION ERROR in Script: ' + script.name + '\n\n'
+						+ matchResult.message + '\n',
 				});
 
 			});
@@ -342,7 +342,7 @@ export class Game {
 									type: 'compilation',
 									matchResult: matchResult,
 								},
-								`COMPILATION ERROR in code action:\n` + matchResult.message + `\n`,
+								'COMPILATION ERROR in code action:\n' + matchResult.message + '\n',
 								object, event, actionNumber
 							);
 
@@ -356,7 +356,7 @@ export class Game {
 									type: 'compilation',
 									matchResult: matchResult,
 								},
-								`COMPILATION ERROR in code action (in action type in a library):\n` + matchResult.message + `\n`,
+								'COMPILATION ERROR in code action (in action type in a library):\n' + matchResult.message + '\n',
 								object, event, actionNumber
 							);
 
@@ -375,7 +375,7 @@ export class Game {
 									type: 'compilation',
 									matchResult: matchResult,
 								},
-								`COMPILATION ERROR in code action (in variable set):\n` + matchResult.message + `\n`,
+								'COMPILATION ERROR in code action (in variable set):\n' + matchResult.message + '\n',
 								object, event, actionNumber
 							);
 
@@ -402,9 +402,9 @@ export class Game {
 						locationRoom: room,
 						matchResult: matchResult,
 						text:
-							`\n___________________________________________\n`
-							+ `COMPILATION ERROR in creation code for instance ` + instance.id + ` in room ` + room.name + `\n\n`
-							+ matchResult.message + `\n`,
+							'\n___________________________________________\n'
+							+ 'COMPILATION ERROR in creation code for instance ' + instance.id + ' in room ' + room.name + '\n\n'
+							+ matchResult.message + '\n',
 					});
 
 				});
@@ -418,9 +418,9 @@ export class Game {
 					locationRoom: room,
 					matchResult: matchResult,
 					text:
-						`\n___________________________________________\n`
-						+ `COMPILATION ERROR in creation code of room ` + room.name + `\n\n`
-						+ matchResult.message + `\n`,
+						'\n___________________________________________\n'
+						+ 'COMPILATION ERROR in creation code of room ' + room.name + '\n\n'
+						+ matchResult.message + '\n',
 				});
 
 			});
@@ -921,7 +921,7 @@ export class Game {
 						type: 'compilation',
 						matchResult: result.matchResult,
 					},
-					`COMPILATION ERROR in argument `+ argNumber.toString() +`\n` + result.matchResult.message + `\n`,
+					'COMPILATION ERROR in argument '+ argNumber.toString() +'\n' + result.matchResult.message + '\n',
 				);
 			}
 			
@@ -1167,7 +1167,7 @@ export class Game {
 					type: 'compilation',
 					location: 'executeString',
 					matchResult: result.matchResult,
-					text: `COMPILATION ERROR in string to be executed\n` + result.matchResult.message + `\n`
+					text: 'COMPILATION ERROR in string to be executed\n' + result.matchResult.message + '\n'
 				},
 			);
 		}
@@ -1281,11 +1281,11 @@ export class Game {
 		var _actionNumber = actionNumber==null ? this.currentEventActionNumber : actionNumber;
 
 		var base = {text:
-			`\n___________________________________________\n`
-			+ (isFatal ? `FATAL ` : ``) + `ERROR in\n`
-			+ `action number ` + _actionNumber.toString() + `\n`
-			+ `of ` + Events.getEventName(_event) + ` Event\n`
-			+ `for object ` + _object.name + `:\n\n`
+			'\n___________________________________________\n'
+			+ (isFatal ? 'FATAL ' : '') + 'ERROR in\n'
+			+ 'action number ' + _actionNumber.toString() + '\n'
+			+ 'of ' + Events.getEventName(_event) + ' Event\n'
+			+ 'for object ' + _object.name + ':\n\n'
 			+ extraText,
 
 			location: 'object',

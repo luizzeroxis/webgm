@@ -42,8 +42,8 @@ export default class BuiltInGlobals {
 			// TODO So, in GM you get 2 errors right after another. I have no idea how to replicate this.
 			throw new NonFatalErrorException({
 					type: 'trying_to_set_the_room_speed_to_a_value_less_or_equal_than_0',
-					text: `\n___________________________________________\n`
-						+ `Trying to set the room speed to a value <= 0. (` + value.toString() + `)\n`
+					text: '\n___________________________________________\n'
+						+ 'Trying to set the room speed to a value <= 0. (' + value.toString() + ')\n'
 				},
 			);
 		}

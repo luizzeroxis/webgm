@@ -738,7 +738,7 @@ export default class BuiltInFunctions {
 			throw this.game.makeFatalError({
 					type: 'unexisting_room_number',
 					numb: numb,
-				}, `Unexisting room number: ` + numb.toString());
+				}, 'Unexisting room number: ' + numb.toString());
 		}
 		this.game.stepStopAction = async () => {
 			await this.game.loadRoom(room);
@@ -1063,13 +1063,13 @@ export default class BuiltInFunctions {
 				throw this.game.makeNonFatalError({
 					type: 'trying_to_draw_non_existing_sprite',
 					spriteIndex: spriteIndex,
-				}, `Trying to draw non-existing sprite. (` + spriteIndex.toString() +`)`);
+				}, 'Trying to draw non-existing sprite. (' + spriteIndex.toString() +')');
 			}
 		} else {
 			throw this.game.makeNonFatalError({
 				type: 'trying_to_draw_non_existing_sprite',
 				spriteIndex: spriteIndex,
-			}, `Trying to draw non-existing sprite. (` + spriteIndex.toString() +`)`);
+			}, 'Trying to draw non-existing sprite. (' + spriteIndex.toString() +')');
 		}
 
 		return 0;
@@ -2961,7 +2961,7 @@ export default class BuiltInFunctions {
 			throw this.game.makeNonFatalError({
 					type: 'trying_to_execute_non_existing_script',
 					scriptIndex: scr,
-				}, `Trying to execute non-existing script. (` + scr.toString() +`)`);
+				}, 'Trying to execute non-existing script. (' + scr.toString() +')');
 		}
 	}
 
@@ -5111,7 +5111,7 @@ export default class BuiltInFunctions {
 					type: 'cannot_compare_arguments',
 					a: variable,
 					b: value,
-				}, `Cannot compare arguments. (` + variable.toString() +` has a different type than ` + value.toString() + `)`);
+				}, 'Cannot compare arguments. (' + variable.toString() +' has a different type than ' + value.toString() + ')');
 		}
 
 		switch (operation) {

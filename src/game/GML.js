@@ -814,9 +814,9 @@ export default class GML {
 				node: node,
 				subType: message,
 			},
-			`Error in code at line ` + lineNumber + `:\n`
-			+ gmlLine + `\n` + arrowString + `\n`
-			+ `at position ` + position + `: ` + message + `\n`
+			'Error in code at line ' + lineNumber + ':\n'
+			+ gmlLine + '\n' + arrowString + '\n'
+			+ 'at position ' + position + ': ' + message + '\n'
 		);
 	}
 

@@ -1,5 +1,5 @@
 import {$, parent, endparent, add, newElem, newTextBox, newCheckBox, newRadioBox, newSelect, newColorBox, uniqueID} from '../../common/H.js'
-import {ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline} from '../../common/Project.js';
+import {ProjectObject} from '../../common/Project.js';
 import {parseArrowString, stringifyArrowValues, hexColorToDecimalColor} from '../../common/tools.js'
 import HTMLResourceSelect from '../HTMLResourceSelect.js';
 import HTMLWindow from '../HTMLWindow.js';
@@ -180,18 +180,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 	}
 
 	makeResourceInterface(name, resourceTypeName, value) {
-		// TODO I am too lazy, this is garbage
-		var resourceType = {
-			'sprite': ProjectSprite,
-			'sound': ProjectSound,
-			'background': ProjectBackground,
-			'path': ProjectPath,
-			'script': ProjectScript,
-			'object': ProjectObject,
-			'room': ProjectRoom,
-			'font': ProjectFont,
-			'timeline': ProjectTimeline,
-		}[resourceTypeName];
+		var resourceType = this.object.constructor.actionArgResourceTypes[resourceTypeName];
 
 		var select = new HTMLResourceSelect(this.editor, name, resourceType);
 		this.removables.push(select);

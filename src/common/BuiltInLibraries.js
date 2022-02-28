@@ -1,6 +1,13 @@
 // import ActionDefaultIcon  from '../editor/img/action-default-icon.png';
 // import Action603Icon from '../editor/img/action-603-icon.png';
 
+let b = {type: 'b'}; // All text bold
+let i = {type: 'i'}; // All text italic
+let r = {type: 'r'}; // Replaced by 'relative '
+let n = {type: 'n'}; // Replaced by 'not '
+let w = {type: 'w'}; // Replaced by 'for the other object: ' or 'for object <name of object>: ' if apply to is not self
+let a = Array.from(new Array(6).keys()).map(x => ({type: 'a', number: x})); // Replace by argument value
+
 export default class BuiltInLibraries {
 	static getList() {
 		return [
@@ -10,13 +17,8 @@ export default class BuiltInLibraries {
 					{
 						id: 101,
 						description: 'Move Fixed',
-						getListText: action => "Start moving in a direction",
-						getHintText: action => (
-							BIL.textApplyTo(action)
-							+ "start moving in directions " + BIL.textArg(action, 0) + " with speed set "
-							+ BIL.textRelative(action)
-							+ "to " + BIL.textArg(action, 1)
-						),
+						listText: ["Start moving in a direction"],
+						hintText: [w, "start moving in directions ", a[0], " with speed set ", r, "to ", a[1]],
 						kind: 'normal',
 						execution: 'function',
 						executionFunction: 'action_move',
@@ -30,12 +32,8 @@ export default class BuiltInLibraries {
 					{
 						id: 117,
 						description: 'Align to Grid',
-						getListText: action => "Align to a grid of " + BIL.textArg(action, 0) + " by " + BIL.textArg(action, 1),
-						// @walign position to a grid with cells of @0 by @1 pixels
-						getHintText: action => (
-							BIL.textApplyTo(action)
-							+ "align position to a grid with cells of " + BIL.textArg(action, 0) + " by " + BIL.textArg(action, 1) + " pixels"
-						),
+						listText: ["Align to a grid of ", a[0], " by ", a[1]],
+						hintText: [w, "align position to a grid with cells of ", a[0], " by ", a[1], " pixels"],
 						kind: 'normal',
 						execution: 'function',
 						executionFunction: 'action_snap',
@@ -61,8 +59,8 @@ export default class BuiltInLibraries {
 					{
 						id: 112,
 						description: 'Wrap Screen',
-						getListText: action => "Wrap @0 when outside",
-						getHintText: action => "@wwrap @0 when an instance moves outside the room",
+						listText: ["Wrap ", a[0], " when outside"],
+						hintText: [w, "wrap ", a[0], " when an instance moves outside the room"],
 						kind: 'normal',
 						execution: 'function',
 						executionFunction: 'action_wrap',
@@ -89,8 +87,8 @@ export default class BuiltInLibraries {
 					{
 						id: 302,
 						description: 'Sleep',
-						getListText: action => "Sleep "+BIL.textArg(action, 0)+" milliseconds",
-						getHintText: action => "sleep "+BIL.textArg(action, 0)+" milliseconds; redrawing the screen: "+BIL.textArg(action, 1),
+						listText: ["Sleep ", a[0], " milliseconds"],
+						hintText: ["sleep ", a[0], " milliseconds; redrawing the screen: ", a[1]],
 						kind: 'normal',
 						execution: 'function',
 						executionFunction: 'action_sleep',
@@ -116,8 +114,8 @@ export default class BuiltInLibraries {
 					{
 						id: 321,
 						description: 'Display Message',
-						getListText: action => "Display a message",
-						getHintText: action => "display message: " + BIL.textArg(action, 0),
+						listText: ["Display a message"],
+						hintText: ["display message: ", a[0]],
 						kind: 'normal',
 						execution: 'function',
 						executionFunction: 'action_message',
@@ -141,62 +139,53 @@ export default class BuiltInLibraries {
 				name: 'control',
 				items: [
 					{
-						id: 421,
-						description: 'Else',
-						getListText: action => "Else",
-						getHintText: action => "else",
-						kind: 'else',
-					},
-					{
 						id: 422,
 						description: 'Start Block',
-						getListText: action => "Start of a block",
-						getHintText: action => "start of a block",
+						listText: ["Start of a block"],
+						hintText: ["start of a block"],
 						kind: 'begin',
 					},
 					{
-						id: 423,
-						description: 'Repeat',
-						getListText: action => "Repeat " + BIL.textArg(action, 0) + " times",
-						getHintText: action => "repeat next action (block) " + BIL.textArg(action, 0) + " times",
-						kind: 'repeat',
-					},
-					{
-						id: 424,
-						description: 'End Block',
-						getListText: action => "End of a block",
-						getHintText: action => "end of a block",
-						kind: 'end',
+						id: 421,
+						description: 'Else',
+						listText: ["Else"],
+						hintText: ["else"],
+						kind: 'else',
 					},
 					{
 						id: 425,
 						description: 'Exit Event',
-						getListText: action => "Exit this event",
-						getHintText: action => "exit this event",
+						listText: ["Exit this event"],
+						hintText: ["exit this event"],
 						kind: 'exit',
+					},
+					{
+						id: 424,
+						description: 'End Block',
+						listText: ["End of a block"],
+						hintText: ["end of a block"],
+						kind: 'end',
+					},
+					{
+						id: 423,
+						description: 'Repeat',
+						listText: ["Repeat ", a[0], " times"],
+						hintText: ["repeat next action (block) ", a[0], " times"],
+						kind: 'repeat',
 					},
 					{
 						id: 603,
 						description: 'Execute Code',
 						// image: Action603Icon,
-						getListText: action => "Execute a piece of code",
-						getHintText: action => BIL.textApplyTo(action) + "execute code:\n\n" + BIL.textArg(action, 0),
+						listText: ["Execute a piece of code"],
+						hintText: [w, "execute code:\n\n", a[0]],
 						kind: 'code',
 					},
 					{
 						id: 601,
 						description: 'Execute Script',
-						getListText: action => "Execute script: " + BIL.textArg(action, 0),
-						getHintText: action => (
-							BIL.textApplyTo(action)
-							+ "execute script " + BIL.textArg(action, 0)
-							+ " with arguments ("
-							+ BIL.textArg(action, 1) + ","
-							+ BIL.textArg(action, 2) + ","
-							+ BIL.textArg(action, 3) + ","
-							+ BIL.textArg(action, 4) + ","
-							+ BIL.textArg(action, 5) + ")"
-						),
+						listText: ["Execute script: ", a[0]],
+						hintText: [w, "execute script ", a[0], " with arguments (", a[1], ",", a[2], ",", a[3], ",", a[4], ",", a[5], ")"],
 						kind: 'normal',
 						execution: 'function',
 						executionFunction: 'action_execute_script',
@@ -242,29 +231,15 @@ export default class BuiltInLibraries {
 					{
 						id: 611,
 						description: 'Set Variable',
-						getListText: action => "Set variable " + BIL.textArg(action, 0) + " to " + BIL.textArg(action, 1),
-						getHintText: action => (
-							BIL.textApplyTo(action)
-							+ "set variable " + BIL.textArg(action, 0) + " "
-							+ BIL.textRelative(action)
-							+ "to " + BIL.textArg(action, 1)
-						),
+						listText: ["Set variable ", a[0], " to ", a[1]],
+						hintText: [w, "set variable ", a[0], " ", r, "to ", a[1]],
 						kind: 'variable',
 					},
 					{
 						id: 612,
 						description: 'Test Variable',
-						getListText: action => (
-							"If " + BIL.textArg(action, 0)
-							+ " is " + BIL.textNot(action) + BIL.textArg(action, 2)
-							+ " " + BIL.textArg(action, 1)
-						),
-						getHintText: action => (
-							BIL.textApplyTo(action)
-							+ "if " + BIL.textArg(action, 0)
-							+ " is " + BIL.textNot(action) + BIL.textArg(action, 2)
-							+ " " + BIL.textArg(action, 1)
-						),
+						listText: ["If ", a[0], " is ", n, a[2], " ", a[1]],
+						hintText: [w, "if ", a[0], " is ", n, a[2], " ", a[1]],
 						kind: 'normal',
 						execution: 'function',
 						executionFunction: 'action_if_variable',
@@ -299,33 +274,4 @@ export default class BuiltInLibraries {
 		];
 	}
 
-	static textArg(action, i) {
-		return action.args[i].value.toString();
-	}
-
-	// TODO add textMenu or something
-	// TODO add textResource or something
-
-	static textApplyTo(action) {
-		if (action.appliesTo == -1)
-			return '';
-		else
-			return 'for the object '+action.appliesTo.toString+': ';
-	}
-
-	static textRelative(action) {
-		if (action.relative) {
-			return 'relative ';
-		}
-		return '';
-	}
-
-	static textNot(action) {
-		if (action.not) {
-			return 'not ';
-		}
-		return '';
-	}
 }
-
-var BIL = BuiltInLibraries; // lol

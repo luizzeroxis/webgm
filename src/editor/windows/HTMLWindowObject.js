@@ -1,6 +1,9 @@
 import Events from '../../common/Events.js';
 import {$, parent, endparent, add, html, text, newElem, newButton, newTextBox, newNumberBox, newCheckBox, newSelect, newImage} from '../../common/H.js'
-import {ProjectSprite, ProjectObject, ProjectEvent, ProjectAction, ProjectActionArg} from '../../common/Project.js';
+import {
+	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline,
+	ProjectEvent, ProjectAction, ProjectActionArg
+} from '../../common/Project.js';
 import HTMLResourceSelect from '../HTMLResourceSelect.js';
 import HTMLTabs from '../HTMLTabs.js';
 import HTMLWindow from '../HTMLWindow.js';
@@ -9,6 +12,19 @@ import HTMLWindowAction from './HTMLWindowAction.js';
 import HTMLWindowCode from './HTMLWindowCode.js';
 
 export default class HTMLWindowObject extends HTMLWindow {
+
+	static actionArgResourceTypes = {
+		'sprite': ProjectSprite,
+		'sound': ProjectSound,
+		'background': ProjectBackground,
+		'path': ProjectPath,
+		'script': ProjectScript,
+		'object': ProjectObject,
+		'room': ProjectRoom,
+		'font': ProjectFont,
+		'timeline': ProjectTimeline,
+	};
+
 	constructor(...args) {
 		super(...args);
 	}
@@ -353,6 +369,8 @@ export default class HTMLWindowObject extends HTMLWindow {
 				}
 			);
 			endparent();
+
+		// TODO: add dispatcher to update action list when resource name changes
 	}
 
 	sortEvents() {
@@ -464,7 +482,10 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 					var actionType = this.editor.getActionType(action);
 
-					this.selectActionsOptions[i] = add( html('option', {/*value: action.getNameId(),*/ title: actionType.getHintText(action)}, null, actionType.getListText(action)) )
+					this.selectActionsOptions[i] = add( html('option',
+						{/*value: action.getNameId(),*/ title: this.getActionHintText(action, actionType)},
+						null, this.getActionListText(action, actionType)
+					) )
 
 				})
 				endparent()
@@ -526,6 +547,63 @@ export default class HTMLWindowObject extends HTMLWindow {
 			{kind: 'else', args: []},
 			{kind: 'exit', args: []},
 		];
+	}
+
+	getActionListText(action, actionType) {
+		if (actionType.listText)
+			return this.parseActionListOrHintText(actionType.listText, action, actionType);
+
+		return actionType.getListText(action);
+	}
+
+	getActionHintText(action, actionType) {
+		if (actionType.hintText)
+			return this.parseActionListOrHintText(actionType.hintText, action, actionType);
+
+		return actionType.getHintText(action);
+	}
+
+	parseActionListOrHintText(textArray, action, actionType) {
+
+		return textArray.reduce((previous, part) => {
+			if (typeof part == 'string') return previous + part;
+			switch (part.type) {
+				case 'a': {
+					let actionArg = action.args[part.number];
+
+					if (['expression', 'string', 'both', 'color'].includes(actionArg.kind)) {
+						return previous + actionArg.value.toString();
+
+					} else if ('boolean' == actionArg.kind) {
+						return previous + (actionArg.value ? 'true' : 'false');
+
+					} else if ('menu' == actionArg.kind) {
+						return previous + actionType.args[part.number].menu[actionArg.value];
+
+					} else {
+						let resourceType = this.constructor.actionArgResourceTypes[actionArg.kind];
+						if (!resourceType) throw new Error('Impossible action arg kind '+actionArg.kind);
+						let resource = this.editor.project.resources[resourceType.getClassName()].find(x => x.id == actionArg.value);
+						return previous + (resource ? resource.name : '<undefined>');
+					}
+				}
+				case 'r':
+					return previous + (action.relative ? 'relative ' : '')
+				case 'n':
+					return previous + (action.not ? 'not ' : '')
+				case 'w': {
+					if (action.appliesTo == -1) return '';
+					if (action.appliesTo == -2) return 'for the other object: ';
+					let resource = this.editor.project.resources.ProjectObject.find(x => x.id == action.appliesTo);
+					return previous + 'for object ' + (resource ? resource.name : '<undefined>') + ': ';
+				}
+
+				// case 'i':
+				// case 'b':
+			}
+			return previous;
+		}, '')
+
 	}
 
 	openActionWindow(action) {

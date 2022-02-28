@@ -971,8 +971,15 @@ export class Game {
 		this.clearIO();
 
 		// TODO Check if room is persistent
+
+		var createdInstances = [];
 		for (let roomInstance of room.instances) {
-			await this.instanceCreate(roomInstance.id, roomInstance.x, roomInstance.y, roomInstance.object_index);
+			createdInstances.push(this.instanceCreateNoEvents(roomInstance.id, roomInstance.x, roomInstance.y, roomInstance.object_index, false));
+		}
+
+		for (let instance of createdInstances) {
+			// TODO run instance creation code
+			await this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
 		}
 
 		if (isFirstRoom) {
@@ -997,6 +1004,14 @@ export class Game {
 
 	// Create an instance in the room.
 	async instanceCreate(id, x, y, object) {
+		var instance = this.instanceCreateNoEvents(id, x, y, object);
+		
+		await this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
+
+		return instance.vars.getBuiltIn('id');
+	}
+
+	instanceCreateNoEvents(id, x, y, object) {
 		if (id == null) {
 			this.lastId += 1;
 			id = this.lastId;
@@ -1005,11 +1020,7 @@ export class Game {
 		var instance = new Instance(id, x, y, object, this);
 		this.instances.push(instance);
 
-		// TODO run instance creation code
-
-		await this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
-
-		return instance.vars.getBuiltIn('id');
+		return instance;
 	}
 
 	// Check if two instances are colliding.

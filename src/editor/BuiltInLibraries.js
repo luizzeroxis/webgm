@@ -6,7 +6,7 @@ let i = {type: 'i'}; // All text italic
 let r = {type: 'r'}; // Replaced by 'relative '
 let n = {type: 'n'}; // Replaced by 'not '
 let w = {type: 'w'}; // Replaced by 'for the other object: ' or 'for object <name of object>: ' if apply to is not self
-let a = Array.from(new Array(6).keys()).map(x => ({type: 'a', number: x})); // Replace by argument value
+let a = Array.from(new Array(6).keys()).map(x => ({type: 'a', number: x})); // Replaced by argument value
 
 export default class BuiltInLibraries {
 	static getList() {
@@ -27,7 +27,6 @@ export default class BuiltInLibraries {
 						isQuestion: false,
 						hasApplyTo: true,
 						hasRelative: true,
-
 					},
 					{
 						id: 117,
@@ -77,6 +76,43 @@ export default class BuiltInLibraries {
 								menu: ['horizontal', 'vertical', 'in both directions'],
 								default: 0,
 							}
+						],
+					},
+				],
+			},
+			{
+				name: 'main1',
+				items: [
+					{
+						id: 201,
+						description: "Create Instance",
+						listText: ["Create instance of object ", a[0]],
+						hintText: [w, "create instance of object ", a[0], " at ", r, "position (", a[1], ",", a[2], ")"],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_create_object",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: true,
+						hasRelative: true,
+
+						args: [
+							{
+								name: "object:",
+								kind: "object",
+								default: -100,
+							},
+							{
+								name: "x:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "y:",
+								kind: "expression",
+								default: "0",
+							},
 						],
 					},
 				],
@@ -292,7 +328,50 @@ export default class BuiltInLibraries {
 					
 				]
 			},
+			{
+				name: 'score',
+				items: [
+					
+				],
+			},
+			{
+				name: 'extra',
+				items: [
+					
+				],
+			},
+			{
+				name: 'draw',
+				items: [
+					
+				],
+			},
 		];
 	}
 
 }
+
+/*
+					{
+						id: 999,
+						description: "",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+*/

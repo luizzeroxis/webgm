@@ -670,6 +670,15 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static async instance_create ([x, y, obj]) {
+
+		var object = this.game.getResourceById('ProjectObject', obj);
+		if (object == null) {
+			throw this.game.makeNonFatalError({
+					type: 'creating_instance_for_non_existing_object',
+					objectIndex: obj,
+				}, 'Creating instance for non-existing object: ' + obj.toString());
+		}
+
 		return await this.game.instanceCreate(null, x, y, obj);
 	}
 	static instance_copy ([_]) {
@@ -4850,7 +4859,11 @@ export default class BuiltInFunctions {
 
 	// ### Objects
 
-	static action_create_object ([_]) {
+	static async action_create_object ([object, x, y], relative) {
+		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
+		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
+
+		await BuiltInFunctions.instance_create.call(this, [x, y, object]);
 
 		return 0;
 	}

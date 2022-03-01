@@ -1,6 +1,5 @@
 //The editor class
 
-import BuiltInLibraries from '../common/BuiltInLibraries.js'
 import Dispatcher from '../common/Dispatcher.js'
 import {WebGMException, UnserializeException} from '../common/Exceptions.js';
 import {parent, endparent, add, newElem, setOnFileDrop} from '../common/H.js'
@@ -25,6 +24,7 @@ import GameArea from './areas/GameArea.js';
 import MenuArea from './areas/MenuArea.js';
 import ResourcesArea from './areas/ResourcesArea.js';
 import WindowsArea from './areas/WindowsArea.js';
+import BuiltInLibraries from './BuiltInLibraries.js'
 import DefaultProjectFontIcon from './img/default-ProjectFont-icon.png';
 import DefaultProjectPathIcon from './img/default-ProjectPath-icon.png';
 import DefaultProjectRoomIcon from './img/default-ProjectRoom-icon.png';

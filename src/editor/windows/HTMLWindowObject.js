@@ -370,7 +370,11 @@ export default class HTMLWindowObject extends HTMLWindow {
 			);
 			endparent();
 
-		// TODO: add dispatcher to update action list when resource name changes
+		this.listeners = this.editor.dispatcher.listen({
+			changeResourceName: i => {
+				this.updateSelectActions();
+			},
+		})
 	}
 
 	sortEvents() {
@@ -651,5 +655,6 @@ export default class HTMLWindowObject extends HTMLWindow {
 		if (this.selectCollisionObject) {
 			this.selectCollisionObject.remove();
 		}
+		this.editor.dispatcher.stopListening(this.listeners);
 	}
 }

@@ -64,7 +64,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 		parent(this.htmlClient)
 			parent( add( newElem('grid-resource resource-object', 'div') ) )
 
-				parent( add( newElem(null, 'div') ) ) // Main area
+				parent( add( newElem('properties-area', 'div') ) ) // Main area
 
 					var inputName = $( add( newTextBox(null, 'Name:', object.name) ), 'input');
 
@@ -272,61 +272,82 @@ export default class HTMLWindowObject extends HTMLWindow {
 						
 						parent( this.tabs.addTab(library.name, (library.name == this.editor.preferences.defaultActionLibraryTab)) )
 
-							library.items.forEach(actionType => {
+							var nextClass = null;
 
-								// TODO add images to the buttons
-								var actionTypeButton = add( newButton('action-type', null, () => {
+							parent( add( newElem('grid-action-types', 'div') ) )
 
-									var event = this.getSelectedEvent();
-									if (!event) {
-										alert("You need to select or add an event before you can add actions.");
-										return;
-									}
+								library.items.forEach(actionType => {
 
-									var action = new ProjectAction();
-									action.typeLibrary = library.name;
-									action.typeId = actionType.id;
-									action.typeKind = actionType.kind;
-									action.typeExecution = actionType.execution;
-									action.typeExecutionFunction = actionType.executionFunction;
-									action.typeExecutionCode = actionType.executionCode;
-									action.typeIsQuestion = actionType.isQuestion;
+									if (actionType.kind == "label") {
+										add( newElem('label', 'div', actionType.name) );
 
-									action.appliesTo = -1;
-									action.relative = false;
-									action.not = false;
+									} else if (actionType.kind == "separator") {
+										nextClass = 'new-row';
 
-									if (actionType.kind == 'normal' && actionType.interfaceKind == 'normal') {
-										// If kind and interface are normal, arguments come from the action type itself
-										action.args = actionType.args.map(arg => new ProjectActionArg(arg.kind, arg.default));
 									} else {
-										// Otherwise, the arguments come from a predefined list 
-										action.args = this.getActionTypeInfo()
-											.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind)
-											.args.map(arg => new ProjectActionArg(arg.kind, arg.default));
+										
+										// TODO add images to the buttons
+										var actionTypeButton = add( newButton('action-type', null, () => {
+
+											var event = this.getSelectedEvent();
+											if (!event) {
+												alert("You need to select or add an event before you can add actions.");
+												return;
+											}
+
+											var action = new ProjectAction();
+											action.typeLibrary = library.name;
+											action.typeId = actionType.id;
+											action.typeKind = actionType.kind;
+											action.typeExecution = actionType.execution;
+											action.typeExecutionFunction = actionType.executionFunction;
+											action.typeExecutionCode = actionType.executionCode;
+											action.typeIsQuestion = actionType.isQuestion;
+
+											action.appliesTo = -1;
+											action.relative = false;
+											action.not = false;
+
+											if (actionType.kind == 'normal' && actionType.interfaceKind == 'normal') {
+												// If kind and interface are normal, arguments come from the action type itself
+												action.args = actionType.args.map(arg => new ProjectActionArg(arg.kind, arg.default));
+											} else {
+												// Otherwise, the arguments come from a predefined list 
+												action.args = this.getActionTypeInfo()
+													.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind)
+													.args.map(arg => new ProjectActionArg(arg.kind, arg.default));
+											}
+
+											this.openActionWindow(action);
+
+											event.actions.push(action);
+
+											this.updateSelectActions();
+											this.selectActions.selectedIndex = event.actions.length-1;
+											this.updateActionsMenu();
+
+										}) )
+
+										if (nextClass) {
+											actionTypeButton.classList.add(nextClass);
+											nextClass = null;
+										}
+
+										actionTypeButton.title = actionType.description;
+
+										parent(actionTypeButton)
+											if (actionType.image) {
+												add( newImage(null, actionType.image) )
+											} else {
+												add( text(actionType.description) )
+											}
+											endparent()
+
 									}
 
-									this.openActionWindow(action);
+								})
 
-									event.actions.push(action);
-
-									this.updateSelectActions();
-									this.selectActions.selectedIndex = event.actions.length-1;
-									this.updateActionsMenu();
-
-								}) )
-
-								actionTypeButton.title = actionType.description;
-
-								parent(actionTypeButton)
-									if (actionType.image) {
-										add( newImage(null, actionType.image) )
-									} else {
-										add( text(actionType.description) )
-									}
-									endparent()
-
-							})
+								endparent()
 
 							endparent()
 

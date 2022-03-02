@@ -17,28 +17,24 @@ export default class BuiltInLocals {
 		var vspeed = this.vars.getBuiltIn('vspeed');
 		this.vars.setBuiltIn('speed', Math.hypot(hspeed, vspeed));
 		this.vars.setBuiltIn('direction', Math.atan2(-vspeed, hspeed) * (180 / Math.PI));
-		return hspeed;
 	}}
 
 	static vspeed = {type: 'real', default: 0, set (vspeed) {
 		var hspeed = this.vars.getBuiltIn('hspeed');
 		this.vars.setBuiltIn('speed', Math.hypot(hspeed, vspeed));
 		this.vars.setBuiltIn('direction', Math.atan2(-vspeed, hspeed) * (180 / Math.PI));
-		return vspeed;
 	}}
 
 	static direction = {type: 'real', default: 0, set (direction) {
 		var dir = direction * (Math.PI / 180);
 		this.vars.setBuiltIn('hspeed', Math.cos(dir) * this.vars.getBuiltIn('speed'));
 		this.vars.setBuiltIn('vspeed', -Math.sin(dir) * this.vars.getBuiltIn('speed'));
-		return direction;
 	}}
 
 	static speed = {type: 'real', default: 0, set (speed) {
 		var dir = this.vars.getBuiltIn('direction') * (Math.PI / 180);
 		this.vars.setBuiltIn('hspeed', Math.cos(dir) * speed);
 		this.vars.setBuiltIn('vspeed', -Math.sin(dir) * speed);
-		return speed;
 	}}
 
 	static friction = {type: 'real', default: 0}

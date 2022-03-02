@@ -6,20 +6,20 @@ export default class BuiltInGlobals {
 
 	// GML Language Overview / Scripts
 
-	static argument = {default: ()=>new Array(16).fill(0), set (value, indexes) {
+	static argument = {default: ()=>new Array(16).fill(0), set (value, previous, indexes) {
 		var index = indexes.at(-1) || 0;
 		this.globalVars.setBuiltIn('argument' + index.toString(), value);
 	}};
-	static argument0 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [0], value) }};
-	static argument1 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [1], value) }};
-	static argument2 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [2], value) }};
-	static argument3 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [3], value) }};
-	static argument4 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [4], value) }};
-	static argument5 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [5], value) }};
-	static argument6 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [6], value) }};
-	static argument7 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [7], value) }};
-	static argument8 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [8], value) }};
-	static argument9 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [9], value) }};
+	static argument0  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [0],  value) }};
+	static argument1  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [1],  value) }};
+	static argument2  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [2],  value) }};
+	static argument3  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [3],  value) }};
+	static argument4  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [4],  value) }};
+	static argument5  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [5],  value) }};
+	static argument6  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [6],  value) }};
+	static argument7  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [7],  value) }};
+	static argument8  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [8],  value) }};
+	static argument9  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [9],  value) }};
 	static argument10 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [10], value) }};
 	static argument11 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [11], value) }};
 	static argument12 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [12], value) }};
@@ -30,10 +30,13 @@ export default class BuiltInGlobals {
 
 	// Game play / Instances
 
-	static instance_count = {readOnly: true, get () {
-		return 0;
-	}};
-	static instance_id = {default: 0, readOnly: true}; // WTF???
+	static instance_count = {readOnly: true, direct: true,
+		directGet() {return this.instances.length},
+	};
+	static instance_id = {readOnly: true, direct: true, dimensions: 1,
+		directLength() {return this.instances.length},
+		directGet(index) {return this.instances[index].vars.getBuiltIn('id')},
+	};
 
 	// Game play / Timing
 
@@ -71,7 +74,9 @@ export default class BuiltInGlobals {
 	static room_persistent = {type: 'bool', default: 0};
 	static transition_kind = {type: 'integer', default: 0};
 	static transition_steps = {type: 'integer', default: 80, set (value) {
-		if (value < 1) return 1;
+		if (value < 1) {
+			this.globalVars.vars.setBuiltIn('transition_steps', 1);
+		}
 	}};
 
 	// Game play / Score

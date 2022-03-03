@@ -473,7 +473,9 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static move_towards_point ([x, y, sp]) {
-		this.currentInstance.setDirectionAndSpeed(sp, Math.atan2(-y, x) * (180 / Math.PI));
+		var cx = this.currentInstance.vars.getBuiltIn('x');
+		var cy = this.currentInstance.vars.getBuiltIn('y');
+		this.currentInstance.setDirectionAndSpeed(Math.atan2(-(y - cy), x - cx) * (180 / Math.PI), sp);
 		return 0;
 	}
 	static move_bounce_solid ([adv]) {

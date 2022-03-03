@@ -3,7 +3,7 @@
 	--area-border: #444;
 	--window-border: #aaa;
 	--titlebar-background: #aaa;
-	--grid-resource-cell: #ccc;
+	--grid-resource-cell-border: #ccc;
 	--game-canvas-border: #888;
 }
 
@@ -12,17 +12,32 @@
 	--area-border: #bbb;
 	--window-border: #555;
 	--titlebar-background: #555;
-	--grid-resource-cell: #333;
+	--grid-resource-cell-border: #333;
 	--game-canvas-border: #777;
 }
 :root.light {
 	color-scheme: light;
 }
 
+.bold {
+	font-weight: bold;
+}
+.italic {
+	font-style: italic;
+}
+
+.tab {
+	display: inline-block;
+}
+.tab-content {
+	border: 1px solid var(--grid-resource-cell-border);
+	padding: 8px;
+}
+
 .grid {
 	display: grid;
 	grid-template-columns: 300px auto;
-	grid-gap: 4px
+	grid-gap: 4px;
 }
 .grid .menu {
 	grid-column: 1/span 2;
@@ -86,12 +101,12 @@
 	grid-template-columns: 1fr;
 }
 .grid-resource > div {
-	border: 1px solid var(--grid-resource-cell);
+	border: 1px solid var(--grid-resource-cell-border);
 	padding: 8px;
 }
 
 .grid-resource.resource-sprite {
-	grid-template-columns: 300px 1fr;
+	grid-template-columns: 300px minmax(300px, 1fr);
 }
 .grid-resource.resource-sprite .preview {
 	overflow: auto;
@@ -99,7 +114,7 @@
 }
 
 .grid-resource.resource-background {
-	grid-template-columns: 300px 1fr;
+	grid-template-columns: 300px minmax(300px, 1fr);
 }
 .grid-resource.resource-background .preview {
 	overflow: auto;
@@ -107,7 +122,7 @@
 }
 
 .grid-resource.resource-object {
-	grid-template-columns: 300px 200px 1fr 200px;
+	grid-template-columns: 200px 200px minmax(200px, 1fr) 250px;
 }
 .grid-resource.resource-object .events label {
 	display: block;
@@ -126,11 +141,25 @@
 	resize: vertical;
 }
 
+.grid-resource.resource-object .grid-action-types {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	overflow-wrap: break-word;
+}
+
+.grid-resource.resource-object .label {
+	grid-column: 1 / -1;
+}
+
 .grid-resource.resource-object .action-type {
 	padding: 0;
 }
 .grid-resource.resource-object .action-type img {
 	display: block;
+}
+
+.grid-resource.resource-object .action-type.new-row {
+	grid-column-start: 1;
 }
 
 .arrow-interface {
@@ -144,7 +173,7 @@
 }
 
 .grid-resource.resource-room {
-	grid-template-columns: 300px 1fr;
+	grid-template-columns: 300px minmax(300px, 1fr);
 }
 .grid-resource.resource-room .preview {
 	overflow: auto;

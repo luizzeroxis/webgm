@@ -452,15 +452,20 @@ export default class BuiltInFunctions {
 		hsnap = hsnap <= 0 ? 1 : hsnap;
 		vsnap = vsnap <= 0 ? 1 : vsnap;
 
-		// This COULD run forever!
+		// TODO: figure out what GM really does.
+
 		var x, y;
-		do {
+		for (var i=0; i<100; ++i) {
 			x = Math.floor((Math.random() * this.game.room.width) / hsnap) * hsnap;
 			y = Math.floor((Math.random() * this.game.room.height) / vsnap) * vsnap;
-		} while (this.game.collisionInstanceOnInstances(this.currentInstance, this.game.instances, x, y, true))
 
-		this.currentInstance.vars.setBuiltInCall('x', x);
-		this.currentInstance.vars.setBuiltInCall('y', y);
+			if (!this.game.collisionInstanceOnInstances(this.currentInstance, this.game.instances, x, y, true)) {
+				this.currentInstance.vars.setBuiltInCall('x', x);
+				this.currentInstance.vars.setBuiltInCall('y', y);
+				break;
+			}
+		}
+		
 		return 0;
 	}
 	static move_snap ([hsnap, vsnap]) {
@@ -468,8 +473,26 @@ export default class BuiltInFunctions {
 		this.currentInstance.vars.setBuiltInCall('y', Math.floor(this.currentInstance.vars.getBuiltIn('y') / vsnap) * vsnap);
 		return 0;
 	}
-	static move_wrap ([_]) {
+	static move_wrap ([hor, vert, margin]) {
+		if (hor) {
+			var x = this.currentInstance.vars.getBuiltIn('x');
+			if (x >= this.game.room.width + margin) {
+				this.currentInstance.vars.setBuiltInCall('x', x - this.game.room.width - margin*2);
+			} else
+			if (x < 0 - margin) {
+				this.currentInstance.vars.setBuiltInCall('x', this.game.room.width + x + margin*2);
+			}
+		}
 
+		if (vert) {
+			var y = this.currentInstance.vars.getBuiltIn('y');
+			if (y >= this.game.room.height + margin) {
+				this.currentInstance.vars.setBuiltInCall('y', y - this.game.room.height - margin*2);
+			} else
+			if (y < 0 - margin) {
+				this.currentInstance.vars.setBuiltInCall('y', this.game.room.height + y - margin*2);
+			}
+		}
 		return 0;
 	}
 	static move_towards_point ([x, y, sp]) {
@@ -4735,8 +4758,15 @@ export default class BuiltInFunctions {
 		}
 		return 0;
 	}
-	static action_move_point ([_]) {
+	static action_move_point ([x, y, speed], relative) {
+		// If not relative: x - instance.x (you subtract to make instance the center)
+		// If relative: x - instance.x + instance.x == x
+		if (!relative) {
+			x -= this.currentInstance.vars.getBuiltIn('x');
+			y -= this.currentInstance.vars.getBuiltIn('y');
+		}
 
+		this.currentInstance.setDirectionAndSpeed(Math.atan2(-y, x) * (180 / Math.PI), speed);
 		return 0;
 	}
 	static action_set_hspeed ([horSpeed], relative) {
@@ -4749,8 +4779,11 @@ export default class BuiltInFunctions {
 		this.currentInstance.vars.setBuiltInCall('vspeed', vertSpeed);
 		return 0;
 	}
-	static action_set_gravity ([_]) {
-
+	static action_set_gravity ([direction, gravity], relative) {
+		direction = (!relative ? direction : this.currentInstance.vars.getBuiltIn('gravity_direction') + direction); // lol
+		this.currentInstance.vars.setBuiltIn('gravity_direction', direction);
+		gravity = (!relative ? gravity : this.currentInstance.vars.getBuiltIn('gravity') + gravity);
+		this.currentInstance.vars.setBuiltIn('gravity', gravity);
 		return 0;
 	}
 	static action_reverse_xdir ([]) {
@@ -4781,8 +4814,8 @@ export default class BuiltInFunctions {
 		this.currentInstance.vars.setBuiltInCall('y', this.currentInstance.vars.getBuiltIn('ystart'));
 		return 0;
 	}
-	static action_move_random ([_]) {
-
+	static action_move_random ([snapHor, snapVert]) {
+		BuiltInFunctions.move_random.call(this, [snapHor, snapVert]);
 		return 0;
 	}
 	static action_snap ([snapHor, snapVert]) {
@@ -4790,25 +4823,41 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static action_wrap ([direction]) {
-		// TODO check sprite size
 		var horizontal = (direction == 0 || direction == 2);
 		var vertical = (direction == 1 || direction == 2);
 
-		if (horizontal) {
-			if (this.currentInstance.vars.getBuiltIn('x') >= this.game.room.width) {
-				this.currentInstance.vars.setBuiltInCall('x', this.currentInstance.vars.getBuiltIn('x') - this.game.room.width);
+		var spriteW = 0;
+		var spriteH = 0;
+
+		if (this.currentInstance.sprite) {
+			var image = this.currentInstance.sprite.images[this.currentInstance.getImageIndex()]
+			if (image) {
+				spriteW = image.image.width;
+				spriteH = image.image.height;
 			}
-			if (this.currentInstance.vars.getBuiltIn('x') < 0) {
-				this.currentInstance.vars.setBuiltInCall('x', this.game.room.width + this.currentInstance.vars.getBuiltIn('x'));
+		}
+
+		if (horizontal) {
+			var x = this.currentInstance.vars.getBuiltIn('x');
+			if (x >= this.game.room.width &&
+				this.currentInstance.vars.getBuiltIn('hspeed') > 0) {
+				this.currentInstance.vars.setBuiltInCall('x', x - this.game.room.width - spriteW);
+			} else
+			if (x < 0 &&
+				this.currentInstance.vars.getBuiltIn('hspeed') < 0) {
+				this.currentInstance.vars.setBuiltInCall('x', this.game.room.width + x + spriteW);
 			}
 		}
 
 		if (vertical) {
-			if (this.currentInstance.vars.getBuiltIn('y') >= this.game.room.height) {
-				this.currentInstance.vars.setBuiltInCall('y', this.currentInstance.vars.getBuiltIn('y') - this.game.room.height);
-			}
-			if (this.currentInstance.vars.getBuiltIn('y') < 0) {
-				this.currentInstance.vars.setBuiltInCall('y', this.game.room.height + this.currentInstance.vars.getBuiltIn('y'));
+			var y = this.currentInstance.vars.getBuiltIn('y');
+			if (y >= this.game.room.height &&
+				this.currentInstance.vars.getBuiltIn('vspeed') > 0) {
+				this.currentInstance.vars.setBuiltInCall('y', y - this.game.room.height - spriteH);
+			} else
+			if (y < 0 &&
+				this.currentInstance.vars.getBuiltIn('vspeed') < 0) {
+				this.currentInstance.vars.setBuiltInCall('y', this.game.room.height + y + spriteH);
 			}
 		}
 		

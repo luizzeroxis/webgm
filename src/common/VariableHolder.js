@@ -90,7 +90,7 @@ export default class VariableHolder {
 					throw new VariableException({type: 'index_not_in_bounds'});
 				}
 
-				for (var [i, index] of indexes.entries()) {
+				for (let [i, index] of indexes.entries()) {
 					if (index >= builtIn.directLength.call(this.caller, i)) {
 						throw new VariableException({type: 'index_not_in_bounds'});
 					}
@@ -101,7 +101,7 @@ export default class VariableHolder {
 		}
 
 		// Find part of array that indexes are referencing
-		for (var index of indexes) {
+		for (let index of indexes) {
 			if (!Array.isArray(variable.value)) {
 				// If index is 0, keep same variable reference, even if it's not an array
 				if (index != 0) {
@@ -212,7 +212,6 @@ export default class VariableHolder {
 		}
 
 		// Find part of array that indexes are referencing
-
 		for (var index of indexes) {
 			if (!Array.isArray(variable.value)) {
 				// Variable is higher dimension but this particular index has not been changed to array. Do it now.

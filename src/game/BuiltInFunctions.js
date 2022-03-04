@@ -710,8 +710,8 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static instance_destroy ([]) {
-		this.game.doEvent(this.game.getEventOfInstance(this.currentInstance, 'destroy'), this.currentInstance);
+	static async instance_destroy ([]) {
+		await this.game.doEvent(this.game.getEventOfInstance(this.currentInstance, 'destroy'), this.currentInstance);
 		this.currentInstance.exists = false;
 		return 0;
 	}
@@ -4930,8 +4930,8 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static action_kill_object ([_]) {
-
+	static async action_kill_object ([]) {
+		await BuiltInFunctions.instance_destroy.call(this, []);
 		return 0;
 	}
 	static action_kill_position ([_]) {
@@ -4941,8 +4941,10 @@ export default class BuiltInFunctions {
 
 	/// ### Sprite
 
-	static action_sprite_set ([_]) {
-
+	static action_sprite_set ([sprite, subimage, speed]) {
+		this.currentInstance.vars.setBuiltInCall('sprite_index', sprite);
+		this.currentInstance.vars.setBuiltIn('image_index', subimage);
+		this.currentInstance.vars.setBuiltIn('image_speed', speed);
 		return 0;
 	}
 	static action_sprite_transform ([_]) {
@@ -4971,29 +4973,31 @@ export default class BuiltInFunctions {
 
 	/// ### Rooms
 
-	static action_previous_room ([_]) {
-
+	static action_previous_room ([transition]) {
+		// TODO transition
+		BuiltInFunctions.room_goto_previous.call(this, []);
 		return 0;
 	}
-	static action_next_room ([_]) {
-
+	static action_next_room ([transition]) {
+		// TODO transition
+		BuiltInFunctions.room_goto_next.call(this, []);
 		return 0;
 	}
-	static action_current_room ([_]) {
-
+	static action_current_room ([transition]) {
+		// TODO transition
+		BuiltInFunctions.room_restart.call(this, []);
 		return 0;
 	}
-	static action_another_room ([_]) {
-
+	static action_another_room ([newRoom, transition]) {
+		// TODO transition
+		BuiltInFunctions.room_goto.call(this, [newRoom]);
 		return 0;
 	}
-	static action_if_previous_room ([_]) {
-
-		return 0;
+	static action_if_previous_room ([]) {
+		return (BuiltInFunctions.room_previous.call(this, [this.game.room.id]) != -1) ? 1 : 0;
 	}
-	static action_if_next_room ([_]) {
-
-		return 0;
+	static action_if_next_room ([]) {
+		return (BuiltInFunctions.room_next.call(this, [this.game.room.id]) != -1) ? 1 : 0;
 	}
 
 	// ## main2

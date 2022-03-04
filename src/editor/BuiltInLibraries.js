@@ -573,6 +573,391 @@ export default class BuiltInLibraries {
 							},
 						],
 					},
+					/*
+					{
+						id: 999,
+						description: "Create Moving",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Create Random",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Change Instance",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
+					{
+						id: 203,
+						description: "Destroy Instance",
+						listText: ["Destroy the instance"],
+						hintText: [w, "destroy the instance"],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_kill_object",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: true,
+						hasRelative: false,
+
+						args: [],
+					},
+					/*
+					{
+						id: 999,
+						description: "Destroy at Position",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
+					{
+						name: "Sprite",
+						kind: "label",
+					},
+					{
+						id: 541,
+						description: "Change Sprite",
+						listText: ["Change sprite into ", a[0]],
+						hintText: [w, "set the sprite to ", a[0], " with subimage ", a[1], " and speed ", a[2]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_sprite_set",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: true,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "sprite:",
+								kind: "sprite",
+								default: -1,
+							},
+							{
+								name: "subimage:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "speed:",
+								kind: "expression",
+								default: "1",
+							},
+						],
+					},
+					/*
+					{
+						id: 999,
+						description: "Transform Sprite",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Color Sprite",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						name: "Sounds",
+						kind: "label",
+					},
+					{
+						id: 999,
+						description: "Play Sound",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Stop Sound",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Check Sound",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
+					{
+						name: "Rooms",
+						kind: "label",
+					},
+					{
+						id: 221,
+						description: "Previous Room",
+						listText: ["Go to previous room"],
+						hintText: ["go to previous room with transition effect ", a[0]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_previous_room",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "transition:",
+								kind: "menu",
+								menu: ["<no effect>", "Create from left", "Create from right", "Create from top", "Create from bottom", "Create from center", "Shift from left", "Shift from right", "Shift from top", "Shift from bottom", "Interlaced from left", "Interlaced from right", "Interlaced from top", "Interlaced from bottom", "Push from left", "Push from right", "Push from top", "Push from bottom", "Rotate left", "Rotate right", "Blend", "Fade out and in"],
+								default: 0,
+							},
+						],
+					},
+					{
+						id: 222,
+						description: "Next Room",
+						listText: ["Go to next room"],
+						hintText: ["go to next room with transition effect ", a[0]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_next_room",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "transition:",
+								kind: "menu",
+								menu: ["<no effect>", "Create from left", "Create from right", "Create from top", "Create from bottom", "Create from center", "Shift from left", "Shift from right", "Shift from top", "Shift from bottom", "Interlaced from left", "Interlaced from right", "Interlaced from top", "Interlaced from bottom", "Push from left", "Push from right", "Push from top", "Push from bottom", "Rotate left", "Rotate right", "Blend", "Fade out and in"],
+								default: 0,
+							},
+						],
+					},
+					{
+						id: 223,
+						description: "Restart Room",
+						listText: ["Restart the current room"],
+						hintText: ["restart the current room with transition effect ", a[0]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_current_room",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "transition:",
+								kind: "menu",
+								menu: ["<no effect>", "Create from left", "Create from right", "Create from top", "Create from bottom", "Create from center", "Shift from left", "Shift from right", "Shift from top", "Shift from bottom", "Interlaced from left", "Interlaced from right", "Interlaced from top", "Interlaced from bottom", "Push from left", "Push from right", "Push from top", "Push from bottom", "Rotate left", "Rotate right", "Blend", "Fade out and in"],
+								default: 0,
+							},
+						],
+					},
+					{
+						id: 224,
+						description: "Different Room",
+						listText: ["Go to room ", a[0]],
+						hintText: ["go to room ", a[0], " with transition effect ", a[1]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_another_room",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "new room:",
+								kind: "room",
+								default: -1,
+							},
+							{
+								name: "transition:",
+								kind: "menu",
+								menu: ["<no effect>", "Create from left", "Create from right", "Create from top", "Create from bottom", "Create from center", "Shift from left", "Shift from right", "Shift from top", "Shift from bottom", "Interlaced from left", "Interlaced from right", "Interlaced from top", "Interlaced from bottom", "Push from left", "Push from right", "Push from top", "Push from bottom", "Rotate left", "Rotate right", "Blend", "Fade out and in"],
+								default: 0,
+							},
+						],
+					},
+					{
+						id: 225,
+						description: "Check Previous",
+						listText: ["If previous room exists"],
+						hintText: ["if previous room exists"],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_if_previous_room",
+
+						interfaceKind: "none",
+						isQuestion: true,
+					},
+					{
+						id: 226,
+						description: "Check Next",
+						listText: ["If next room exists"],
+						hintText: ["if next room exists"],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_if_next_room",
+
+						interfaceKind: "none",
+						isQuestion: true,
+					},
 				],
 			},
 			{

@@ -7,9 +7,14 @@ export default class BuiltInGlobals {
 	// GML Language Overview / Scripts
 
 	static argument = {default: ()=>new Array(16).fill(0), set (value, previous, indexes) {
-		var index = indexes.at(-1) || 0;
-		this.globalVars.setBuiltIn('argument' + index.toString(), value);
+		while (indexes.length > 1 && indexes[0] == 0) {
+			indexes.shift();
+		}
+		if (indexes.length != 1) return;
+
+		this.globalVars.setBuiltIn('argument' + indexes[0].toString(), value);
 	}};
+
 	static argument0  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [0],  value) }};
 	static argument1  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [1],  value) }};
 	static argument2  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [2],  value) }};
@@ -82,14 +87,24 @@ export default class BuiltInGlobals {
 	// Game play / Score
 
 	static score = {type: 'integer', default: 0};
-	static lives = {type: 'integer', default: -1, set (value) {
-		var previous = this.globalVars.getBuiltIn('lives');
+	static lives = {type: 'integer', default: -1, async set (value, previous, indexes) {
 		if (value <= 0 && previous > 0) {
-			// TODO value is still not set here!! do something about that!!!
-			// TODO run no more lives event
+			var OTHER_NO_MORE_LIVES = 6;
+			for (let instance of this.instances) {
+				if (!instance.exists) continue;
+				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_NO_MORE_LIVES), instance);
+			}
 		}
 	}};
-	static health = {type: 'real', default: 100};
+	static health = {type: 'real', default: 100, async set (value, previous, indexes) {
+		if (value <= 0 && previous > 0) {
+			var OTHER_NO_MORE_HEALTH = 9;
+			for (let instance of this.instances) {
+				if (!instance.exists) continue;
+				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_NO_MORE_HEALTH), instance);
+			}
+		}
+	}};
 	static show_score = {type: 'bool', default: 1};
 	static show_lives = {type: 'bool', default: 0};
 	static show_health = {type: 'bool', default: 0};

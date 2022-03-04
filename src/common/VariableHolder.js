@@ -140,7 +140,7 @@ export default class VariableHolder {
 	}
 
 	// Set variable value. Use when you don't know what kinda variable it is (e.g. from GML).
-	set(name, value, indexes, overrideReadOnly, callSet=true) {
+	async set(name, value, indexes, overrideReadOnly, callSet=true) {
 
 		var variable;
 		var varInfo = this.getVariableInfo(name);
@@ -232,7 +232,7 @@ export default class VariableHolder {
 
 		// Call built in set function
 		if (varInfo && varInfo.list == this.builtInList && callSet && this.caller != null && builtIn.set) {
-			builtIn.set.call(this.caller, value, previous, indexes | []);
+			await builtIn.set.call(this.caller, value, previous, indexes | []);
 		}
 
 	}

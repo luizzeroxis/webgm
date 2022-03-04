@@ -273,27 +273,27 @@ export default class GML {
 			VarDeclare: async ({_names}) => {
 				for (let name of _names) { // is _names always an array of strings?
 					if (!this.vars.exists(name)) {
-						this.vars.set(name, null);
+						await this.vars.set(name, null);
 					} // TODO check what if the variable exists
 				}
 			},
 			GlobalVarDeclare: async ({_names}) => {
 				for (let name of _names) {
 					if (!this.game.globalVars.exists(name)) {
-						this.game.globalVars.set(name, 0);
+						await this.game.globalVars.set(name, 0);
 					}
 				}
 			},
 			Assignment: async ({_variable, _variableNode, _expression}) => {
 				var varInfo = await this.interpretASTNode(_variable);
 				var value = await this.interpretASTNode(_expression);
-				this.varSet(varInfo, value, _variableNode);
+				await this.varSet(varInfo, value, _variableNode);
 			},
 			// Note: In GM, assignment operations don't error out when they should, and they have weird behaviour. It's replicated here.
 			AssignmentAdd: async ({_variable, _variableNode, _expression}) => {
 				var varInfo = await this.interpretASTNode(_variable);
 				var value = await this.interpretASTNode(_expression);
-				this.varModify(varInfo, old => {
+				await this.varModify(varInfo, old => {
 					if (typeof old === typeof value) {
 						return old + value; // Works for both numbers (addition) and strings (concatenation).
 					}
@@ -303,7 +303,7 @@ export default class GML {
 			AssignmentSubtract: async ({_variable, _variableNode, _expression}) => {
 				var varInfo = await this.interpretASTNode(_variable);
 				var value = await this.interpretASTNode(_expression);
-				this.varModify(varInfo, old => {
+				await this.varModify(varInfo, old => {
 					if (typeof old === 'number' && typeof value == 'number') {
 						return old - value;
 					}
@@ -313,7 +313,7 @@ export default class GML {
 			AssignmentMultiply: async ({_variable, _variableNode, _expression}) => {
 				var varInfo = await this.interpretASTNode(_variable);
 				var value = await this.interpretASTNode(_expression);
-				this.varModify(varInfo, old => {
+				await this.varModify(varInfo, old => {
 					if (typeof old === 'number' && typeof value == 'string') {
 						// Yeah, wtf. *= repeats the string like in Python, but only if the original value was a real and the new one a string. I have no idea why.
 						return value.repeat(old);
@@ -327,7 +327,7 @@ export default class GML {
 			AssignmentDivide: async ({_variable, _variableNode, _expression}) => {
 				var varInfo = await this.interpretASTNode(_variable);
 				var value = await this.interpretASTNode(_expression);
-				this.varModify(varInfo, old => {
+				await this.varModify(varInfo, old => {
 					if (typeof old === 'number' && typeof value == 'number') {
 						return old / value;
 					}
@@ -647,7 +647,7 @@ export default class GML {
 
 	}
 
-	varSet(varInfo, value, node) {
+	async varSet(varInfo, value, node) {
 
 		try {
 
@@ -656,11 +656,11 @@ export default class GML {
 				if (this.game.constants[varInfo.name] != null)
 					throw this.makeErrorInGMLNode("Variable name expected. (it's a constant)", node);
 				if (this.vars.exists(varInfo.name))
-					return this.vars.set(varInfo.name, value, varInfo.indexes);
+					return await this.vars.set(varInfo.name, value, varInfo.indexes);
 				if (this.game.globalVars.exists(varInfo.name))
-					return this.game.globalVars.set(varInfo.name, value, varInfo.indexes);
+					return await this.game.globalVars.set(varInfo.name, value, varInfo.indexes);
 
-				this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
+				await this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
 
 			} else {
 
@@ -676,7 +676,7 @@ export default class GML {
 
 				} else {
 					for (let instance of instances) {
-						instance.vars.set(varInfo.name, value, varInfo.indexes);
+						await instance.vars.set(varInfo.name, value, varInfo.indexes);
 					}
 
 				}
@@ -732,10 +732,10 @@ export default class GML {
 		}
 	}
 
-	varModify(varInfo, valueFunc, node) {
+	async varModify(varInfo, valueFunc, node) {
 		var oldValue = this.varGet(varInfo, node);
 		var newValue = valueFunc(oldValue);
-		this.varSet(varInfo, newValue, node);
+		await this.varSet(varInfo, newValue, node);
 	}
 
 	arrayIndexValidate(index, node) {

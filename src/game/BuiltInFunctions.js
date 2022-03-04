@@ -766,7 +766,7 @@ export default class BuiltInFunctions {
 
 	// ## Rooms
 
-	static async room_goto ([numb]) {
+	static room_goto ([numb]) {
 		var room = this.game.getResourceById('ProjectRoom', numb);
 		if (room == null) {
 			throw this.game.makeFatalError({

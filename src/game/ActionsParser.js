@@ -17,6 +17,7 @@ export default class ActionsParser {
 
 	parseAction() {
 		var action = this.actions[this.actionNumber];
+		if (action == null) return null;
 		this.actionNumber++;
 
 		// normal, begin group, end group, else, exit, repeat, variable, code
@@ -127,6 +128,7 @@ export default class ActionsParser {
 
 	parseElseIfExists() {
 		var action = this.actions[this.actionNumber];
+		if (action == null) return false;
 		if (action.typeKind == 'else') {
 			this.actionNumber++;
 			return true;

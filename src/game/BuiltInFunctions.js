@@ -2306,6 +2306,7 @@ export default class BuiltInFunctions {
 
 	static show_message ([str]) {
 		this.game.clearIO();
+		// TODO parse #s
 		alert(str);
 		return 0;
 	}
@@ -4943,7 +4944,9 @@ export default class BuiltInFunctions {
 
 	static action_sprite_set ([sprite, subimage, speed]) {
 		this.currentInstance.vars.setBuiltInCall('sprite_index', sprite);
-		this.currentInstance.vars.setBuiltIn('image_index', subimage);
+		if (subimage != -1) {
+			this.currentInstance.vars.setBuiltIn('image_index', subimage);
+		}
 		this.currentInstance.vars.setBuiltIn('image_speed', speed);
 		return 0;
 	}
@@ -5004,12 +5007,16 @@ export default class BuiltInFunctions {
 
 	// ### Timing
 
-	static action_set_alarm ([_]) {
-
+	static action_set_alarm ([numberOfSteps, inAlarmNo], relative) {
+		numberOfSteps = (!relative ? numberOfSteps : this.currentInstance.vars.getBuiltInArray('alarm', [inAlarmNo]) + numberOfSteps);
+		this.currentInstance.setBuiltInArray('alarm', [inAlarmNo], numberOfSteps);
 		return 0;
 	}
 	static async action_sleep ([milliseconds, redraw]) {
 		// TODO read with redraw
+		if (redraw) {
+			//
+		}
 		await BuiltInFunctions.sleep.call(this, [milliseconds]);
 		return 0;
 	}
@@ -5083,8 +5090,8 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static action_end_game ([_]) {
-
+	static action_end_game ([]) {
+		BuiltInFunctions.game_end.call(this, []);
 		return 0;
 	}
 	static action_save_game ([_]) {
@@ -5115,29 +5122,40 @@ export default class BuiltInFunctions {
 
 	// ### Questions
 
-	static action_if_empty ([_]) {
-
+	static action_if_empty ([x, y, objects], relative) {
+		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
+		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
+		if (objects == 0) {
+			return BuiltInFunctions.place_free.call(this, [x, y]);
+		} else if (objects == 1) {
+			return BuiltInFunctions.place_empty.call(this, [x, y]);
+		}
 		return 0;
 	}
-	static action_if_collision ([_]) {
-
+	static action_if_collision ([x, y, objects], relative) {
+		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
+		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
+		if (objects == 0) {
+			return !(BuiltInFunctions.place_free.call(this, [x, y]));
+		} else if (objects == 1) {
+			return !(BuiltInFunctions.place_empty.call(this, [x, y]));
+		}
 		return 0;
 	}
-	static action_if_object ([_]) {
-
-		return 0;
+	static action_if_object ([object, x, y], relative) {
+		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
+		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
+		return BuiltInFunctions.place_meeting.call(this, [x, y, object]);
 	}
 	static action_if_number ([_]) {
 
 		return 0;
 	}
-	static action_if_dice ([_]) {
-
-		return 0;
+	static action_if_dice ([sides]) {
+		return ((Math.random() * sides) < 1) ? 1 : 0;
 	}
-	static action_if_question ([_]) {
-
-		return 0;
+	static action_if_question ([question]) {
+		return BuiltInFunctions.show_question.call(this, [question]);
 	}
 	static action_if ([_]) {
 

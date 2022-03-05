@@ -1,6 +1,3 @@
-// import ActionDefaultIcon  from '../editor/img/action-default-icon.png';
-// import Action603Icon from '../editor/img/action-603-icon.png';
-
 let b = {type: 'b'}; // All text bold
 let i = {type: 'i'}; // All text italic
 let r = {type: 'r'}; // Replaced by 'relative '
@@ -968,6 +965,34 @@ export default class BuiltInLibraries {
 						kind: "label",
 					},
 					{
+						id: 301,
+						description: "Set Alarm",
+						listText: ["Set ", a[1], " ", r, "to ", a[0]],
+						hintText: [w, "set ", a[1], " ", r, "to ", a[0]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_set_alarm",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: true,
+						hasRelative: true,
+
+						args: [
+							{
+								name: "number of steps:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "in alarm no:",
+								kind: "menu",
+								menu: ["Alarm 0", "Alarm 1", "Alarm 2", "Alarm 3", "Alarm 4", "Alarm 5", "Alarm 6", "Alarm 7", "Alarm 8", "Alarm 9", "Alarm 10", "Alarm 11"],
+								default: 0,
+							},
+						],
+					},
+					{
 						id: 302,
 						description: "Sleep",
 						listText: ["Sleep ", a[0], " milliseconds"],
@@ -994,6 +1019,143 @@ export default class BuiltInLibraries {
 							}
 						]
 					},
+					/*
+					{
+						kind: "separator",
+					},
+					{
+						id: 999,
+						description: "Set Time Line",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Time Line Position",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Time Line Speed",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Start Time Line",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Pause Time Line",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Stop Time Line",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
 					{
 						name: "Info",
 						kind: "label",
@@ -1019,12 +1181,546 @@ export default class BuiltInLibraries {
 								default: "",
 							}
 						]
-					}
+					},
+					/*
+					{
+						id: 999,
+						description: "Show Info",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						kind: "separator",
+					},
+					{
+						id: 999,
+						description: "Splash Text",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Splash Image",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Splash Webpage",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Splash Video",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Splash Settings",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
+					{
+						name: "Game",
+						kind: "label",
+					},
+					/*
+					{
+						id: 999,
+						description: "Restart Game",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
+					{
+						id: 332,
+						description: "End Game",
+						listText: ["End the game"],
+						hintText: ["end the game"],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_end_game",
+
+						interfaceKind: "none",
+						isQuestion: false,
+					},
+					/*
+					{
+						kind: "separator",
+					},
+					{
+						id: 999,
+						description: "Save Game",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Load Game",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						name: "Resources",
+						kind: "label",
+					},
+					{
+						id: 999,
+						description: "Replace Sprite",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Replace Sound",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Replace Background",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
 				],
 			},
 			{
 				name: "control",
 				items: [
+					{
+						name: "Questions",
+						kind: "label",
+					},
+					{
+						id: 401,
+						description: "Check Empty",
+						listText: ["If a position is collision free"],
+						hintText: [w, "if ", r, "position (", a[0], ",", a[1], ") is ", n, "collision free for ", a[2], " objects"],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_if_empty",
+
+						interfaceKind: "normal",
+						isQuestion: true,
+						hasApplyTo: true,
+						hasRelative: true,
+
+						args: [
+							{
+								name: "x:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "y:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "objects",
+								kind: "menu",
+								menu: ["Only solid", "All"],
+								default: 0,
+							},
+						],
+					},
+					{
+						id: 402,
+						description: "Check Collision",
+						listText: ["If there is a collision at a position"],
+						hintText: [w, "if ", r, "position (", a[0], ",", a[2], ") gives ", n, "a collision with ", a[2], " objects"],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_if_collision",
+
+						interfaceKind: "normal",
+						isQuestion: true,
+						hasApplyTo: true,
+						hasRelative: true,
+
+						args: [
+							{
+								name: "x:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "y:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "objects",
+								kind: "menu",
+								menu: ["Only solid", "All"],
+								default: 0,
+							},
+						],
+					},
+					{
+						id: 403,
+						description: "Check Object",
+						listText: ["If there is an object at a position"],
+						hintText: [w, "if at ", r, "position (", a[1], ",", a[2], ") there is ", n, "object ", a[0]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_if_object",
+
+						interfaceKind: "normal",
+						isQuestion: true,
+						hasApplyTo: true,
+						hasRelative: true,
+
+						args: [
+							{
+								name: "object:",
+								kind: "object",
+								default: -100,
+							},
+							{
+								name: "x:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "y:",
+								kind: "expression",
+								default: "0",
+							},
+						],
+					},
+					/*
+					{
+						id: 999,
+						description: "Test Instance Count",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
+					{
+						id: 405,
+						description: "Test Chance",
+						listText: ["With chance 1 out of ", a[0], " perform next ", n],
+						hintText: ["with a chance of 1 out of ", a[0], " do ", n, " perform the next action"],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_if_dice",
+
+						interfaceKind: "normal",
+						isQuestion: true,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "sides:",
+								kind: "expression",
+								default: "2",
+							},
+						],
+					},
+					{
+						id: 407,
+						description: "Check Question",
+						listText: ["If the user answers yes to a question"],
+						hintText: ["if the player does ", n, "say yes to the question: ", a[0]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_if_question",
+
+						interfaceKind: "normal",
+						isQuestion: true,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "question:",
+								kind: "both",
+								default: "",
+							},
+						],
+					},
+					/*
+					{
+						id: 999,
+						description: "Test Expression",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Check Mouse",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Check Grid",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
 					{
 						name: "Other",
 						kind: "label",
@@ -1064,6 +1760,30 @@ export default class BuiltInLibraries {
 						hintText: ["repeat next action (block) ", a[0], " times"],
 						kind: "repeat",
 					},
+					/*
+					{
+						id: 999,
+						description: "Call Parent Event",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
 					{
 						name: "Code",
 						kind: "label",
@@ -1188,6 +1908,30 @@ export default class BuiltInLibraries {
 							},
 						]
 					},
+					/*
+					{
+						id: 999,
+						description: "Draw Variable",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
 					
 				]
 			},

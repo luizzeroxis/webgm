@@ -144,6 +144,7 @@ export default class VariableHolder {
 
 		var variable;
 		var varInfo = this.getVariableInfo(name);
+		var builtIn;
 
 		if (varInfo == null) {
 			// Variable doesn't exist, create it
@@ -154,7 +155,7 @@ export default class VariableHolder {
 			variable = varInfo.reference;
 
 			if (varInfo.list == this.builtInList) {
-				var builtIn = this.builtInClass[name];
+				builtIn = this.builtInClass[name];
 
 				if (builtIn.readOnly && !overrideReadOnly) {
 					throw new VariableException({type: 'read_only'});
@@ -197,18 +198,17 @@ export default class VariableHolder {
 			difference = Math.abs(difference);
 
 			// Remove leading 0 indexes, they don't matter
-			while (indexes[0] == 0) {
+			while (indexes[0] == 0 && difference != 0) {
 				indexes.shift();
 				difference--;
 			}
 
 			// For the other extra indexes
-			// TODO this should probably be a simple for but I don't wanna touch this code
-			indexes.slice(0, difference).forEach(index => {
+			for (var i=0; i<difference; ++i) {
 				// Convert to higher dimension, move entire value (array or not) into index 0 of the new first dimension
 				variable.dimensions++;
 				variable.value = [ {value: variable.value} ];
-			})
+			}
 		}
 
 		// Find part of array that indexes are referencing
@@ -231,7 +231,7 @@ export default class VariableHolder {
 		variable.value = value;
 
 		// Call built in set function
-		if (varInfo && varInfo.list == this.builtInList && callSet && this.caller != null && builtIn.set) {
+		if (builtIn && callSet && this.caller != null && builtIn.set) {
 			await builtIn.set.call(this.caller, value, previous, indexes | []);
 		}
 

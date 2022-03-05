@@ -1585,30 +1585,39 @@ export default class BuiltInLibraries {
 							},
 						],
 					},
-					/*
 					{
-						id: 999,
+						id: 404,
 						description: "Test Instance Count",
-						listText: [""],
-						hintText: [""],
+						listText: ["If the number of instances is a value"],
+						hintText: ["if number of objects ", a[0], " is ", n, a[2], " ", a[1]],
 						kind: "normal",
 						execution: "function",
-						executionFunction: "",
+						executionFunction: "action_if_number",
 
 						interfaceKind: "normal",
-						isQuestion: false,
+						isQuestion: true,
 						hasApplyTo: false,
 						hasRelative: false,
 
 						args: [
 							{
-								name: "",
-								kind: "",
-								default: "",
+								name: "object:",
+								kind: "object",
+								default: -100,
+							},
+							{
+								name: "number:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "operation:",
+								kind: "menu",
+								menu: ["Equal to", "Smaller than", "Larger than"],
+								default: 0,
 							},
 						],
 					},
-					*/
 					{
 						id: 405,
 						description: "Test Chance",
@@ -1653,74 +1662,78 @@ export default class BuiltInLibraries {
 							},
 						],
 					},
-					/*
 					{
-						id: 999,
+						id: 408,
 						description: "Test Expression",
-						listText: [""],
-						hintText: [""],
+						listText: ["If an expression is true"],
+						hintText: [w, "if expression ", a[0], " is ", n, "true"],
 						kind: "normal",
 						execution: "function",
-						executionFunction: "",
+						executionFunction: "action_if",
 
 						interfaceKind: "normal",
-						isQuestion: false,
-						hasApplyTo: false,
+						isQuestion: true,
+						hasApplyTo: true,
 						hasRelative: false,
 
 						args: [
 							{
-								name: "",
-								kind: "",
+								name: "expression:",
+								kind: "expression",
 								default: "",
 							},
 						],
 					},
 					{
-						id: 999,
+						id: 409,
 						description: "Check Mouse",
-						listText: [""],
-						hintText: [""],
+						listText: ["If ", a[0], " mouse button is ", n, "pressed"],
+						hintText: ["if ", a[0], " mouse button is ", n, "pressed"],
 						kind: "normal",
 						execution: "function",
-						executionFunction: "",
+						executionFunction: "action_if_mouse",
 
 						interfaceKind: "normal",
-						isQuestion: false,
+						isQuestion: true,
 						hasApplyTo: false,
 						hasRelative: false,
 
 						args: [
 							{
-								name: "",
-								kind: "",
-								default: "",
+								name: "button",
+								kind: "menu",
+								menu: ["no", "left", "right", "middle"],
+								default: 1,
 							},
 						],
 					},
 					{
-						id: 999,
+						id: 410,
 						description: "Check Grid",
-						listText: [""],
-						hintText: [""],
+						listText: ["If instance is aligned with grid"],
+						hintText: [w, "if object is ", n, "aligned with grid with cells of ", a[0], " by ", a[1], " pixels"],
 						kind: "normal",
 						execution: "function",
-						executionFunction: "",
+						executionFunction: "action_if_aligned",
 
 						interfaceKind: "normal",
-						isQuestion: false,
-						hasApplyTo: false,
+						isQuestion: true,
+						hasApplyTo: true,
 						hasRelative: false,
 
 						args: [
 							{
-								name: "",
-								kind: "",
-								default: "",
+								name: "snap hor:",
+								kind: "expression",
+								default: "16",
+							},
+							{
+								name: "snap vert:",
+								kind: "expression",
+								default: "16",
 							},
 						],
 					},
-					*/
 					{
 						name: "Other",
 						kind: "label",
@@ -1791,7 +1804,6 @@ export default class BuiltInLibraries {
 					{
 						id: 603,
 						description: "Execute Code",
-						// image: Action603Icon,
 						listText: ["Execute a piece of code"],
 						hintText: [w, "execute code:\n\n", a[0]],
 						kind: "code",

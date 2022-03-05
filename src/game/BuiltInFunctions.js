@@ -667,14 +667,22 @@ export default class BuiltInFunctions {
 		var instances = this.objectReferenceToInstances(obj);
 
 		if (Array.isArray(instances)) {
-			if (instances.filter(x => x.exists).length > 0) {
+			if (instances.length > 0) {
 				return 1;
 			}
 		}
 
 		return 0;
 	}
-	static instance_number ([_]) {
+	static instance_number ([obj]) {
+		if (obj == -7) { // local
+			return 0;
+		}
+
+		var instances = this.objectReferenceToInstances(obj);
+		if (Array.isArray(instances)) {
+			return instances.length;
+		}
 
 		return 0;
 	}
@@ -5125,9 +5133,9 @@ export default class BuiltInFunctions {
 	static action_if_empty ([x, y, objects], relative) {
 		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
 		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
-		if (objects == 0) {
+		if (objects == 0) { // Only solid
 			return BuiltInFunctions.place_free.call(this, [x, y]);
-		} else if (objects == 1) {
+		} else if (objects == 1) { // All
 			return BuiltInFunctions.place_empty.call(this, [x, y]);
 		}
 		return 0;
@@ -5135,9 +5143,9 @@ export default class BuiltInFunctions {
 	static action_if_collision ([x, y, objects], relative) {
 		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
 		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
-		if (objects == 0) {
+		if (objects == 0) { // Only solid
 			return !(BuiltInFunctions.place_free.call(this, [x, y]));
-		} else if (objects == 1) {
+		} else if (objects == 1) { // All
 			return !(BuiltInFunctions.place_empty.call(this, [x, y]));
 		}
 		return 0;
@@ -5147,8 +5155,15 @@ export default class BuiltInFunctions {
 		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
 		return BuiltInFunctions.place_meeting.call(this, [x, y, object]);
 	}
-	static action_if_number ([_]) {
-
+	static action_if_number ([object, number, operation]) {
+		var result = BuiltInFunctions.instance_number.call(this, [object]);
+		if (operation == 0) { // Equal to
+			return (result == number) ? 1 : 0;
+		} else if (operation == 1) { // Smaller than
+			return (result < number) ? 1 : 0;
+		} else if (operation == 2) { // Larger than
+			return (result > number) ? 1 : 0;
+		}
 		return 0;
 	}
 	static action_if_dice ([sides]) {
@@ -5157,17 +5172,14 @@ export default class BuiltInFunctions {
 	static action_if_question ([question]) {
 		return BuiltInFunctions.show_question.call(this, [question]);
 	}
-	static action_if ([_]) {
-
-		return 0;
+	static action_if ([expression]) {
+		return expression;
 	}
-	static action_if_mouse ([_]) {
-
-		return 0;
+	static action_if_mouse ([button]) {
+		return BuiltInFunctions.mouse_check_button.call(this, [button]);
 	}
-	static action_if_aligned ([_]) {
-
-		return 0;
+	static action_if_aligned ([snapHor, snapVert]) {
+		return BuiltInFunctions.place_snapped.call(this, [snapHor, snapVert]);
 	}
 
 	// ### Other

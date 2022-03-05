@@ -203,24 +203,44 @@ export default class VariableHolder {
 				difference--;
 			}
 
-			// For the other extra indexes
-			for (var i=0; i<difference; ++i) {
-				// Convert to higher dimension, move entire value (array or not) into index 0 of the new first dimension
-				variable.dimensions++;
-				variable.value = [ {value: variable.value} ];
+			// If there's still more indexes than dimensions...
+			if (difference != 0) {
+				if (builtIn) {
+					// For built ins, ignore indexes and use first possible value.
+					indexes = new Array(variable.dimensions).fill(0);
+				} else {
+					// Convert to higher dimension until there's no more difference.
+					for (var i=0; i<difference; ++i) {
+						// Move entire value (array or not) into index 0 of the new first dimension
+						variable.dimensions++;
+						variable.value = [ {value: variable.value} ];
+					}
+				}
 			}
 		}
 
 		// Find part of array that indexes are referencing
 		for (var index of indexes) {
 			if (!Array.isArray(variable.value)) {
+				if (builtIn) {
+					throw new Error("Built in is not an array. Did you forget to set the default properly?");
+				}
 				// Variable is higher dimension but this particular index has not been changed to array. Do it now.
 				variable.value = [ {value: variable.value} ];
 			}
-			// If index doesn't exist, create it (after length or middle)
-			if (variable.value[index] == undefined) {
-				variable.value[index] = {value: 0};
+
+			if (builtIn) {
+				// If after length, default to using first index. This could get funky with dimensions higher than 1, but luckly we don't have those in built ins.
+				if (index >= variable.value.length) {
+					index = 0;
+				}
+			} else {
+				// If index doesn't exist, create it (after length or middle)
+				if (variable.value[index] == undefined) {
+					variable.value[index] = {value: 0};
+				}
 			}
+
 			// Get reference to object that refers to that index
 			variable = variable.value[index];
 		}

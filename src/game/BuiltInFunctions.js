@@ -5158,7 +5158,7 @@ export default class BuiltInFunctions {
 	static action_if_number ([object, number, operation]) {
 		var result = BuiltInFunctions.instance_number.call(this, [object]);
 		if (operation == 0) { // Equal to
-			return (result == number) ? 1 : 0;
+			return (result === number) ? 1 : 0;
 		} else if (operation == 1) { // Smaller than
 			return (result < number) ? 1 : 0;
 		} else if (operation == 2) { // Larger than
@@ -5232,12 +5232,21 @@ export default class BuiltInFunctions {
 
 	// ### Score
 
-	static action_set_score ([_]) {
-
+	static action_set_score ([newScore], relative) {
+		newScore = (!relative ? newScore : this.currentInstance.vars.getBuiltIn("score") + newScore);
+		this.game.globalVars.setBuiltIn("score", newScore);
 		return 0;
 	}
-	static action_if_score ([_]) {
-
+	static action_if_score ([value, operation]) {
+		var score = this.currentInstance.vars.getBuiltIn("score");
+		switch (operation) {
+			case 0: // equal to
+				return (score === value) ? 1 : 0;
+			case 1: // smaller than
+				return (score < value) ? 1 : 0;
+			case 2: // larger than
+				return (score > value) ? 1 : 0;
+		}
 		return 0;
 	}
 	static action_draw_score ([_]) {
@@ -5255,12 +5264,21 @@ export default class BuiltInFunctions {
 
 	// ### Lives
 
-	static action_set_life ([_]) {
-
+	static action_set_life ([newLives], relative) {
+		newLives = (!relative ? newLives : this.currentInstance.vars.getBuiltIn("lives") + newLives);
+		this.game.globalVars.setBuiltInCall("lives", newLives);
 		return 0;
 	}
-	static action_if_life ([_]) {
-
+	static action_if_life ([value, operation]) {
+		var lives = this.currentInstance.vars.getBuiltIn("lives");
+		switch (operation) {
+			case 0: // equal to
+				return (lives === value) ? 1 : 0;
+			case 1: // smaller than
+				return (lives < value) ? 1 : 0;
+			case 2: // larger than
+				return (lives > value) ? 1 : 0;
+		}
 		return 0;
 	}
 	static action_draw_life ([_]) {
@@ -5274,12 +5292,21 @@ export default class BuiltInFunctions {
 
 	// ### Health
 
-	static action_set_health ([_]) {
-
+	static action_set_health ([value], relative) {
+		value = (!relative ? value : this.currentInstance.vars.getBuiltIn("health") + value);
+		this.game.globalVars.setBuiltInCall("health", value);
 		return 0;
 	}
-	static action_if_health ([_]) {
-
+	static action_if_health ([value, operation]) {
+		var health = this.currentInstance.vars.getBuiltIn("health");
+		switch (operation) {
+			case 0: // equal to
+				return (health === value) ? 1 : 0;
+			case 1: // smaller than
+				return (health < value) ? 1 : 0;
+			case 2: // larger than
+				return (health > value) ? 1 : 0;
+		}
 		return 0;
 	}
 	static action_draw_health ([_]) {

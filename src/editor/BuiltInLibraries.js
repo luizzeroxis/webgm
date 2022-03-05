@@ -1950,7 +1950,328 @@ export default class BuiltInLibraries {
 			{
 				name: "score",
 				items: [
-					
+					{
+						name: "Score",
+						kind: "label",
+					},
+					{
+						id: 701,
+						description: "Set Score",
+						listText: ["Set the score ", r, "to ", a[0]],
+						hintText: ["set the score ", r, "to ", a[0]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_set_score",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: true,
+
+						args: [
+							{
+								name: "new score:",
+								kind: "expression",
+								default: "0",
+							},
+						],
+					},
+					{
+						id: 702,
+						description: "Test Score",
+						listText: ["If score is ", n, a[1], " ", a[0]],
+						hintText: ["if score is ", n, a[1], " ", a[0]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_if_score",
+
+						interfaceKind: "normal",
+						isQuestion: true,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "value:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "operation:",
+								kind: "menu",
+								menu: ["equal to", "smaller than", "larger than"],
+								default: 0,
+							},
+						],
+					},
+					/*
+					{
+						id: 999,
+						description: "Draw Score",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Show Highscore",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Clear Highscore",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
+					{
+						name: "Lives",
+						kind: "label",
+					},
+					{
+						id: 711,
+						description: "Set Lives",
+						listText: ["Set lives ", r, "to ", a[0]],
+						hintText: ["set the number of lives ", r, "to ", a[0]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_set_life",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: true,
+
+						args: [
+							{
+								name: "new lives:",
+								kind: "expression",
+								default: "0",
+							},
+						],
+					},
+					{
+						id: 712,
+						description: "Test Lives",
+						listText: ["If lives are ", n, a[1], " ", a[0]],
+						hintText: ["If lives are ", n, a[1], " ", a[0]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_if_life",
+
+						interfaceKind: "normal",
+						isQuestion: true,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "value:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "operation:",
+								kind: "menu",
+								menu: ["equal to", "smaller than", "larger than"],
+								default: 0,
+							},
+						],
+					},
+					/*
+					{
+						id: 999,
+						description: "Draw Lives",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Draw Life Images",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
+					{
+						name: "Health",
+						kind: "label",
+					},
+					{
+						id: 721,
+						description: "Set Health",
+						listText: ["Set the health ", r, "to ", a[0]],
+						hintText: ["set the health ", r, "to ", a[0]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_set_health",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: true,
+
+						args: [
+							{
+								name: "value (0-100):",
+								kind: "expression",
+								default: "0",
+							},
+						],
+					},
+					{
+						id: 722,
+						description: "Test Health",
+						listText: ["If health is ", n, a[1], " ", a[0]],
+						hintText: ["if health is ", n, a[1], " ", a[0]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_if_health",
+
+						interfaceKind: "normal",
+						isQuestion: true,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "value:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "operation:",
+								kind: "menu",
+								menu: ["equal to", "smaller than", "larger than"],
+								default: 0,
+							},
+						],
+					},
+					/*
+					{
+						id: 999,
+						description: "Draw Health",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Score Caption",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
 				],
 			},
 			{

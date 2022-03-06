@@ -1092,15 +1092,7 @@ export default class BuiltInFunctions {
 		if (spriteIndex >= 0) {
 			var sprite = this.game.project.resources.ProjectSprite.find(x => x.id == spriteIndex)
 			if (sprite) {
-				var _subimg = subimg % sprite.images.length;
-				if (sprite.images[_subimg]) {
-					this.game.ctx.save();
-					this.game.ctx.translate(-sprite.originx, -sprite.originy);
-					this.game.ctx.drawImage(sprite.images[_subimg].image, x, y);
-					this.game.ctx.restore();
-				} else {
-					// Do nothing
-				}
+				this.game.drawSprite(sprite, subimg % sprite.images.length, x, y);
 			} else {
 				throw this.game.makeNonFatalError({
 					type: 'trying_to_draw_non_existing_sprite',
@@ -5404,8 +5396,14 @@ export default class BuiltInFunctions {
 
 	// ### Other
 
-	static action_set_cursor ([_]) {
-
+	static action_set_cursor ([sprite, cursor]) {
+		this.game.globalVars.setBuiltInCall("cursor_sprite", sprite);
+		
+		if (cursor == 0) {
+			this.game.canvas.classList.add("no-cursor");
+		} else if (cursor == 1) {
+			this.game.canvas.classList.remove("no-cursor");
+		}
 		return 0;
 	}
 	static action_webpage ([_]) {

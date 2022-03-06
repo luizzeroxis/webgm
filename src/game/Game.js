@@ -68,6 +68,9 @@ export class Game {
 
 		this.stepStopAction = null;
 
+		this.cursorSprite = null;
+		this.cursorImageIndex = 0;
+
 	}
 
 	// Starts the game.
@@ -764,20 +767,21 @@ export class Game {
 					await this.doEvent(drawEvent, instance); 
 				} else {
 					// No draw event, draw sprite if it has one.
-
 					if (instance.sprite) {
-						var image = instance.sprite.images[instance.getImageIndex()];
-						if (image) {
-							this.ctx.save();
-							this.ctx.translate(-instance.sprite.originx, -instance.sprite.originy);
-							this.ctx.drawImage(image.image, instance.vars.getBuiltIn('x'), instance.vars.getBuiltIn('y'));
-							this.ctx.restore();
-						}
+						this.drawSprite(instance.sprite, instance.getImageIndex(), instance.vars.getBuiltIn('x'), instance.vars.getBuiltIn('y'));
 					}
 				}
 			}
 
 		}
+
+		// Draw mouse cursor
+
+		if (this.cursorSprite) {
+			this.drawSprite(this.cursorSprite, this.cursorImageIndex, this.globalVars.getBuiltIn('mouse_x'), this.globalVars.getBuiltIn('mouse_y'));
+			this.cursorImageIndex = ((++this.cursorImageIndex) % this.cursorSprite.images.length);
+		}
+
 	}
 
 	// Execute a event.
@@ -1129,6 +1133,19 @@ export class Game {
 			point.y >= instanceY &&
 			point.y < instanceY + instanceImage.image.height
 		);
+	}
+
+	// Draw a sprite with the image index at x and y.
+	drawSprite(sprite, imageIndex, x, y) {
+		var image = sprite.images[imageIndex];
+		if (image == null) return false;
+
+		this.ctx.save();
+		this.ctx.translate(-sprite.originx, -sprite.originy);
+		this.ctx.drawImage(image.image, x, y);
+		this.ctx.restore();
+
+		return true;
 	}
 
 	// Get state of a key. dict should be key, keyPressed or keyReleased.

@@ -4,6 +4,8 @@ import BuiltInFunctions from './BuiltInFunctions.js';
 
 export default class BuiltInGlobals {
 
+	// this = Game
+
 	// GML Language Overview / Scripts
 
 	static argument = {default: ()=>new Array(16).fill(0), set (value, previous, indexes) {
@@ -141,7 +143,9 @@ export default class BuiltInGlobals {
 	static mouse_y = {default: 0, readOnly: true};
 	static mouse_button = {type: 'integer', default: 0}; // TODO I think this is an enum
 	static mouse_lastbutton = {type: 'integer', default: 0};
-	static cursor_sprite = {type: 'integer', default: -1};
+	static cursor_sprite = {type: 'integer', default: -1, set (cursor_sprite) {
+		this.cursorSprite = this.getResourceById('ProjectSprite', cursor_sprite);
+	}};
 
 	// Game Graphics / Backgrounds
 

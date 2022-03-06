@@ -2277,7 +2277,466 @@ export default class BuiltInLibraries {
 			{
 				name: "extra",
 				items: [
-					
+					/*
+					{
+						name: "Particles",
+						kind: "label",
+					},
+					{
+						id: 999,
+						description: "Create Part System",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Destroy Part System",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Clear Part System",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Create Particle",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Particle Color",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Particle Life",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Particle Speed",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Particle Gravity",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Particle Secondary",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Create Emitter",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Destroy Emitter",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Burst from Emitter",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Stream from Emitter",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						name: "CD",
+						kind: "label",
+					},
+					{
+						id: 999,
+						description: "Play CD",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Stop CD",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Pause CD",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Resume CD",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Check CD",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Check CD Playing",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						name: "Other",
+						kind: "label",
+					},
+					*/
+					{
+						id: 801,
+						description: "Set Cursor",
+						listText: ["Set mouse to ", a[0]],
+						hintText: ["set the mouse cursor to sprite ", a[0], " and ", a[1], " the windows cursor"],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_set_cursor",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "sprite:",
+								kind: "sprite",
+								default: -1,
+							},
+							{
+								name: "cursor:",
+								kind: "menu",
+								menu: ["don't show", "show"],
+								default: 0,
+							},
+						],
+					},
 				],
 			},
 			{

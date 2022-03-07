@@ -1,6 +1,6 @@
 import {$, parent, endparent, add, newElem, newTextBox, newCheckBox, newRadioBox, newSelect, newColorBox, uniqueID} from '../../common/H.js'
 import {ProjectObject} from '../../common/Project.js';
-import {parseArrowString, stringifyArrowValues, hexColorToDecimalColor} from '../../common/tools.js'
+import {parseArrowString, stringifyArrowValues, decimalColorToHexColor, hexColorToDecimalColor} from '../../common/tools.js'
 import HTMLResourceSelect from '../HTMLResourceSelect.js';
 import HTMLWindow from '../HTMLWindow.js';
 
@@ -173,7 +173,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 	}
 
 	makeColorInterface(name, value) {
-		var input = $( add( newColorBox(null, name, hexColorToDecimalColor(value)) ), 'input');
+		var input = $( add( newColorBox(null, name, decimalColorToHexColor(value)) ), 'input');
 		return {
 			getValue: () => hexColorToDecimalColor(input.value),
 		}

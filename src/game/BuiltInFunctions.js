@@ -5415,24 +5415,33 @@ export default class BuiltInFunctions {
 
 	// ### Drawing
 
-	static action_draw_sprite ([_]) {
-
+	static action_draw_sprite ([sprite, x, y, subimage], relative) {
+		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
+		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
+		subimage = (subimage != -1) ? subimage : this.currentInstance.vars.getBuiltIn('image_index');
+		BuiltInFunctions.draw_sprite.call(this, [sprite, subimage, x, y])
 		return 0;
 	}
 	static action_draw_background ([_]) {
 
 		return 0;
 	}
-	static action_draw_text ([_]) {
-
+	static action_draw_text ([text, x, y], relative) {
+		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
+		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
+		BuiltInFunctions.draw_text.call(this, [x, y, text]);
 		return 0;
 	}
 	static action_draw_text_transformed ([_]) {
 
 		return 0;
 	}
-	static action_draw_rectangle ([_]) {
-
+	static action_draw_rectangle ([x1, y1, x2, y2, filled], relative) {
+		x1 = (!relative ? x1 : this.currentInstance.vars.getBuiltIn('x') + x1);
+		y1 = (!relative ? y1 : this.currentInstance.vars.getBuiltIn('y') + y1);
+		x2 = (!relative ? x2 : this.currentInstance.vars.getBuiltIn('x') + x2);
+		y2 = (!relative ? y2 : this.currentInstance.vars.getBuiltIn('y') + y2);
+		BuiltInFunctions.draw_rectangle.call(this, [x1, y1, x2, y2, filled]); // 0=filled, 1=outline
 		return 0;
 	}
 	static action_draw_gradient_hor ([_]) {
@@ -5443,16 +5452,24 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static action_draw_ellipse ([_]) {
-
+	static action_draw_ellipse ([x1, y1, x2, y2, filled], relative) {
+		x1 = (!relative ? x1 : this.currentInstance.vars.getBuiltIn('x') + x1);
+		y1 = (!relative ? y1 : this.currentInstance.vars.getBuiltIn('y') + y1);
+		x2 = (!relative ? x2 : this.currentInstance.vars.getBuiltIn('x') + x2);
+		y2 = (!relative ? y2 : this.currentInstance.vars.getBuiltIn('y') + y2);
+		BuiltInFunctions.draw_ellipse.call(this, [x1, y1, x2, y2, filled]); // 0=filled, 1=outline
 		return 0;
 	}
 	static action_draw_ellipse_gradient ([_]) {
 
 		return 0;
 	}
-	static action_draw_line ([_]) {
-
+	static action_draw_line ([x1, y1, x2, y2], relative) {
+		x1 = (!relative ? x1 : this.currentInstance.vars.getBuiltIn('x') + x1);
+		y1 = (!relative ? y1 : this.currentInstance.vars.getBuiltIn('y') + y1);
+		x2 = (!relative ? x2 : this.currentInstance.vars.getBuiltIn('x') + x2);
+		y2 = (!relative ? y2 : this.currentInstance.vars.getBuiltIn('y') + y2);
+		BuiltInFunctions.draw_line.call(this, [x1, y1, x2, y2]);
 		return 0;
 	}
 	static action_draw_arrow ([_]) {
@@ -5462,12 +5479,13 @@ export default class BuiltInFunctions {
 
 	// ### Settings
 
-	static action_color ([_]) {
-
+	static action_color ([color]) {
+		BuiltInFunctions.draw_set_color.call(this, [color]);
 		return 0;
 	}
-	static action_font ([_]) {
-
+	static action_font ([font, align]) {
+		BuiltInFunctions.draw_set_font.call(this, [font]);
+		BuiltInFunctions.draw_set_halign.call(this, [align]); // 0=left, 1=center, 2=right
 		return 0;
 	}
 	static action_fullscreen ([_]) {

@@ -2704,11 +2704,11 @@ export default class BuiltInLibraries {
 							},
 						],
 					},
+					*/
 					{
 						name: "Other",
 						kind: "label",
 					},
-					*/
 					{
 						id: 801,
 						description: "Set Cursor",
@@ -2742,7 +2742,479 @@ export default class BuiltInLibraries {
 			{
 				name: "draw",
 				items: [
-					
+					{
+						name: "Drawing",
+						kind: "label",
+					},
+					{
+						id: 501,
+						description: "Draw Sprite",
+						listText: ["Draw sprite ", a[0]],
+						hintText: [w, "at ", r, "position (", a[1], ",", a[2], ") draw image ", a[3], " of sprite ", a[0]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_draw_sprite",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: true,
+						hasRelative: true,
+
+						args: [
+							{
+								name: "sprite:",
+								kind: "sprite",
+								default: -1,
+							},
+							{
+								name: "x:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "y:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "subimage:",
+								kind: "expression",
+								default: "-1",
+							},
+						],
+					},
+					/*
+					{
+						id: 999,
+						description: "Draw Background",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
+					{
+						kind: "separator",
+					},
+					{
+						id: 514,
+						description: "Draw Text",
+						listText: ["Draw a text"],
+						hintText: [w, "at ", r, "position (", a[1], ",", a[2], ") draw text: ", a[0]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_draw_text",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: true,
+						hasRelative: true,
+
+						args: [
+							{
+								name: "text:",
+								kind: "both",
+								default: "",
+							},
+							{
+								name: "x:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "y:",
+								kind: "expression",
+								default: "0",
+							},
+						],
+					},
+					/*
+					{
+						id: 999,
+						description: "Draw Scaled Text",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
+					{
+						kind: "separator",
+					},
+					{
+						id: 511,
+						description: "Draw Rectangle",
+						listText: ["Draw a rectangle"],
+						hintText: [w, "draw rectangle with ", r, "vertices (", a[0], ",", a[1], ") and (", a[2], ",", a[3], "), ", a[4]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_draw_rectangle",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: true,
+						hasRelative: true,
+
+						args: [
+							{
+								name: "x1:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "y1:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "x2:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "y2:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "filled:",
+								kind: "menu",
+								menu: ["filled", "outline"],
+								default: 0,
+							},
+						],
+					},
+					/*
+					{
+						id: 999,
+						description: "Horizontal Gradient",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Vertical Gradient",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
+					{
+						id: 512,
+						description: "Draw Ellipse",
+						listText: ["Draw an ellipse"],
+						hintText: [w, "draw an ellipse with ", r, "vertices (", a[0], ",", a[1], ") and (", a[2], ",", a[3], "), ", a[4]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_draw_ellipse",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: true,
+						hasRelative: true,
+
+						args: [
+							{
+								name: "x1:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "y1:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "x2:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "y2:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "filled:",
+								kind: "menu",
+								menu: ["filled", "outline"],
+								default: 0,
+							},
+						],
+					},
+					/*
+					{
+						id: 999,
+						description: "Gradient Ellipse",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
+					{
+						kind: "separator",
+					},
+					{
+						id: 513,
+						description: "Draw Line",
+						listText: ["Draw a line"],
+						hintText: [w, "draw a line ", r, "between (", a[0], ",", a[1], ") and (", a[2], ",", a[3], ")"],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_draw_line",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: true,
+						hasRelative: true,
+
+						args: [
+							{
+								name: "x1:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "y1:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "x2:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "y2:",
+								kind: "expression",
+								default: "0",
+							},
+						],
+					},
+					/*
+					{
+						id: 999,
+						description: "Draw Arrow",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
+					{
+						name: "Settings",
+						kind: "label",
+					},
+					{
+						id: 524,
+						description: "Set Color",
+						listText: ["Set the color"],
+						hintText: ["set the drawing color to ", a[0]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_color",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "color",
+								kind: "color",
+								default: 16777215,
+							},
+						],
+					},
+					{
+						id: 526,
+						description: "Set Font",
+						listText: ["Set font to ", a[0]],
+						hintText: ["set the font for drawing text to ", a[0], " and align ", a[1]],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "action_font",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "Font:",
+								kind: "font",
+								default: -1,
+							},
+							{
+								name: "align:",
+								kind: "menu",
+								menu: ["left", "center", "right"],
+								default: 0,
+							},
+						],
+					},
+					/*
+					{
+						id: 999,
+						description: "Set Full Screen",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						name: "Other",
+						kind: "label",
+					},
+					{
+						id: 999,
+						description: "Take Snapshot",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					{
+						id: 999,
+						description: "Create Effect",
+						listText: [""],
+						hintText: [""],
+						kind: "normal",
+						execution: "function",
+						executionFunction: "",
+
+						interfaceKind: "normal",
+						isQuestion: false,
+						hasApplyTo: false,
+						hasRelative: false,
+
+						args: [
+							{
+								name: "",
+								kind: "",
+								default: "",
+							},
+						],
+					},
+					*/
 				],
 			},
 		];

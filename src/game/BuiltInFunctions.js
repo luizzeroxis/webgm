@@ -460,8 +460,8 @@ export default class BuiltInFunctions {
 			y = Math.floor((Math.random() * this.game.room.height) / vsnap) * vsnap;
 
 			if (!this.game.collisionInstanceOnInstances(this.currentInstance, this.game.instances, x, y, true)) {
-				this.currentInstance.vars.setBuiltInCall('x', x);
-				this.currentInstance.vars.setBuiltInCall('y', y);
+				this.currentInstance.vars.setBuiltIn('x', x);
+				this.currentInstance.vars.setBuiltIn('y', y);
 				break;
 			}
 		}
@@ -469,28 +469,28 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static move_snap ([hsnap, vsnap]) {
-		this.currentInstance.vars.setBuiltInCall('x', Math.floor(this.currentInstance.vars.getBuiltIn('x') / hsnap) * hsnap);
-		this.currentInstance.vars.setBuiltInCall('y', Math.floor(this.currentInstance.vars.getBuiltIn('y') / vsnap) * vsnap);
+		this.currentInstance.vars.setBuiltIn('x', Math.floor(this.currentInstance.vars.getBuiltIn('x') / hsnap) * hsnap);
+		this.currentInstance.vars.setBuiltIn('y', Math.floor(this.currentInstance.vars.getBuiltIn('y') / vsnap) * vsnap);
 		return 0;
 	}
 	static move_wrap ([hor, vert, margin]) {
 		if (hor) {
 			var x = this.currentInstance.vars.getBuiltIn('x');
 			if (x >= this.game.room.width + margin) {
-				this.currentInstance.vars.setBuiltInCall('x', x - this.game.room.width - margin*2);
+				this.currentInstance.vars.setBuiltIn('x', x - this.game.room.width - margin*2);
 			} else
 			if (x < 0 - margin) {
-				this.currentInstance.vars.setBuiltInCall('x', this.game.room.width + x + margin*2);
+				this.currentInstance.vars.setBuiltIn('x', this.game.room.width + x + margin*2);
 			}
 		}
 
 		if (vert) {
 			var y = this.currentInstance.vars.getBuiltIn('y');
 			if (y >= this.game.room.height + margin) {
-				this.currentInstance.vars.setBuiltInCall('y', y - this.game.room.height - margin*2);
+				this.currentInstance.vars.setBuiltIn('y', y - this.game.room.height - margin*2);
 			} else
 			if (y < 0 - margin) {
-				this.currentInstance.vars.setBuiltInCall('y', this.game.room.height + y - margin*2);
+				this.currentInstance.vars.setBuiltIn('y', this.game.room.height + y - margin*2);
 			}
 		}
 		return 0;
@@ -4806,13 +4806,13 @@ export default class BuiltInFunctions {
 	static action_move_to ([x, y], relative) {
 		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
 		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
-		this.currentInstance.vars.setBuiltInCall('x', x);
-		this.currentInstance.vars.setBuiltInCall('y', y);
+		this.currentInstance.vars.setBuiltIn('x', x);
+		this.currentInstance.vars.setBuiltIn('y', y);
 		return 0;
 	}
 	static action_move_start ([]) {
-		this.currentInstance.vars.setBuiltInCall('x', this.currentInstance.vars.getBuiltIn('xstart'));
-		this.currentInstance.vars.setBuiltInCall('y', this.currentInstance.vars.getBuiltIn('ystart'));
+		this.currentInstance.vars.setBuiltIn('x', this.currentInstance.vars.getBuiltIn('xstart'));
+		this.currentInstance.vars.setBuiltIn('y', this.currentInstance.vars.getBuiltIn('ystart'));
 		return 0;
 	}
 	static action_move_random ([snapHor, snapVert]) {
@@ -4842,11 +4842,11 @@ export default class BuiltInFunctions {
 			var x = this.currentInstance.vars.getBuiltIn('x');
 			if (x >= this.game.room.width &&
 				this.currentInstance.vars.getBuiltIn('hspeed') > 0) {
-				this.currentInstance.vars.setBuiltInCall('x', x - this.game.room.width - spriteW);
+				this.currentInstance.vars.setBuiltIn('x', x - this.game.room.width - spriteW);
 			} else
 			if (x < 0 &&
 				this.currentInstance.vars.getBuiltIn('hspeed') < 0) {
-				this.currentInstance.vars.setBuiltInCall('x', this.game.room.width + x + spriteW);
+				this.currentInstance.vars.setBuiltIn('x', this.game.room.width + x + spriteW);
 			}
 		}
 
@@ -4854,11 +4854,11 @@ export default class BuiltInFunctions {
 			var y = this.currentInstance.vars.getBuiltIn('y');
 			if (y >= this.game.room.height &&
 				this.currentInstance.vars.getBuiltIn('vspeed') > 0) {
-				this.currentInstance.vars.setBuiltInCall('y', y - this.game.room.height - spriteH);
+				this.currentInstance.vars.setBuiltIn('y', y - this.game.room.height - spriteH);
 			} else
 			if (y < 0 &&
 				this.currentInstance.vars.getBuiltIn('vspeed') < 0) {
-				this.currentInstance.vars.setBuiltInCall('y', this.game.room.height + y + spriteH);
+				this.currentInstance.vars.setBuiltIn('y', this.game.room.height + y + spriteH);
 			}
 		}
 		

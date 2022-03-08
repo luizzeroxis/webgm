@@ -659,8 +659,8 @@ export class Game {
 			var hspeedNew = hspeedOld;
 			var vspeedNew = vspeedOld;
 
-			instance.vars.setBuiltInCall('x', instance.vars.getBuiltIn('x') + hspeedOld);
-			instance.vars.setBuiltInCall('y', instance.vars.getBuiltIn('y') + vspeedOld);
+			instance.vars.setBuiltIn('x', instance.vars.getBuiltIn('x') + hspeedOld);
+			instance.vars.setBuiltIn('y', instance.vars.getBuiltIn('y') + vspeedOld);
 
 			if (instance.vars.getBuiltIn('friction') != 0) {
 				var direction = instance.vars.getBuiltIn('direction') * (Math.PI / 180);

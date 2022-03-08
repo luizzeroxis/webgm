@@ -39,8 +39,6 @@ export default class Instance {
 		this.vars.setBuiltIn('xstart', x);
 		this.vars.setBuiltIn('ystart', y);
 
-		this.updateBBox();
-
 	}
 
 	getImageIndex() {
@@ -63,36 +61,5 @@ export default class Instance {
 		this.vars.setBuiltIn('speed', Math.hypot(hspeed, vspeed));
 		this.vars.setBuiltIn('direction', Math.atan2(-vspeed, hspeed) * (180 / Math.PI));
 	}
-
-	updateBBox() {
-		if (this.sprite) {
-			var image = this.sprite.images[this.getImageIndex()];
-
-			if (image) {
-				var bbox_l = this.vars.getBuiltIn('x') - this.sprite.originx;
-				var bbox_r = bbox_l + image.image.width;
-				var bbox_t = this.vars.getBuiltIn('y') - this.sprite.originy;
-				var bbox_b = bbox_t + image.image.height;
-
-				this.vars.setBuiltIn('bbox_left', bbox_l);
-				this.vars.setBuiltIn('bbox_right', bbox_r);
-				this.vars.setBuiltIn('bbox_top', bbox_t);
-				this.vars.setBuiltIn('bbox_bottom', bbox_b);
-
-			} else {
-				// no image index
-				var x = this.vars.getBuiltIn('x');
-				var y = this.vars.getBuiltIn('y');
-
-				this.vars.setBuiltIn('bbox_left', x);
-				this.vars.setBuiltIn('bbox_right', x);
-				this.vars.setBuiltIn('bbox_top', y);
-				this.vars.setBuiltIn('bbox_bottom', y);
-			}
-			
-		} else {
-			// no sprite index
-		}
-	}
-
+	
 }

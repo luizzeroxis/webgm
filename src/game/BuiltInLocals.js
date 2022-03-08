@@ -1,13 +1,11 @@
 export default class BuiltInLocals {
 
+	// this = Instance
+
 	// Game play / Moving around
 
-	static x = {type: 'real', default: 0, set (x) {
-		this.updateBBox();
-	}}
-	static y = {type: 'real', default: 0, set (y) {
-		this.updateBBox();
-	}}
+	static x = {type: 'real', default: 0}
+	static y = {type: 'real', default: 0}
 	static xprevious = {type: 'real', default: 0}
 	static yprevious = {type: 'real', default: 0}
 	static xstart = {type: 'real', default: 0}
@@ -83,29 +81,10 @@ export default class BuiltInLocals {
 			if (image) {
 				this.vars.setBuiltIn('sprite_width', image.image.width);
 				this.vars.setBuiltIn('sprite_height', image.image.height);
-
-				var bbox_l = this.vars.getBuiltIn('x') - this.sprite.originx;
-				var bbox_r = bbox_l + image.image.width;
-				var bbox_t = this.vars.getBuiltIn('y') - this.sprite.originy;
-				var bbox_b = bbox_t + image.image.height;
-
-				this.vars.setBuiltIn('bbox_left', bbox_l);
-				this.vars.setBuiltIn('bbox_right', bbox_r);
-				this.vars.setBuiltIn('bbox_top', bbox_t);
-				this.vars.setBuiltIn('bbox_bottom', bbox_b);
-
 			} else {
 				// no image index
 				this.vars.setBuiltIn('sprite_width', 1);
 				this.vars.setBuiltIn('sprite_height', 1);
-
-				var x = this.vars.getBuiltIn('x');
-				var y = this.vars.getBuiltIn('y');
-
-				this.vars.setBuiltIn('bbox_left', x);
-				this.vars.setBuiltIn('bbox_right', x);
-				this.vars.setBuiltIn('bbox_top', y);
-				this.vars.setBuiltIn('bbox_bottom', y);
 			}
 			this.vars.setBuiltIn('sprite_xoffset', this.sprite.originx);
 			this.vars.setBuiltIn('sprite_yoffset', this.sprite.originy);
@@ -115,10 +94,6 @@ export default class BuiltInLocals {
 			// no sprite index
 			this.vars.setBuiltIn('sprite_width', 0);
 			this.vars.setBuiltIn('sprite_height', 0);
-			this.vars.setBuiltIn('bbox_left', -100000);
-			this.vars.setBuiltIn('bbox_right', -100000);
-			this.vars.setBuiltIn('bbox_top', -100000);
-			this.vars.setBuiltIn('bbox_bottom', -100000);
 			this.vars.setBuiltIn('sprite_xoffset', 0);
 			this.vars.setBuiltIn('sprite_yoffset', 0);
 			this.vars.setBuiltIn('image_number', 0);
@@ -142,10 +117,33 @@ export default class BuiltInLocals {
 	static image_alpha = {type: 'real', default: 1}
 	static image_blend = {type: 'integer', default: 16777215}
 
-	static bbox_left = {default: -100000, readOnly: true}
-	static bbox_right = {default: -100000, readOnly: true}
-	static bbox_top = {default: -100000, readOnly: true}
-	static bbox_bottom = {default: -100000, readOnly: true}
+	static bbox_left = {readOnly: true, direct: true, directGet() {
+		if (this.sprite == null) return -100000;
+
+		var image = this.sprite.images[this.getImageIndex()];
+		return this.vars.getBuiltIn('x') + (image ? -this.sprite.originx : 0);
+	}}
+
+	static bbox_right = {readOnly: true, direct: true, directGet() {
+		if (this.sprite == null) return -100000;
+
+		var image = this.sprite.images[this.getImageIndex()];
+		return this.vars.getBuiltIn('x') + (image ? -this.sprite.originx + image.image.width: 0);
+	}}
+
+	static bbox_top = {readOnly: true, direct: true, directGet() {
+		if (this.sprite == null) return -100000;
+
+		var image = this.sprite.images[this.getImageIndex()];
+		return this.vars.getBuiltIn('y') + (image ? -this.sprite.originy : 0);
+	}}
+
+	static bbox_bottom = {readOnly: true, direct: true, directGet() {
+		if (this.sprite == null) return -100000;
+
+		var image = this.sprite.images[this.getImageIndex()];
+		return this.vars.getBuiltIn('y') + (image ? -this.sprite.originy + image.image.height: 0);
+	}}
 
 	// Unknown
 	

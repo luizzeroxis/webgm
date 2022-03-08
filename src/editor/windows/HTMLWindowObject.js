@@ -508,6 +508,10 @@ export default class HTMLWindowObject extends HTMLWindow {
 					var actionType = this.editor.getActionType(action);
 					var listText = this.getActionListText(action, actionType);
 					var hintText = this.getActionHintText(action, actionType);
+
+					if (this.editor.preferences.hintTextInAction) {
+						listText = hintText;
+					}
 					
 					this.selectActionsOptions[i] = add( html('option',
 						{

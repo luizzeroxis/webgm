@@ -73,6 +73,7 @@ export default class Editor {
 			scrollToGameOnRun: true,
 			focusCanvasOnRun: true,
 			clearCanvasOnStop: true,
+			hintTextInAction: false,
 		}
 
 		this.autoTheme = 'light';

@@ -51,8 +51,14 @@ export default class BuiltInLocals {
 
 	// Game play / Instances
 
-	static object_index = {default: -1, readOnly: true}
-	static id = {default: -1, readOnly: true}
+	static object_index = {readOnly: true, direct: true, directGet() {
+		return this.object_index;
+	}}
+
+	static id = {readOnly: true, direct: true, directGet() {
+		return this.id;
+	}}
+	
 	static mask_index = {type: 'integer', default: -1}
 	static solid = {type: 'bool', default: 0}
 	static persistent = {type: 'bool', default: 0}
@@ -74,6 +80,7 @@ export default class BuiltInLocals {
 	static sprite_index = {type: 'integer', default: -1, set (sprite_index) {
 		// Update sprite cache
 		this.sprite = this.game.getResourceById('ProjectSprite', sprite_index);
+		this.vars.setBuiltIn('image_index', 0);
 	}}
 
 	static sprite_width = {readOnly: true, direct: true, directGet() {

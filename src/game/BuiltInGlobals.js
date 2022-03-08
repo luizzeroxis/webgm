@@ -42,7 +42,7 @@ export default class BuiltInGlobals {
 	};
 	static instance_id = {readOnly: true, direct: true, dimensions: 1,
 		directLength() {return this.instances.length},
-		directGet(index) {return this.instances[index].vars.getBuiltIn('id')},
+		directGet(index) {return this.instances[index].id},
 	};
 
 	// Game play / Timing

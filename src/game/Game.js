@@ -1017,7 +1017,7 @@ export class Game {
 		
 		await this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
 
-		return instance.vars.getBuiltIn('id');
+		return instance.id;
 	}
 
 	instanceCreateNoEvents(id, x, y, object) {

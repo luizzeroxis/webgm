@@ -6,15 +6,13 @@ export default class Instance {
 
 	constructor (id, x, y, object_index, game) {
 
+		this.id = id;
 		this.object_index = object_index;
 		this.game = game;
 
 		this.exists = true;
 
 		this.vars = new VariableHolder(this, BuiltInLocals);
-
-		// Id
-		this.vars.setBuiltIn('id', id);
 
 		// Set by constructor
 		this.vars.setBuiltIn('x', x);
@@ -25,13 +23,12 @@ export default class Instance {
 		// this.sprite = game.getResourceById('ProjectSprite', this.object.sprite_index); // already called when setting sprite_index
 		
 		// Inherited from object
-		this.vars.setBuiltIn('object_index', this.object.id);
 		this.vars.setBuiltInCall('sprite_index', this.object.sprite_index);
 		this.vars.setBuiltIn('visible', this.object.visible ? 1 : 0);
 		this.vars.setBuiltIn('solid', this.object.solid ? 1 : 0);
 		this.vars.setBuiltIn('depth', this.object.depth);
 		this.vars.setBuiltIn('persistent', this.object.persistent ? 1 : 0);
-		this.vars.setBuiltIn('mask_index', this.object.mask);
+		this.vars.setBuiltIn('mask_index', this.object.mask_index);
 
 		// Started up variables
 		this.vars.setBuiltIn('xprevious', x);

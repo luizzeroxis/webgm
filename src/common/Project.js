@@ -180,8 +180,8 @@ export class Project {
 			this.solid = false;
 			this.depth = 0;
 			this.persistent = false
-			this.parent = null;
-			this.mask = null;
+			this.parent_index = -1;
+			this.mask_index = -1;
 			this.events = [];
 		}
 		static getName() { return 'object'; }

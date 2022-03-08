@@ -96,10 +96,19 @@ export default class BuiltInGlobals {
 		BuiltInFunctions.room_goto.call(this.gml, [value]);
 	}};
 
-	static room_first = {default: 0, readOnly: true};
-	static room_last = {default: 0, readOnly: true};
-	static room_width = {default: 640, readOnly: true};
-	static room_height = {default: 480, readOnly: true};
+	static room_first = {readOnly: true, direct: true, directGet() {
+		return this.project.resources.ProjectRoom[0].id;
+	}};
+	static room_last = {readOnly: true, direct: true, directGet() {
+		return this.project.resources.ProjectRoom[this.project.resources.ProjectRoom.length - 1].id;
+	}};
+	static room_width = {readOnly: true, direct: true, directGet() {
+		return this.room.width;
+	}};
+	static room_height = {readOnly: true, direct: true, directGet() {
+		return this.room.height;
+	}};
+	
 	static room_caption = {type: 'string', default: ""};
 	static room_persistent = {type: 'bool', default: 0};
 	static transition_kind = {type: 'integer', default: 0};

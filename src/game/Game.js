@@ -968,8 +968,6 @@ export class Game {
 		this.canvas.height = room.height;
 
 		this.globalVars.setBuiltIn('room', room.id);
-		this.globalVars.setBuiltIn('room_width', room.width);
-		this.globalVars.setBuiltIn('room_height', room.height);
 		this.globalVars.setBuiltIn('room_speed', room.speed);
 
 		// TODO set background and views variables

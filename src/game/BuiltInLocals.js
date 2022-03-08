@@ -74,38 +74,37 @@ export default class BuiltInLocals {
 	static sprite_index = {type: 'integer', default: -1, set (sprite_index) {
 		// Update sprite cache
 		this.sprite = this.game.getResourceById('ProjectSprite', sprite_index);
-
-		if (this.sprite) {
-			var image = this.sprite.images[this.getImageIndex()];
-
-			if (image) {
-				this.vars.setBuiltIn('sprite_width', image.image.width);
-				this.vars.setBuiltIn('sprite_height', image.image.height);
-			} else {
-				// no image index
-				this.vars.setBuiltIn('sprite_width', 1);
-				this.vars.setBuiltIn('sprite_height', 1);
-			}
-			this.vars.setBuiltIn('sprite_xoffset', this.sprite.originx);
-			this.vars.setBuiltIn('sprite_yoffset', this.sprite.originy);
-			this.vars.setBuiltIn('image_number', this.sprite.images.length);
-			
-		} else {
-			// no sprite index
-			this.vars.setBuiltIn('sprite_width', 0);
-			this.vars.setBuiltIn('sprite_height', 0);
-			this.vars.setBuiltIn('sprite_xoffset', 0);
-			this.vars.setBuiltIn('sprite_yoffset', 0);
-			this.vars.setBuiltIn('image_number', 0);
-		}
-
 	}}
-	static sprite_width = {default: 0, readOnly: true}
-	static sprite_height = {default: 0, readOnly: true}
-	static sprite_xoffset = {default: 0, readOnly: true}
-	static sprite_yoffset = {default: 0, readOnly: true}
+
+	static sprite_width = {readOnly: true, direct: true, directGet() {
+		if (this.sprite == null) return 0;
+
+		var image = this.sprite.images[this.getImageIndex()];
+		return image ? image.image.width : 1;
+	}}
+
+	static sprite_height = {readOnly: true, direct: true, directGet() {
+		if (this.sprite == null) return 0;
+
+		var image = this.sprite.images[this.getImageIndex()];
+		return image ? image.image.height : 1;
+	}}
+
+	static sprite_xoffset = {readOnly: true, direct: true, directGet() {
+		if (this.sprite == null) return 0;
+		return this.sprite.originx;
+	}}
+
+	static sprite_yoffset = {readOnly: true, direct: true, directGet() {
+		if (this.sprite == null) return 0;
+		return this.sprite.originy;
+	}}
 	
-	static image_number = {default: 0, readOnly: true}
+	static image_number = {readOnly: true, direct: true, directGet() {
+		if (this.sprite == null) return 0;
+		return this.sprite.images.length;
+	}}
+
 	static image_index = {type: 'real', default: 0}
 	static image_speed = {type: 'real', default: 1}
 
@@ -148,7 +147,7 @@ export default class BuiltInLocals {
 	// Unknown
 	
 	static image_single = {type: 'real', default: -1, set(image_single) {
-		this.vars.setBuiltIn('image_number', image_single);
+		this.vars.setBuiltIn('image_index', image_single);
 		this.vars.setBuiltIn('image_speed', 0);
 	}}
 

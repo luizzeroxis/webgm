@@ -42,7 +42,7 @@ export default class Instance {
 	}
 
 	getImageIndex() {
-		return Math.floor(this.vars.getBuiltIn('image_index') % this.vars.getBuiltIn('image_number'));
+		return Math.floor(this.vars.getBuiltIn('image_index') % (this.sprite ? this.sprite.images.length : 0));
 	}
 
 	setDirectionAndSpeed(direction, speed) {
@@ -61,5 +61,5 @@ export default class Instance {
 		this.vars.setBuiltIn('speed', Math.hypot(hspeed, vspeed));
 		this.vars.setBuiltIn('direction', Math.atan2(-vspeed, hspeed) * (180 / Math.PI));
 	}
-	
+
 }

@@ -723,9 +723,11 @@ export class Game {
 			instance.vars.setBuiltIn('xprevious', instance.vars.getBuiltIn('x'));
 			instance.vars.setBuiltIn('yprevious', instance.vars.getBuiltIn('y'));
 
+			var imageNumber = (instance.sprite ? instance.sprite.images.length : 0);
+
 			var i = instance.vars.getBuiltIn('image_index') + instance.vars.getBuiltIn('image_speed');
-			if (i >= instance.vars.getBuiltIn('image_number')) {
-				i -= instance.vars.getBuiltIn('image_number');
+			if (i >= imageNumber) {
+				i -= imageNumber;
 			}
 			instance.vars.setBuiltIn('image_index', i);
 		}

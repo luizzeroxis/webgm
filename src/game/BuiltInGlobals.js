@@ -33,13 +33,15 @@ export default class BuiltInGlobals {
 	static argument13 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [13], value) }};
 	static argument14 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [14], value) }};
 	static argument15 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [15], value) }};
+
 	static argument_relative = {default: 0, readOnly: true};
 
 	// Game play / Instances
 
-	static instance_count = {readOnly: true, direct: true,
-		directGet() {return this.instances.length},
-	};
+	static instance_count = {readOnly: true, direct: true, directGet() {
+		return this.instances.length;
+	}}
+
 	static instance_id = {readOnly: true, direct: true, dimensions: 1,
 		directLength() {return this.instances.length},
 		directGet(index) {return this.instances[index].id},
@@ -58,21 +60,42 @@ export default class BuiltInGlobals {
 			);
 		}
 	}};
-	static fps = {default: 0, readOnly: true};
-	static current_time = {default: 0, readOnly: true};
-	static current_year = {default: 0, readOnly: true};
-	static current_month = {default: 0, readOnly: true};
-	static current_day = {default: 0, readOnly: true};
-	static current_weekday = {default: 0, readOnly: true};
-	static current_hour = {default: 0, readOnly: true};
-	static current_minute = {default: 0, readOnly: true};
-	static current_second = {default: 0, readOnly: true};
+
+	static fps = {readOnly: true, direct: true, directGet() {
+		return this.fps;
+	}};
+
+	static current_time = {readOnly: true, direct: true, directGet() {
+		return Math.floor(performance.now());
+	}};
+	static current_year = {readOnly: true, direct: true, directGet() {
+		return (new Date()).getFullYear();
+	}};
+	static current_month = {readOnly: true, direct: true, directGet() {
+		return (new Date()).getMonth() + 1;
+	}};
+	static current_day = {readOnly: true, direct: true, directGet() {
+		return (new Date()).getDate();
+	}};
+	static current_weekday = {readOnly: true, direct: true, directGet() {
+		return (new Date()).getDay() + 1;
+	}};
+	static current_hour = {readOnly: true, direct: true, directGet() {
+		return (new Date()).getHours();
+	}};
+	static current_minute = {readOnly: true, direct: true, directGet() {
+		return (new Date()).getMinutes();
+	}};
+	static current_second = {readOnly: true, direct: true, directGet() {
+		return (new Date()).getSeconds();
+	}};
 
 	// Game play / Rooms
 	
 	static room = {type: 'integer', default: 0, set (value) {
 		BuiltInFunctions.room_goto.call(this.gml, [value]);
 	}};
+
 	static room_first = {default: 0, readOnly: true};
 	static room_last = {default: 0, readOnly: true};
 	static room_width = {default: 640, readOnly: true};
@@ -80,6 +103,7 @@ export default class BuiltInGlobals {
 	static room_caption = {type: 'string', default: ""};
 	static room_persistent = {type: 'bool', default: 0};
 	static transition_kind = {type: 'integer', default: 0};
+
 	static transition_steps = {type: 'integer', default: 80, set (value) {
 		if (value < 1) {
 			this.globalVars.vars.setBuiltIn('transition_steps', 1);
@@ -89,6 +113,7 @@ export default class BuiltInGlobals {
 	// Game play / Score
 
 	static score = {type: 'integer', default: 0};
+
 	static lives = {type: 'integer', default: -1, async set (value, previous, indexes) {
 		if (value <= 0 && previous > 0) {
 			var OTHER_NO_MORE_LIVES = 6;
@@ -98,6 +123,7 @@ export default class BuiltInGlobals {
 			}
 		}
 	}};
+
 	static health = {type: 'real', default: 100, async set (value, previous, indexes) {
 		if (value <= 0 && previous > 0) {
 			var OTHER_NO_MORE_HEALTH = 9;
@@ -107,6 +133,7 @@ export default class BuiltInGlobals {
 			}
 		}
 	}};
+
 	static show_score = {type: 'bool', default: 1};
 	static show_lives = {type: 'bool', default: 0};
 	static show_health = {type: 'bool', default: 0};
@@ -143,6 +170,7 @@ export default class BuiltInGlobals {
 	static mouse_y = {default: 0, readOnly: true};
 	static mouse_button = {type: 'integer', default: 0}; // TODO I think this is an enum
 	static mouse_lastbutton = {type: 'integer', default: 0};
+
 	static cursor_sprite = {type: 'integer', default: -1, set (cursor_sprite) {
 		this.cursorSprite = this.getResourceById('ProjectSprite', cursor_sprite);
 	}};

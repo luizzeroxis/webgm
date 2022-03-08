@@ -542,9 +542,6 @@ export class Game {
 		// Get all events
 		this.mapEvents = this.getMapOfEvents();
 
-		// Do some stuff
-		this.globalVars.setBuiltIn('fps', this.fps);
-
 		// Begin step
 		for (let {event, instance} of this.getEventsOfTypeAndSubtype('step', 'begin')) {
 			if (!instance.exists) continue;

@@ -1,3 +1,4 @@
+import Events from '../common/Events.js';
 import {NonFatalErrorException} from '../common/Exceptions.js';
 
 import BuiltInFunctions from './BuiltInFunctions.js';
@@ -152,10 +153,18 @@ export default class BuiltInGlobals {
 
 	// Game play / Generating events
 
-	static event_type = {default: 11, readOnly: true};
-	static event_number = {default: 0, readOnly: true};
-	static event_object = {default: 0, readOnly: true};
-	static event_action = {default: 0, readOnly: true};
+	static event_type = {readOnly: true, direct: true, directGet() {
+		return this.currentEvent ? Events.listEventTypes.find(x => x.value == this.currentEvent.type).id : 0;
+	}};
+	static event_number = {readOnly: true, direct: true, directGet() {
+		return this.currentEvent ? this.currentEvent.subtype : 0;
+	}};
+	static event_object = {readOnly: true, direct: true, directGet() {
+		return this.currentEventInstance ? this.currentEventInstance.object_index : 0;
+	}};
+	static event_action = {readOnly: true, direct: true, directGet() {
+		return this.currentEventActionNumber ? this.currentEventActionNumber : 0;
+	}};
 
 	// Game play / Miscellaneous variables and functions
 

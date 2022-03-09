@@ -181,3 +181,8 @@ export var toInteger = (value) => {
 		return Math.round(value);
 	}
 }
+
+export var parseNewLineHash = (string) => {
+	// Replace # without backslash before and \r with \n, then replace \# with #.
+	return string.replaceAll(/(?<!\\)#|\r/g, "\n").replaceAll("\\#", "#");
+}

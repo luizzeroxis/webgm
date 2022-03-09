@@ -2,6 +2,7 @@ import Dispatcher from '../common/Dispatcher.js'
 import Events from '../common/Events.js';
 import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from '../common/Exceptions.js';
 import {Project} from '../common/Project.js';
+import {makeCSSFont} from '../common/tools.js';
 import VariableHolder from '../common/VariableHolder.js';
 
 import ActionsParser from './ActionsParser.js';
@@ -50,6 +51,10 @@ export class Game {
 		this.drawFont = -1;
 		this.drawHAlign = 0;
 		this.drawVAlign = 0;
+
+		this.cssFontsCache = {
+			"-1": makeCSSFont("Arial", 12, false, false),
+		};
 
 		this.gml = null;
 		this.gmlCache = new Map();
@@ -251,6 +256,8 @@ export class Game {
 			this.loadSounds(), // TODO
 		];
 
+		this.loadFonts();
+
 		this.loadActions();
 		this.loadGML();
 
@@ -277,6 +284,13 @@ export class Game {
 
 	// Returns a list of promises of loading sounds.
 	loadSounds() {} // TODO
+
+	// Loads all fonts.
+	loadFonts() {
+		this.project.resources.ProjectFont.forEach(font => {
+			this.cssFontsCache[font.id] = makeCSSFont(font.font, font.size, font.bold, font.italic);
+		})
+	}
 
 	// Parse all action lists in events and timeline moments into action trees.
 	loadActions() {
@@ -793,7 +807,7 @@ export class Game {
 
 		this.currentEvent = event;
 		this.currentEventInstance = instance;
-		this.currentEventOther = other || instance;
+		this.currentEventOther = other;
 
 		var parsedActions = this.actionsCache.get(event);
 
@@ -831,7 +845,7 @@ export class Game {
 
 		if (treeAction.appliesTo != undefined) {
 			var applyToInstances = this.getApplyToInstances(treeAction.appliesTo);
-			var otherInstance = this.currentEventOther;
+			var otherInstance = this.currentEventOther || this.currentEventInstance;
 			if (treeAction.appliesTo == -2) { // other
 				otherInstance = this.currentEventInstance;
 			}
@@ -931,7 +945,7 @@ export class Game {
 				);
 			}
 			
-			return await this.gml.execute(result.ast, this.currentEventInstance, this.currentEventOther);
+			return await this.gml.execute(result.ast, this.currentEventInstance, this.currentEventOther || this.currentEventInstance);
 		}
 		return arg.value;
 	}
@@ -1257,7 +1271,7 @@ export class Game {
 			case -1:
 				return [this.currentEventInstance];
 			case -2:
-				return [this.currentEventOther];
+				return [this.currentEventOther || this.currentEventInstance];
 			default:
 				return this.instances.filter(x => x.exists && x.object_index == appliesTo);
 		}

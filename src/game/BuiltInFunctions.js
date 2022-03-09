@@ -1,4 +1,4 @@
-import {decimalColorToHSVValues, decimalColorAndAlphaToRGBA, decimalColorToRGB, rgbValuesToDecimalColor, makeCSSFont, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger} from '../common/tools.js'
+import {decimalColorToHSVValues, decimalColorAndAlphaToRGBA, decimalColorToRGB, rgbValuesToDecimalColor, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger, parseNewLineHash} from '../common/tools.js'
 
 export default class BuiltInFunctions {
 
@@ -1373,12 +1373,7 @@ export default class BuiltInFunctions {
 
 		this.game.ctx.fillStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 
-		var f = this.game.project.resources.ProjectFont.find(x => x.id == this.game.drawFont);
-		if (f) {
-			this.game.ctx.font = makeCSSFont(f.font, f.size, f.bold, f.italic);
-		} else {
-			this.game.ctx.font = makeCSSFont('Arial', 12, false, false);
-		}
+		this.game.ctx.font = this.game.cssFontsCache[this.game.drawFont];
 
 		// holy shit now this is epic
 		this.game.ctx.textAlign = (['left', 'center', 'right'])[this.game.drawHAlign];
@@ -1399,9 +1394,7 @@ export default class BuiltInFunctions {
 			currentY = y - (height * lines.length);
 		}
 
-		// Capture #, except when preceeded by \, or \n, or \r
-		var lines = string.split(/(?<!\\)#|\n|\r/)
-		lines = lines.map(x => x.replaceAll("\\#", "#"));
+		var lines = parseNewLineHash(string).split('\n');
 
 		for (var line of lines) {
 			this.game.ctx.fillText(line, x, currentY);
@@ -2306,8 +2299,7 @@ export default class BuiltInFunctions {
 
 	static show_message ([str]) {
 		this.game.clearIO();
-		// TODO parse #s
-		alert(str);
+		alert(parseNewLineHash(str));
 		return 0;
 	}
 	static show_message_ext ([_]) {

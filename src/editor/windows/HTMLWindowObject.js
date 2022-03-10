@@ -1,5 +1,5 @@
 import Events from '../../common/Events.js';
-import {$, parent, endparent, add, html, text, newElem, newButton, newTextBox, newNumberBox, newCheckBox, newSelect, newImage} from '../../common/H.js'
+import {$, parent, endparent, add, newElem, newButton, newTextBox, newNumberBox, newCheckBox, newSelect, newImage, newOption} from '../../common/H.js'
 import {
 	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline,
 	ProjectEvent, ProjectAction, ProjectActionArg
@@ -101,7 +101,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 					// Event subtype div
 
 					this.selectCollisionObject = null;
-					this.divEventSubtype = add( html('div') );
+					this.divEventSubtype = add( newElem(null, 'div') );
 
 					// Add event button
 					this.buttonEventAdd = add( newButton(null, 'Add Event', () => {
@@ -335,13 +335,13 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 										actionTypeButton.title = actionType.description;
 
-										parent(actionTypeButton)
-											if (actionType.image) {
+										if (actionType.image) {
+											parent(actionTypeButton)
 												add( newImage(null, actionType.image) )
-											} else {
-												add( text(actionType.description) )
-											}
-											endparent()
+												endparent()
+										} else {
+											actionTypeButton.textContent = actionType.description;
+										}
 
 									}
 
@@ -424,8 +424,8 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 		parent( this.selectEvents );
 			this.paramEvents.forEach(event => {
-				this.selectEventsOptions[event.getNameId()] = add( html('option',
-					{value: event.getNameId()}, null, Events.getEventName(event, this.editor.project)) )
+				this.selectEventsOptions[event.getNameId()] = add( newOption(null, event.getNameId(),
+					Events.getEventName(event, this.editor.project)) )
 			})
 			endparent();
 
@@ -508,17 +508,12 @@ export default class HTMLWindowObject extends HTMLWindow {
 					var actionType = this.editor.getActionType(action);
 					var listText = this.getActionListText(action, actionType);
 					var hintText = this.getActionHintText(action, actionType);
-
-					if (this.editor.preferences.hintTextInAction) {
-						listText = hintText;
-					}
 					
-					this.selectActionsOptions[i] = add( html('option',
-						{
-							/*value: action.getNameId(),*/
-							class: (listText.bold ? 'bold ' : '') + (listText.italic ? 'italic ' : ''),
-							title: hintText.text
-						}, null, listText.text) )
+					this.selectActionsOptions[i] = add( newOption(
+						(listText.bold ? 'bold ' : '') + (listText.italic ? 'italic ' : ''),
+						null, (this.editor.preferences.hintTextInAction ? hintText.text : listText.text)
+					) )
+					this.selectActionsOptions[i].title = hintText.text;
 
 				})
 				endparent()

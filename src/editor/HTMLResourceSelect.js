@@ -1,4 +1,4 @@
-import {$, parent, endparent, add, remove, html, newSelect} from '../common/H.js'
+import {$, parent, endparent, add, remove, newSelect, newOption} from '../common/H.js'
 
 export default class HTMLResourceSelect {
 	constructor(editor, labelContent, resourceType, noNone=false) {
@@ -11,10 +11,10 @@ export default class HTMLResourceSelect {
 		this.select = parent($(this.html, 'select'))
 
 			if (!noNone) {
-				add( html('option', {value: -1}, null, '<none>') );
+				add( newOption(null, -1, '<none>') );
 			}
 			this.editor.project.resources[resourceType.getClassName()].forEach(resource => {
-				selectOptions[resource.id] = add( html('option', {value: resource.id}, null, resource.name) )
+				selectOptions[resource.id] = add( newOption(null, resource.id, resource.name) )
 			})
 			endparent();
 
@@ -22,7 +22,7 @@ export default class HTMLResourceSelect {
 			createResource: i => {
 				if (i.constructor != resourceType) return;
 				parent(this.select)
-					selectOptions[i.id] = add( html('option', {value: i.id}, null, i.name) )
+					selectOptions[i.id] = add( newOption(null, i.id, i.name) )
 					endparent()
 			},
 			deleteResource: i => {

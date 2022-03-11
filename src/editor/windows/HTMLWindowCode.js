@@ -1,4 +1,4 @@
-import {$, parent, endparent, add, newElem, newRadioBox, uniqueID} from '../../common/H.js'
+import {parent, endparent, add, HRadioInput, uniqueID} from '../../common/H.js'
 import {ProjectObject} from '../../common/Project.js';
 import HTMLCodeEditor from '../HTMLCodeEditor.js';
 import HTMLResourceSelect from '../HTMLResourceSelect.js';
@@ -20,15 +20,12 @@ export default class HTMLWindowCode extends HTMLWindow {
 		this.htmlTitle.textContent = this.actionType.description;
 
 		parent(this.htmlClient)
-			add( newElem(null, 'div') )
 
 			var appliesToGroup = '_radio_'+uniqueID();
-			this.radioAppliesToSelf = $( add( newRadioBox(null, 'Self',
-				appliesToGroup, (action.appliesTo == -1)) ), 'input')
-			this.radioAppliesToOther = $( add( newRadioBox(null, 'Other',
-				appliesToGroup, (action.appliesTo == -2)) ), 'input')
-			this.radioAppliesToObject = $( add( newRadioBox(null, 'Object:',
-				appliesToGroup, (action.appliesTo >= 0)) ), 'input')
+
+			this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, 'Self', (action.appliesTo == -1)) );
+			this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, 'Other', (action.appliesTo == -2)) );
+			this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, 'Object:', (action.appliesTo >= 0)) );
 
 			this.selectObject = new HTMLResourceSelect(this.editor, null, ProjectObject);
 			if (action.appliesTo >= 0)
@@ -41,7 +38,7 @@ export default class HTMLWindowCode extends HTMLWindow {
 					this.apply()
 				},
 				() => {
-					this.object.deleteActionWindow(this);
+					this.object.deleteActionWindow(this.id);
 					this.close();
 				}
 			);
@@ -54,9 +51,9 @@ export default class HTMLWindowCode extends HTMLWindow {
 	apply() {
 		this.action.args[0].value = this.codeEditor.getValue();
 		this.action.appliesTo = (
-			this.radioAppliesToSelf.checked ? -1 :
-			this.radioAppliesToOther.checked ? -2 :
-			this.radioAppliesToObject.checked ? this.selectObject.getValue() :
+			this.radioAppliesToSelf.getChecked() ? -1 :
+			this.radioAppliesToOther.getChecked() ? -2 :
+			this.radioAppliesToObject.getChecked() ? this.selectObject.getValue() :
 			null
 		);
 

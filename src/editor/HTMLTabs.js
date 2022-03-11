@@ -1,11 +1,11 @@
-import {$, parent, endparent, add, remove, newElem, newRadioBox, uniqueID} from '../common/H.js'
+import {parent, endparent, add, remove, HRadioInput, newElem, uniqueID} from '../common/H.js'
 
 export default class HTMLTabs {
 
-	constructor() {
+	constructor(classes) {
 
-		this.html = parent( add( newElem(null, 'div') ) )
-			this.tabsDiv = add( newElem(null, 'div') )
+		this.html = parent( add( newElem(classes, 'div') ) )
+			this.tabsDiv = add( newElem('tabs', 'div') )
 			this.contentsDiv = null;
 			endparent()
 
@@ -26,11 +26,11 @@ export default class HTMLTabs {
 		}
 
 		parent(this.tabsDiv)
-			
-			var radio = add( newRadioBox('tab', name, this.radioGroup, select) )
-			$(radio, 'input').addEventListener('click', () => {
+
+			var radio = add( new HRadioInput(this.radioGroup, name, select, 'tab') )
+			radio.setOnClick(() => {
 				this.showTabContentDiv(contentDiv);
-			})
+			});
 
 			endparent()
 

@@ -1,4 +1,4 @@
-import {$, parent, endparent, add, newElem, newTextBox, newCheckBox, newRadioBox, newSelect, newColorBox, uniqueID} from '../../common/H.js'
+import {parent, endparent, add, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, newElem, uniqueID} from '../../common/H.js'
 import {ProjectObject} from '../../common/Project.js';
 import {parseArrowString, stringifyArrowValues, decimalColorToHexColor, hexColorToDecimalColor} from '../../common/tools.js'
 import HTMLResourceSelect from '../HTMLResourceSelect.js';
@@ -38,12 +38,10 @@ export default class HTMLWindowAction extends HTMLWindow {
 					add( newElem(null, 'legend', 'Applies to') )
 
 					var appliesToGroup = '_radio_'+uniqueID();
-					this.radioAppliesToSelf = $( add( newRadioBox(null, 'Self',
-						appliesToGroup, (action.appliesTo == -1)) ), 'input')
-					this.radioAppliesToOther = $( add( newRadioBox(null, 'Other',
-						appliesToGroup, (action.appliesTo == -2)) ), 'input')
-					this.radioAppliesToObject = $( add( newRadioBox(null, 'Object:',
-						appliesToGroup, (action.appliesTo >= 0)) ), 'input')
+
+					this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, 'Self', (action.appliesTo == -1)) );
+					this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, 'Other', (action.appliesTo == -2)) );
+					this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, 'Object:', (action.appliesTo >= 0)) );
 
 					this.selectObject = new HTMLResourceSelect(this.editor, null, ProjectObject);
 					this.removables.push(this.selectObject);
@@ -108,7 +106,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 			}
 
 			if (this.actionTypeHasRelative) {
-				this.inputRelative = $( add( newCheckBox(null, "Relative", action.relative) ), 'input');
+				this.inputRelative = add( new HCheckBoxInput("Relative", action.relative) );
 			}
 
 			this.actionTypeIsQuestion = this.actionType.isQuestion;
@@ -117,7 +115,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 			}
 
 			if (this.actionTypeIsQuestion) {
-				this.inputNot = $( add( newCheckBox(null, "NOT", action.not) ), 'input');
+				this.inputNot = add( new HCheckBoxInput("NOT", action.not) );
 			}
 
 			this.makeApplyOkButtons(
@@ -125,7 +123,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 					this.apply()
 				},
 				() => {
-					this.object.deleteActionWindow(this);
+					this.object.deleteActionWindow(this.id);
 					this.close();
 				},
 			);
@@ -134,9 +132,9 @@ export default class HTMLWindowAction extends HTMLWindow {
 	}
 
 	makeTextInterface(name, value) {
-		var input = $( add( newTextBox(null, name, value) ), 'input');
+		var input = add( new HTextInput(name, value) );
 		return {
-			getValue: () => input.value,
+			getValue: () => input.getValue(),
 		}
 	}
 
@@ -153,29 +151,32 @@ export default class HTMLWindowAction extends HTMLWindow {
 			for (var y=2; y>=0; --y)
 			for (var x=0; x<=2; ++x) {
 				var i = (3*y)+x;
-				inputs[i] = $( add( newCheckBox(null, directionNames[i], directions[i]) ), 'input');
+				inputs[i] = add( new HCheckBoxInput(directionNames[i], directions[i]) );
 			}
 
 			endparent();
 
 		return {
-			getValue: () => stringifyArrowValues(inputs.map(x => x.checked)),
+			getValue: () => stringifyArrowValues(inputs.map(x => x.getChecked())),
 		}
 	}
 
 	makeMenuInterface(name, optionNames, value) {
-		var options = optionNames.map((name, value) => ({name, value}));
-		var select = $( add( newSelect(null, name, options) ), 'select');
-		select.selectedIndex = value;
+
+		var options = optionNames.map((text, index) => ({name: text, value: index}));
+
+		var select = add( new HSelectWithOptions(name, options) );
+		select.setSelectedIndex(value);
+
 		return {
-			getValue: () => parseInt(select.value),
+			getValue: () => parseInt(select.getValue()),
 		}
 	}
 
 	makeColorInterface(name, value) {
-		var input = $( add( newColorBox(null, name, decimalColorToHexColor(value)) ), 'input');
+		var input = add( new HColorInput(name, decimalColorToHexColor(value)) );
 		return {
-			getValue: () => hexColorToDecimalColor(input.value),
+			getValue: () => hexColorToDecimalColor(input.getValue()),
 		}
 	}
 
@@ -199,18 +200,18 @@ export default class HTMLWindowAction extends HTMLWindow {
 
 		if (this.actionTypeHasApplyTo) {
 			this.action.appliesTo = (
-				this.radioAppliesToSelf.checked ? -1 :
-				this.radioAppliesToOther.checked ? -2 :
-				this.radioAppliesToObject.checked ? this.selectObject.getValue() :
+				this.radioAppliesToSelf.getChecked() ? -1 :
+				this.radioAppliesToOther.getChecked() ? -2 :
+				this.radioAppliesToObject.getChecked() ? this.selectObject.getValue() :
 				null
 			);
 		}
 
 		if (this.actionTypeHasRelative)
-			this.action.relative = this.inputRelative.checked;
+			this.action.relative = this.inputRelative.getChecked();
 
 		if (this.actionTypeIsQuestion)
-			this.action.not = this.inputNot.checked;
+			this.action.not = this.inputNot.getChecked();
 
 		// Update action in event in object
 		this.object.updateSelectActions();

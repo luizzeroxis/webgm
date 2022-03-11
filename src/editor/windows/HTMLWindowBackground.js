@@ -1,5 +1,5 @@
 import AbstractImage from '../../common/AbstractImage.js'
-import {$, parent, endparent, add, newElem, newButton, newTextBox, newImage} from '../../common/H.js'
+import {parent, endparent, add, HTextInput, newElem, newButton, newImage} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js'
 import HTMLWindow from '../HTMLWindow.js';
 
@@ -19,7 +19,7 @@ export default class HTMLWindowBackground extends HTMLWindow {
 					var paramName = background.name;
 					var paramImage = background.image;
 
-					var inputName = $( add( newTextBox(null, 'Name:', paramName) ), 'input');
+					var inputName = add( new HTextInput('Name:', paramName) );
 
 					add( newButton(null, 'Load Background', () => {
 
@@ -69,7 +69,7 @@ export default class HTMLWindowBackground extends HTMLWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(background, inputName.value);
+					this.editor.changeResourceName(background, inputName.getValue());
 					this.editor.changeBackgroundImage(background, paramImage);
 				},
 				() => this.close()

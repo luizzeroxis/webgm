@@ -1,7 +1,8 @@
 import AbstractImage from '../../common/AbstractImage.js'
-import {$, parent, endparent, add, newElem, newCanvas, newTextBox, newNumberBox, newCheckBox, newRadioBox, newColorBox, uniqueID} from '../../common/H.js'
+import {parent, endparent, add, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, newElem, newCanvas, newCheckBox, uniqueID} from '../../common/H.js'
 import {ProjectObject, ProjectInstance} from '../../common/Project.js'
 import HTMLResourceSelect from '../HTMLResourceSelect.js';
+import HTMLTabs from '../HTMLTabs.js';
 import HTMLWindow from '../HTMLWindow.js';
 import DefaultInstanceIcon from '../img/default-instance-icon.png';
 
@@ -22,43 +23,41 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 					// left area
 
-					this.inputSnapX = $( add( newNumberBox(null, 'Snap X:', 16, 1, 1) ), 'input');
-					this.inputSnapY = $( add( newNumberBox(null, 'Snap Y:', 16, 1, 1) ), 'input');
-					this.inputShowGrid = $( add( newCheckBox(null, 'Show grid', true) ), 'input');
+					this.inputSnapX = add( new HNumberInput('Snap X:', 16, 1, 1) )
+					this.inputSnapY = add( new HNumberInput('Snap Y:', 16, 1, 1) )
+					this.inputShowGrid = add( new HCheckBoxInput('Show grid', true) )
 
-					parent( add( newElem(null, 'fieldset') ) )
+					this.tabs = new HTMLTabs();
 
-						add( newElem(null, 'legend', 'Instances') )
+					parent( this.tabs.addTab('Instances') )
 
 						this.selectObject = new HTMLResourceSelect(this.editor, 'Object:', ProjectObject, true);
 
 						var toolGroup = '_radio_'+uniqueID();
-						this.radioAdd = $( add( newRadioBox(null, 'Add instance', toolGroup, true) ), 'input')
-						this.radioMultiple = $( add( newRadioBox(null, 'Add multiple instances', toolGroup) ), 'input')
-						this.radioMove = $( add( newRadioBox(null, 'Move instance', toolGroup) ), 'input')
-						this.radioDelete = $( add( newRadioBox(null, 'Delete instance', toolGroup) ), 'input')
+						this.radioAdd =      add( new HRadioInput(toolGroup, 'Add instance', true) )
+						this.radioMultiple = add( new HRadioInput(toolGroup, 'Add multiple instances') )
+						this.radioMove =     add( new HRadioInput(toolGroup, 'Move instance') )
+						this.radioDelete =   add( new HRadioInput(toolGroup, 'Delete instance') )
 
-						this.inputSnapToGrid = $( add( newCheckBox(null, 'Snap to grid', true) ), 'input');
-						this.inputDeleteUnderlying = $( add( newCheckBox(null, 'Delete underlying', false) ), 'input');
+						this.inputSnapToGrid = add( new HCheckBoxInput('Snap to grid', true) )
+						this.inputDeleteUnderlying = add( new HCheckBoxInput('Delete underlying', false) )
 
 						endparent()
 
-					parent( add( newElem(null, 'fieldset') ) )
+					parent( this.tabs.addTab('Settings') )
 
-						add( newElem(null, 'legend', 'Settings') )
-
-						this.inputName = $( add( newTextBox(null, 'Name:', room.name) ), 'input');
-						this.inputWidth = $( add( newNumberBox(null, 'Width:', room.width, 1, 1) ), 'input');
-						this.inputHeight = $( add( newNumberBox(null, 'Height:', room.height, 1, 1) ), 'input');
-						this.inputSpeed = $( add( newNumberBox(null, 'Speed:', room.speed, 1, 1) ), 'input');
+						this.inputName = add( new HTextInput('Name:', room.name) )
+						this.inputWidth = add( new HNumberInput('Width:', room.width, 1, 1) )
+						this.inputHeight = add( new HNumberInput('Height:', room.height, 1, 1) )
+						this.inputSpeed = add( new HNumberInput('Speed:', room.speed, 1, 1) )
 
 						endparent()
 					
-					parent( add( newElem(null, 'fieldset') ) )
+					parent( this.tabs.addTab('Backgrounds') )
 
-						add( newElem(null, 'legend', 'Backgrounds') )
+						// add( newElem(null, 'legend', 'Backgrounds') )
 
-						this.inputBackgroundColor = $( add( newColorBox(null, 'Background color:', room.backgroundColor) ), 'input');
+						this.inputBackgroundColor = add( new HColorInput('Background color:', room.backgroundColor) )
 
 						endparent()
 
@@ -76,13 +75,13 @@ export default class HTMLWindowRoom extends HTMLWindow {
 						endparent()
 
 					// updates
-					this.inputWidth.onchange = () => this.updateCanvasPreview();
-					this.inputHeight.onchange = () => this.updateCanvasPreview();
-					this.inputBackgroundColor.onchange = () => this.updateCanvasPreview();
+					this.inputSnapX.setOnChange(() => this.updateCanvasPreview())
+					this.inputSnapY.setOnChange(() => this.updateCanvasPreview())
+					this.inputShowGrid.setOnChange(() => this.updateCanvasPreview())
 
-					this.inputSnapX.onchange = () => this.updateCanvasPreview();
-					this.inputSnapY.onchange = () => this.updateCanvasPreview();
-					this.inputShowGrid.onchange = () => this.updateCanvasPreview();
+					this.inputWidth.setOnChange(() => this.updateCanvasPreview())
+					this.inputHeight.setOnChange(() => this.updateCanvasPreview())
+					this.inputBackgroundColor.setOnChange(() => this.updateCanvasPreview())
 
 					endparent()
 				parent( add( newElem('preview', 'div') ) )
@@ -103,16 +102,16 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 						this.currentPos = snappedPos;
 
-						if (this.radioAdd.checked) {
+						if (this.radioAdd.getChecked()) {
 							this.movingInstance = this.addInstance(e);
 						} else
 
-						if (this.radioMultiple.checked) {
+						if (this.radioMultiple.getChecked()) {
 							this.movingInstance = this.addInstance(e);
 							this.deleteUnderlying(e);
 						} else
 
-						if (this.radioMove.checked) {
+						if (this.radioMove.getChecked()) {
 							{
 								let hover = this.getInstanceAtPosition(pos);
 								if (hover) {
@@ -122,7 +121,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 						} else
 
-						if (this.radioDelete.checked) {
+						if (this.radioDelete.getChecked()) {
 							{
 								let hover = this.getInstanceAtPosition(pos);
 								if (hover) {
@@ -141,14 +140,14 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 						if (this.mouseIsDown) {
 
-							if (this.radioAdd.checked || this.radioMove.checked) {
+							if (this.radioAdd.getChecked() || this.radioMove.getChecked()) {
 								if (this.movingInstance) {
 									this.movingInstance.x = snappedPos.x;
 									this.movingInstance.y = snappedPos.y;
 								}
 							} else
 
-							if (this.radioMultiple.checked) {
+							if (this.radioMultiple.getChecked()) {
 								{
 									let hover = this.getInstanceAtPosition(pos);
 									if (hover != this.movingInstance) {
@@ -159,7 +158,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 								}
 							} else
 
-							if (this.radioDelete.checked) {
+							if (this.radioDelete.getChecked()) {
 								{
 									let hover = this.getInstanceAtPosition(pos);
 									if (hover) {
@@ -197,7 +196,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 						this.mouseIsDown = false;
 
 						if (this.movingInstance) {
-							if (this.radioAdd.checked) {
+							if (this.radioAdd.getChecked()) {
 								this.deleteUnderlying(e);
 							}
 						}
@@ -215,13 +214,13 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(room, this.inputName.value);
+					this.editor.changeResourceName(room, this.inputName.getValue());
 
-					room.width = parseInt(this.inputWidth.value);
-					room.height = parseInt(this.inputHeight.value);
-					room.speed = parseInt(this.inputSpeed.value);
+					room.width = parseInt(this.inputWidth.getValue());
+					room.height = parseInt(this.inputHeight.getValue());
+					room.speed = parseInt(this.inputSpeed.getValue());
 
-					room.backgroundColor = this.inputBackgroundColor.value;
+					room.backgroundColor = this.inputBackgroundColor.getValue();
 
 					// In GM, these ids are saved instantly. Even if you close and don't save the room, it still uses the ids. In this project, ideally resource editors would only change the project when you press ok or apply. Because of that, we create the ProjectInstances without ids, and only when saving we fill in the ids.
 
@@ -261,9 +260,12 @@ export default class HTMLWindowRoom extends HTMLWindow {
 		var x = pos.x;
 		var y = pos.y;
 
-		if (this.inputSnapToGrid.checked) {
-			x = Math.floor(x / this.inputSnapX.value) * this.inputSnapX.value;
-			y = Math.floor(y / this.inputSnapY.value) * this.inputSnapY.value;
+		if (this.inputSnapToGrid.getChecked()) {
+			var snapX = Math.max(1, parseInt(this.inputSnapX.getValue()) || 0);
+			var snapY = Math.max(1, parseInt(this.inputSnapY.getValue()) || 0);
+
+			x = Math.floor(x / snapX) * snapX;
+			y = Math.floor(y / snapY) * snapY;
 		}
 
 		return {x: x, y: y};
@@ -278,7 +280,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 	}
 
 	deleteUnderlying(e) {
-		if (this.inputDeleteUnderlying.checked) {
+		if (this.inputDeleteUnderlying.getChecked()) {
 			for (var i = this.paramInstances.length - 1; i >= 0; i--) {
 				var instance = this.paramInstances[i];
 				if (instance != this.movingInstance && this.isInstanceAtPosition(instance, this.currentPos)) {
@@ -333,10 +335,10 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 	updateCanvasPreview() {
 
-		this.canvasPreview.width = this.inputWidth.value;
-		this.canvasPreview.height = this.inputHeight.value;
+		this.canvasPreview.width = this.inputWidth.getValue();
+		this.canvasPreview.height = this.inputHeight.getValue();
 
-		this.ctx.fillStyle = this.inputBackgroundColor.value;
+		this.ctx.fillStyle = this.inputBackgroundColor.getValue();
 		this.ctx.fillRect(0, 0, this.canvasPreview.width, this.canvasPreview.height);
 
 		// instance
@@ -368,21 +370,25 @@ export default class HTMLWindowRoom extends HTMLWindow {
 		})
 
 		// grid
-		if (this.inputShowGrid.checked) {
+		if (this.inputShowGrid.getChecked()) {
 			
 			this.ctx.globalCompositeOperation = 'difference';
 			this.ctx.fillStyle = 'white';
 			this.ctx.strokeStyle = 'white';
 
-			var snapx = parseInt(this.inputSnapX.value);
-			var snapy = parseInt(this.inputSnapY.value);
+			var snapx = parseInt(this.inputSnapX.getValue());
+			var snapy = parseInt(this.inputSnapY.getValue());
 
-			for (var x = 0; x < this.canvasPreview.width; x += snapx) {
-				this.drawLine(x, 0, x, this.canvasPreview.height);
+			if (snapx > 0) {
+				for (var x = 0; x < this.canvasPreview.width; x += snapx) {
+					this.drawLine(x, 0, x, this.canvasPreview.height);
+				}
 			}
 
-			for (var y = 0; y < this.canvasPreview.height; y += snapy) {
-				this.drawLine(0, y, this.canvasPreview.width, y);
+			if (snapy > 0) {
+				for (var y = 0; y < this.canvasPreview.height; y += snapy) {
+					this.drawLine(0, y, this.canvasPreview.width, y);
+				}
 			}
 
 			this.ctx.globalCompositeOperation = 'source-over';

@@ -1,4 +1,4 @@
-import {$, parent, endparent, add, newElem, newTextBox, newNumberBox, newCheckBox} from '../../common/H.js'
+import {parent, endparent, add, HTextInput, HNumberInput, HCheckBoxInput, newElem} from '../../common/H.js'
 import HTMLWindow from '../HTMLWindow.js';
 
 export default class HTMLWindowFont extends HTMLWindow {
@@ -14,17 +14,17 @@ export default class HTMLWindowFont extends HTMLWindow {
 			parent( add( newElem('grid-resource resource-font', 'div') ) )
 				parent( add( newElem(null, 'div') ) )
 
-					this.inputName = $( add( newTextBox(null, 'Name:', font.name) ), 'input');
-					this.inputFont = $( add( newTextBox(null, 'Font:', font.font) ), 'input');
-					this.inputSize = $( add( newNumberBox(null, 'Size', font.size, 1, 1) ), 'input');
-					this.inputBold = $( add( newCheckBox(null, 'Bold', font.bold) ), 'input');
-					this.inputItalic = $( add( newCheckBox(null, 'Italic', font.italic) ), 'input');
+					this.inputName = add( new HTextInput('Name:', font.name) )
+					this.inputFont = add( new HTextInput('Font:', font.font) )
+					this.inputSize = add( new HNumberInput('Size', font.size, 1, 1) )
+					this.inputBold = add( new HCheckBoxInput('Bold', font.bold) )
+					this.inputItalic = add( new HCheckBoxInput('Italic', font.italic) )
 
 					this.divPreview = add( newElem('preview', 'div', 'AaBbCcDd') );
-					this.inputFont.oninput = () => this.updatePreview();
-					this.inputSize.oninput = () => this.updatePreview();
-					this.inputBold.oninput = () => this.updatePreview();
-					this.inputItalic.oninput = () => this.updatePreview();
+					this.inputFont.input.html.oninput = () => this.updatePreview();
+					this.inputSize.input.html.oninput = () => this.updatePreview();
+					this.inputBold.input.html.oninput = () => this.updatePreview();
+					this.inputItalic.input.html.oninput = () => this.updatePreview();
 
 					this.updatePreview();
 
@@ -33,11 +33,11 @@ export default class HTMLWindowFont extends HTMLWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(font, this.inputName.value);
-					font.font = this.inputFont.value;
-					font.size = parseInt(this.inputSize.value);
-					font.bold = this.inputBold.checked;
-					font.italic = this.inputItalic.checked;
+					this.editor.changeResourceName(font, this.inputName.getValue());
+					font.font = this.inputFont.getValue();
+					font.size = parseInt(this.inputSize.getValue());
+					font.bold = this.inputBold.getChecked();
+					font.italic = this.inputItalic.getChecked();
 					// changes here
 				},
 				() => this.close()
@@ -46,10 +46,9 @@ export default class HTMLWindowFont extends HTMLWindow {
 	}
 
 	updatePreview() {
-		//this.divPreview.style.font = makeCSSFont(this.inputFont.value, this.inputSize.value, this.inputBold.checked, this.inputItalic.checked);
-		this.divPreview.style.fontFamily = this.inputFont.value;
-		this.divPreview.style.fontSize = this.inputSize.value + 'pt';
-		this.divPreview.style.fontWeight = (this.inputBold.checked ? 'bold' : null);
-		this.divPreview.style.fontStyle = (this.inputItalic.checked ? 'italic' : null);
+		this.divPreview.style.fontFamily = this.inputFont.getValue();
+		this.divPreview.style.fontSize = this.inputSize.getValue() + 'pt';
+		this.divPreview.style.fontWeight = (this.inputBold.getChecked() ? 'bold' : null);
+		this.divPreview.style.fontStyle = (this.inputItalic.getChecked() ? 'italic' : null);
 	}
 }

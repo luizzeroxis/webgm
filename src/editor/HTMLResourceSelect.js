@@ -1,14 +1,16 @@
-import {$, parent, endparent, add, remove, newSelect, newOption} from '../common/H.js'
+import { parent, endparent, add, remove, HSelect, newOption} from '../common/H.js'
 
 export default class HTMLResourceSelect {
 	constructor(editor, labelContent, resourceType, noNone=false) {
 
 		this.editor = editor;
 
-		this.html = add( newSelect(null, labelContent) );
+		this.html = add( new HSelect(labelContent) )
+		this.select = this.html.select;
 
 		var selectOptions = {};
-		this.select = parent($(this.html, 'select'))
+
+		parent( this.select )
 
 			if (!noNone) {
 				add( newOption(null, -1, '<none>') );
@@ -16,6 +18,7 @@ export default class HTMLResourceSelect {
 			this.editor.project.resources[resourceType.getClassName()].forEach(resource => {
 				selectOptions[resource.id] = add( newOption(null, resource.id, resource.name) )
 			})
+
 			endparent();
 
 		this.listeners = this.editor.dispatcher.listen({
@@ -40,13 +43,13 @@ export default class HTMLResourceSelect {
 	}
 
 	getValue() {
-		var value = parseInt(this.select.value);
+		var value = parseInt(this.html.getValue());
 		if (Number.isNaN(value)) return -1;
 		return value;
 	}
 
 	setValue(value) {
-		this.select.value = value;
+		this.html.setValue(value);
 	}
 
 	remove() {

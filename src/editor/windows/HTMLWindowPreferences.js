@@ -1,4 +1,4 @@
-import {$, parent, endparent, add, newTextBox, newCheckBox, newSelect} from '../../common/H.js'
+import {parent, endparent, add, HTextInput, HCheckBoxInput, HSelectWithOptions} from '../../common/H.js'
 import HTMLWindow from '../HTMLWindow.js';
 
 export default class HTMLWindowPreferences extends HTMLWindow {
@@ -7,31 +7,31 @@ export default class HTMLWindowPreferences extends HTMLWindow {
 		
 		parent(this.htmlClient)
 
-			var selectTheme = add( newSelect(null, 'Theme:', [
+			var selectTheme = add( new HSelectWithOptions('Theme:', [
 				{name: 'Auto', value: 'auto'},
 				{name: 'Light', value: 'light'},
 				{name: 'Dark', value: 'dark'},
 			], this.editor.preferences.theme));
 
-			var inputDefaultActionLibraryTab = add( newTextBox(null, 'Default action library tab:', this.editor.preferences.defaultActionLibraryTab) )
+			var inputDefaultActionLibraryTab = add( new HTextInput('Default action library tab:', this.editor.preferences.defaultActionLibraryTab) )
 
-			var inputHintTextInAction = add( newCheckBox(null, 'Use full tooltip text in action', this.editor.preferences.hintTextInAction) )
+			var inputHintTextInAction = add( new HCheckBoxInput('Use full tooltip text in action', this.editor.preferences.hintTextInAction) )
 
-			var inputScrollToGameOnRun = add( newCheckBox(null, 'Scroll to game area on run', this.editor.preferences.scrollToGameOnRun) )
-			var inputFocusCanvasOnRun = add( newCheckBox(null, 'Focus game canvas on run', this.editor.preferences.focusCanvasOnRun) )
-			var inputClearCanvasOnStop = add( newCheckBox(null, 'Clear game canvas on stop', this.editor.preferences.clearCanvasOnStop) )
+			var inputScrollToGameOnRun = add( new HCheckBoxInput('Scroll to game area on run', this.editor.preferences.scrollToGameOnRun) )
+			var inputFocusCanvasOnRun = add( new HCheckBoxInput('Focus game canvas on run', this.editor.preferences.focusCanvasOnRun) )
+			var inputClearCanvasOnStop = add( new HCheckBoxInput('Clear game canvas on stop', this.editor.preferences.clearCanvasOnStop) )
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.preferences.theme = $(selectTheme, 'select').value;
+					this.editor.preferences.theme = selectTheme.getValue();
 
-					this.editor.preferences.defaultActionLibraryTab = $(inputDefaultActionLibraryTab, 'input').value;
+					this.editor.preferences.defaultActionLibraryTab = inputDefaultActionLibraryTab.getValue();
 
-					this.editor.preferences.hintTextInAction = $(inputHintTextInAction, 'input').checked;
+					this.editor.preferences.hintTextInAction = inputHintTextInAction.getChecked();
 
-					this.editor.preferences.scrollToGameOnRun = $(inputScrollToGameOnRun, 'input').checked;
-					this.editor.preferences.focusCanvasOnRun = $(inputFocusCanvasOnRun, 'input').checked;
-					this.editor.preferences.clearCanvasOnStop = $(inputClearCanvasOnStop, 'input').checked;
+					this.editor.preferences.scrollToGameOnRun = inputScrollToGameOnRun.getChecked();
+					this.editor.preferences.focusCanvasOnRun = inputFocusCanvasOnRun.getChecked();
+					this.editor.preferences.clearCanvasOnStop = inputClearCanvasOnStop.getChecked();
 					
 					this.editor.savePreferences();
 				},

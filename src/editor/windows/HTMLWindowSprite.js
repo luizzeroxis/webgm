@@ -1,5 +1,5 @@
 import AbstractImage from '../../common/AbstractImage.js';
-import {$, parent, endparent, add, newElem, newButton, newTextBox, newNumberBox, newImage, setOnFileDrop} from '../../common/H.js'
+import {parent, endparent, add, HTextInput, HNumberInput, newElem, newButton, newImage, setOnFileDrop} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js';
 import HTMLWindow from '../HTMLWindow.js';
 
@@ -22,7 +22,7 @@ export default class HTMLWindowSprite extends HTMLWindow {
 					var paramOriginX = sprite.originx;
 					var paramOriginY = sprite.originy;
 
-					var inputName = $( add( newTextBox(null, 'Name:', paramName) ), 'input');
+					var inputName = add( new HTextInput('Name:', paramName) )
 
 					this.buttonLoadSprite = add( newButton(null, 'Load Sprite', () => {
 
@@ -65,8 +65,8 @@ export default class HTMLWindowSprite extends HTMLWindow {
 
 						add( newElem(null, 'legend', 'Origin') )
 
-						var inputOriginX = $( add( newNumberBox(null, 'X:', paramOriginX, 1, 0) ), 'input');
-						var inputOriginY = $( add( newNumberBox(null, 'Y:', paramOriginY, 1, 0) ), 'input');
+						var inputOriginX = add( new HNumberInput('X:', paramOriginX, 1, 0) )
+						var inputOriginY = add( new HNumberInput('Y:', paramOriginY, 1, 0) )
 						
 						add( newButton(null, 'Center', () => {
 							var w=16, h=16;
@@ -74,8 +74,8 @@ export default class HTMLWindowSprite extends HTMLWindow {
 								w = Math.floor(this.paramImages[0].image.width / 2);
 								h = Math.floor(this.paramImages[0].image.height / 2);
 							}
-							inputOriginX.value = w;
-							inputOriginY.value = h;
+							inputOriginX.setValue(w);
+							inputOriginY.setValue(h);
 						}) )
 
 						endparent()
@@ -92,9 +92,9 @@ export default class HTMLWindowSprite extends HTMLWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(sprite, inputName.value);
+					this.editor.changeResourceName(sprite, inputName.getValue());
 					this.editor.changeSpriteImages(sprite, this.paramImages);
-					this.editor.changeSpriteOrigin(sprite, parseInt(inputOriginX.value), parseInt(inputOriginY.value));
+					this.editor.changeSpriteOrigin(sprite, parseInt(inputOriginX.getValue()), parseInt(inputOriginY.getValue()));
 				},
 				() => this.close()
 			);

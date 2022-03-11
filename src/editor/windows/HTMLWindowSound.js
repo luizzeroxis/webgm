@@ -1,5 +1,5 @@
 import AbstractAudio from '../../common/AbstractAudio.js';
-import {$, parent, endparent, add, newElem, newButton, newTextBox, newSlider} from '../../common/H.js'
+import {parent, endparent, add, HTextInput, HRangeInput, newElem, newButton} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js';
 import HTMLWindow from '../HTMLWindow.js';
 
@@ -16,7 +16,7 @@ export default class HTMLWindowSound extends HTMLWindow {
 
 					var paramSound = sound.sound;
 
-					var inputName = $( add( newTextBox(null, 'Name:', sound.name) ), 'input');
+					var inputName = add( new HTextInput('Name:', sound.name) )
 
 					add( newButton(null, 'Load Sound', () => {
 
@@ -38,16 +38,16 @@ export default class HTMLWindowSound extends HTMLWindow {
 						}
 						endparent()
 
-					var inputVolume = $( add( newSlider(null, 'Volume:', sound.volume, 1/70, 0, 1) ), 'input');
+					var inputVolume = add( new HRangeInput('Volume:', sound.volume, 1/70, 0, 1) )
 
 					endparent()
 				endparent();
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(sound, inputName.value);
+					this.editor.changeResourceName(sound, inputName.getValue());
 					sound.sound = paramSound;
-					sound.volume = parseFloat(inputVolume.value);
+					sound.volume = parseFloat(inputVolume.getValue());
 					//
 				},
 				() => this.close()

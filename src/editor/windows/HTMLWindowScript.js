@@ -1,4 +1,4 @@
-import {$, parent, endparent, add, newElem, newTextBox} from '../../common/H.js'
+import {parent, endparent, add, HTextInput, newElem} from '../../common/H.js'
 import HTMLCodeEditor from '../HTMLCodeEditor.js';
 import HTMLWindow from '../HTMLWindow.js';
 
@@ -13,7 +13,7 @@ export default class HTMLWindowScript extends HTMLWindow {
 			parent( add( newElem('grid-resource resource-script', 'div') ) )
 				parent( add( newElem(null, 'div') ) )
 
-					var inputName = $( add( newTextBox(null, 'Name:', script.name) ), 'input');
+					var inputName = add( new HTextInput('Name:', script.name) )
 
 					this.codeEditor = new HTMLCodeEditor(script.code);
 
@@ -22,7 +22,7 @@ export default class HTMLWindowScript extends HTMLWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(script, inputName.value);
+					this.editor.changeResourceName(script, inputName.getValue());
 					script.code = this.codeEditor.getValue();
 				},
 				() => {

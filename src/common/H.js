@@ -1,18 +1,5 @@
 // H.js
 
-// HTML query selector - usage: $(query) or $(element, query)
-export function $(...args) {
-	if (args.length == 1) {
-		let [query] = args;
-		return document.querySelector(query);
-	}
-	if (args.length == 2) {
-		let [element, query] = args;
-		return element.querySelector(query);
-	}
-	throw new Error('too many arguments for function $');
-}
-
 //// HTML generation parent system
 
 export class HElement {
@@ -27,7 +14,20 @@ export class HElement {
 
 		if (this.html == null) {
 			let [tag, attributes, text] = args;
-			this.html = html(tag, attributes, text);
+
+			this.html = document.createElement(tag);
+
+			if (attributes) {
+				for (let [name, value] of Object.entries(attributes)) {
+					if (value != null) {
+						this.html.setAttribute(name, value);
+					}
+				}
+			}
+
+			if (text) {
+				this.html.textContent = text;
+			}
 		}
 
 		this.children = [];
@@ -96,23 +96,17 @@ export function remove(element) {
 	}
 }
 
-//Makes a new element.
-export function html(tag, attributes, text) {
-	var e = document.createElement(tag);
-
-	if (attributes) {
-		for (let [name, value] of Object.entries(attributes)) {
-			if (value != null) {
-				e.setAttribute(name, value);
-			}
+// Remove the element's children.
+export function removeChildren(element) {
+	if (element instanceof HElement) {
+		for (const child of element.children) {
+			remove(child);
 		}
-	}
 
-	if (text) {
-		e.textContent = text;
+		element.children = [];
+	} else {
+		element.replaceChildren();
 	}
-
-	return e;
 }
 
 //// Specific element creation helpers
@@ -134,9 +128,18 @@ export class HLabelAndInput extends HElement {
 	constructor(type, label, value, _class) {
 		parent( super('div', {class: _class}) )
 			let id = '_id_' + uniqueID();
-			this.label = add( html('label', {for: id}, label) )
-			this.input = add( html('input', {id: id, type: type, value: value}) )
+			this.label = add( new HElement('label', {for: id}, label) )
+			this.input = add( new HElement('input', {id: id, type: type, value: value}) )
 			endparent()
+	}
+	getValue() {
+		return this.input.html.value;
+	}
+	setValue(value) {
+		this.input.html.value = value;
+	}
+	setOnChange(onChange) {
+		this.input.html.addEventListener('change', onChange);
 	}
 }
 
@@ -174,11 +177,17 @@ export class HCheckBoxInput extends HElement {
 	constructor(label, checked, _class) {
 		parent( super('div', {class: _class}) )
 			let id = '_id_' + uniqueID();
-			this.input = add( html('input', {id: id, type: 'checkbox',
+			this.input = add( new HElement('input', {id: id, type: 'checkbox',
 				...(checked ? {checked: 'checked'} : null)
 			}) )
-			this.label = add( html('label', {for: id}, label) )
+			this.label = add( new HElement('label', {for: id}, label) )
 			endparent()
+	}
+	getChecked() {
+		return this.input.html.checked;
+	}
+	setOnChange(onChange) {
+		this.input.html.addEventListener('change', onChange);
 	}
 }
 
@@ -186,11 +195,17 @@ export class HRadioInput extends HElement {
 	constructor(group, label, checked, _class) {
 		parent( super('div', {class: _class}) )
 			let id = '_id_' + uniqueID();
-			this.input = add( html('input', {id: id, type: 'radio', name: group,
+			this.input = add( new HElement('input', {id: id, type: 'radio', name: group,
 				...(checked ? {checked: 'checked'} : null)
 			}) )
-			this.label = add( html('label', {for: id}, label) )
+			this.label = add( new HElement('label', {for: id}, label) )
 			endparent()
+	}
+	getChecked() {
+		return this.input.html.checked;
+	}
+	setOnClick(onClick) {
+		this.input.html.addEventListener('click', onClick);
 	}
 }
 
@@ -198,9 +213,27 @@ export class HSelect extends HElement {
 	constructor(label, _class) {
 		parent( super('div', {class: _class}) )
 			let id = '_id_' + uniqueID();
-			this.label = add( html('label', {for: id}, label) )
-			this.select = add( html('select', {id: id}) )
+			this.label = add( new HElement('label', {for: id}, label) )
+			this.select = add( new HElement('select', {id: id}) )
 			endparent()
+	}
+	getValue() {
+		return this.select.html.value;
+	}
+	setValue(value) {
+		this.select.html.value = value;
+	}
+	getSelectedIndex() {
+		return this.select.html.selectedIndex;
+	}
+	setSelectedIndex(index) {
+		this.select.html.selectedIndex = index;
+	}
+	setOnChange(onChange) {
+		this.select.html.addEventListener('change', onChange);
+	}
+	removeOptions() {
+		removeChildren(this.select);
 	}
 }
 
@@ -221,7 +254,7 @@ export class HSelectWithOptions extends HSelect {
 			endparent()
 
 		if (value) {
-			this.select.value = value;
+			this.setValue(value);
 		}
 	}
 }
@@ -236,7 +269,7 @@ export class HImage extends HElement {
 
 // Create any element.
 export function newElem(classes, tag, content) {
-	return html(tag, {class: classes}, content);
+	return new HElement(tag, {class: classes}, content).html;
 }
 
 // <button><button>

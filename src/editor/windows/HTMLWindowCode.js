@@ -1,6 +1,6 @@
 import {parent, endparent, add, HRadioInput, uniqueID} from '../../common/H.js'
 import {ProjectObject} from '../../common/Project.js';
-import HTMLCodeEditor from '../HTMLCodeEditor.js';
+import HCodeEditor from '../HCodeEditor.js';
 import HTMLResourceSelect from '../HTMLResourceSelect.js';
 import HTMLWindow from '../HTMLWindow.js';
 
@@ -31,7 +31,7 @@ export default class HTMLWindowCode extends HTMLWindow {
 			if (action.appliesTo >= 0)
 				this.selectObject.setValue(action.appliesTo);
 
-			this.codeEditor = new HTMLCodeEditor(action.args[0].value);
+			this.codeEditor = add( new HCodeEditor(action.args[0].value) )
 
 			this.makeApplyOkButtons(
 				() => {

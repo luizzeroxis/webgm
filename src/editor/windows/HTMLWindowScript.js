@@ -1,5 +1,5 @@
 import {parent, endparent, add, HTextInput, newElem} from '../../common/H.js'
-import HTMLCodeEditor from '../HTMLCodeEditor.js';
+import HCodeEditor from '../HCodeEditor.js';
 import HTMLWindow from '../HTMLWindow.js';
 
 export default class HTMLWindowScript extends HTMLWindow {
@@ -15,7 +15,7 @@ export default class HTMLWindowScript extends HTMLWindow {
 
 					var inputName = add( new HTextInput('Name:', script.name) )
 
-					this.codeEditor = new HTMLCodeEditor(script.code);
+					this.codeEditor = add( new HCodeEditor(script.code) )
 
 					endparent()
 				endparent();

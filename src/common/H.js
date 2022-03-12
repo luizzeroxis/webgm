@@ -79,17 +79,14 @@ export function add(element) {
 export function remove(element) {
 	if (element instanceof HElement) {
 		element.html.remove();
-		element.html = null;
 
-		if (element.onRemove) {
-			element.onRemove();
-		}
+		// if (element.onRemove) {
+		// 	element.onRemove();
+		// }
 
-		for (const child of element.children) {
-			remove(child);
-		}
-
-		element.children = [];
+		// for (const child of element.children) {
+		// 	remove(child);
+		// }
 
 	} else {
 		element.remove(); // Element.remove

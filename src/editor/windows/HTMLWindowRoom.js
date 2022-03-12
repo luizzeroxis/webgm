@@ -1,8 +1,8 @@
 import AbstractImage from '../../common/AbstractImage.js'
-import {parent, endparent, add, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, newElem, newCanvas, newCheckBox, uniqueID} from '../../common/H.js'
+import {parent, endparent, add, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, newElem, newCanvas, uniqueID} from '../../common/H.js'
 import {ProjectObject, ProjectInstance} from '../../common/Project.js'
 import HTMLResourceSelect from '../HTMLResourceSelect.js';
-import HTMLTabs from '../HTMLTabs.js';
+import HTabControl from '../HTabControl.js';
 import HTMLWindow from '../HTMLWindow.js';
 import DefaultInstanceIcon from '../img/default-instance-icon.png';
 
@@ -27,9 +27,9 @@ export default class HTMLWindowRoom extends HTMLWindow {
 					this.inputSnapY = add( new HNumberInput('Snap Y:', 16, 1, 1) )
 					this.inputShowGrid = add( new HCheckBoxInput('Show grid', true) )
 
-					this.tabs = new HTMLTabs();
+					this.tabControl = add( new HTabControl() )
 
-					parent( this.tabs.addTab('Instances') )
+					parent( this.tabControl.addTab('Instances') )
 
 						this.selectObject = new HTMLResourceSelect(this.editor, 'Object:', ProjectObject, true);
 
@@ -44,7 +44,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 						endparent()
 
-					parent( this.tabs.addTab('Settings') )
+					parent( this.tabControl.addTab('Settings') )
 
 						this.inputName = add( new HTextInput('Name:', room.name) )
 						this.inputWidth = add( new HNumberInput('Width:', room.width, 1, 1) )
@@ -53,9 +53,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 						endparent()
 					
-					parent( this.tabs.addTab('Backgrounds') )
-
-						// add( newElem(null, 'legend', 'Backgrounds') )
+					parent( this.tabControl.addTab('Backgrounds') )
 
 						this.inputBackgroundColor = add( new HColorInput('Background color:', room.backgroundColor) )
 

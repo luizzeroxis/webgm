@@ -5,7 +5,7 @@ import {
 	ProjectEvent, ProjectAction, ProjectActionArg
 } from '../../common/Project.js';
 import HTMLResourceSelect from '../HTMLResourceSelect.js';
-import HTMLTabs from '../HTMLTabs.js';
+import HTabControl from '../HTabControl.js';
 import HTMLWindow from '../HTMLWindow.js';
 
 import HTMLWindowAction from './HTMLWindowAction.js';
@@ -264,11 +264,11 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 				parent( add( newElem(null, 'div') ) ) // Libraries area
 
-					this.tabs = new HTMLTabs();
+					this.librariesTabControl = add( new HTabControl() )
 
 					this.editor.libraries.forEach(library => {
 						
-						parent( this.tabs.addTab(library.name, (library.name == this.editor.preferences.defaultActionLibraryTab)) )
+						parent( this.librariesTabControl.addTab(library.name, (library.name == this.editor.preferences.defaultActionLibraryTab)) )
 
 							var nextClass = null;
 

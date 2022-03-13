@@ -1,16 +1,16 @@
 import {parent, endparent, add, HCheckBoxInput, HColorInput} from '../../common/H.js'
-import HTMLWindow from '../HTMLWindow.js';
+import HWindow from '../HWindow.js';
 
-export default class HTMLWindowGlobalGameSettings extends HTMLWindow {
+export default class HWindowGlobalGameSettings extends HWindow {
 
-	constructor(...args) {
-		super(...args);
-	}
+	constructor(editor, id, globalGameSettings) {
+		super(editor, id);
 
-	makeClient(globalGameSettings) {
-		this.htmlTitle.textContent = 'Global Game Settings';
+		this.globalGameSettings = globalGameSettings;
 
-		parent(this.htmlClient)
+		this.title.html.textContent = 'Global Game Settings';
+
+		parent(this.client)
 
 			this.inputColor = add( new HColorInput('Color outside the room region:', globalGameSettings.colorOutsideRoom) )
 

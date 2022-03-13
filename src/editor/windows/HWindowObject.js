@@ -1,17 +1,17 @@
 import Events from '../../common/Events.js';
-import {parent, endparent, add, remove, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HSelectWithOptions, newElem, newButton, newImage, newOption} from '../../common/H.js'
+import {parent, endparent, add, removeChildren, HElement, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HSelectWithOptions, newElem, newButton, newImage, newOption} from '../../common/H.js'
 import {
 	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline,
 	ProjectEvent, ProjectAction, ProjectActionArg
 } from '../../common/Project.js';
 import HResourceSelect from '../HResourceSelect.js';
 import HTabControl from '../HTabControl.js';
-import HTMLWindow from '../HTMLWindow.js';
+import HWindow from '../HWindow.js';
 
-import HTMLWindowAction from './HTMLWindowAction.js';
-import HTMLWindowCode from './HTMLWindowCode.js';
+import HWindowAction from './HWindowAction.js';
+import HWindowCode from './HWindowCode.js';
 
-export default class HTMLWindowObject extends HTMLWindow {
+export default class HWindowObject extends HWindow {
 
 	static actionArgResourceTypes = {
 		'sprite': ProjectSprite,
@@ -25,12 +25,12 @@ export default class HTMLWindowObject extends HTMLWindow {
 		'timeline': ProjectTimeline,
 	};
 
-	constructor(...args) {
-		super(...args);
-	}
-	makeClient(object) {
+	constructor(editor, id, object) {
+		super(editor, id);
 
-		this.htmlTitle.textContent = 'Edit Object '+object.name;
+		this.object = object;
+
+		this.title.html.textContent = 'Edit Object '+object.name;
 		this.htmlActionWindows = [];
 
 		// make a copy of the events and actions inside
@@ -61,10 +61,10 @@ export default class HTMLWindowObject extends HTMLWindow {
 		this.selectEventsOptions = {}; //<option>s inside event <select>
 		this.selectActionsOptions = {}; //<option>s inside action <select>
 
-		parent(this.htmlClient)
-			parent( add( newElem('grid-resource resource-object', 'div') ) )
+		parent(this.client)
+			parent( add( new HElement('div', {class: 'grid-resource resource-object'}) ) )
 
-				parent( add( newElem('properties-area', 'div') ) ) // Main area
+				parent( add( new HElement('div') ) ) // Properties area
 
 					var inputName = add( new HTextInput('Name:', object.name) )
 
@@ -78,7 +78,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 					endparent()
 
-				parent( add( newElem(null, 'div') ) ) // Events area
+				parent( add( new HElement('div') ) ) // Events area
 
 					// Event select
 
@@ -101,7 +101,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 					// Event subtype div
 
 					this.selectCollisionObject = null;
-					this.divEventSubtype = add( newElem(null, 'div') );
+					this.divEventSubtype = add( new HElement('div') )
 
 					// Add event button
 					this.buttonEventAdd = add( newButton(null, 'Add Event', () => {
@@ -388,12 +388,19 @@ export default class HTMLWindowObject extends HTMLWindow {
 				}
 			);
 			endparent();
+		
+	}
 
+	onAdd() {
 		this.listeners = this.editor.dispatcher.listen({
 			changeResourceName: i => {
 				this.updateSelectActions();
 			},
 		})
+	}
+
+	onRemove() {
+		this.editor.dispatcher.stopListening(this.listeners);
 	}
 
 	sortEvents() {
@@ -424,6 +431,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 			this.paramEvents.forEach(event => {
 				this.selectEventsOptions[event.getNameId()] = add( newOption(null, event.getNameId(),
 					Events.getEventName(event, this.editor.project)) )
+				// TODO update name of object in collision event
 			})
 			endparent();
 
@@ -444,12 +452,8 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 	updateDivEventSubtype() {
 
-		if (this.selectCollisionObject) {
-			remove(this.selectCollisionObject)
-			this.selectCollisionObject = null;
-		}
+		removeChildren(this.divEventSubtype)
 
-		this.divEventSubtype.textContent = '';
 		var eventType = this.selectEventType.getValue();
 
 		parent(this.divEventSubtype);
@@ -546,25 +550,25 @@ export default class HTMLWindowObject extends HTMLWindow {
 	getActionTypeInfo() {
 		return [
 			{kind: 'normal', interfaceKind: 'none', args: []},
-			{kind: 'normal', interfaceKind: 'normal', htmlclass: HTMLWindowAction},
-			{kind: 'normal', interfaceKind: 'arrows', htmlclass: HTMLWindowAction, args: [
+			{kind: 'normal', interfaceKind: 'normal', htmlclass: HWindowAction},
+			{kind: 'normal', interfaceKind: 'arrows', htmlclass: HWindowAction, args: [
 				{name: 'Directions:', kind: 'string', default: "000000000"},
 				{name: 'Speed:', kind: 'expression', default: "0"},
 			]},
-			{kind: 'normal', interfaceKind: 'code', htmlclass: HTMLWindowCode, args: [
+			{kind: 'normal', interfaceKind: 'code', htmlclass: HWindowCode, args: [
 				{kind: 'string', default: ""},
 			]},
-			{kind: 'normal', interfaceKind: 'text', htmlclass: HTMLWindowCode, args: [
+			{kind: 'normal', interfaceKind: 'text', htmlclass: HWindowCode, args: [
 				{kind: 'string', default: ""},
 			]},
-			{kind: 'repeat', htmlclass: HTMLWindowAction, hasApplyTo: false, args: [
+			{kind: 'repeat', htmlclass: HWindowAction, hasApplyTo: false, args: [
 				{name: 'times:', kind: 'expression', default: "1"},
 			]},
-			{kind: 'variable', htmlclass: HTMLWindowAction, hasApplyTo: true, hasRelative: true, args: [
+			{kind: 'variable', htmlclass: HWindowAction, hasApplyTo: true, hasRelative: true, args: [
 				{name: 'variable:', kind: 'string', default: ""},
 				{name: 'value:', kind: 'expression', default: "0"},
 			]},
-			{kind: 'code', htmlclass: HTMLWindowCode, hasApplyTo: true, args: [
+			{kind: 'code', htmlclass: HWindowCode, hasApplyTo: true, args: [
 				{kind: 'string', default: ""},
 			]},
 			{kind: 'begin', args: []},
@@ -667,12 +671,4 @@ export default class HTMLWindowObject extends HTMLWindow {
 		this.htmlActionWindows = [];
 	}
 
-	remove() {
-		super.remove();
-		remove(this.selectSprite)
-		if (this.selectCollisionObject) {
-			remove(this.selectCollisionObject)
-		}
-		this.editor.dispatcher.stopListening(this.listeners);
-	}
 }

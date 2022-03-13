@@ -1,16 +1,16 @@
 import {parent, endparent, add, newElem} from '../../common/H.js'
-import HTMLWindow from '../HTMLWindow.js';
+import HWindow from '../HWindow.js';
 
-export default class HTMLWindowTimeline extends HTMLWindow {
+export default class HWindowTimeline extends HWindow {
 
-	constructor(...args) {
-		super(...args);
-	}
+	constructor(editor, id, timeline) {
+		super(editor, id);
 
-	makeClient(timeline) {
-		this.htmlTitle.textContent = 'Edit Time Line '+timeline.name;
+		this.timeline = timeline;
 
-		parent(this.htmlClient)
+		this.title.html.textContent = 'Edit Time Line '+timeline.name;
+
+		parent(this.client)
 			parent( add( newElem('grid-resource resource-timeline', 'div') ) )
 				parent( add( newElem(null, 'div') ) )
 

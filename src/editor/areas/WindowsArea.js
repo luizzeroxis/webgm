@@ -1,4 +1,4 @@
-import {parent, endparent, add, newElem} from '../../common/H.js'
+import {parent, endparent, add, remove, newElem} from '../../common/H.js'
 import Editor from '../Editor.js';
 
 export default class WindowsArea {
@@ -20,15 +20,14 @@ export default class WindowsArea {
 		});
 	}
 
-	// Open a new window or focus on a existing one. windowClass is class that extends HTMLWindow. It will send id and the editor as arguments, then call makeClient with ...clientArgs. If a window with the same id is opened, it will focus on it, and return null. Otherwise it returns the newly created instance.
+	// Open a new window or focus on a existing one. windowClass is class that extends HWindow. It will send id, the editor and ...clientArgs as arguments. If a window with the same id is opened, it will focus on it, and return null. Otherwise it returns the newly created instance.
 	open(windowClass, id, ...clientArgs) {
 		if (this.windows.find(x => x.id == id)) {
 			this.focus(id);
 			return null;
 		} else {
 			parent(this.html)
-				var w = new windowClass(id, this.editor);
-				w.makeClient(...clientArgs);
+				var w = add( new windowClass(this.editor, id, ...clientArgs) )
 				endparent()
 
 			this.windows.unshift(w);
@@ -47,7 +46,7 @@ export default class WindowsArea {
 	delete(w) {
 		var index = this.windows.findIndex(x => x == w);
 		if (index>=0) {
-			this.windows[index].remove();
+			remove(this.windows[index])
 			this.windows.splice(index, 1);
 			return true;
 		}
@@ -58,15 +57,17 @@ export default class WindowsArea {
 	deleteId(id) {
 		var index = this.windows.findIndex(x => x.id == id);
 		if (index>=0) {
-			this.windows[index].remove();
+			remove(this.windows[index])
 			this.windows.splice(index, 1);
+			return true;
 		}
+		return false;
 	}
 
 	// Remove all windows.
 	clear() {
 		for (let w of this.windows) {
-			w.remove();
+			remove(w);
 		}
 		this.windows = [];
 	}

@@ -1,6 +1,6 @@
 import {parent, endparent, add, newElem, newButton} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js';
-import HTMLWindowPreferences from '../windows/HTMLWindowPreferences.js';
+import HWindowPreferences from '../windows/HWindowPreferences.js';
 
 export default class MenuArea {
 
@@ -26,7 +26,7 @@ export default class MenuArea {
 			}) )
 
 			add( newButton(null, 'Preferences', () => {
-				this.editor.windowsArea.open(HTMLWindowPreferences, 'preferences');
+				this.editor.windowsArea.open(HWindowPreferences, 'preferences');
 			}) )
 
 			this.runButton = add( newButton(null, 'Run', () => {

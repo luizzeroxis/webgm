@@ -1,15 +1,17 @@
 import {parent, endparent, add, HTextInput, newElem} from '../../common/H.js'
 import HCodeEditor from '../HCodeEditor.js';
-import HTMLWindow from '../HTMLWindow.js';
+import HWindow from '../HWindow.js';
 
-export default class HTMLWindowScript extends HTMLWindow {
-	constructor(...args) {
-		super(...args);
-	}
-	makeClient(script) {
-		this.htmlTitle.textContent = 'Edit Script '+script.name;
+export default class HWindowScript extends HWindow {
+	
+	constructor(editor, id, script) {
+		super(editor, id);
 
-		parent(this.htmlClient)
+		this.script = script;
+
+		this.title.html.textContent = 'Edit Script '+script.name;
+
+		parent(this.client)
 			parent( add( newElem('grid-resource resource-script', 'div') ) )
 				parent( add( newElem(null, 'div') ) )
 
@@ -30,7 +32,7 @@ export default class HTMLWindowScript extends HTMLWindow {
 				}
 			);
 
-			this.codeEditor.setNextElem(this.htmlApply);
+			this.codeEditor.setNextElem(this.applyButton);
 
 			endparent();
 	}

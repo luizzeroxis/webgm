@@ -1,25 +1,22 @@
-import {parent, endparent, add, remove, HRadioInput, uniqueID} from '../../common/H.js'
+import {parent, endparent, add, HRadioInput, uniqueID} from '../../common/H.js'
 import {ProjectObject} from '../../common/Project.js';
 import HCodeEditor from '../HCodeEditor.js';
 import HResourceSelect from '../HResourceSelect.js';
-import HTMLWindow from '../HTMLWindow.js';
+import HWindow from '../HWindow.js';
 
-export default class HTMLWindowCode extends HTMLWindow {
+export default class HWindowCode extends HWindow {
 
-	constructor(...args) {
-		super(...args);
-	}
-
-	makeClient(action, object) {
+	constructor(editor, id, action, object) {
+		super(editor, id);
 
 		this.action = action;
 		this.object = object;
 
 		this.actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
 
-		this.htmlTitle.textContent = this.actionType.description;
+		this.title.html.textContent = this.actionType.description;
 
-		parent(this.htmlClient)
+		parent(this.client)
 
 			var appliesToGroup = '_radio_'+uniqueID();
 
@@ -43,7 +40,7 @@ export default class HTMLWindowCode extends HTMLWindow {
 				}
 			);
 
-			this.codeEditor.setNextElem(this.htmlApply);
+			this.codeEditor.setNextElem(this.applyButton);
 
 			endparent();
 	}
@@ -59,11 +56,6 @@ export default class HTMLWindowCode extends HTMLWindow {
 
 		// Update action in event in object
 		this.object.updateSelectActions();
-	}
-
-	remove() {
-		super.remove();
-		remove(this.selectObject)
 	}
 	
 }

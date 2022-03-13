@@ -13,9 +13,16 @@ export default class Dispatcher {
 	}
 
 	stopListening(listeners) {
+		// console.log('stopListening:')
 		for (var subject in listeners) {
 			var index = this.listeners[subject].findIndex(x => x == listeners[subject]);
-			this.listeners[subject].splice(index, 1);
+			if (index >= 0) {
+				this.listeners[subject].splice(index, 1);
+				// console.log('*', subject, listeners[subject]);
+			}
+			if (this.listeners[subject].length == 0) {
+				delete this.listeners[subject];
+			}
 		}
 	}
 

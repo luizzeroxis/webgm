@@ -1,19 +1,18 @@
 import AbstractImage from '../../common/AbstractImage.js';
 import {parent, endparent, add, HTextInput, HNumberInput, newElem, newButton, newImage, setOnFileDrop} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js';
-import HTMLWindow from '../HTMLWindow.js';
+import HWindow from '../HWindow.js';
 
-export default class HTMLWindowSprite extends HTMLWindow {
+export default class HWindowSprite extends HWindow {
 
-	constructor(...args) {
-		super(...args);
-	}
+	constructor(editor, id, sprite) {
+		super(editor, id);
 
-	makeClient(sprite) {
 		this.sprite = sprite;
-		this.htmlTitle.textContent = 'Edit Sprite '+sprite.name;
+		
+		this.title.html.textContent = 'Edit Sprite '+sprite.name;
 
-		parent(this.htmlClient)
+		parent(this.client)
 			parent( add( newElem('grid-resource resource-sprite', 'div') ) )
 				parent( add( newElem(null, 'div') ) )
 
@@ -102,7 +101,7 @@ export default class HTMLWindowSprite extends HTMLWindow {
 			endparent();
 
 		// Open file if dropped in the window body
-		setOnFileDrop(this.html, files => this.loadSpriteFromFiles(files), true);
+		setOnFileDrop(this, files => this.loadSpriteFromFiles(files), true);
 
 	}
 

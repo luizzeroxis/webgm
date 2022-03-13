@@ -1,30 +1,25 @@
-import {parent, endparent, add, remove, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, newElem, uniqueID} from '../../common/H.js'
+import {parent, endparent, add, HElement, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, newElem, uniqueID} from '../../common/H.js'
 import {ProjectObject} from '../../common/Project.js';
 import {parseArrowString, stringifyArrowValues, decimalColorToHexColor, hexColorToDecimalColor} from '../../common/tools.js'
 import HResourceSelect from '../HResourceSelect.js';
-import HTMLWindow from '../HTMLWindow.js';
+import HWindow from '../HWindow.js';
 
-export default class HTMLWindowAction extends HTMLWindow {
+export default class HWindowAction extends HWindow {
 
-	constructor(...args) {
-		super(...args);
-	}
-
-	makeClient(action, object) {
+	constructor(editor, id, action, object) {
+		super(editor, id);
 
 		this.action = action;
 		this.object = object;
 
-		this.removables = [];
-
 		this.actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
 
-		this.htmlTitle.textContent = this.actionType.description;
+		this.title.html.textContent = this.actionType.description;
 
 		var actionTypeInfo = this.object.getActionTypeInfo();
 		var actionTypeInfoItem = actionTypeInfo.find(x => x.kind == this.actionType.kind && x.interfaceKind == this.actionType.interfaceKind);
 
-		parent(this.htmlClient)
+		parent(this.client)
 
 			this.actionTypeHasApplyTo = this.actionType.hasApplyTo;
 			if (this.actionType.hasApplyTo == undefined) {
@@ -33,7 +28,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 
 			if (this.actionTypeHasApplyTo) {
 
-				parent( add( newElem(null, 'fieldset') ) )
+				parent( add( new HElement('fieldset') ) )
 
 					add( newElem(null, 'legend', 'Applies to') )
 
@@ -44,7 +39,6 @@ export default class HTMLWindowAction extends HTMLWindow {
 					this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, 'Object:', (action.appliesTo >= 0)) );
 
 					this.selectObject = add( new HResourceSelect(this.editor, null, ProjectObject) )
-					this.removables.push(this.selectObject);
 
 					if (action.appliesTo >= 0)
 						this.selectObject.setValue(action.appliesTo);
@@ -184,7 +178,6 @@ export default class HTMLWindowAction extends HTMLWindow {
 		var resourceType = this.object.constructor.actionArgResourceTypes[resourceTypeName];
 
 		var select = add( new HResourceSelect(this.editor, name, resourceType) )
-		this.removables.push(select);
 		select.setValue(value);
 
 		return {
@@ -216,13 +209,6 @@ export default class HTMLWindowAction extends HTMLWindow {
 		// Update action in event in object
 		this.object.updateSelectActions();
 
-	}
-
-	remove() {
-		super.remove();
-		for (let removable of this.removables) {
-			remove(removable)
-		}
 	}
 
 }

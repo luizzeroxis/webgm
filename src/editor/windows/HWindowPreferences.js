@@ -1,11 +1,14 @@
 import {parent, endparent, add, HTextInput, HCheckBoxInput, HSelectWithOptions} from '../../common/H.js'
-import HTMLWindow from '../HTMLWindow.js';
+import HWindow from '../HWindow.js';
 
-export default class HTMLWindowPreferences extends HTMLWindow {
-	makeClient() {
-		this.htmlTitle.textContent = 'Preferences';
+export default class HWindowPreferences extends HWindow {
+
+	constructor(editor, id) {
+		super(editor, id);
+
+		this.title.html.textContent = 'Preferences';
 		
-		parent(this.htmlClient)
+		parent(this.client)
 
 			var selectTheme = add( new HSelectWithOptions('Theme:', [
 				{name: 'Auto', value: 'auto'},

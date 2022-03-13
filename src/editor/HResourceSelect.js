@@ -6,12 +6,18 @@ export default class HResourceSelect extends HSelect {
 
 		this.editor = editor;
 		this.resourceType = resourceType;
+		this.noNone = noNone;
 
 		this.selectOptions = {};
+	}
+
+	onAdd() {
+
+		this.removeOptions();
 
 		parent(this.select)
 
-			if (!noNone) {
+			if (!this.noNone) {
 				add( newOption(null, -1, '<none>') )
 			}
 
@@ -19,10 +25,8 @@ export default class HResourceSelect extends HSelect {
 				this.selectOptions[resource.id] = add( newOption(null, resource.id, resource.name) )
 			})
 
-			endparent();
-	}
+			endparent()
 
-	onAdd() {
 		this.listeners = this.editor.dispatcher.listen({
 			createResource: i => {
 				if (i.constructor != this.resourceType) return;

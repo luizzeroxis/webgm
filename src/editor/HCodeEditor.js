@@ -16,7 +16,7 @@ export default class HCodeEditor extends HElement {
 					e.preventDefault();
 					this.textareaCode.html.setRangeText('\t', this.textareaCode.html.selectionStart, this.textareaCode.html.selectionEnd, 'end');
 				} else if (e.code == "Escape") {
-					this.nextElem.focus();
+					this.nextElem.html.focus();
 				}
 			})
 

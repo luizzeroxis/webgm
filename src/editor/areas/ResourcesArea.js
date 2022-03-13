@@ -3,8 +3,8 @@ import {Project} from '../../common/Project.js';
 import HResourceListItem from '../HResourceListItem.js';
 import GameInformationIcon from '../img/game-information-icon.png';
 import GameSettingsIcon from '../img/global-game-settings-icon.png';
-import HTMLWindowGameInformation from '../windows/HTMLWindowGameInformation.js';
-import HTMLWindowGlobalGameSettings from '../windows/HTMLWindowGlobalGameSettings.js';
+import HWindowGameInformation from '../windows/HWindowGameInformation.js';
+import HWindowGlobalGameSettings from '../windows/HWindowGlobalGameSettings.js';
 // import ExtensionPackagesIcon from './img/extension-packages-icon.png';
 
 export default class ResourcesArea {
@@ -35,7 +35,7 @@ export default class ResourcesArea {
 					add( newElem('name', 'span', 'Game Information') )
 
 					parent( add( newElem('right', 'div') ) )
-						add( newButton(null, 'Edit', () => this.editor.windowsArea.open(HTMLWindowGameInformation,
+						add( newButton(null, 'Edit', () => this.editor.windowsArea.open(HWindowGameInformation,
 							'game-information', this.editor.project.gameInformation)) )
 						endparent();
 
@@ -46,7 +46,7 @@ export default class ResourcesArea {
 					add( newElem('name', 'span', 'Global Game Settings') )
 
 					parent( add( newElem('right', 'div') ) )
-						add( newButton(null, 'Edit', () => this.editor.windowsArea.open(HTMLWindowGlobalGameSettings,
+						add( newButton(null, 'Edit', () => this.editor.windowsArea.open(HWindowGlobalGameSettings,
 							'global-game-settings', this.editor.project.globalGameSettings )) )
 						endparent();
 
@@ -57,7 +57,7 @@ export default class ResourcesArea {
 				// 	add( newElem('name', 'span', 'Extension packages') )
 
 				// 	parent( add( newElem('right', 'div') ) )
-				// 		add( newButton(null, 'Edit', () => this.editor.openWindow(HTMLWindowExtensionPackages,
+				// 		add( newButton(null, 'Edit', () => this.editor.openWindow(HWindowExtensionPackages,
 				// 			'extension-packages', this.editor.project.extensionPackages)) )
 				// 		endparent();
 

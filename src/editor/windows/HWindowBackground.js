@@ -1,18 +1,18 @@
 import AbstractImage from '../../common/AbstractImage.js'
 import {parent, endparent, add, HTextInput, newElem, newButton, newImage} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js'
-import HTMLWindow from '../HTMLWindow.js';
+import HWindow from '../HWindow.js';
 
-export default class HTMLWindowBackground extends HTMLWindow {
+export default class HWindowBackground extends HWindow {
 	
-	constructor(...args) {
-		super(...args);
-	}
+	constructor(editor, id, background) {
+		super(editor, id);
 
-	makeClient(background) {
-		this.htmlTitle.textContent = 'Edit Background '+background.name;
+		this.background = background;
 
-		parent(this.htmlClient)
+		this.title.html.textContent = 'Edit Background '+background.name;
+
+		parent(this.client)
 			parent( add( newElem('grid-resource resource-background', 'div') ) )
 				parent( add( newElem(null, 'div') ) )
 

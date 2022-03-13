@@ -1,16 +1,18 @@
 import AbstractAudio from '../../common/AbstractAudio.js';
 import {parent, endparent, add, HTextInput, HRangeInput, newElem, newButton} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js';
-import HTMLWindow from '../HTMLWindow.js';
+import HWindow from '../HWindow.js';
 
-export default class HTMLWindowSound extends HTMLWindow {
-	constructor(...args) {
-		super(...args);
-	}
-	makeClient(sound) {
-		this.htmlTitle.textContent = 'Edit Sound '+sound.name;
+export default class HWindowSound extends HWindow {
 
-		parent(this.htmlClient)
+	constructor(editor, id, sound) {
+		super(editor, id);
+
+		this.sound = sound;
+
+		this.title.html.textContent = 'Edit Sound '+sound.name;
+
+		parent(this.client)
 			parent( add( newElem('grid-resource resource-sound', 'div') ) )
 				parent( add( newElem(null, 'div') ) )
 

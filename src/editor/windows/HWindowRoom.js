@@ -1,21 +1,23 @@
 import AbstractImage from '../../common/AbstractImage.js'
-import {parent, endparent, add, remove, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, newElem, newCanvas, uniqueID} from '../../common/H.js'
+import {parent, endparent, add, HElement, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, newElem, newCanvas, uniqueID} from '../../common/H.js'
 import {ProjectObject, ProjectInstance} from '../../common/Project.js'
 import HResourceSelect from '../HResourceSelect.js';
 import HTabControl from '../HTabControl.js';
-import HTMLWindow from '../HTMLWindow.js';
+import HWindow from '../HWindow.js';
 import DefaultInstanceIcon from '../img/default-instance-icon.png';
 
-export default class HTMLWindowRoom extends HTMLWindow {
-	constructor(...args) {
-		super(...args);
-	}
-	makeClient(room) {
-		this.htmlTitle.textContent = 'Edit Room '+room.name;
+export default class HWindowRoom extends HWindow {
 
-		parent(this.htmlClient)
-			parent( add( newElem('grid-resource resource-room', 'div') ) )
-				parent( add( newElem(null, 'div') ) )
+	constructor(editor, id, room) {
+		super(editor, id);
+
+		this.room = room;
+
+		this.title.html.textContent = 'Edit Room '+room.name;
+
+		parent(this.client)
+			parent( add( new HElement('div', {class: 'grid-resource resource-room'}) ) )
+				parent( add( new HElement('div') ) )
 
 					this.paramInstances = room.instances.map(instance => {
 						return new ProjectInstance(instance.id, instance.x, instance.y, instance.object_index);
@@ -237,6 +239,9 @@ export default class HTMLWindowRoom extends HTMLWindow {
 			);
 			endparent();
 
+	}
+
+	onAdd() {
 		this.listeners = this.editor.dispatcher.listen({
 			changeObjectSprite: i => {
 				this.updateCanvasPreview();
@@ -245,7 +250,10 @@ export default class HTMLWindowRoom extends HTMLWindow {
 				this.updateCanvasPreview();
 			},
 		})
+	}
 
+	onRemove() {
+		this.editor.dispatcher.stopListening(this.listeners);
 	}
 
 	getMousePosition(e) {
@@ -406,12 +414,6 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 		this.ctx.restore();
 		
-	}
-
-	remove() {
-		super.remove();
-		remove(this.selectObject)
-		this.editor.dispatcher.stopListening(this.listeners);
 	}
 
 }

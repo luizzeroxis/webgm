@@ -1,16 +1,16 @@
 import {parent, endparent, add, newElem} from '../../common/H.js'
-import HTMLWindow from '../HTMLWindow.js';
+import HWindow from '../HWindow.js';
 
-export default class HTMLWindowPath extends HTMLWindow {
+export default class HWindowPath extends HWindow {
 
-	constructor(...args) {
-		super(...args);
-	}
+	constructor(editor, id, path) {
+		super(editor, id);
 
-	makeClient(path) {
-		this.htmlTitle.textContent = 'Edit Path '+path.name;
+		this.path = path;
 
-		parent(this.htmlClient)
+		this.title.html.textContent = 'Edit Path '+path.name;
+
+		parent(this.client)
 			parent( add( newElem('grid-resource resource-path', 'div') ) )
 				parent( add( newElem(null, 'div') ) )
 

@@ -1,16 +1,16 @@
 import {parent, endparent, add, newElem} from '../../common/H.js'
-import HTMLWindow from '../HTMLWindow.js';
+import HWindow from '../HWindow.js';
 
-export default class HTMLWindowGameInformation extends HTMLWindow {
+export default class HWindowGameInformation extends HWindow {
 
-	constructor(...args) {
-		super(...args);
-	}
+	constructor(editor, id, gameInformation) {
+		super(editor, id);
 
-	makeClient(gameInformation) {
-		this.htmlTitle.textContent = 'Game Information';
+		this.gameInformation = gameInformation;
 
-		parent(this.htmlClient)
+		this.title.html.textContent = 'Game Information';
+
+		parent(this.client)
 
 			this.textareaText = add( newElem('code', 'textarea', gameInformation.text) )
 

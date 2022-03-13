@@ -31,30 +31,30 @@ import DefaultProjectRoomIcon from './img/default-ProjectRoom-icon.png';
 import DefaultProjectScriptIcon from './img/default-ProjectScript-icon.png';
 import DefaultProjectSoundIcon from './img/default-ProjectSound-icon.png';
 import DefaultProjectTimelineIcon from './img/default-ProjectTimeline-icon.png';
-import HTMLWindowBackground from './windows/HTMLWindowBackground.js';
-import HTMLWindowFont from './windows/HTMLWindowFont.js';
-import HTMLWindowObject from './windows/HTMLWindowObject.js';
-import HTMLWindowPath from './windows/HTMLWindowPath.js';
-import HTMLWindowRoom from './windows/HTMLWindowRoom.js';
-import HTMLWindowScript from './windows/HTMLWindowScript.js';
-import HTMLWindowSound from './windows/HTMLWindowSound.js';
-import HTMLWindowSprite from './windows/HTMLWindowSprite.js';
-import HTMLWindowTimeline from './windows/HTMLWindowTimeline.js';
+import HWindowBackground from './windows/HWindowBackground.js';
+import HWindowFont from './windows/HWindowFont.js';
+import HWindowObject from './windows/HWindowObject.js';
+import HWindowPath from './windows/HWindowPath.js';
+import HWindowRoom from './windows/HWindowRoom.js';
+import HWindowScript from './windows/HWindowScript.js';
+import HWindowSound from './windows/HWindowSound.js';
+import HWindowSprite from './windows/HWindowSprite.js';
+import HWindowTimeline from './windows/HWindowTimeline.js';
 
 import './style.css';
 
 export default class Editor {
 
 	static resourceTypesInfo = [
-		{class: ProjectSprite,     windowClass: HTMLWindowSprite,     resourceIcon: null                      },
-		{class: ProjectSound,      windowClass: HTMLWindowSound,      resourceIcon: DefaultProjectSoundIcon   },
-		{class: ProjectBackground, windowClass: HTMLWindowBackground, resourceIcon: null                      },
-		{class: ProjectPath,       windowClass: HTMLWindowPath,       resourceIcon: DefaultProjectPathIcon    },
-		{class: ProjectScript,     windowClass: HTMLWindowScript,     resourceIcon: DefaultProjectScriptIcon  },
-		{class: ProjectFont,       windowClass: HTMLWindowFont,       resourceIcon: DefaultProjectFontIcon    },
-		{class: ProjectTimeline,   windowClass: HTMLWindowTimeline,   resourceIcon: DefaultProjectTimelineIcon},
-		{class: ProjectObject,     windowClass: HTMLWindowObject,     resourceIcon: null                      },
-		{class: ProjectRoom,       windowClass: HTMLWindowRoom,       resourceIcon: DefaultProjectRoomIcon    },
+		{class: ProjectSprite,     windowClass: HWindowSprite,     resourceIcon: null                      },
+		{class: ProjectSound,      windowClass: HWindowSound,      resourceIcon: DefaultProjectSoundIcon   },
+		{class: ProjectBackground, windowClass: HWindowBackground, resourceIcon: null                      },
+		{class: ProjectPath,       windowClass: HWindowPath,       resourceIcon: DefaultProjectPathIcon    },
+		{class: ProjectScript,     windowClass: HWindowScript,     resourceIcon: DefaultProjectScriptIcon  },
+		{class: ProjectFont,       windowClass: HWindowFont,       resourceIcon: DefaultProjectFontIcon    },
+		{class: ProjectTimeline,   windowClass: HWindowTimeline,   resourceIcon: DefaultProjectTimelineIcon},
+		{class: ProjectObject,     windowClass: HWindowObject,     resourceIcon: null                      },
+		{class: ProjectRoom,       windowClass: HWindowRoom,       resourceIcon: DefaultProjectRoomIcon    },
 	];
 
 	constructor() {

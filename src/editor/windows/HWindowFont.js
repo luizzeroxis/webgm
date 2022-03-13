@@ -1,16 +1,16 @@
 import {parent, endparent, add, HTextInput, HNumberInput, HCheckBoxInput, newElem} from '../../common/H.js'
-import HTMLWindow from '../HTMLWindow.js';
+import HWindow from '../HWindow.js';
 
-export default class HTMLWindowFont extends HTMLWindow {
+export default class HWindowFont extends HWindow {
 
-	constructor(...args) {
-		super(...args);
-	}
+	constructor(editor, id, font) {
+		super(editor, id);
 
-	makeClient(font) {
-		this.htmlTitle.textContent = 'Edit Font '+font.name;
+		this.font = font;
 
-		parent(this.htmlClient)
+		this.title.html.textContent = 'Edit Font '+font.name;
+
+		parent(this.client)
 			parent( add( newElem('grid-resource resource-font', 'div') ) )
 				parent( add( newElem(null, 'div') ) )
 

@@ -30,10 +30,12 @@ export class HElement {
 			}
 		}
 
+		this.parent = null;
 		this.children = [];
 
 	}
-	// onRemove() {}
+	onAdd() {}
+	onRemove() {}
 }
 
 let parentStack = [document.body];
@@ -54,20 +56,22 @@ export function endparent() {
 
 // Add the element to the current parent.
 export function add(element) {
-	// if (!(element instanceof HElement)) {
-	// 	element = new HElement(element);
-	// }
 	const parent = parentStack[parentStack.length - 1];
+
 	if (parent instanceof HElement) {
 		parent.children.push(element);
+
 		if (element instanceof HElement) {
+			element.parent = parent;
 			parent.html.append(element.html);
+			callOnAddIfConnected(element);
 		} else {
 			parent.html.append(element);
 		}
 	} else {
 		if (element instanceof HElement) {
 			parent.append(element.html);
+			callOnAddIfConnected(element);
 		} else {
 			parent.append(element);
 		}
@@ -78,18 +82,36 @@ export function add(element) {
 // Remove the element from its parent.
 export function remove(element) {
 	if (element instanceof HElement) {
+		if (element.parent) {
+			element.parent.children.splice(element.parent.children.indexOf(element), 1);
+			element.parent = null;
+		}
 		element.html.remove();
-
-		// if (element.onRemove) {
-		// 	element.onRemove();
-		// }
-
-		// for (const child of element.children) {
-		// 	remove(child);
-		// }
-
+		callOnRemoveIfNotConnected(element);
 	} else {
-		element.remove(); // Element.remove
+		element.remove();
+	}
+}
+
+function callOnAddIfConnected(element) {
+	if (element.html.isConnected) {
+		for (const child of element.children) {
+			if (child instanceof HElement) {
+				callOnAddIfConnected(child);
+			}
+		}
+		element.onAdd();
+	}
+}
+
+function callOnRemoveIfNotConnected(element) {
+	if (!element.html.isConnected) {
+		for (const child of element.children) {
+			if (child instanceof HElement) {
+				callOnRemoveIfNotConnected(child);
+			}
+		}
+		element.onRemove();
 	}
 }
 
@@ -99,8 +121,6 @@ export function removeChildren(element) {
 		for (const child of element.children) {
 			remove(child);
 		}
-
-		element.children = [];
 	} else {
 		element.replaceChildren();
 	}

@@ -4,8 +4,8 @@ import {
 	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline,
 	ProjectEvent, ProjectAction, ProjectActionArg
 } from '../../common/Project.js';
-import HTMLResourceSelect from '../HTMLResourceSelect.js';
 import HTabControl from '../HTabControl.js';
+import HTMLResourceSelect from '../HTMLResourceSelect.js';
 import HTMLWindow from '../HTMLWindow.js';
 
 import HTMLWindowAction from './HTMLWindowAction.js';

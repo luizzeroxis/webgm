@@ -1,18 +1,19 @@
-import {parent, endparent, add, remove, newElem, newButton, newImage, setAttributeExceptNull} from '../common/H.js'
+import {parent, endparent, add, HElement, newElem, newButton, newImage, setAttributeExceptNull} from '../common/H.js'
 import {ProjectSprite, ProjectSound, ProjectBackground, ProjectObject} from '../common/Project.js';
 
 import Editor from './Editor.js';
 import DefaultProjectSoundIcon from './img/default-ProjectSound-icon.png';
 
-export default class HTMLResource {
+export default class HResourceListItem extends HElement {
 
 	constructor(resource, editor) {
+		super('li')
 
 		this.id = resource;
 		this.resource = resource;
 		this.editor = editor;
 
-		this.html = parent( add( newElem(null, 'li') ) )
+		parent(this)
 
 			this.htmlIcon = add( newImage('icon') );
 			this.htmlIcon.width = 16;
@@ -30,6 +31,10 @@ export default class HTMLResource {
 
 				endparent()
 			endparent()
+
+	}
+
+	onAdd() {
 
 		this.listeners = this.editor.dispatcher.listen({
 			changeResourceName: i => {
@@ -68,6 +73,11 @@ export default class HTMLResource {
 				}
 			})}
 		}
+
+	}
+
+	onRemove() {
+		this.editor.dispatcher.stopListening(this.listeners);
 	}
 
 	updateIcon() {
@@ -101,9 +111,5 @@ export default class HTMLResource {
 
 		setAttributeExceptNull(this.htmlIcon, 'src', src);
 	}
-	
-	remove() {
-		remove(this.html);
-		this.editor.dispatcher.stopListening(this.listeners);
-	}
+
 }

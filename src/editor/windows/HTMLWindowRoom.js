@@ -1,8 +1,8 @@
 import AbstractImage from '../../common/AbstractImage.js'
 import {parent, endparent, add, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, newElem, newCanvas, uniqueID} from '../../common/H.js'
 import {ProjectObject, ProjectInstance} from '../../common/Project.js'
-import HTMLResourceSelect from '../HTMLResourceSelect.js';
 import HTabControl from '../HTabControl.js';
+import HTMLResourceSelect from '../HTMLResourceSelect.js';
 import HTMLWindow from '../HTMLWindow.js';
 import DefaultInstanceIcon from '../img/default-instance-icon.png';
 

@@ -13,7 +13,7 @@ export default class HTabControl extends HElement {
 
 	addTab(name, isSelected) {
 
-		if (!isSelected) {
+		if (isSelected == null) {
 			isSelected = (this.currentTabContent == null);
 		}
 

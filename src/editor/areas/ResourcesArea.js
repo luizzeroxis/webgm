@@ -1,6 +1,6 @@
-import {parent, endparent, add, newElem, newButton, newImage} from '../../common/H.js'
+import {parent, endparent, add, remove, newElem, newButton, newImage} from '../../common/H.js'
 import {Project} from '../../common/Project.js';
-import HTMLResource from '../HTMLResource.js';
+import HResourceListItem from '../HResourceListItem.js';
 import GameInformationIcon from '../img/game-information-icon.png';
 import GameSettingsIcon from '../img/global-game-settings-icon.png';
 import HTMLWindowGameInformation from '../windows/HTMLWindowGameInformation.js';
@@ -80,7 +80,7 @@ export default class ResourcesArea {
 	// Add resource to resources tree in the proper type.
 	add(resource) {
 		parent(this.resourceTypes[resource.constructor.name]);
-			var r = new HTMLResource(resource, this.editor);
+			var r = add( new HResourceListItem(resource, this.editor) )
 
 			r.htmlEditButton.onclick = () => this.editor.windowsArea.openResource(resource)
 			r.htmlDeleteButton.onclick = () => this.editor.deleteResource(resource)
@@ -93,14 +93,14 @@ export default class ResourcesArea {
 	delete(resource) {
 		var index = this.resources.findIndex(x => x.id == resource);
 		if (index>=0) {
-			this.resources[index].remove();
+			remove(this.resources[index])
 			this.resources.splice(index, 1);
 		}
 	}
 
 	refresh() {
 		for (let resource of this.resources) {
-			resource.remove();
+			remove(resource)
 		}
 		Project.getTypes().forEach(type => {
 			this.editor.project.resources[type.getClassName()].forEach(resource => {

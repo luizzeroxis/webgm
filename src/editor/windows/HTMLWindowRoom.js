@@ -1,8 +1,8 @@
 import AbstractImage from '../../common/AbstractImage.js'
-import {parent, endparent, add, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, newElem, newCanvas, uniqueID} from '../../common/H.js'
+import {parent, endparent, add, remove, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, newElem, newCanvas, uniqueID} from '../../common/H.js'
 import {ProjectObject, ProjectInstance} from '../../common/Project.js'
+import HResourceSelect from '../HResourceSelect.js';
 import HTabControl from '../HTabControl.js';
-import HTMLResourceSelect from '../HTMLResourceSelect.js';
 import HTMLWindow from '../HTMLWindow.js';
 import DefaultInstanceIcon from '../img/default-instance-icon.png';
 
@@ -31,7 +31,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 					parent( this.tabControl.addTab('Instances') )
 
-						this.selectObject = new HTMLResourceSelect(this.editor, 'Object:', ProjectObject, true);
+						this.selectObject = add( new HResourceSelect(this.editor, 'Object:', ProjectObject, true) )
 
 						var toolGroup = '_radio_'+uniqueID();
 						this.radioAdd =      add( new HRadioInput(toolGroup, 'Add instance', true) )
@@ -410,7 +410,7 @@ export default class HTMLWindowRoom extends HTMLWindow {
 
 	remove() {
 		super.remove();
-		this.selectObject.remove();
+		remove(this.selectObject)
 		this.editor.dispatcher.stopListening(this.listeners);
 	}
 

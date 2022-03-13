@@ -1,7 +1,7 @@
-import {parent, endparent, add, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, newElem, uniqueID} from '../../common/H.js'
+import {parent, endparent, add, remove, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, newElem, uniqueID} from '../../common/H.js'
 import {ProjectObject} from '../../common/Project.js';
 import {parseArrowString, stringifyArrowValues, decimalColorToHexColor, hexColorToDecimalColor} from '../../common/tools.js'
-import HTMLResourceSelect from '../HTMLResourceSelect.js';
+import HResourceSelect from '../HResourceSelect.js';
 import HTMLWindow from '../HTMLWindow.js';
 
 export default class HTMLWindowAction extends HTMLWindow {
@@ -43,7 +43,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 					this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, 'Other', (action.appliesTo == -2)) );
 					this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, 'Object:', (action.appliesTo >= 0)) );
 
-					this.selectObject = new HTMLResourceSelect(this.editor, null, ProjectObject);
+					this.selectObject = add( new HResourceSelect(this.editor, null, ProjectObject) )
 					this.removables.push(this.selectObject);
 
 					if (action.appliesTo >= 0)
@@ -183,7 +183,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 	makeResourceInterface(name, resourceTypeName, value) {
 		var resourceType = this.object.constructor.actionArgResourceTypes[resourceTypeName];
 
-		var select = new HTMLResourceSelect(this.editor, name, resourceType);
+		var select = add( new HResourceSelect(this.editor, name, resourceType) )
 		this.removables.push(select);
 		select.setValue(value);
 
@@ -221,7 +221,7 @@ export default class HTMLWindowAction extends HTMLWindow {
 	remove() {
 		super.remove();
 		for (let removable of this.removables) {
-			removable.remove();
+			remove(removable)
 		}
 	}
 

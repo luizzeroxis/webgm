@@ -1,11 +1,11 @@
 import Events from '../../common/Events.js';
-import {parent, endparent, add, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HSelectWithOptions, newElem, newButton, newImage, newOption} from '../../common/H.js'
+import {parent, endparent, add, remove, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HSelectWithOptions, newElem, newButton, newImage, newOption} from '../../common/H.js'
 import {
 	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline,
 	ProjectEvent, ProjectAction, ProjectActionArg
 } from '../../common/Project.js';
+import HResourceSelect from '../HResourceSelect.js';
 import HTabControl from '../HTabControl.js';
-import HTMLResourceSelect from '../HTMLResourceSelect.js';
 import HTMLWindow from '../HTMLWindow.js';
 
 import HTMLWindowAction from './HTMLWindowAction.js';
@@ -68,7 +68,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 					var inputName = add( new HTextInput('Name:', object.name) )
 
-					this.selectSprite = new HTMLResourceSelect(this.editor, 'Sprite:', ProjectSprite);
+					this.selectSprite = add( new HResourceSelect(this.editor, 'Sprite:', ProjectSprite) )
 					this.selectSprite.setValue(object.sprite_index);
 
 					var inputVisible = add( new HCheckBoxInput('Visible', object.visible) )
@@ -445,7 +445,7 @@ export default class HTMLWindowObject extends HTMLWindow {
 	updateDivEventSubtype() {
 
 		if (this.selectCollisionObject) {
-			this.selectCollisionObject.remove();
+			remove(this.selectCollisionObject)
 			this.selectCollisionObject = null;
 		}
 
@@ -477,9 +477,8 @@ export default class HTMLWindowObject extends HTMLWindow {
 			} else
 
 			if (eventType == 'collision') {
-				this.selectCollisionObject = new HTMLResourceSelect(this.editor, 'Object:', ProjectObject, true);
-				let subtypeElement = this.selectCollisionObject.select;
-				this.subtypeValueFunction = () => (parseInt(subtypeElement.value));
+				this.selectCollisionObject = add( new HResourceSelect(this.editor, 'Object:', ProjectObject, true) )
+				this.subtypeValueFunction = () => (parseInt(this.selectCollisionObject.getValue()));
 			} else
 
 			if (eventType == 'other') {
@@ -670,9 +669,9 @@ export default class HTMLWindowObject extends HTMLWindow {
 
 	remove() {
 		super.remove();
-		this.selectSprite.remove();
+		remove(this.selectSprite)
 		if (this.selectCollisionObject) {
-			this.selectCollisionObject.remove();
+			remove(this.selectCollisionObject)
 		}
 		this.editor.dispatcher.stopListening(this.listeners);
 	}

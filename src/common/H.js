@@ -299,45 +299,6 @@ export function newCanvas(classes, width, height) {
 	return new HCanvas(width, height, classes).html;
 }
 
-// <input type=text />
-export function newTextBox(classes, labelcontent, value) {
-	return new HTextInput(labelcontent, value, classes).html;
-}
-
-// <input type=number />
-export function newNumberBox(classes, labelcontent, value, step, min, max) {
-	return new HNumberInput(labelcontent, value, step, min, max, classes).html;
-}
-
-// <input type=range />
-export function newSlider(classes, labelcontent, value, step, min, max) {
-	return new HRangeInput(labelcontent, value, step, min, max, classes).html;
-}
-
-// <input type=color />
-export function newColorBox(classes, labelcontent, value) {
-	return new HColorInput(labelcontent, value, classes).html;
-}
-
-// <input type=checkbox />
-export function newCheckBox(classes, labelcontent, checked) {
-	return new HCheckBoxInput(labelcontent, checked, classes).html;
-}
-
-// <input type=radio />
-export function newRadioBox(classes, labelcontent, groupname, checked) {
-	return new HRadioInput(groupname, labelcontent, checked, classes).html;
-}
-
-// <select> <option /> </select>
-export function newSelect(classes, labelcontent, options, value) {
-	if (options) {
-		return new HSelectWithOptions(labelcontent, options, value, classes).html;
-	} else {
-		return new HSelect(labelcontent, classes).html;
-	}
-}
-
 // <option />
 export function newOption(classes, value, text) {
 	return new HOption(text, value, classes).html;

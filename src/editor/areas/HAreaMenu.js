@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, newElem, newButton} from '../../common/H.js'
+import {parent, endparent, add, HElement, newButton} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js';
 import HWindowPreferences from '../windows/HWindowPreferences.js';
 

@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, newElem, newCanvas} from '../../common/H.js'
+import {parent, endparent, add, HElement, newCanvas} from '../../common/H.js'
 
 export default class HAreaGame extends HElement{
 

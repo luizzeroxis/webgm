@@ -93,6 +93,17 @@ export function remove(element) {
 	}
 }
 
+// Remove the element's children.
+export function removeChildren(element) {
+	if (element instanceof HElement) {
+		for (const child of element.children) {
+			remove(child);
+		}
+	} else {
+		element.replaceChildren();
+	}
+}
+
 function callOnAddIfConnected(element) {
 	if (element.html.isConnected) {
 		for (const child of element.children) {
@@ -112,17 +123,6 @@ function callOnRemoveIfNotConnected(element) {
 			}
 		}
 		element.onRemove();
-	}
-}
-
-// Remove the element's children.
-export function removeChildren(element) {
-	if (element instanceof HElement) {
-		for (const child of element.children) {
-			remove(child);
-		}
-	} else {
-		element.replaceChildren();
 	}
 }
 

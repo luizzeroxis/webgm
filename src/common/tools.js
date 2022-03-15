@@ -1,8 +1,3 @@
-// export {$, parent, endparent, add, remove, html, text,
-// 	newElem, newButton, newCanvas, newTextBox, newNumberBox, newCheckBox, newRadioBox, newSelect, newColorBox, newImage,
-// 	uniqueID, setAttributeExceptNull
-// 	} from '../common/H.js';
-
 //Bunch of random functions that make my life easier
 
 //= Base 64 =

@@ -713,10 +713,10 @@ export default class GML {
 			return instance ? [instance] : [];
 
 		} else if (object == -1 || object == -7) { // self or local
-			return [this.currentInstance];
+			return [this.currentInstance]; // TODO check if exists
 
 		} else if (object == -2) { // other
-			return [this.currentOther];
+			return [this.currentOther]; // TODO check if exists
 
 		} else if (object == -3) { // all
 			return this.game.instances.filter(instance => instance.exists);

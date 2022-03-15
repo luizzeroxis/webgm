@@ -101,7 +101,7 @@ export default class HWindowSprite extends HWindow {
 			endparent();
 
 		// Open file if dropped in the window body
-		setOnFileDrop(this, files => this.loadSpriteFromFiles(files), true);
+		setOnFileDrop(this.html, files => this.loadSpriteFromFiles(files), true);
 
 	}
 

@@ -1,9 +1,9 @@
-import {parent, endparent, add, newElem, newCanvas} from '../../common/H.js'
+import {parent, endparent, add, HElement, newElem, newCanvas} from '../../common/H.js'
 
-export default class GameArea {
+export default class HAreaGame extends HElement{
 
 	constructor() {
-		this.html = parent( add( newElem('game', 'div') ) )
+		parent( super('div', {class: 'game'}) )
 			this.canvas = add( newCanvas("canvas", 640, 480) )
 			this.canvas.setAttribute('tabindex', 0);
 			endparent()

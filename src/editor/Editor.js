@@ -2,7 +2,7 @@
 
 import Dispatcher from '../common/Dispatcher.js'
 import {WebGMException, UnserializeException} from '../common/Exceptions.js';
-import {parent, endparent, add, newElem, setOnFileDrop} from '../common/H.js'
+import {parent, endparent, add, HElement, newElem, setOnFileDrop} from '../common/H.js'
 import {
 	Project,
 	ProjectAction,
@@ -20,10 +20,10 @@ import ProjectSerializer from '../common/ProjectSerializer.js';
 import VirtualFileSystem from '../common/VirtualFileSystem.js';
 import {Game} from '../game/Game.js';
 
-import GameArea from './areas/GameArea.js';
-import MenuArea from './areas/MenuArea.js';
-import ResourcesArea from './areas/ResourcesArea.js';
-import WindowsArea from './areas/WindowsArea.js';
+import HAreaGame from './areas/HAreaGame.js';
+import HAreaMenu from './areas/HAreaMenu.js';
+import HAreaResources from './areas/HAreaResources.js';
+import HAreaWindows from './areas/HAreaWindows.js';
 import BuiltInLibraries from './BuiltInLibraries.js'
 import DefaultProjectFontIcon from './img/default-ProjectFont-icon.png';
 import DefaultProjectPathIcon from './img/default-ProjectPath-icon.png';
@@ -59,14 +59,13 @@ export default class Editor {
 
 	constructor() {
 
-		//this.editor = this;
 		this.project = new Project();
 		this.game = null;
 		this.projectName = 'game';
 
 		this.dispatcher = new Dispatcher();
 
-		//Preferences
+		// Preferences
 		this.preferences = {
 			theme: 'auto',
 			defaultActionLibraryTab: 'move',
@@ -80,33 +79,35 @@ export default class Editor {
 
 		this.loadPreferences();
 
-		//Libraries
+		// Update theme if on auto to match system
+		var media = window.matchMedia('(prefers-color-scheme: dark)');
+		media.addEventListener('change', e => this.updateAutoTheme(e));
+		this.updateAutoTheme(media);
+
+		// Libraries
 		this.libraries = BuiltInLibraries.getList();
 
-		//Areas
-
-		this.html = parent( add( newElem('editor', 'div') ))
+		// Areas
+		this.div = parent( new HElement('div', {class: 'editor'}) )
 
 			add( newElem(null, 'div', 'Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!') )
 
-			parent( add( newElem('grid', 'div') ) )
+			parent( add( new HElement('div', {class: 'grid'}) ) )
 
-				this.menuArea = new MenuArea(this);
-				this.resourcesArea = new ResourcesArea(this);
-				this.windowsArea = new WindowsArea(this);
-				this.gameArea = new GameArea();
+				this.menuArea = add( new HAreaMenu(this) )
+				this.resourcesArea = add( new HAreaResources(this) )
+				this.windowsArea = add( new HAreaWindows(this) )
+				this.gameArea = add( new HAreaGame() )
 
 				endparent()
 
 			endparent()
 
 		// Open file if dropped in the editor body
-		setOnFileDrop(this.html, file => this.openProjectFromFile(file));
+		setOnFileDrop(this.div.html, file => this.openProjectFromFile(file));
 
-		// Update theme if on auto to match system
-		var media = window.matchMedia('(prefers-color-scheme: dark)');
-		media.addEventListener('change', e => this.updateAutoTheme(e));
-		this.updateAutoTheme(media);
+		// Actually add to the DOM
+		add(this.div)
 	}
 
 	updateAutoTheme(mediaQueryList) {
@@ -211,7 +212,7 @@ export default class Editor {
 		this.dispatcher.speak('changeObjectSprite', object);
 	}
 
-	// Called from MenuArea
+	// Called from HAreaMenu
 	newProject() {
 		this.project = new Project();
 
@@ -219,7 +220,7 @@ export default class Editor {
 		this.windowsArea.clear();
 	}
 
-	// Called from MenuArea
+	// Called from HAreaMenu
 	openProjectFromFile(file) {
 
 		var promise;
@@ -253,7 +254,7 @@ export default class Editor {
 		})
 	}
 
-	// Called from MenuArea
+	// Called from HAreaMenu
 	saveProject() {
 
 		ProjectSerializer.serializeZIP(this.project)
@@ -263,7 +264,7 @@ export default class Editor {
 		
 	}
 
-	// Called from MenuArea
+	// Called from HAreaMenu
 	runGame() {
 
 		this.stopGame();
@@ -311,7 +312,7 @@ export default class Editor {
 				
 	}
 
-	// Called from MenuArea and runGame
+	// Called from HAreaMenu and runGame
 	stopGame () {
 		if (this.game) {
 			this.game.stepStopAction = async () => await this.game.end();

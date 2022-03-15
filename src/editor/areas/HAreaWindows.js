@@ -1,16 +1,17 @@
-import {parent, endparent, add, remove, newElem} from '../../common/H.js'
+import {parent, endparent, add, remove, HElement, newElem} from '../../common/H.js'
 import Editor from '../Editor.js';
 
-export default class WindowsArea {
+export default class HAreaWindows extends HElement {
 
 	constructor(editor) {
+		super('div', {class: 'windows'})
+
 		this.editor = editor;
-		
-		this.html = add( newElem('windows', 'div') )
-
 		this.windows = [];
+	}
 
-		this.editor.dispatcher.listen({
+	onAdd() {
+		this.listeners = this.editor.dispatcher.listen({
 			createResource: i => {
 				this.openResource(i);
 			},
@@ -20,13 +21,17 @@ export default class WindowsArea {
 		});
 	}
 
+	// onRemove() {
+	// 	this.editor.dispatcher.stopListening(this.listeners);
+	// }
+
 	// Open a new window or focus on a existing one. windowClass is class that extends HWindow. It will send id, the editor and ...clientArgs as arguments. If a window with the same id is opened, it will focus on it, and return null. Otherwise it returns the newly created instance.
 	open(windowClass, id, ...clientArgs) {
 		if (this.windows.find(x => x.id == id)) {
 			this.focus(id);
 			return null;
 		} else {
-			parent(this.html)
+			parent(this)
 				var w = add( new windowClass(this.editor, id, ...clientArgs) )
 				endparent()
 

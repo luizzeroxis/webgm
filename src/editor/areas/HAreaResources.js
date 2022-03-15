@@ -1,4 +1,4 @@
-import {parent, endparent, add, remove, newElem, newButton, newImage} from '../../common/H.js'
+import {parent, endparent, add, remove, HElement, newElem, newButton, newImage} from '../../common/H.js'
 import {Project} from '../../common/Project.js';
 import HResourceListItem from '../HResourceListItem.js';
 import GameInformationIcon from '../img/game-information-icon.png';
@@ -7,14 +7,16 @@ import HWindowGameInformation from '../windows/HWindowGameInformation.js';
 import HWindowGlobalGameSettings from '../windows/HWindowGlobalGameSettings.js';
 // import ExtensionPackagesIcon from './img/extension-packages-icon.png';
 
-export default class ResourcesArea {
+export default class HAreaResources extends HElement {
 
 	constructor(editor) {
+		super('div', {class: 'resources'})
+
 		this.editor = editor;
 		this.resourceTypes = {};
 		this.resources = [];
 
-		this.html = parent( add( newElem('resources', 'div') ) )
+		parent(this)
 			parent( add ( newElem(null, 'ul') ) )
 
 				Project.getTypes().forEach(type => {
@@ -67,7 +69,10 @@ export default class ResourcesArea {
 
 			endparent()
 
-		this.editor.dispatcher.listen({
+	}
+
+	onAdd() {
+		this.listeners = this.editor.dispatcher.listen({
 			createResource: i => {
 				this.add(i);
 			},
@@ -76,6 +81,10 @@ export default class ResourcesArea {
 			},
 		});
 	}
+
+	// onRemove() {
+	// 	this.editor.dispatcher.stopListening(this.listeners);
+	// }
 
 	// Add resource to resources tree in the proper type.
 	add(resource) {

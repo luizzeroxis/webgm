@@ -1,13 +1,15 @@
-import {parent, endparent, add, newElem, newButton} from '../../common/H.js'
+import {parent, endparent, add, HElement, newElem, newButton} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js';
 import HWindowPreferences from '../windows/HWindowPreferences.js';
 
-export default class MenuArea {
+export default class HAreaMenu extends HElement {
 
 	constructor(editor) {
+		super('div', {class: 'menu'})
+
 		this.editor = editor;
 
-		parent( add( newElem('menu', 'div') ) )
+		parent(this)
 
 			add( newButton(null, 'New', () => {
 				if (!confirm("Clear current project and start anew?")) return;

@@ -169,18 +169,18 @@ export class HTextInput extends HLabelAndInput {
 export class HNumberInput extends HLabelAndInput {
 	constructor(label, value, step, min, max, _class) {
 		super('number', label, value, _class);
-		this.input.step = step;
-		this.input.min = min;
-		this.input.max = max;
+		this.input.html.step = step;
+		this.input.html.min = min;
+		this.input.html.max = max;
 	}
 }
 
 export class HRangeInput extends HLabelAndInput {
 	constructor(label, value, step, min, max, _class) {
 		super('range', label, value, _class);
-		this.input.step = step;
-		this.input.min = min;
-		this.input.max = max;
+		this.input.html.step = step;
+		this.input.html.min = min;
+		this.input.html.max = max;
 	}
 }
 

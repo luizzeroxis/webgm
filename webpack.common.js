@@ -1,7 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const WorkboxPlugin = require('workbox-webpack-plugin');
 
 module.exports = {
 	entry: './src/index.js',
@@ -37,10 +36,6 @@ module.exports = {
 			title: 'webgm'
 		}),
 		new MiniCssExtractPlugin(),
-		new WorkboxPlugin.GenerateSW({
-			clientsClaim: true,
-			skipWaiting: true,
-		}),
 	],
 	optimization: {
 		runtimeChunk: 'single',

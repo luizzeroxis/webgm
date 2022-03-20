@@ -76,6 +76,9 @@ export class Game {
 		this.cursorSprite = null;
 		this.cursorImageIndex = 0;
 
+		this.audioContext = null;
+		this.sounds = new Map();
+
 	}
 
 	// Starts the game.
@@ -85,6 +88,7 @@ export class Game {
 			this.startCanvas();
 			this.startInput();
 			this.startEngine();
+			this.startAudio();
 
 			await this.loadProject();
 			await this.loadFirstRoom();
@@ -161,6 +165,9 @@ export class Game {
 		this.input.removeEventListener('mousemove', this.mouseMoveHandler)
 		this.input.removeEventListener('wheel', this.wheelHandler)
 
+		// audio
+		this.stopAllSounds();
+
 		this.dispatcher.speak('close', e);
 	}
 
@@ -215,8 +222,8 @@ export class Game {
 
 		this.mouseMoveHandler = (e) => {
 			var rect = this.input.getBoundingClientRect();
-			this.mouseX = Math.floor(Math.max(0, Math.min(e.clientX - rect.left, this.room.width)));
-			this.mouseY = Math.floor(Math.max(0, Math.min(e.clientY - rect.top, this.room.height)));
+			this.mouseX = Math.floor(Math.max(0, Math.min(e.clientX - rect.left, this.room.width || 0)));
+			this.mouseY = Math.floor(Math.max(0, Math.min(e.clientY - rect.top, this.room.height || 0)));
 
 			this.globalVars.setBuiltIn('mouse_x', this.mouseX);
 			this.globalVars.setBuiltIn('mouse_y', this.mouseY);
@@ -246,6 +253,16 @@ export class Game {
 
 	}
 
+	startAudio() {
+		if (!this.audioContext) {
+			this.audioContext = new AudioContext();
+		} else {
+			if (this.audioContext.state == 'suspended') {
+				this.audioContext.resume();
+			}
+		}
+	}
+
 	// // Project loading
 
 	// Makes sure all resources are loaded, and parses GML code.
@@ -253,7 +270,7 @@ export class Game {
 		var promises = [
 			this.loadSprites(),
 			this.loadBackgrounds(), // TODO
-			this.loadSounds(), // TODO
+			this.loadSounds(),
 		];
 
 		this.loadFonts();
@@ -283,7 +300,20 @@ export class Game {
 	loadBackgrounds() {} // TODO
 
 	// Returns a list of promises of loading sounds.
-	loadSounds() {} // TODO
+	loadSounds() {
+		var promises = [];
+		this.project.resources.ProjectSound.forEach(sound => {
+			if (!sound.sound) return;
+			sound.sound.load();
+			promises.push(sound.sound.promise
+				.catch(e => {
+					throw new EngineException("Could not load audio in sound " + sound.name);
+				}));
+
+			this.sounds.set(sound, {volume: sound.volume, audioNodes: []})
+		})
+		return Promise.all(promises);
+	}
 
 	// Loads all fonts.
 	loadFonts() {
@@ -908,7 +938,7 @@ export class Game {
 				}
 				break;
 
-			case 'variable': // TODO
+			case 'variable':
 				for (let applyToInstance of applyToInstances) {
 					if (!applyToInstance.exists) continue;
 					await this.gml.execute(this.gmlCache.get(treeAction.action), applyToInstance, otherInstance);
@@ -1157,6 +1187,38 @@ export class Game {
 		this.ctx.restore();
 
 		return true;
+	}
+
+	// Play a sound, on loop or not.
+	playSound(sound, loop) {
+		this.startAudio();
+		var audioNode = this.audioContext.createMediaElementSource(new Audio(sound.sound.src));
+		audioNode.connect(this.audioContext.destination);
+		audioNode.mediaElement.volume = this.sounds.get(sound).volume;
+		audioNode.mediaElement.loop = loop;
+		audioNode.mediaElement.play();
+
+		this.sounds.get(sound).audioNodes.push(audioNode);
+	}
+
+	// Stop all playing sounds from a sound resource.
+	stopSound(sound) {
+		for (let audioNode of this.sounds.get(sound).audioNodes) {
+			audioNode.mediaElement.pause();
+			audioNode.disconnect();
+		}
+		this.sounds.get(sound).audioNodes = [];
+	}
+
+	// Stop all sounds being played.
+	stopAllSounds() {
+		for (let [sound, value] of this.sounds) {
+			for (let audioNode of value.audioNodes) {
+				audioNode.mediaElement.pause();
+				audioNode.disconnect();
+			}
+			value.audioNodes = [];
+		}
 	}
 
 	// Get state of a key. dict should be key, keyPressed or keyReleased.

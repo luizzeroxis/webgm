@@ -22,7 +22,7 @@ export default class AbstractAudio {
 	load() {
 		if (this.promise == null) {
 			this.promise = new Promise((resolve, reject) => {
-				this.audio.onload = (e) => {
+				this.audio.oncanplaythrough = (e) => { // onload simply isn't a thing. That's great.
 					resolve();
 				};
 				this.audio.onerror = (e) => {

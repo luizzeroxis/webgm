@@ -2028,27 +2028,66 @@ export default class BuiltInFunctions {
 
 	// ## Basic sound functions
 
-	static sound_play ([_]) {
+	static sound_play ([index]) {
+		var sound = this.game.getResourceById('ProjectSound', index);
+		if (!sound) {
+			throw this.game.makeNonFatalError({
+				type: 'sound_does_not_exist',
+				soundIndex: index,
+			}, 'Sound does not exist. (' + index.toString() +')');
+		}
+
+		this.game.playSound(sound, false);
+		return 0;
+	}
+	static sound_loop ([index]) {
+		var sound = this.game.getResourceById('ProjectSound', index);
+		if (!sound) {
+			throw this.game.makeNonFatalError({
+				type: 'sound_does_not_exist',
+				soundIndex: index,
+			}, 'Sound does not exist. (' + index.toString() +')');
+		}
+
+		this.game.playSound(sound, true);
+		return 0;
+	}
+	static sound_stop ([index]) {
+		var sound = this.game.getResourceById('ProjectSound', index);
+		if (!sound) {
+			throw this.game.makeNonFatalError({
+				type: 'sound_does_not_exist',
+				soundIndex: index,
+			}, 'Sound does not exist. (' + index.toString() +')');
+		}
+
+		this.game.stopSound(sound);
+	}
+	static sound_stop_all ([]) {
+		this.game.stopAllSounds();
+		return 0;
+	}
+	static sound_isplaying ([index]) {
+		var sound = this.game.getResourceById('ProjectSound', index);
+		if (!sound) return 0;
+
+		for (let audioNode of this.game.sounds.get(sound).audioNodes) {
+			if (!audioNode.mediaElement.ended) {
+				return 1;
+			}
+		}
 
 		return 0;
 	}
-	static sound_loop ([_]) {
+	static sound_volume ([index, value]) {
+		var sound = this.game.getResourceById('ProjectSound', index);
+		if (!sound) return 0; // TODO check if error
 
-		return 0;
-	}
-	static sound_stop ([_]) {
+		this.game.sounds.get(sound).volume = value;
 
-		return 0;
-	}
-	static sound_stop_all ([_]) {
-
-		return 0;
-	}
-	static sound_isplaying ([_]) {
-
-		return 0;
-	}
-	static sound_volume ([_]) {
+		for (let audioNode of this.game.sounds.get(sound).audioNodes) {
+			audioNode.mediaElement.volume = value;
+		}
 
 		return 0;
 	}
@@ -5176,7 +5215,7 @@ export default class BuiltInFunctions {
 	// ### Code
 
 	static action_execute_script ([script, argument0, argument1, argument2, argument3, argument4]) {
-		var scriptResource = this.game.project.resources.ProjectScript.find(x => x.id == script);
+		var scriptResource = this.game.getResourceById('ProjectScript', script);
 
 		if (scriptResource) {
 			return this.execute(this.game.gmlCache.get(scriptResource), this.currentInstance, this.currentOther,

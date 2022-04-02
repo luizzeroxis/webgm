@@ -394,6 +394,7 @@ export default class HWindowObject extends HWindow {
 	onAdd() {
 		this.listeners = this.editor.dispatcher.listen({
 			changeResourceName: i => {
+				this.updateSelectEvents();
 				this.updateSelectActions();
 			},
 		})
@@ -431,7 +432,6 @@ export default class HWindowObject extends HWindow {
 			this.paramEvents.forEach(event => {
 				this.selectEventsOptions[event.getNameId()] = add( newOption(null, event.getNameId(),
 					Events.getEventName(event, this.editor.project)) )
-				// TODO update name of object in collision event
 			})
 			endparent();
 

@@ -5040,7 +5040,7 @@ export default class BuiltInFunctions {
 
 	static action_set_alarm ([numberOfSteps, inAlarmNo], relative) {
 		numberOfSteps = (!relative ? numberOfSteps : this.currentInstance.vars.getBuiltInArray('alarm', [inAlarmNo]) + numberOfSteps);
-		this.currentInstance.setBuiltInArray('alarm', [inAlarmNo], numberOfSteps);
+		this.currentInstance.vars.setBuiltInArray('alarm', [inAlarmNo], numberOfSteps);
 		return 0;
 	}
 	static async action_sleep ([milliseconds, redraw]) {
@@ -5256,12 +5256,12 @@ export default class BuiltInFunctions {
 	// ### Score
 
 	static action_set_score ([newScore], relative) {
-		newScore = (!relative ? newScore : this.currentInstance.vars.getBuiltIn("score") + newScore);
+		newScore = (!relative ? newScore : this.game.globalVars.getBuiltIn("score") + newScore);
 		this.game.globalVars.setBuiltIn("score", newScore);
 		return 0;
 	}
 	static action_if_score ([value, operation]) {
-		var score = this.currentInstance.vars.getBuiltIn("score");
+		var score = this.game.globalVars.getBuiltIn("score");
 		switch (operation) {
 			case 0: // equal to
 				return (score === value) ? 1 : 0;
@@ -5288,12 +5288,12 @@ export default class BuiltInFunctions {
 	// ### Lives
 
 	static action_set_life ([newLives], relative) {
-		newLives = (!relative ? newLives : this.currentInstance.vars.getBuiltIn("lives") + newLives);
+		newLives = (!relative ? newLives : this.game.globalVars.getBuiltIn("lives") + newLives);
 		this.game.globalVars.setBuiltInCall("lives", newLives);
 		return 0;
 	}
 	static action_if_life ([value, operation]) {
-		var lives = this.currentInstance.vars.getBuiltIn("lives");
+		var lives = this.game.globalVars.getBuiltIn("lives");
 		switch (operation) {
 			case 0: // equal to
 				return (lives === value) ? 1 : 0;
@@ -5316,12 +5316,12 @@ export default class BuiltInFunctions {
 	// ### Health
 
 	static action_set_health ([value], relative) {
-		value = (!relative ? value : this.currentInstance.vars.getBuiltIn("health") + value);
+		value = (!relative ? value : this.game.globalVars.getBuiltIn("health") + value);
 		this.game.globalVars.setBuiltInCall("health", value);
 		return 0;
 	}
 	static action_if_health ([value, operation]) {
-		var health = this.currentInstance.vars.getBuiltIn("health");
+		var health = this.game.globalVars.getBuiltIn("health");
 		switch (operation) {
 			case 0: // equal to
 				return (health === value) ? 1 : 0;

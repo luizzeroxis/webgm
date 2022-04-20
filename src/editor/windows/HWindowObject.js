@@ -1,5 +1,5 @@
 import Events from '../../common/Events.js';
-import {parent, endparent, add, removeChildren, HElement, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HSelectWithOptions, newElem, newButton, newImage, newOption} from '../../common/H.js'
+import {parent, endparent, add, removeChildren, HElement, HButton, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HOption, HSelectWithOptions, HImage} from '../../common/H.js'
 import {
 	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline,
 	ProjectEvent, ProjectAction, ProjectActionArg
@@ -58,9 +58,6 @@ export default class HWindowObject extends HWindow {
 		})
 		// you know, fuck javascript
 
-		this.selectEventsOptions = {}; //<option>s inside event <select>
-		this.selectActionsOptions = {}; //<option>s inside action <select>
-
 		parent(this.client)
 			parent( add( new HElement('div', {class: 'grid-resource resource-object'}) ) )
 
@@ -104,7 +101,7 @@ export default class HWindowObject extends HWindow {
 					this.divEventSubtype = add( new HElement('div') )
 
 					// Add event button
-					this.buttonEventAdd = add( newButton(null, 'Add Event', () => {
+					this.buttonEventAdd = add( new HButton('Add Event', () => {
 
 						var eventType = this.selectEventType.getValue();
 						var eventSubtype = 0;
@@ -133,7 +130,7 @@ export default class HWindowObject extends HWindow {
 					}) )
 
 					// Delete event button
-					this.buttonEventDelete = add( newButton(null, 'Delete', () => {
+					this.buttonEventDelete = add( new HButton('Delete', () => {
 
 						var index = this.paramEvents.findIndex(event => this.selectEvents.getValue() == event.getNameId());
 						if (index < 0) return;
@@ -158,7 +155,7 @@ export default class HWindowObject extends HWindow {
 
 					// Change event button
 
-					this.buttonEventChange = add( newButton(null, 'Change', () => {
+					this.buttonEventChange = add( new HButton('Change', () => {
 
 						var event = this.getSelectedEvent();
 						if (!event) return;
@@ -189,7 +186,7 @@ export default class HWindowObject extends HWindow {
 
 					endparent();
 
-				parent( add( newElem(null, 'div') ) ) // Actions area
+				parent( add( new HElement('div') ) ) // Actions area
 
 					// // Actions
 
@@ -200,7 +197,7 @@ export default class HWindowObject extends HWindow {
 						this.updateActionsMenu();
 					})
 
-					this.buttonActionEdit = add( newButton(null, 'Edit action', () => {
+					this.buttonActionEdit = add( new HButton('Edit action', () => {
 						var event = this.getSelectedEvent();
 						if (!event) return;
 
@@ -213,7 +210,7 @@ export default class HWindowObject extends HWindow {
 						this.openActionWindow(action);
 					}) )
 
-					this.buttonActionDelete = add( newButton(null, 'Delete action', () => {
+					this.buttonActionDelete = add( new HButton('Delete action', () => {
 						var event = this.getSelectedEvent();
 						if (!event) return;
 
@@ -232,7 +229,7 @@ export default class HWindowObject extends HWindow {
 
 					}) )
 
-					this.buttonActionUp = add( newButton(null, '▲', () => {
+					this.buttonActionUp = add( new HButton('▲', () => {
 						var event = this.getSelectedEvent();
 						if (!event) return;
 
@@ -246,7 +243,7 @@ export default class HWindowObject extends HWindow {
 						this.updateActionsMenu();
 					}) )
 
-					this.buttonActionDown = add( newButton(null, '▼', () => {
+					this.buttonActionDown = add( new HButton('▼', () => {
 						var event = this.getSelectedEvent();
 						if (!event) return;
 
@@ -262,7 +259,7 @@ export default class HWindowObject extends HWindow {
 
 					endparent();
 
-				parent( add( newElem(null, 'div') ) ) // Libraries area
+				parent( add( new HElement('div') ) ) // Libraries area
 
 					this.librariesTabControl = add( new HTabControl() )
 
@@ -272,12 +269,12 @@ export default class HWindowObject extends HWindow {
 
 							var nextClass = null;
 
-							parent( add( newElem('grid-action-types', 'div') ) )
+							parent( add( new HElement('div', {class: 'grid-action-types'}) ) )
 
 								library.items.forEach(actionType => {
 
 									if (actionType.kind == "label") {
-										add( newElem('label', 'div', actionType.name) );
+										add( new HElement('div', {class: 'label'}, actionType.name) );
 
 									} else if (actionType.kind == "separator") {
 										nextClass = 'new-row';
@@ -285,7 +282,7 @@ export default class HWindowObject extends HWindow {
 									} else {
 										
 										// TODO add images to the buttons
-										var actionTypeButton = add( newButton('action-type', null, () => {
+										var actionTypeButton = add( new HButton(null, () => {
 
 											var event = this.getSelectedEvent();
 											if (!event) {
@@ -324,21 +321,21 @@ export default class HWindowObject extends HWindow {
 											this.selectActions.setSelectedIndex(event.actions.length-1)
 											this.updateActionsMenu();
 
-										}) )
+										}, 'action-type') )
 
 										if (nextClass) {
-											actionTypeButton.classList.add(nextClass);
+											actionTypeButton.html.classList.add(nextClass);
 											nextClass = null;
 										}
 
-										actionTypeButton.title = actionType.description;
+										actionTypeButton.html.title = actionType.description;
 
 										if (actionType.image) {
 											parent(actionTypeButton)
-												add( newImage(null, actionType.image) )
+												add( new HImage(actionType.image) )
 												endparent()
 										} else {
-											actionTypeButton.textContent = actionType.description;
+											actionTypeButton.html.textContent = actionType.description;
 										}
 
 									}
@@ -426,12 +423,10 @@ export default class HWindowObject extends HWindow {
 
 		var index = this.selectEvents.getSelectedIndex();
 		this.selectEvents.removeOptions();
-		this.selectEventsOptions = {};
 
 		parent( this.selectEvents.select );
 			this.paramEvents.forEach(event => {
-				this.selectEventsOptions[event.getNameId()] = add( newOption(null, event.getNameId(),
-					Events.getEventName(event, this.editor.project)) )
+				add( new HOption(Events.getEventName(event, this.editor.project), event.getNameId()) )
 			})
 			endparent();
 
@@ -441,11 +436,11 @@ export default class HWindowObject extends HWindow {
 
 	updateEventsMenu() {
 		if (this.selectEvents.getSelectedIndex() < 0) {
-			this.buttonEventChange.disabled = true;
-			this.buttonEventDelete.disabled = true;
+			this.buttonEventChange.setDisabled(true);
+			this.buttonEventDelete.setDisabled(true);
 		} else {
-			this.buttonEventChange.disabled = false;
-			this.buttonEventDelete.disabled = false;
+			this.buttonEventChange.setDisabled(false);
+			this.buttonEventDelete.setDisabled(false);
 		}
 
 	}
@@ -498,7 +493,6 @@ export default class HWindowObject extends HWindow {
 
 		var index = this.selectActions.getSelectedIndex();
 		this.selectActions.removeOptions();
-		this.selectActionsOptions = {};
 
 		var event = this.getSelectedEvent();
 
@@ -510,11 +504,12 @@ export default class HWindowObject extends HWindow {
 					var listText = this.getActionListText(action, actionType);
 					var hintText = this.getActionHintText(action, actionType);
 					
-					this.selectActionsOptions[i] = add( newOption(
-						(listText.bold ? 'bold ' : '') + (listText.italic ? 'italic ' : ''),
-						null, (this.editor.preferences.hintTextInAction ? hintText.text : listText.text)
+					let option = add( new HOption(
+						(this.editor.preferences.hintTextInAction ? hintText.text : listText.text), // text
+						null, // value
+						(listText.bold ? 'bold ' : '') + (listText.italic ? 'italic ' : '') // class
 					) )
-					this.selectActionsOptions[i].title = hintText.text;
+					option.html.title = hintText.text;
 
 				})
 				endparent()
@@ -530,15 +525,15 @@ export default class HWindowObject extends HWindow {
 		var event = this.getSelectedEvent();
 		
 		if (this.selectActions.getSelectedIndex() < 0) {
-			this.buttonActionEdit.disabled = true;
-			this.buttonActionDelete.disabled = true;
-			this.buttonActionUp.disabled = true;
-			this.buttonActionDown.disabled = true;
+			this.buttonActionEdit.setDisabled(true);
+			this.buttonActionDelete.setDisabled(true);
+			this.buttonActionUp.setDisabled(true);
+			this.buttonActionDown.setDisabled(true);
 		} else {
-			this.buttonActionEdit.disabled = false;
-			this.buttonActionDelete.disabled = false;
-			this.buttonActionUp.disabled = (this.selectActions.getSelectedIndex() == 0);
-			this.buttonActionDown.disabled = (this.selectActions.getSelectedIndex() == event.actions.length-1);
+			this.buttonActionEdit.setDisabled(false);
+			this.buttonActionDelete.setDisabled(false);
+			this.buttonActionUp.setDisabled(this.selectActions.getSelectedIndex() == 0);
+			this.buttonActionDown.setDisabled(this.selectActions.getSelectedIndex() == event.actions.length-1);
 		}
 
 	}

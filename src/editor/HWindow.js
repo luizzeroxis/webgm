@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, newButton} from '../common/H.js'
+import {parent, endparent, add, HElement, HButton} from '../common/H.js'
 
 export default class HWindow extends HElement {
 
@@ -12,7 +12,7 @@ export default class HWindow extends HElement {
 
 			parent( add( new HElement('div', {class: 'titlebar'}) ) )
 				this.title = add( new HElement('span') )
-				this.closeButton = add( newButton('closebutton right', 'Close', () => this.close()) );
+				this.closeButton = add( new HButton('Close', () => this.close(), 'closebutton right') );
 				endparent()
 
 			this.client = add( new HElement('div', {class: 'client'}) )
@@ -26,11 +26,11 @@ export default class HWindow extends HElement {
 	makeApplyOkButtons(applyOkFunc, okFunc) {
 		parent( add( new HElement('div') ) )
 
-			this.applyButton = add( newButton(null, 'Apply', () => {
+			this.applyButton = add( new HButton('Apply', () => {
 				applyOkFunc();
 			}) );
 
-			this.okButton = add( newButton(null, 'Ok', () => {
+			this.okButton = add( new HButton('Ok', () => {
 				if (applyOkFunc() != false)
 					okFunc();
 			}) );

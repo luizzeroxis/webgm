@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, newElem, newButton, newImage, setAttributeExceptNull} from '../common/H.js'
+import {parent, endparent, add, HElement, HButton, HImage, HMenu} from '../common/H.js'
 import {ProjectSprite, ProjectSound, ProjectBackground, ProjectObject} from '../common/Project.js';
 
 import Editor from './Editor.js';
@@ -15,19 +15,19 @@ export default class HResourceListItem extends HElement {
 
 		parent(this)
 
-			this.htmlIcon = add( newImage('icon') );
-			this.htmlIcon.width = 16;
-			this.htmlIcon.height = 16;
+			this.htmlIcon = add( new HImage(null, 'icon') );
+			this.htmlIcon.html.width = 16;
+			this.htmlIcon.html.height = 16;
 
 			this.updateIcon();
 			
-			this.htmlName = add( newElem('name', 'span') )
-			this.htmlName.textContent = this.resource.name;
+			this.htmlName = add( new HElement('span', {class: 'name'}) )
+			this.htmlName.html.textContent = this.resource.name;
 
-			parent( add( newElem('right', 'div') ) )
+			parent( add( new HElement('div', {class: 'right'}) ) )
 
-				this.htmlEditButton = add( newButton(null, 'Edit') )
-				this.htmlDeleteButton = add( newButton(null, 'Delete') )
+				this.htmlEditButton = add( new HButton('Edit', () => this.properties()) )
+				this.htmlDeleteButton = add( new HButton('Delete', () => this.delete()) )
 
 				endparent()
 			endparent()
@@ -39,7 +39,7 @@ export default class HResourceListItem extends HElement {
 		this.listeners = this.editor.dispatcher.listen({
 			changeResourceName: i => {
 				if (i !== this.resource) return;
-				this.htmlName.textContent = i.name;
+				this.htmlName.html.textContent = i.name;
 			},
 		})
 
@@ -109,7 +109,15 @@ export default class HResourceListItem extends HElement {
 			src = Editor.resourceTypesInfo.find(x => x.class == this.resource.constructor).resourceIcon;
 		}
 
-		setAttributeExceptNull(this.htmlIcon, 'src', src);
+		this.htmlIcon.setSrc(src);
+	}
+
+	properties() {
+		this.editor.windowsArea.openResource(this.resource);
+	}
+
+	delete() {
+		this.editor.deleteResource(this.resource);
 	}
 
 }

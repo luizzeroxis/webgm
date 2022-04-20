@@ -1,4 +1,4 @@
-import {parent, endparent, add, HTextInput, newElem} from '../../common/H.js'
+import {parent, endparent, add, HElement, HTextInput} from '../../common/H.js'
 import HCodeEditor from '../HCodeEditor.js';
 import HWindow from '../HWindow.js';
 
@@ -12,8 +12,8 @@ export default class HWindowScript extends HWindow {
 		this.title.html.textContent = 'Edit Script '+script.name;
 
 		parent(this.client)
-			parent( add( newElem('grid-resource resource-script', 'div') ) )
-				parent( add( newElem(null, 'div') ) )
+			parent( add( new HElement('div', {class: 'grid-resource resource-script'}) ) )
+				parent( add( new HElement('div') ) )
 
 					var inputName = add( new HTextInput('Name:', script.name) )
 

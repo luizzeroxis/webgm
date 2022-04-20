@@ -1,4 +1,4 @@
-import {parent, endparent, add, remove, HSelect, newOption} from '../common/H.js'
+import {parent, endparent, add, remove, HSelect, HOption} from '../common/H.js'
 
 export default class HResourceSelect extends HSelect {
 	constructor(editor, label, resourceType, noNone=false) {
@@ -20,7 +20,7 @@ export default class HResourceSelect extends HSelect {
 			createResource: i => {
 				if (i.constructor != this.resourceType) return;
 				parent(this.select)
-					this.selectOptions[i.id] = add( newOption(null, i.id, i.name) )
+					this.selectOptions[i.id] = add( new HOption(i.name, i.id) )
 					endparent()
 			},
 			deleteResource: i => {
@@ -30,7 +30,7 @@ export default class HResourceSelect extends HSelect {
 			},
 			changeResourceName: i => {
 				if (i.constructor != this.resourceType) return;
-				this.selectOptions[i.id].textContent = i.name;
+				this.selectOptions[i.id].html.textContent = i.name;
 			}
 			// TODO sprite changes?
 		})
@@ -46,11 +46,11 @@ export default class HResourceSelect extends HSelect {
 		parent(this.select)
 
 			if (!this.noNone) {
-				add( newOption(null, -1, '<none>') )
+				add( new HOption('<none>', -1) )
 			}
 
 			this.editor.project.resources[this.resourceType.getClassName()].forEach(resource => {
-				this.selectOptions[resource.id] = add( newOption(null, resource.id, resource.name) )
+				this.selectOptions[resource.id] = add( new HOption(resource.name, resource.id) )
 			})
 
 			endparent()

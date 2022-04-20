@@ -1,15 +1,13 @@
-import {newElem} from './H.js';
+import {HElement} from './H.js';
 
 export default class VirtualFileSystem {
 
-	constructor() {
-
-	}
+	constructor() {}
 
 	static openDialog(accept, multiple=false) {
 
 		return new Promise((resolve, reject) => {
-			var f = newElem(null, 'input');
+			var f = new HElement('input');
 			f.accept = accept;
 			f.type = 'file';
 			if (multiple) {
@@ -39,7 +37,7 @@ export default class VirtualFileSystem {
 	}
 
 	static save(blob, name) {
-		var a = newElem(null, 'a');
+		var a = new HElement('a');
 		a.href = URL.createObjectURL(blob);
 		a.download = name;
 		a.click();

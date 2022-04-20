@@ -38,7 +38,7 @@ export class HElement {
 	onRemove() {}
 }
 
-let parentStack = [document.body];
+export let parentStack = [new HElement(document.body)];
 
 // Make the element the parent of newly added elements.
 export function parent(element) {
@@ -96,7 +96,7 @@ export function remove(element) {
 // Remove the element's children.
 export function removeChildren(element) {
 	if (element instanceof HElement) {
-		for (const child of element.children) {
+		for (const child of [...element.children]) {
 			remove(child);
 		}
 	} else {
@@ -106,7 +106,7 @@ export function removeChildren(element) {
 
 function callOnAddIfConnected(element) {
 	if (element.html.isConnected) {
-		for (const child of element.children) {
+		for (const child of [...element.children]) {
 			if (child instanceof HElement) {
 				callOnAddIfConnected(child);
 			}
@@ -117,7 +117,7 @@ function callOnAddIfConnected(element) {
 
 function callOnRemoveIfNotConnected(element) {
 	if (!element.html.isConnected) {
-		for (const child of element.children) {
+		for (const child of [...element.children]) {
 			if (child instanceof HElement) {
 				callOnRemoveIfNotConnected(child);
 			}
@@ -133,11 +133,20 @@ export class HButton extends HElement {
 		super('button', {class: _class}, text)
 		this.html.addEventListener('click', onClick);
 	}
+	setDisabled(disabled) {
+		this.html.disabled = disabled;
+	}
 }
 
 export class HCanvas extends HElement {
 	constructor(width, height, _class) {
 		super('canvas', {class: _class, width: width, height: height});
+	}
+	clear() {
+		// Haxs for cleaning canvas
+		var h = this.html.height;
+		this.html.height = 0;
+		this.html.height = h;
 	}
 }
 
@@ -202,6 +211,9 @@ export class HCheckBoxInput extends HElement {
 	}
 	getChecked() {
 		return this.input.html.checked;
+	}
+	setChecked(checked) {
+		this.input.html.checked = checked;
 	}
 	setOnChange(onChange) {
 		this.input.html.addEventListener('change', onChange);
@@ -280,35 +292,14 @@ export class HImage extends HElement {
 	constructor(src, _class) {
 		super('img', {class: _class, ...(src ? {src: src} : null)})
 	}
+	setSrc(src) {
+		if (src != null) {
+			this.html.src = src;
+		} else {
+			this.html.removeAttribute('src');
+		}
+	}
 }
-
-////
-
-// Create any element.
-export function newElem(classes, tag, content) {
-	return new HElement(tag, {class: classes}, content).html;
-}
-
-// <button><button>
-export function newButton(classes, content, onclick) {
-	return new HButton(content, onclick, classes).html;
-}
-
-// <canvas></canvas>
-export function newCanvas(classes, width, height) {
-	return new HCanvas(width, height, classes).html;
-}
-
-// <option />
-export function newOption(classes, value, text) {
-	return new HOption(text, value, classes).html;
-}
-
-// <img />
-export function newImage(classes, src) {
-	return new HImage(src, classes).html;
-}
-
 
 //// ID generator for unique elements
 
@@ -319,15 +310,6 @@ export function uniqueID() {
 }
 
 //// Helpers
-
-// Sets a html attribute unless the value provided is null, in which case it removes it
-export var setAttributeExceptNull = (element, attr, value) => {
-	if (value != null) {
-		element.setAttribute(attr, value);
-	} else {
-		element.removeAttribute(attr);
-	}
-}
 
 // Make a element be able to receive drops of files from anywhere.
 export var setOnFileDrop = (element, onSelectFile, multiple=false) => {

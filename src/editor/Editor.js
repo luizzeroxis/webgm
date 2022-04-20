@@ -2,7 +2,7 @@
 
 import Dispatcher from '../common/Dispatcher.js'
 import {WebGMException, UnserializeException} from '../common/Exceptions.js';
-import {parent, endparent, add, HElement, newElem, setOnFileDrop} from '../common/H.js'
+import {parent, endparent, add, HElement, setOnFileDrop} from '../common/H.js'
 import {
 	Project,
 	ProjectAction,
@@ -90,7 +90,7 @@ export default class Editor {
 		// Areas
 		this.div = parent( new HElement('div', {class: 'editor'}) )
 
-			add( newElem(null, 'div', 'Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!') )
+			add( new HElement('div', {}, 'Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!') )
 
 			parent( add( new HElement('div', {class: 'grid'}) ) )
 
@@ -274,8 +274,8 @@ export default class Editor {
 			return;
 		}
 
-		this.menuArea.runButton.disabled = true;
-		this.menuArea.stopButton.disabled = false;
+		this.menuArea.runButton.setDisabled(true);
+		this.menuArea.stopButton.setDisabled(false);
 
 		if (this.preferences.scrollToGameOnRun) {
 			this.gameArea.scrollIntoView();
@@ -284,7 +284,7 @@ export default class Editor {
 			this.gameArea.focus();
 		}
 
-		this.game = new Game(this.project, this.gameArea.canvas, this.gameArea.canvas);
+		this.game = new Game(this.project, this.gameArea.canvas.html, this.gameArea.canvas.html);
 
 		this.game.dispatcher.listen({
 			close: e => {
@@ -293,8 +293,8 @@ export default class Editor {
 					alert("An error has ocurred when trying to run the game:\n" + e.message);
 				}
 
-				this.menuArea.runButton.disabled = false;
-				this.menuArea.stopButton.disabled = true;
+				this.menuArea.runButton.setDisabled(false);
+				this.menuArea.stopButton.setDisabled(true);
 
 				if (this.preferences.clearCanvasOnStop) {
 					this.gameArea.clearCanvas();

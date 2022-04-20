@@ -1,5 +1,5 @@
 import AbstractAudio from '../../common/AbstractAudio.js';
-import {parent, endparent, add, HTextInput, HRangeInput, newElem, newButton} from '../../common/H.js'
+import {parent, endparent, add, HElement, HButton, HTextInput, HRangeInput} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js';
 import HWindow from '../HWindow.js';
 
@@ -13,14 +13,14 @@ export default class HWindowSound extends HWindow {
 		this.title.html.textContent = 'Edit Sound '+sound.name;
 
 		parent(this.client)
-			parent( add( newElem('grid-resource resource-sound', 'div') ) )
-				parent( add( newElem(null, 'div') ) )
+			parent( add( new HElement('div', {class: 'grid-resource resource-sound'}) ) )
+				parent( add( new HElement('div') ) )
 
 					var paramSound = sound.sound;
 
 					var inputName = add( new HTextInput('Name:', sound.name) )
 
-					add( newButton(null, 'Load Sound', () => {
+					add( new HButton('Load Sound', () => {
 
 						VirtualFileSystem.openDialog('audio/*')
 						.then(file => {
@@ -30,9 +30,9 @@ export default class HWindowSound extends HWindow {
 
 					}) )
 
-					parent( add( newElem('preview', 'div') ) )
+					parent( add( new HElement('div', {class: 'preview'}) ) )
 
-						var audioPreview = add( newElem(null, 'audio') )
+						var audioPreview = add( new HElement('audio') )
 						audioPreview.controls = true;
 						audioPreview.loop = true;
 						if (paramSound) {

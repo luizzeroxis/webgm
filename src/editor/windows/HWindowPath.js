@@ -1,4 +1,4 @@
-import {parent, endparent, add, newElem} from '../../common/H.js'
+import {parent, endparent, add, HElement} from '../../common/H.js'
 import HWindow from '../HWindow.js';
 
 export default class HWindowPath extends HWindow {
@@ -11,8 +11,8 @@ export default class HWindowPath extends HWindow {
 		this.title.html.textContent = 'Edit Path '+path.name;
 
 		parent(this.client)
-			parent( add( newElem('grid-resource resource-path', 'div') ) )
-				parent( add( newElem(null, 'div') ) )
+			parent( add( new HElement('div', {class: 'grid-resource resource-path'}) ) )
+				parent( add( new HElement('div') ) )
 
 
 					

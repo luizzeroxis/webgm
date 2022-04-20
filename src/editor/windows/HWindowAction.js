@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, newElem, uniqueID} from '../../common/H.js'
+import {parent, endparent, add, HElement, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, uniqueID} from '../../common/H.js'
 import {ProjectObject} from '../../common/Project.js';
 import {parseArrowString, stringifyArrowValues, decimalColorToHexColor, hexColorToDecimalColor} from '../../common/tools.js'
 import HResourceSelect from '../HResourceSelect.js';
@@ -30,7 +30,7 @@ export default class HWindowAction extends HWindow {
 
 				parent( add( new HElement('fieldset') ) )
 
-					add( newElem(null, 'legend', 'Applies to') )
+					add( new HElement('legend', {}, 'Applies to') )
 
 					var appliesToGroup = '_radio_'+uniqueID();
 
@@ -138,9 +138,9 @@ export default class HWindowAction extends HWindow {
 
 		var inputs = [];
 
-		add( newElem(null, 'span', name) )
+		add( new HElement('span', {}, name) )
 
-		parent( add( newElem('arrow-interface', 'div') ) );
+		parent( add( new HElement('div', {class: 'arrow-interface'}) ) );
 
 			for (var y=2; y>=0; --y)
 			for (var x=0; x<=2; ++x) {

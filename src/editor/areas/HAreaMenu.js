@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, newButton} from '../../common/H.js'
+import {parent, endparent, add, HElement, HButton} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js';
 import HWindowPreferences from '../windows/HWindowPreferences.js';
 
@@ -11,34 +11,36 @@ export default class HAreaMenu extends HElement {
 
 		parent(this)
 
-			add( newButton(null, 'New', () => {
+			add( new HButton('New', () => {
 				if (!confirm("Clear current project and start anew?")) return;
 				this.editor.newProject();
 			}) )
 
-			add ( newButton(null, 'Open', () => {
+			add ( new HButton('Open', () => {
 				VirtualFileSystem.openDialog('application/zip,application/json')
 				.then(file => {
 					this.editor.openProjectFromFile(file);
 				})
 			}) )
 
-			add( newButton(null, 'Save', () => {
+			add( new HButton('Save', () => {
 				this.editor.saveProject();
 			}) )
 
-			add( newButton(null, 'Preferences', () => {
+			add( new HButton('Preferences', () => {
 				this.editor.windowsArea.open(HWindowPreferences, 'preferences');
 			}) )
 
-			this.runButton = add( newButton(null, 'Run', () => {
+			add( new HElement('div', {class: 'separator'}) )
+
+			this.runButton = add( new HButton('Run', () => {
 				this.editor.runGame();
 			}) )
 
-			this.stopButton = add( newButton(null, 'Stop', () => {
+			this.stopButton = add( new HButton('Stop', () => {
 				this.editor.stopGame();
 			}) )
-			this.stopButton.disabled = true;
+			this.stopButton.setDisabled(true);
 
 			endparent()
 	}

@@ -1,11 +1,11 @@
-import {parent, endparent, add, HElement, newCanvas} from '../../common/H.js'
+import {parent, endparent, add, HElement, HCanvas} from '../../common/H.js'
 
 export default class HAreaGame extends HElement{
 
 	constructor() {
 		parent( super('div', {class: 'game'}) )
-			this.canvas = add( newCanvas("canvas", 640, 480) )
-			this.canvas.setAttribute('tabindex', 0);
+			this.canvas = add( new HCanvas(640, 480) )
+			this.canvas.html.setAttribute('tabindex', 0);
 			endparent()
 	}
 
@@ -14,14 +14,11 @@ export default class HAreaGame extends HElement{
 	}
 
 	focus() {
-		this.canvas.focus({preventScroll: true});
+		this.canvas.html.focus({preventScroll: true});
 	}
 
 	clearCanvas() {
-		// Haxs for cleaning canvas
-		var h = this.canvas.height;
-		this.canvas.height = 0;
-		this.canvas.height = h;
+		this.canvas.clear();
 	}
 
 }

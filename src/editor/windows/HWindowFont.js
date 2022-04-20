@@ -1,4 +1,4 @@
-import {parent, endparent, add, HTextInput, HNumberInput, HCheckBoxInput, newElem} from '../../common/H.js'
+import {parent, endparent, add, HElement, HTextInput, HNumberInput, HCheckBoxInput} from '../../common/H.js'
 import HWindow from '../HWindow.js';
 
 export default class HWindowFont extends HWindow {
@@ -11,8 +11,8 @@ export default class HWindowFont extends HWindow {
 		this.title.html.textContent = 'Edit Font '+font.name;
 
 		parent(this.client)
-			parent( add( newElem('grid-resource resource-font', 'div') ) )
-				parent( add( newElem(null, 'div') ) )
+			parent( add( new HElement('div', {class: 'grid-resource resource-font'}) ) )
+				parent( add( new HElement('div') ) )
 
 					this.inputName = add( new HTextInput('Name:', font.name) )
 					this.inputFont = add( new HTextInput('Font:', font.font) )
@@ -20,7 +20,7 @@ export default class HWindowFont extends HWindow {
 					this.inputBold = add( new HCheckBoxInput('Bold', font.bold) )
 					this.inputItalic = add( new HCheckBoxInput('Italic', font.italic) )
 
-					this.divPreview = add( newElem('preview', 'div', 'AaBbCcDd') );
+					this.divPreview = add( new HElement('div', {class: 'preview'}, 'AaBbCcDd') );
 					this.inputFont.input.html.oninput = () => this.updatePreview();
 					this.inputSize.input.html.oninput = () => this.updatePreview();
 					this.inputBold.input.html.oninput = () => this.updatePreview();
@@ -46,9 +46,9 @@ export default class HWindowFont extends HWindow {
 	}
 
 	updatePreview() {
-		this.divPreview.style.fontFamily = this.inputFont.getValue();
-		this.divPreview.style.fontSize = this.inputSize.getValue() + 'pt';
-		this.divPreview.style.fontWeight = (this.inputBold.getChecked() ? 'bold' : null);
-		this.divPreview.style.fontStyle = (this.inputItalic.getChecked() ? 'italic' : null);
+		this.divPreview.html.style.fontFamily = this.inputFont.getValue();
+		this.divPreview.html.style.fontSize = this.inputSize.getValue() + 'pt';
+		this.divPreview.html.style.fontWeight = (this.inputBold.getChecked() ? 'bold' : null);
+		this.divPreview.html.style.fontStyle = (this.inputItalic.getChecked() ? 'italic' : null);
 	}
 }

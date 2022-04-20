@@ -1,5 +1,5 @@
 import AbstractImage from '../../common/AbstractImage.js';
-import {parent, endparent, add, HTextInput, HNumberInput, newElem, newButton, newImage, setOnFileDrop} from '../../common/H.js'
+import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HImage, setOnFileDrop} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js';
 import HWindow from '../HWindow.js';
 
@@ -13,8 +13,8 @@ export default class HWindowSprite extends HWindow {
 		this.title.html.textContent = 'Edit Sprite '+sprite.name;
 
 		parent(this.client)
-			parent( add( newElem('grid-resource resource-sprite', 'div') ) )
-				parent( add( newElem(null, 'div') ) )
+			parent( add( new HElement('div', {class: 'grid-resource resource-sprite'}) ) )
+				parent( add( new HElement('div') ) )
 
 					var paramName = sprite.name;
 					this.paramImages = sprite.images;
@@ -23,7 +23,7 @@ export default class HWindowSprite extends HWindow {
 
 					var inputName = add( new HTextInput('Name:', paramName) )
 
-					this.buttonLoadSprite = add( newButton(null, 'Load Sprite', () => {
+					this.buttonLoadSprite = add( new HButton('Load Sprite', () => {
 
 						VirtualFileSystem.openDialog('image/*', true)
 						.then(files => {
@@ -32,42 +32,42 @@ export default class HWindowSprite extends HWindow {
 
 					}) )
 
-					parent( add( newElem(null, 'div', 'Width: ')) )
-						this.divWidth = add( newElem(null, 'span') )
+					parent( add( new HElement('div', {}, 'Width: ')) )
+						this.divWidth = add( new HElement('span') )
 						endparent()
 
-					parent( add( newElem(null, 'div', 'Height: ')) )
-						this.divHeight = add( newElem(null, 'span') )
+					parent( add( new HElement('div', {}, 'Height: ')) )
+						this.divHeight = add( new HElement('span') )
 						endparent()
 
-					parent( add( newElem(null, 'div', 'Number of subimages: ')) )
-						this.divSubimages = add( newElem(null, 'span') )
+					parent( add( new HElement('div', {}, 'Number of subimages: ')) )
+						this.divSubimages = add( new HElement('span') )
 						endparent()
 
 					this.showSubimage = 0;
 
-					parent( add( newElem(null, 'div', 'Show: ')) )
+					parent( add( new HElement('div', {}, 'Show: ')) )
 
-						this.buttonShowSubimageLeft = add( newButton(null, '◀', () => {
+						this.buttonShowSubimageLeft = add( new HButton('◀', () => {
 							this.showSubimage -= 1;
 							this.updateShow();
 						}) )
-						this.divShowSubimage = add( newElem(null, 'span') )
-						this.buttonShowSubimageRight = add( newButton(null, '▶', () => {
+						this.divShowSubimage = add( new HElement('span') )
+						this.buttonShowSubimageRight = add( new HButton('▶', () => {
 							this.showSubimage += 1;
 							this.updateShow();
 						}) )
 
 						endparent()
 
-					parent( add( newElem(null, 'fieldset') ) )
+					parent( add( new HElement('fieldset') ) )
 
-						add( newElem(null, 'legend', 'Origin') )
+						add( new HElement('legend', {}, 'Origin') )
 
 						var inputOriginX = add( new HNumberInput('X:', paramOriginX, 1, 0) )
 						var inputOriginY = add( new HNumberInput('Y:', paramOriginY, 1, 0) )
 						
-						add( newButton(null, 'Center', () => {
+						add( new HButton('Center', () => {
 							var w=16, h=16;
 							if (this.paramImages.length > 0) {
 								w = Math.floor(this.paramImages[0].image.width / 2);
@@ -81,11 +81,11 @@ export default class HWindowSprite extends HWindow {
 
 					endparent()
 
-				parent( add( newElem('preview', 'div') ) )
-					this.imgSprite = add( newImage() )
+				parent( add( new HElement('div', {class: 'preview'}) ) )
+					this.imgSprite = add( new HImage() )
 					endparent()
 
-				this.updateAsImages();
+				this.updateImageInfo();
 
 				endparent()
 
@@ -106,7 +106,7 @@ export default class HWindowSprite extends HWindow {
 	}
 
 	loadSpriteFromFiles(files) {
-		this.buttonLoadSprite.disabled = true;
+		this.buttonLoadSprite.setDisabled(true);
 
 		var images = [];
 
@@ -114,23 +114,20 @@ export default class HWindowSprite extends HWindow {
 			images.push(new AbstractImage(file));
 		}
 
-		// Update preview to show images being loaded
-		// this.updateAsImages(images);
-
 		Promise.all(images.map(x => x.promise)).then(() => {
 			this.paramImages = images;
-			this.updateAsImages();
+			this.updateImageInfo();
 		}).catch(e => {
-			// this.updateAsImages();
+			// this.updateImageInfo();
 			alert("Error when opening image");
 
 		}).finally(() => {
-			this.buttonLoadSprite.disabled = false;
+			this.buttonLoadSprite.setDisabled(false);
 		})
 
 	}
 
-	updateAsImages() {
+	updateImageInfo() {
 		this.showSubimage = 0;
 
 		if (this.paramImages.length > 0) {
@@ -141,7 +138,7 @@ export default class HWindowSprite extends HWindow {
 			})
 
 		} else {
-			this.imgSprite.removeAttribute('src');
+			this.imgSprite.setSrc(null);
 			this.divWidth.textContent = '32';
 			this.divHeight.textContent = '32';
 		}
@@ -155,12 +152,12 @@ export default class HWindowSprite extends HWindow {
 	updateShow() {
 
 		if (this.paramImages.length > 0) {
-			this.imgSprite.src = this.paramImages[this.showSubimage].image.src;
+			this.imgSprite.setSrc(this.paramImages[this.showSubimage].image.src);
 		}
 
 		this.divShowSubimage.textContent = this.showSubimage.toString();
-		this.buttonShowSubimageLeft.disabled = (this.showSubimage == 0);
-		this.buttonShowSubimageRight.disabled = (this.showSubimage >= this.paramImages.length - 1);
+		this.buttonShowSubimageLeft.setDisabled(this.showSubimage == 0);
+		this.buttonShowSubimageRight.setDisabled(this.showSubimage >= this.paramImages.length - 1);
 	}
 
 }

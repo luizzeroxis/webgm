@@ -1,5 +1,5 @@
 import AbstractImage from '../../common/AbstractImage.js'
-import {parent, endparent, add, HElement, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, newElem, newCanvas, uniqueID} from '../../common/H.js'
+import {parent, endparent, add, HElement, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from '../../common/H.js'
 import {ProjectObject, ProjectInstance} from '../../common/Project.js'
 import HResourceSelect from '../HResourceSelect.js';
 import HTabControl from '../HTabControl.js';
@@ -61,17 +61,17 @@ export default class HWindowRoom extends HWindow {
 
 						endparent()
 
-					parent( add( newElem(null, 'div', 'X: ') ) )
-						this.spanX = add( newElem(null, 'span', '0') );
+					parent( add( new HElement('div', {}, 'X: ') ) )
+						this.spanX = add( new HElement('span', {}, '0') );
 						endparent()
-					parent( add( newElem(null, 'div', 'Y: ') ) )
-						this.spanY = add( newElem(null, 'span', '0') );
+					parent( add( new HElement('div', {}, 'Y: ') ) )
+						this.spanY = add( new HElement('span', {}, '0') );
 						endparent()
-					parent( add( newElem(null, 'div', 'Object: ') ) )
-						this.spanObject = add( newElem(null, 'span', '') );
+					parent( add( new HElement('div', {}, 'Object: ') ) )
+						this.spanObject = add( new HElement('span') );
 						endparent()
-					parent( add( newElem(null, 'div', 'ID: ') ) )
-						this.spanId = add( newElem(null, 'span', '') );
+					parent( add( new HElement('div', {}, 'ID: ') ) )
+						this.spanId = add( new HElement('span') );
 						endparent()
 
 					// updates
@@ -84,17 +84,17 @@ export default class HWindowRoom extends HWindow {
 					this.inputBackgroundColor.setOnChange(() => this.updateCanvasPreview())
 
 					endparent()
-				parent( add( newElem('preview', 'div') ) )
+				parent( add( new HElement('div', {class: 'preview'}) ) )
 
 					// actual room area
 
-					this.canvasPreview = add( newCanvas(null, room.width, room.height) );
-					this.ctx = this.canvasPreview.getContext('2d');
+					this.canvasPreview = add( new HCanvas(room.width, room.height) );
+					this.ctx = this.canvasPreview.html.getContext('2d');
 					this.ctx.imageSmoothingEnabled = false;
 
 					// TODO: account for sprite size when moving and deleting
 
-					this.canvasPreview.onmousedown = (e) => {
+					this.canvasPreview.html.onmousedown = (e) => {
 
 						this.mouseIsDown = true;
 						var pos = this.getMousePosition(e);
@@ -134,7 +134,7 @@ export default class HWindowRoom extends HWindow {
 
 					}
 
-					this.canvasPreview.onmousemove = (e) => {
+					this.canvasPreview.html.onmousemove = (e) => {
 						var pos = this.getMousePosition(e);
 						var snappedPos = this.snapMousePosition(pos);
 
@@ -171,20 +171,20 @@ export default class HWindowRoom extends HWindow {
 							
 						}
 
-						this.spanX.textContent = snappedPos.x;
-						this.spanY.textContent = snappedPos.y;
-						this.spanObject.textContent = '';
-						this.spanId.textContent = '';
+						this.spanX.html.textContent = snappedPos.x;
+						this.spanY.html.textContent = snappedPos.y;
+						this.spanObject.html.textContent = '';
+						this.spanId.html.textContent = '';
 
 						{
 							let hover = this.getInstanceAtPosition(pos);
 							if (hover) {
-								this.spanObject.textContent = this.editor.project.resources.ProjectObject
+								this.spanObject.html.textContent = this.editor.project.resources.ProjectObject
 									.find(x => x.id == hover.object_index).name;
 								if (hover.id != null) {
-									this.spanId.textContent = hover.id;
+									this.spanId.html.textContent = hover.id;
 								} else {
-									this.spanId.textContent = "(not applied)";
+									this.spanId.html.textContent = "(not applied)";
 								}
 							}
 						}
@@ -341,11 +341,11 @@ export default class HWindowRoom extends HWindow {
 
 	updateCanvasPreview() {
 
-		this.canvasPreview.width = this.inputWidth.getValue();
-		this.canvasPreview.height = this.inputHeight.getValue();
+		this.canvasPreview.html.width = this.inputWidth.getValue();
+		this.canvasPreview.html.height = this.inputHeight.getValue();
 
 		this.ctx.fillStyle = this.inputBackgroundColor.getValue();
-		this.ctx.fillRect(0, 0, this.canvasPreview.width, this.canvasPreview.height);
+		this.ctx.fillRect(0, 0, this.canvasPreview.html.width, this.canvasPreview.html.height);
 
 		// instance
 		this.paramInstances.forEach(instance => {
@@ -386,14 +386,14 @@ export default class HWindowRoom extends HWindow {
 			var snapy = parseInt(this.inputSnapY.getValue());
 
 			if (snapx > 0) {
-				for (var x = 0; x < this.canvasPreview.width; x += snapx) {
-					this.drawLine(x, 0, x, this.canvasPreview.height);
+				for (var x = 0; x < this.canvasPreview.html.width; x += snapx) {
+					this.drawLine(x, 0, x, this.canvasPreview.html.height);
 				}
 			}
 
 			if (snapy > 0) {
-				for (var y = 0; y < this.canvasPreview.height; y += snapy) {
-					this.drawLine(0, y, this.canvasPreview.width, y);
+				for (var y = 0; y < this.canvasPreview.html.height; y += snapy) {
+					this.drawLine(0, y, this.canvasPreview.html.width, y);
 				}
 			}
 

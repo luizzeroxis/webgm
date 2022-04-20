@@ -19,6 +19,10 @@
 	color-scheme: light;
 }
 
+body {
+	margin: 0;
+}
+
 .bold {
 	font-weight: bold;
 }
@@ -31,6 +35,10 @@
 }
 .tab-content {
 	border: 1px solid var(--grid-resource-cell-border);
+	padding: 8px;
+}
+
+.editor {
 	padding: 8px;
 }
 
@@ -55,6 +63,14 @@
 .menu, .resources, .windows, .game {
 	border: 1px solid var(--area-border);
 	padding: 8px;
+}
+
+.menu {
+	display: flex;
+}
+
+.menu .separator {
+	width: 8px;
 }
 
 .resources > ul > li {

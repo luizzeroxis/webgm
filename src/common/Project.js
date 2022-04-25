@@ -283,17 +283,17 @@ export class Project {
 		}
 
 		export class ProjectRoomBackground {
-			constructor() {
-				this.visibleAtStart = false;
-				this.isForeground = false;
-				this.backgroundIndex = -1;
-				this.tileHorizontally = true;
-				this.tileVertically = true;
-				this.x = 0;
-				this.y = 0;
-				this.stretch = false;
-				this.horizontalSpeed = 0;
-				this.verticalSpeed = 0;
+			constructor(visibleAtStart=false, isForeground=false, backgroundIndex=-1, tileHorizontally=true, tileVertically=true, x=0, y=0, stretch=false, horizontalSpeed=0, verticalSpeed=0) {
+				this.visibleAtStart = visibleAtStart;
+				this.isForeground = isForeground;
+				this.backgroundIndex = backgroundIndex;
+				this.tileHorizontally = tileHorizontally;
+				this.tileVertically = tileVertically;
+				this.x = x;
+				this.y = y;
+				this.stretch = stretch;
+				this.horizontalSpeed = horizontalSpeed;
+				this.verticalSpeed = verticalSpeed;
 			}
 		}
 

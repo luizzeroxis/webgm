@@ -33,30 +33,8 @@ export default class HWindowObject extends HWindow {
 		this.title.html.textContent = 'Edit Object '+object.name;
 		this.htmlActionWindows = [];
 
-		// make a copy of the events and actions inside
-		this.paramEvents = object.events.map(event => {
-			var newevent = new ProjectEvent(event.type, event.subtype);
-			newevent.actions = event.actions.map(action => {
-				var newaction = new ProjectAction();
-				newaction.typeLibrary = action.typeLibrary;
-				newaction.typeId = action.typeId;
-				newaction.typeKind = action.typeKind;
-				newaction.typeExecution = action.typeExecution;
-				newaction.typeExecutionFunction = action.typeExecutionFunction;
-				newaction.typeExecutionCode = action.typeExecutionCode;
-				newaction.typeIsQuestion = action.typeIsQuestion;
-
-				newaction.args = action.args.map(x => ({kind: x.kind, value: x.value}));
-
-				newaction.appliesTo = action.appliesTo;
-				newaction.relative = action.relative;
-				newaction.not = action.not;
-
-				return newaction;
-			})
-			return newevent;
-		})
-		// you know, fuck javascript
+		// Create paramEvents as copy
+		this.copyProperties();
 
 		parent(this.client)
 			parent( add( new HElement('div', {class: 'grid-resource resource-object'}) ) )
@@ -378,7 +356,9 @@ export default class HWindowObject extends HWindow {
 					})
 
 					object.events = this.paramEvents;
-					// changes here
+
+					// Make sure that paramEvents is a copy
+					this.copyProperties();
 				},
 				() => {
 					this.close();
@@ -399,6 +379,32 @@ export default class HWindowObject extends HWindow {
 
 	onRemove() {
 		this.editor.dispatcher.stopListening(this.listeners);
+	}
+
+	// Make a copy of every property of the resource so we can change it at will without changing the original resource.
+	copyProperties() {
+		this.paramEvents = this.object.events.map(event => {
+			var newEvent = new ProjectEvent(event.type, event.subtype);
+			newEvent.actions = event.actions.map(action => {
+				var newAction = new ProjectAction();
+				newAction.typeLibrary = action.typeLibrary;
+				newAction.typeId = action.typeId;
+				newAction.typeKind = action.typeKind;
+				newAction.typeExecution = action.typeExecution;
+				newAction.typeExecutionFunction = action.typeExecutionFunction;
+				newAction.typeExecutionCode = action.typeExecutionCode;
+				newAction.typeIsQuestion = action.typeIsQuestion;
+
+				newAction.args = action.args.map(x => ({kind: x.kind, value: x.value}));
+
+				newAction.appliesTo = action.appliesTo;
+				newAction.relative = action.relative;
+				newAction.not = action.not;
+
+				return newAction;
+			})
+			return newEvent;
+		})
 	}
 
 	sortEvents() {

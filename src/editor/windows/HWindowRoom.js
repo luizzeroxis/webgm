@@ -1,6 +1,6 @@
 import AbstractImage from '../../common/AbstractImage.js'
 import {parent, endparent, add, HElement, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from '../../common/H.js'
-import {ProjectObject, ProjectInstance} from '../../common/Project.js'
+import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground} from '../../common/Project.js'
 import HResourceSelect from '../HResourceSelect.js';
 import HTabControl from '../HTabControl.js';
 import HWindow from '../HWindow.js';
@@ -15,13 +15,12 @@ export default class HWindowRoom extends HWindow {
 
 		this.title.html.textContent = 'Edit Room '+room.name;
 
+		// Create paramInstances and paramBackgrounds as copies
+		this.copyProperties();
+
 		parent(this.client)
 			parent( add( new HElement('div', {class: 'grid-resource resource-room'}) ) )
 				parent( add( new HElement('div') ) )
-
-					this.paramInstances = room.instances.map(instance => {
-						return new ProjectInstance(instance.id, instance.x, instance.y, instance.object_index);
-					});
 
 					// left area
 
@@ -58,6 +57,77 @@ export default class HWindowRoom extends HWindow {
 					parent( this.tabControl.addTab('Backgrounds') )
 
 						this.inputBackgroundColor = add( new HColorInput('Background color:', room.backgroundColor) )
+
+						let getBackground = (index) => {
+							let currentBackground = this.paramBackgrounds[index];
+							if (currentBackground == null) {
+								return new ProjectRoomBackground(); // default values used
+							}
+							return currentBackground;
+						}
+
+						let getOrCreateBackground = (index) => {
+							if (this.paramBackgrounds[index] == null) {
+								this.paramBackgrounds[index] = new ProjectRoomBackground(); // default values used
+							}
+							return this.paramBackgrounds[index];
+						}
+
+						let getOrCreateCurrentBackground = () => {
+							let currentBackgroundId = this.selectBackgrounds.getValue();
+							if (this.paramBackgrounds[currentBackgroundId] == null) {
+								this.paramBackgrounds[currentBackgroundId] = new ProjectRoomBackground();
+							}
+							return this.paramBackgrounds[currentBackgroundId];
+						}
+
+						let updateBackgroundProperties = () => {
+							let currentBackgroundId = this.selectBackgrounds.getValue();
+							let currentBackground = getBackground(currentBackgroundId);
+
+							this.inputBackgroundVisibleAtStart.setChecked(currentBackground.visibleAtStart);
+							this.selectResourceBackground.setValue(currentBackground.backgroundIndex);
+						}
+
+						this.selectBackgrounds = add( new HSelect('Backgrounds:', 'backgrounds') )
+						this.selectBackgroundsOptions = [];
+
+						parent(this.selectBackgrounds.select)
+							for (let i=0; i<8; ++i) {
+								let background = getBackground(i);
+								let _class = (background.visibleAtStart ? 'bold' : null);
+								this.selectBackgroundsOptions[i] = add( new HOption('Background '+i.toString(), i, _class) )
+							}
+							endparent()
+
+						this.selectBackgrounds.select.html.size = 8;
+
+						this.selectBackgrounds.setOnChange(() => {
+							updateBackgroundProperties();
+						})
+
+						this.inputBackgroundVisibleAtStart = add( new HCheckBoxInput('Visible when room starts') )
+						this.inputBackgroundVisibleAtStart.setOnChange(() => {
+
+							let currentBackgroundId = this.selectBackgrounds.getValue();
+							let currentBackground = getOrCreateBackground(currentBackgroundId);
+
+							currentBackground.visibleAtStart = this.inputBackgroundVisibleAtStart.getChecked();
+
+							if (currentBackground.visibleAtStart) {
+								this.selectBackgroundsOptions[currentBackgroundId].html.classList.add('bold');
+							} else {
+								this.selectBackgroundsOptions[currentBackgroundId].html.classList.remove('bold');
+							}
+
+						})
+
+						this.selectResourceBackground = add( new HResourceSelect(this.editor, null, ProjectBackground) )
+						this.selectResourceBackground.setOnChange(() => {
+							getOrCreateCurrentBackground().backgroundIndex = this.selectResourceBackground.getValue();
+						})
+
+						updateBackgroundProperties();
 
 						endparent()
 
@@ -222,6 +292,8 @@ export default class HWindowRoom extends HWindow {
 
 					room.backgroundColor = this.inputBackgroundColor.getValue();
 
+					room.backgrounds = this.paramBackgrounds;
+
 					// In GM, these ids are saved instantly. Even if you close and don't save the room, it still uses the ids. In this project, ideally resource editors would only change the project when you press ok or apply. Because of that, we create the ProjectInstances without ids, and only when saving we fill in the ids.
 
 					for (let instance of this.paramInstances) {
@@ -232,6 +304,9 @@ export default class HWindowRoom extends HWindow {
 					}
 
 					room.instances = this.paramInstances;
+
+					// Make sure that paramInstances and paramBackgrounds are copies
+					this.copyProperties();
 				},
 				() => {
 					this.close()
@@ -254,6 +329,17 @@ export default class HWindowRoom extends HWindow {
 
 	onRemove() {
 		this.editor.dispatcher.stopListening(this.listeners);
+	}
+
+	// Make a copy of every property of the resource so we can change it at will without changing the original resource.
+	copyProperties() {
+		this.paramBackgrounds = this.room.backgrounds.map(background => {
+			if (background == null) return null;
+			return new ProjectRoomBackground(background.visibleAtStart, background.isForeground, background.backgroundIndex, background.tileHorizontally, background.tileVertically, background.x, background.y, background.stretch, background.horizontalSpeed, background.verticalSpeed);
+		})
+		this.paramInstances = this.room.instances.map(instance => {
+			return new ProjectInstance(instance.id, instance.x, instance.y, instance.object_index);
+		});
 	}
 
 	getMousePosition(e) {

@@ -8,18 +8,18 @@ export default class VirtualFileSystem {
 
 		return new Promise((resolve, reject) => {
 			var f = new HElement('input');
-			f.accept = accept;
-			f.type = 'file';
+			f.html.accept = accept;
+			f.html.type = 'file';
 			if (multiple) {
-				f.multiple = true;
+				f.html.multiple = true;
 			}
-			f.onchange = () => {
+			f.html.onchange = () => {
 				if (multiple)
-					resolve(f.files);
+					resolve(f.html.files);
 				else
-					resolve(f.files[0]);
+					resolve(f.html.files[0]);
 			}
-			f.click();
+			f.html.click();
 		})
 		
 	}
@@ -38,9 +38,9 @@ export default class VirtualFileSystem {
 
 	static save(blob, name) {
 		var a = new HElement('a');
-		a.href = URL.createObjectURL(blob);
-		a.download = name;
-		a.click();
+		a.html.href = URL.createObjectURL(blob);
+		a.html.download = name;
+		a.html.click();
 	}
 
 }

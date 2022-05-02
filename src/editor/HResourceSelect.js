@@ -58,7 +58,7 @@ export default class HResourceSelect extends HSelect {
 			endparent()
 
 		this.select.html.value = previousValue;
-		if (!this.noNone && this.select.html.selectedIndex == -1) {
+		if (this.select.html.selectedIndex == -1) {
 			this.select.html.selectedIndex = 0;
 		}
 	}

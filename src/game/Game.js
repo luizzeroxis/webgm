@@ -790,7 +790,14 @@ export class Game {
 		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 		// this.ctx.fillStyle = "black";
 
-		// TODO Draw background images
+		// Draw background backgrounds
+
+		for (let roomBackground of this.room.backgrounds) {
+			if (!roomBackground) continue;
+			if (roomBackground.isForeground == true) continue;
+			this.drawRoomBackground(roomBackground);
+		}
+
 		// TODO Draw tiles
 
 		// Draw instances
@@ -818,6 +825,14 @@ export class Game {
 
 		}
 
+		// Draw foreground backgrounds
+
+		for (let roomBackground of this.room.backgrounds) {
+			if (!roomBackground) continue;
+			if (roomBackground.isForeground == false) continue;
+			this.drawRoomBackground(roomBackground);
+		}
+
 		// Draw mouse cursor
 
 		if (this.cursorSprite) {
@@ -825,6 +840,21 @@ export class Game {
 			this.cursorImageIndex = ((++this.cursorImageIndex) % this.cursorSprite.images.length);
 		}
 
+	}
+
+	drawRoomBackground(roomBackground) {
+		if (!roomBackground.visibleAtStart) return false;
+
+		var background = this.getResourceById('ProjectBackground', roomBackground.backgroundIndex);
+		if (!background) return false;
+
+		var image = background.image;
+		if (!image) return false;
+
+		// TODO tileHorizontally, tileVertically, stretch, horizontalSpeed, verticalSpeed
+
+		this.ctx.drawImage(image.image, roomBackground.x, roomBackground.y);
+		return true;
 	}
 
 	// Execute a event.
@@ -1181,10 +1211,7 @@ export class Game {
 		var image = sprite.images[imageIndex];
 		if (image == null) return false;
 
-		this.ctx.save();
-		this.ctx.translate(-sprite.originx, -sprite.originy);
-		this.ctx.drawImage(image.image, x, y);
-		this.ctx.restore();
+		this.ctx.drawImage(image.image, x-sprite.originx, y-sprite.originy);
 
 		return true;
 	}

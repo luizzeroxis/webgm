@@ -120,11 +120,15 @@ export default class HWindowRoom extends HWindow {
 								this.selectBackgroundsOptions[currentBackgroundId].html.classList.remove('bold');
 							}
 
+							this.updateCanvasPreview();
+
 						})
 
 						this.selectResourceBackground = add( new HResourceSelect(this.editor, null, ProjectBackground) )
 						this.selectResourceBackground.setOnChange(() => {
 							getOrCreateCurrentBackground().backgroundIndex = this.selectResourceBackground.getValue();
+
+							this.updateCanvasPreview();
 						})
 
 						updateBackgroundProperties();
@@ -433,11 +437,18 @@ export default class HWindowRoom extends HWindow {
 		this.ctx.fillStyle = this.inputBackgroundColor.getValue();
 		this.ctx.fillRect(0, 0, this.canvasPreview.html.width, this.canvasPreview.html.height);
 
+		// backgrounds
+		for (let roomBackground of this.paramBackgrounds) {
+			if (!roomBackground) continue;
+			if (roomBackground.isForeground == true) continue;
+			this.drawRoomBackground(roomBackground);
+		}
+
 		// instance
-		this.paramInstances.forEach(instance => {
-			var object = this.editor.project.resources.ProjectObject.find(x => x.id == instance.object_index);
-			var sprite = this.editor.project.resources.ProjectSprite.find(x => x.id == object.sprite_index);
-			var image, ox=0, oy=0;
+		for (let roomInstance of this.paramInstances) {
+			let object = this.editor.project.resources.ProjectObject.find(x => x.id == roomInstance.object_index);
+			let sprite = this.editor.project.resources.ProjectSprite.find(x => x.id == object.sprite_index);
+			let image, ox=0, oy=0;
 
 			if (sprite) {
 				ox = sprite.originx;
@@ -446,20 +457,22 @@ export default class HWindowRoom extends HWindow {
 					image = sprite.images[0];
 				} else {
 					// won't show if there is a sprite, but no images
-					return;
+					continue;
 				}
 			} else {
 				image = this.defaultInstanceImage;
 			}
 			image.promise.then(() => {
-
-				this.ctx.save();
-				this.ctx.translate(-ox, -oy);
-				this.ctx.drawImage(image.image, instance.x, instance.y);
-				this.ctx.restore();
-
+				this.ctx.drawImage(image.image, roomInstance.x - ox, roomInstance.y - oy);
 			})
-		})
+		}
+
+		// foregrounds
+		for (let roomBackground of this.paramBackgrounds) {
+			if (!roomBackground) continue;
+			if (roomBackground.isForeground == false) continue;
+			this.drawRoomBackground(roomBackground);
+		}
 
 		// grid
 		if (this.inputShowGrid.getChecked()) {
@@ -485,6 +498,47 @@ export default class HWindowRoom extends HWindow {
 
 			this.ctx.globalCompositeOperation = 'source-over';
 		}
+	}
+
+	drawRoomBackground(roomBackground) {
+		if (!roomBackground.visibleAtStart) return false;
+
+		var background = this.editor.project.resources.ProjectBackground.find(x => x.id == roomBackground.backgroundIndex);
+		if (!background) return false;
+
+		var image = background.image;
+		if (!image) return false;
+
+		// TODO stretch
+
+		image.promise.then(() => {
+			// let xStart = roomBackground.x;
+			// let yStart = roomBackground.y;
+
+			// if (roomBackground.tileHorizontally) {
+			// 	xStart = (roomBackground.x % background.image.image.width) - background.image.image.width;
+			// }
+			// if (roomBackground.tileVertically) {
+			// 	yStart = (roomBackground.y % background.image.image.height) - background.image.image.height;
+			// }
+
+			// for (let x = xStart; x < this.canvasPreview.html.width; x += background.image.image.width) {
+			// 	for (let y = yStart; y < this.canvasPreview.html.height; y += background.image.image.height) {
+
+			// 		this.ctx.drawImage(image.image, x, y);
+
+			// 		if (!roomBackground.tileVertically) {
+			// 			break;
+			// 		}
+			// 	}
+			// 	if (!roomBackground.tileHorizontally) {
+			// 		break;
+			// 	}
+			// }
+
+			this.ctx.drawImage(image.image, roomBackground.x, roomBackground.y);
+		})
+		return true;
 	}
 
 	drawLine(x1, y1, x2, y2) {

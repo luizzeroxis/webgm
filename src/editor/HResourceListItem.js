@@ -70,7 +70,11 @@ export default class HResourceListItem extends HElement {
 				changeObjectSprite: i => {
 					if (i != this.resource) return;
 					this.updateIcon();
-				}
+				},
+				deleteResource: i => {
+					if (i.id != this.resource.sprite_index) return;
+					this.updateIcon();
+				},
 			})}
 		}
 

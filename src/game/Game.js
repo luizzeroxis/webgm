@@ -14,7 +14,7 @@ import Instance from './Instance.js';
 export class Game {
 
 	constructor (project, canvas, input) {
-		this.project = project;
+		this.project = new Project(project);
 		this.canvas = canvas;
 		this.input = input;
 

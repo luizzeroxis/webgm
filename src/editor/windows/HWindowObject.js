@@ -283,12 +283,22 @@ export default class HWindowObject extends HWindow {
 
 											if (actionType.kind == 'normal' && actionType.interfaceKind == 'normal') {
 												// If kind and interface are normal, arguments come from the action type itself
-												action.args = actionType.args.map(arg => new ProjectActionArg(arg.kind, arg.default));
+												action.args = actionType.args.map(typeArg => {
+													let actionArg = new ProjectActionArg();
+													actionArg.kind = typeArg.kind;
+													actionArg.value = typeArg.default;
+													return actionArg;
+												});
 											} else {
 												// Otherwise, the arguments come from a predefined list 
 												action.args = this.getActionTypeInfo()
 													.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind)
-													.args.map(arg => new ProjectActionArg(arg.kind, arg.default));
+													.args.map(typeArg => {
+														let actionArg = new ProjectActionArg();
+														actionArg.kind = typeArg.kind;
+														actionArg.value = typeArg.default;
+														return actionArg;
+													});
 											}
 
 											this.openActionWindow(action);
@@ -384,7 +394,9 @@ export default class HWindowObject extends HWindow {
 	// Make a copy of every property of the resource so we can change it at will without changing the original resource.
 	copyProperties() {
 		this.paramEvents = this.object.events.map(event => {
-			var newEvent = new ProjectEvent(event.type, event.subtype);
+			var newEvent = new ProjectEvent();
+			newEvent.type = event.type;
+			newEvent.subtype = event.subtype;
 			newEvent.actions = event.actions.map(action => {
 				var newAction = new ProjectAction();
 				newAction.typeLibrary = action.typeLibrary;

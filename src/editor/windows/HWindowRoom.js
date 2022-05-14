@@ -339,10 +339,10 @@ export default class HWindowRoom extends HWindow {
 	copyProperties() {
 		this.paramBackgrounds = this.room.backgrounds.map(background => {
 			if (background == null) return null;
-			return new ProjectRoomBackground(background.visibleAtStart, background.isForeground, background.backgroundIndex, background.tileHorizontally, background.tileVertically, background.x, background.y, background.stretch, background.horizontalSpeed, background.verticalSpeed);
+			return new ProjectRoomBackground(background);
 		})
 		this.paramInstances = this.room.instances.map(instance => {
-			return new ProjectInstance(instance.id, instance.x, instance.y, instance.object_index);
+			return new ProjectInstance(instance);
 		});
 	}
 
@@ -370,7 +370,11 @@ export default class HWindowRoom extends HWindow {
 	addInstance(e) {
 		if (this.selectObject.getValue() == -1) return;
 
-		var i = new ProjectInstance(null, this.currentPos.x, this.currentPos.y, this.selectObject.getValue());
+		var i = new ProjectInstance();
+		i.x = this.currentPos.x;
+		i.y = this.currentPos.y;
+		i.object_index = this.selectObject.getValue();
+		
 		this.paramInstances.push(i);
 		return i;
 	}

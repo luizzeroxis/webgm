@@ -393,30 +393,7 @@ export default class HWindowObject extends HWindow {
 
 	// Make a copy of every property of the resource so we can change it at will without changing the original resource.
 	copyProperties() {
-		this.paramEvents = this.object.events.map(event => {
-			var newEvent = new ProjectEvent();
-			newEvent.type = event.type;
-			newEvent.subtype = event.subtype;
-			newEvent.actions = event.actions.map(action => {
-				var newAction = new ProjectAction();
-				newAction.typeLibrary = action.typeLibrary;
-				newAction.typeId = action.typeId;
-				newAction.typeKind = action.typeKind;
-				newAction.typeExecution = action.typeExecution;
-				newAction.typeExecutionFunction = action.typeExecutionFunction;
-				newAction.typeExecutionCode = action.typeExecutionCode;
-				newAction.typeIsQuestion = action.typeIsQuestion;
-
-				newAction.args = action.args.map(x => ({kind: x.kind, value: x.value}));
-
-				newAction.appliesTo = action.appliesTo;
-				newAction.relative = action.relative;
-				newAction.not = action.not;
-
-				return newAction;
-			})
-			return newEvent;
-		})
+		this.paramEvents = this.object.events.map(event => new ProjectEvent(event));
 	}
 
 	sortEvents() {

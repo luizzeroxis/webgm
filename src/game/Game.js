@@ -1115,7 +1115,7 @@ export class Game {
 		// spriteA.shape = 'rectangle';
 
 		var collisions = [
-			{shape1: 'precise', shape2: 'precise', func: this.collisionInstanceRectangleOnInstanceRectangle},
+			{shape1: 'precise', shape2: 'precise', func: this.collisionInstancePreciseOnInstancePrecise},
 			{shape1: 'precise', shape2: 'rectangle', func: this.collisionInstanceRectangleOnInstanceRectangle},
 			// {shape1: 'precise', shape2: 'disk', func: this.collisionInstanceRectangleOnInstanceRectangle},
 			// {shape1: 'precise', shape2: 'diamond', func: this.collisionInstanceRectangleOnInstanceRectangle},
@@ -1166,6 +1166,64 @@ export class Game {
 		for (let collision of collisions) {
 			if (instance.sprite.shape == collision.shape) {
 				return collision.func(instance, point);
+			}
+		}
+	}
+
+	// Check if two instances, with precise shape, are colliding.
+	collisionInstancePreciseOnInstancePrecise(a, b, aX, aY, bX, bY) {
+		aX = (aX == null) ? Math.floor(a.vars.getBuiltIn('x')) : aX;
+		aY = (aY == null) ? Math.floor(a.vars.getBuiltIn('y')) : aY;
+		let aImage = a.sprite.images[a.getImageIndex()];
+		let aX1 = aX - a.sprite.originx;
+		let aY1 = aY - a.sprite.originy;
+		let aX2 = aX1 + aImage.image.width;
+		let aY2 = aY1 + aImage.image.height;
+
+		bX = (bX == null) ? Math.floor(b.vars.getBuiltIn('x')) : bX;
+		bY = (bY == null) ? Math.floor(b.vars.getBuiltIn('y')) : bY;
+		let bImage = b.sprite.images[b.getImageIndex()];
+		let bX1 = bX - b.sprite.originx;
+		let bY1 = bY - b.sprite.originy;
+		let bX2 = bX1 + bImage.image.width;
+		let bY2 = bY1 + bImage.image.height;
+
+		let rectCol = (
+			aX1 <= bX1 + bImage.image.width &&
+			bX1 <= aX1 + aImage.image.width &&
+			aY1 <= bY1 + bImage.image.height &&
+			bY1 <= aY1 + aImage.image.height
+		)
+
+		if (!rectCol) return false;
+
+		let offscreen = new OffscreenCanvas(aImage.image.width + bImage.image.width,
+			Math.max(aImage.image.height, bImage.image.height));
+
+		let offscreenCtx = offscreen.getContext('2d');
+		offscreenCtx.drawImage(aImage.image, 0, 0);
+		offscreenCtx.drawImage(bImage.image, aImage.image.width, 0);
+
+		let aData = offscreenCtx.getImageData(0, 0, aImage.image.width, aImage.image.height);
+		let bData = offscreenCtx.getImageData(aImage.image.width, 0, bImage.image.width, bImage.image.height);
+
+		let gX1 = Math.max(aX1, bX1);
+		let gY1 = Math.max(aY1, bY1);
+		let gX2 = Math.min(aX2, bX2);
+		let gY2 = Math.min(aY2, bY2);
+
+		for (let gX = gX1; gX < gX2; ++gX)
+		for (let gY = gY1; gY < gY2; ++gY) {
+			let aDataX = gX - aX1;
+			let aDataY = gY - aY1;
+			let aCol = (aData.data[(aDataY * aData.width + aDataX) * 4 + 3]) >= (255-a.sprite.alphaTolerance);
+			if (!aCol) continue;
+
+			let bDataX = gX - bX1;
+			let bDataY = gY - bY1;
+			let bCol = (bData.data[(bDataY * bData.width + bDataX) * 4 + 3]) >= (255-b.sprite.alphaTolerance);
+			if (bCol) {
+				return true;
 			}
 		}
 	}

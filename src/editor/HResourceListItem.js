@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, HButton, HImage, HMenu} from '../common/H.js'
+import {parent, endparent, add, HElement, HButton, HImage} from '../common/H.js'
 import {ProjectSprite, ProjectSound, ProjectBackground, ProjectObject} from '../common/Project.js';
 
 import Editor from './Editor.js';

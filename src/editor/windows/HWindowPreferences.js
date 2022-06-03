@@ -14,29 +14,27 @@ export default class HWindowPreferences extends HWindow {
 				{name: 'Auto', value: 'auto'},
 				{name: 'Light', value: 'light'},
 				{name: 'Dark', value: 'dark'},
-			], this.editor.preferences.theme));
+			], this.editor.preferences.get('theme')));
 
-			var inputDefaultActionLibraryTab = add( new HTextInput('Default action library tab:', this.editor.preferences.defaultActionLibraryTab) )
+			var inputDefaultActionLibraryTab = add( new HTextInput('Default action library tab:', this.editor.preferences.get('defaultActionLibraryTab')) )
 
-			var inputHintTextInAction = add( new HCheckBoxInput('Use full tooltip text in action', this.editor.preferences.hintTextInAction) )
+			var inputHintTextInAction = add( new HCheckBoxInput('Use full tooltip text in action', this.editor.preferences.get('hintTextInAction')) )
 
-			var inputScrollToGameOnRun = add( new HCheckBoxInput('Scroll to game area on run', this.editor.preferences.scrollToGameOnRun) )
-			var inputFocusCanvasOnRun = add( new HCheckBoxInput('Focus game canvas on run', this.editor.preferences.focusCanvasOnRun) )
-			var inputClearCanvasOnStop = add( new HCheckBoxInput('Clear game canvas on stop', this.editor.preferences.clearCanvasOnStop) )
+			var inputScrollToGameOnRun = add( new HCheckBoxInput('Scroll to game area on run', this.editor.preferences.get('scrollToGameOnRun')) )
+			var inputFocusCanvasOnRun = add( new HCheckBoxInput('Focus game canvas on run', this.editor.preferences.get('focusCanvasOnRun')) )
+			var inputClearCanvasOnStop = add( new HCheckBoxInput('Clear game canvas on stop', this.editor.preferences.get('clearCanvasOnStop')) )
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.preferences.theme = selectTheme.getValue();
-
-					this.editor.preferences.defaultActionLibraryTab = inputDefaultActionLibraryTab.getValue();
-
-					this.editor.preferences.hintTextInAction = inputHintTextInAction.getChecked();
-
-					this.editor.preferences.scrollToGameOnRun = inputScrollToGameOnRun.getChecked();
-					this.editor.preferences.focusCanvasOnRun = inputFocusCanvasOnRun.getChecked();
-					this.editor.preferences.clearCanvasOnStop = inputClearCanvasOnStop.getChecked();
-					
-					this.editor.savePreferences();
+					this.editor.preferences.setAll({
+						theme: selectTheme.getValue(),
+						defaultActionLibraryTab: inputDefaultActionLibraryTab.getValue(),
+						hintTextInAction: inputHintTextInAction.getChecked(),
+						scrollToGameOnRun: inputScrollToGameOnRun.getChecked(),
+						focusCanvasOnRun: inputFocusCanvasOnRun.getChecked(),
+						clearCanvasOnStop: inputClearCanvasOnStop.getChecked(),
+					});
+					this.editor.preferences.save();
 				},
 				() => this.close()
 			)

@@ -243,7 +243,7 @@ export default class HWindowObject extends HWindow {
 
 					this.editor.libraries.forEach(library => {
 						
-						parent( this.librariesTabControl.addTab(library.name, (library.name == this.editor.preferences.defaultActionLibraryTab)) )
+						parent( this.librariesTabControl.addTab(library.name, (library.name == this.editor.preferences.get('defaultActionLibraryTab'))) )
 
 							var nextClass = null;
 
@@ -500,7 +500,7 @@ export default class HWindowObject extends HWindow {
 					var hintText = this.getActionHintText(action, actionType);
 					
 					let option = add( new HOption(
-						(this.editor.preferences.hintTextInAction ? hintText.text : listText.text), // text
+						(this.editor.preferences.get('hintTextInAction') ? hintText.text : listText.text), // text
 						null, // value
 						(listText.bold ? 'bold ' : '') + (listText.italic ? 'italic ' : '') // class
 					) )

@@ -31,6 +31,7 @@ import DefaultProjectRoomIcon from './img/default-ProjectRoom-icon.png';
 import DefaultProjectScriptIcon from './img/default-ProjectScript-icon.png';
 import DefaultProjectSoundIcon from './img/default-ProjectSound-icon.png';
 import DefaultProjectTimelineIcon from './img/default-ProjectTimeline-icon.png';
+import PreferencesManager from './PreferencesManager.js';
 import HWindowBackground from './windows/HWindowBackground.js';
 import HWindowFont from './windows/HWindowFont.js';
 import HWindowObject from './windows/HWindowObject.js';
@@ -66,18 +67,14 @@ export default class Editor {
 		this.dispatcher = new Dispatcher();
 
 		// Preferences
-		this.preferences = {
-			theme: 'auto',
-			defaultActionLibraryTab: 'move',
-			scrollToGameOnRun: true,
-			focusCanvasOnRun: true,
-			clearCanvasOnStop: true,
-			hintTextInAction: false,
-		}
+		this.preferences = new PreferencesManager();
+		this.preferences.dispatcher.listen({
+			'change': () => {
+				this.applyTheme();
+			}
+		});
 
 		this.autoTheme = 'light';
-
-		this.loadPreferences();
 
 		// Update theme if on auto to match system
 		var media = window.matchMedia('(prefers-color-scheme: dark)');
@@ -115,39 +112,9 @@ export default class Editor {
 		this.applyTheme();
 	}
 
-	loadPreferences() {
-		var preferences;
-		try {
-			preferences = JSON.parse(window.localStorage.getItem('preferences'));
-			if (preferences != null) {
-				this.preferences = Object.assign(this.preferences, preferences);
-				this.applyPreferences();
-			}
-		} catch (e) {
-			// SyntaxError
-			console.log('Could not load preferences, clearing them', preferences);
-			window.localStorage.clear();
-		}
-	}
-
-	savePreferences() {
-		var preferences = JSON.stringify(this.preferences);
-		try {
-			window.localStorage.setItem('preferences', preferences);
-			this.applyPreferences();
-		} catch (e) {
-			// SecurityError
-			console.log('Could not save preferences', this.preferences);
-		}
-	}
-
-	applyPreferences() {
-		this.applyTheme();
-	}
-
 	applyTheme() {
 
-		var theme = this.preferences.theme;
+		var theme = this.preferences.get('theme');
 		if (theme == 'auto') {
 			theme = this.autoTheme;
 		}
@@ -277,10 +244,10 @@ export default class Editor {
 		this.menuArea.runButton.setDisabled(true);
 		this.menuArea.stopButton.setDisabled(false);
 
-		if (this.preferences.scrollToGameOnRun) {
+		if (this.preferences.get('scrollToGameOnRun')) {
 			this.gameArea.scrollIntoView();
 		}
-		if (this.preferences.focusCanvasOnRun) {
+		if (this.preferences.get('focusCanvasOnRun')) {
 			this.gameArea.focus();
 		}
 
@@ -296,7 +263,7 @@ export default class Editor {
 				this.menuArea.runButton.setDisabled(false);
 				this.menuArea.stopButton.setDisabled(true);
 
-				if (this.preferences.clearCanvasOnStop) {
+				if (this.preferences.get('clearCanvasOnStop')) {
 					this.gameArea.clearCanvas();
 				}
 

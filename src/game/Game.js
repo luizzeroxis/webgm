@@ -269,8 +269,8 @@ export class Game {
 	loadProject() {
 		var promises = [
 			this.loadSprites(),
-			this.loadBackgrounds(), // TODO
 			this.loadSounds(),
+			this.loadBackgrounds(),
 		];
 
 		this.loadFonts();
@@ -296,9 +296,6 @@ export class Game {
 		return Promise.all(promises);
 	}
 
-	// Returns a list of promises of loading background images.
-	loadBackgrounds() {} // TODO
-
 	// Returns a list of promises of loading sounds.
 	loadSounds() {
 		var promises = [];
@@ -311,6 +308,20 @@ export class Game {
 				}));
 
 			this.sounds.set(sound, {volume: sound.volume, audioNodes: []})
+		})
+		return Promise.all(promises);
+	}
+
+	// Returns a list of promises of loading background images.
+	loadBackgrounds() {
+		var promises = [];
+		this.project.resources.ProjectBackground.forEach(background => {
+			if (!background.image) return;
+			background.image.load();
+			promises.push(background.image.promise
+				.catch(e => {
+					throw new EngineException("Could not load image in background " + background.name);
+				}));
 		})
 		return Promise.all(promises);
 	}

@@ -191,6 +191,12 @@ body {
 .grid-resource.resource-room {
 	grid-template-columns: 300px minmax(300px, 1fr);
 }
+.grid-resource.resource-room .backgrounds label {
+	display: block;
+}
+.grid-resource.resource-room .backgrounds select {
+	width: 100%;
+}
 .grid-resource.resource-room .preview {
 	overflow: auto;
 	max-height: 80vh;

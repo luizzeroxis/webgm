@@ -32,6 +32,7 @@ import DefaultProjectScriptIcon from './img/default-ProjectScript-icon.png';
 import DefaultProjectSoundIcon from './img/default-ProjectSound-icon.png';
 import DefaultProjectTimelineIcon from './img/default-ProjectTimeline-icon.png';
 import PreferencesManager from './PreferencesManager.js';
+import ThemeManager from './ThemeManager.js';
 import HWindowBackground from './windows/HWindowBackground.js';
 import HWindowFont from './windows/HWindowFont.js';
 import HWindowObject from './windows/HWindowObject.js';
@@ -66,20 +67,8 @@ export default class Editor {
 
 		this.dispatcher = new Dispatcher();
 
-		// Preferences
 		this.preferences = new PreferencesManager();
-		this.preferences.dispatcher.listen({
-			'change': () => {
-				this.applyTheme();
-			}
-		});
-
-		this.autoTheme = 'light';
-
-		// Update theme if on auto to match system
-		var media = window.matchMedia('(prefers-color-scheme: dark)');
-		media.addEventListener('change', e => this.updateAutoTheme(e));
-		this.updateAutoTheme(media);
+		this.themeManager = new ThemeManager(this);
 
 		// Libraries
 		this.libraries = BuiltInLibraries.getList();
@@ -105,28 +94,6 @@ export default class Editor {
 
 		// Actually add to the DOM
 		add(this.div)
-	}
-
-	updateAutoTheme(mediaQueryList) {
-		this.autoTheme = mediaQueryList.matches ? 'dark' : 'light';
-		this.applyTheme();
-	}
-
-	applyTheme() {
-
-		var theme = this.preferences.get('theme');
-		if (theme == 'auto') {
-			theme = this.autoTheme;
-		}
-
-		if (theme == 'dark') {
-			document.documentElement.classList.remove('light');
-			document.documentElement.classList.add('dark');
-		} else {
-			document.documentElement.classList.remove('dark');
-			document.documentElement.classList.add('light');
-		}
-
 	}
 
 	// Resource management

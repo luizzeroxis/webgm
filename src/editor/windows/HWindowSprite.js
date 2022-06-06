@@ -1,5 +1,5 @@
 import AbstractImage from '../../common/AbstractImage.js';
-import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HImage, setOnFileDrop} from '../../common/H.js'
+import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HImage, HCheckBoxInput, setOnFileDrop} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js';
 import HWindow from '../HWindow.js';
 
@@ -81,6 +81,15 @@ export default class HWindowSprite extends HWindow {
 
 					endparent()
 
+				parent( add( new HElement('div', {class: 'mask'}) ) )
+					parent( add( new HElement('fieldset') ) )
+						add( new HElement('legend', {}, 'Collision Checking') )
+
+						var inputPreciseCollisionChecking = add( new HCheckBoxInput('Precise collision checking', (sprite.shape == 'precise')) )
+
+						endparent()
+					endparent()
+
 				parent( add( new HElement('div', {class: 'preview'}) ) )
 					this.imgSprite = add( new HImage() )
 					endparent()
@@ -94,6 +103,8 @@ export default class HWindowSprite extends HWindow {
 					this.editor.changeResourceName(sprite, inputName.getValue());
 					this.editor.changeSpriteImages(sprite, this.paramImages);
 					this.editor.changeSpriteOrigin(sprite, parseInt(inputOriginX.getValue()), parseInt(inputOriginY.getValue()));
+
+					sprite.shape = inputPreciseCollisionChecking.getChecked() ? 'precise' : 'rectangle';
 				},
 				() => this.close()
 			);

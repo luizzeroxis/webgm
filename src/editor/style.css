@@ -19,8 +19,25 @@
 	color-scheme: light;
 }
 
+.h-label-and-input, .h-select {
+	display: flex;
+	gap: 4px;
+	align-items: baseline;
+	flex-wrap: wrap;
+}
+
+.h-label-and-input > input, .h-select > select {
+	flex: 1;
+	width: 100%;
+}
+
 body {
 	margin: 0;
+}
+
+body, button, input {
+	font-family: sans-serif;
+	font-size: 10pt;
 }
 
 .bold {
@@ -122,7 +139,7 @@ body {
 }
 
 .grid-resource.resource-sprite {
-	grid-template-columns: 300px minmax(300px, 1fr);
+	grid-template-columns: 250px 250px minmax(300px, 1fr);
 }
 .grid-resource.resource-sprite .preview {
 	overflow: auto;
@@ -141,18 +158,16 @@ body {
 	grid-template-columns: 200px 200px minmax(200px, 1fr) 250px;
 }
 .grid-resource.resource-object .events label {
-	display: block;
+	width: 100%;
 }
 .grid-resource.resource-object .events select {
-	width: 100%;
 	height: calc(12*16px);
 	resize: vertical;
 }
 .grid-resource.resource-object .actions label {
-	display: block;
+	width: 100%;
 }
 .grid-resource.resource-object .actions select {
-	width: 100%;
 	height: calc(12*16px);
 	resize: vertical;
 }
@@ -192,10 +207,10 @@ body {
 	grid-template-columns: 300px minmax(300px, 1fr);
 }
 .grid-resource.resource-room .backgrounds label {
-	display: block;
+	width: 100%;
 }
 .grid-resource.resource-room .backgrounds select {
-	width: 100%;
+	overflow: auto;
 }
 .grid-resource.resource-room .preview {
 	overflow: auto;

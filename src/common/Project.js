@@ -20,8 +20,8 @@ export class Project {
 
 			this.lastId = 100000;
 		} else {
-			this.resources = object.resources;
-			this.counter = object.counter;
+			this.resources = {};
+			this.counter = {};
 
 			Project.getTypes().forEach(type => {
 				let typeName = type.getClassName();

@@ -25,7 +25,7 @@ export default class HWindowSound extends HWindow {
 						VirtualFileSystem.openDialog('audio/*')
 						.then(file => {
 							paramSound = new AbstractAudio(file);
-							audioPreview.src = paramSound.src;
+							audioPreview.html.src = paramSound.src;
 						})
 
 					}) )
@@ -33,10 +33,10 @@ export default class HWindowSound extends HWindow {
 					parent( add( new HElement('div', {class: 'preview'}) ) )
 
 						var audioPreview = add( new HElement('audio') )
-						audioPreview.controls = true;
-						audioPreview.loop = true;
+						audioPreview.html.controls = true;
+						audioPreview.html.loop = true;
 						if (paramSound) {
-							audioPreview.src = paramSound.src;
+							audioPreview.html.src = paramSound.src;
 						}
 						endparent()
 

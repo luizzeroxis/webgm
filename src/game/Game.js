@@ -862,9 +862,32 @@ export class Game {
 		var image = background.image;
 		if (!image) return false;
 
-		// TODO tileHorizontally, tileVertically, stretch, horizontalSpeed, verticalSpeed
+		// TODO stretch, horizontalSpeed, verticalSpeed
 
-		this.ctx.drawImage(image.image, roomBackground.x, roomBackground.y);
+		let xStart = roomBackground.x;
+		let yStart = roomBackground.y;
+
+		if (roomBackground.tileHorizontally) {
+			xStart = (roomBackground.x % background.image.image.width) - background.image.image.width;
+		}
+		if (roomBackground.tileVertically) {
+			yStart = (roomBackground.y % background.image.image.height) - background.image.image.height;
+		}
+
+		for (let x = xStart; x < this.room.width; x += background.image.image.width) {
+			for (let y = yStart; y < this.room.height; y += background.image.image.height) {
+
+				this.ctx.drawImage(image.image, x, y);
+
+				if (!roomBackground.tileVertically) {
+					break;
+				}
+			}
+			if (!roomBackground.tileHorizontally) {
+				break;
+			}
+		}
+
 		return true;
 	}
 

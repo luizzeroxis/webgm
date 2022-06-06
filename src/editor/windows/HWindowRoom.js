@@ -87,6 +87,8 @@ export default class HWindowRoom extends HWindow {
 
 							this.inputBackgroundVisibleAtStart.setChecked(currentBackground.visibleAtStart);
 							this.selectResourceBackground.setValue(currentBackground.backgroundIndex);
+							this.inputTileHorizontally.setChecked(currentBackground.tileHorizontally);
+							this.inputTileVertically.setChecked(currentBackground.tileVertically);
 						}
 
 						this.selectBackgrounds = add( new HSelect('Backgrounds:', 'backgrounds') )
@@ -127,7 +129,18 @@ export default class HWindowRoom extends HWindow {
 						this.selectResourceBackground = add( new HResourceSelect(this.editor, null, ProjectBackground) )
 						this.selectResourceBackground.setOnChange(() => {
 							getOrCreateCurrentBackground().backgroundIndex = this.selectResourceBackground.getValue();
+							this.updateCanvasPreview();
+						})
 
+						this.inputTileHorizontally = add( new HCheckBoxInput('Tile Hor.') )
+						this.inputTileHorizontally.setOnChange(() => {
+							getOrCreateCurrentBackground().tileHorizontally = this.inputTileHorizontally.getChecked();
+							this.updateCanvasPreview();
+						})
+
+						this.inputTileVertically = add( new HCheckBoxInput('Tile Vert.') )
+						this.inputTileVertically.setOnChange(() => {
+							getOrCreateCurrentBackground().tileVertically = this.inputTileVertically.getChecked();
 							this.updateCanvasPreview();
 						})
 
@@ -328,6 +341,9 @@ export default class HWindowRoom extends HWindow {
 			changeSpriteOrigin: i => {
 				this.updateCanvasPreview();
 			},
+			changeBackgroundImage: i => {
+				this.updateCanvasPreview();
+			},
 		})
 	}
 
@@ -516,31 +532,30 @@ export default class HWindowRoom extends HWindow {
 		// TODO stretch
 
 		image.promise.then(() => {
-			// let xStart = roomBackground.x;
-			// let yStart = roomBackground.y;
+			let xStart = roomBackground.x;
+			let yStart = roomBackground.y;
 
-			// if (roomBackground.tileHorizontally) {
-			// 	xStart = (roomBackground.x % background.image.image.width) - background.image.image.width;
-			// }
-			// if (roomBackground.tileVertically) {
-			// 	yStart = (roomBackground.y % background.image.image.height) - background.image.image.height;
-			// }
+			if (roomBackground.tileHorizontally) {
+				xStart = (roomBackground.x % background.image.image.width) - background.image.image.width;
+			}
+			if (roomBackground.tileVertically) {
+				yStart = (roomBackground.y % background.image.image.height) - background.image.image.height;
+			}
 
-			// for (let x = xStart; x < this.canvasPreview.html.width; x += background.image.image.width) {
-			// 	for (let y = yStart; y < this.canvasPreview.html.height; y += background.image.image.height) {
+			for (let x = xStart; x < this.canvasPreview.html.width; x += background.image.image.width) {
+				for (let y = yStart; y < this.canvasPreview.html.height; y += background.image.image.height) {
 
-			// 		this.ctx.drawImage(image.image, x, y);
+					this.ctx.drawImage(image.image, x, y);
 
-			// 		if (!roomBackground.tileVertically) {
-			// 			break;
-			// 		}
-			// 	}
-			// 	if (!roomBackground.tileHorizontally) {
-			// 		break;
-			// 	}
-			// }
+					if (!roomBackground.tileVertically) {
+						break;
+					}
+				}
+				if (!roomBackground.tileHorizontally) {
+					break;
+				}
+			}
 
-			this.ctx.drawImage(image.image, roomBackground.x, roomBackground.y);
 		})
 		return true;
 	}

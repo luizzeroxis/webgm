@@ -23,13 +23,15 @@ export default class VariableHolder {
 					this.builtInList[name] = {};
 				}
 			}
-			this.builtInList[name].dimensions = this.builtInClass[name].dimensions;
+			
 			if (this.builtInList[name].dimensions == undefined) {
 				// TODO 1d only
 				this.builtInList[name].dimensions = 0;
 				if (Array.isArray(this.builtInList[name].value)) {
 					this.builtInList[name].dimensions = 1;
 				}
+			} else {
+				this.builtInList[name].dimensions = this.builtInClass[name].dimensions;
 			}
 		}
 	}
@@ -44,6 +46,8 @@ export default class VariableHolder {
 
 		var variable;
 		var varInfo = this.getVariableInfo(name);
+		var builtIn;
+		let dimensions;
 
 		if (varInfo == null) {
 			// This should never happen
@@ -52,11 +56,23 @@ export default class VariableHolder {
 
 		variable = varInfo.reference;
 
+		if (variable) {
+			dimensions = variable.dimensions;
+		}
+
+		if (varInfo.list == this.builtInList) {
+			builtIn = this.builtInClass[name];
+
+			if (builtIn.direct) {
+				dimensions = (builtIn.dimensions == undefined ? 0 : builtIn.dimensions)
+			}
+		}
+
 		indexes = indexes || [];
 
 		// TODO get dimensions from built in when direct
 		// Get difference between dimensions of variable and amount of indexes
-		var difference = variable.dimensions - indexes.length;
+		var difference = dimensions - indexes.length;
 
 		// If there are more dimensions than indexes specify
 		if (difference > 0) {
@@ -84,9 +100,8 @@ export default class VariableHolder {
 
 		// Check direct built ins, where data isn't stored here, we use a funcion to get that data from elsewhere
 		if (varInfo.list == this.builtInList) {
-			var builtIn = this.builtInClass[name];
 			if (builtIn.direct) {
-				if (indexes.length != variable.dimensions) {
+				if (indexes.length != dimensions) {
 					throw new VariableException({type: 'index_not_in_bounds'});
 				}
 
@@ -145,6 +160,7 @@ export default class VariableHolder {
 		var variable;
 		var varInfo = this.getVariableInfo(name);
 		var builtIn;
+		let dimensions;
 
 		if (varInfo == null) {
 			// Variable doesn't exist, create it
@@ -154,11 +170,19 @@ export default class VariableHolder {
 		} else {
 			variable = varInfo.reference;
 
+			if (variable) {
+				dimensions = variable.dimensions;
+			}
+
 			if (varInfo.list == this.builtInList) {
 				builtIn = this.builtInClass[name];
 
 				if (builtIn.readOnly && !overrideReadOnly) {
 					throw new VariableException({type: 'read_only'});
+				}
+
+				if (builtIn.direct) {
+					dimensions = (builtIn.dimensions == undefined ? 0 : builtIn.dimensions)
 				}
 
 				if (builtIn.type != null) {
@@ -183,7 +207,7 @@ export default class VariableHolder {
 		indexes = indexes || [];
 
 		// Get difference between dimensions of variable and amount of indexes
-		var difference = variable.dimensions - indexes.length;
+		var difference = dimensions - indexes.length;
 
 		// If there are more dimensions than indexes specify
 		if (difference > 0) {
@@ -207,7 +231,7 @@ export default class VariableHolder {
 			if (difference != 0) {
 				if (builtIn) {
 					// For built ins, ignore indexes and use first possible value.
-					indexes = new Array(variable.dimensions).fill(0);
+					indexes = new Array(dimensions).fill(0);
 				} else {
 					// Convert to higher dimension until there's no more difference.
 					for (var i=0; i<difference; ++i) {
@@ -216,6 +240,14 @@ export default class VariableHolder {
 						variable.value = [ {value: variable.value} ];
 					}
 				}
+			}
+		}
+
+		// Check direct built ins, where data ins't store here, we use a function to set that data to elsewhere
+		if (builtIn) {
+			if (builtIn.direct) {
+				// TODO check some lengths and all
+				return builtIn.directSet.call(this.caller, value, indexes);
 			}
 		}
 

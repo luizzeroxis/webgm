@@ -784,6 +784,15 @@ export class Game {
 			instance.vars.setBuiltIn('image_index', i);
 		}
 
+		// Check global game settings default keys
+		if (this.project.globalGameSettings.keyEscEndsGame) {
+			if (this.getKey(27, this.keyPressed)) {
+				this.stepStopAction = async () => {
+					await this.end();
+				};
+			}
+		}
+
 		// Reset keyboard/mouse states
 		this.clearIO();
 

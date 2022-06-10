@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement} from '../../common/H.js'
+import {parent, endparent, add, HElement, HTextInput} from '../../common/H.js'
 import HWindow from '../HWindow.js';
 
 export default class HWindowTimeline extends HWindow {
@@ -14,14 +14,14 @@ export default class HWindowTimeline extends HWindow {
 			parent( add( new HElement('div', {class: 'grid-resource resource-timeline'}) ) )
 				parent( add( new HElement('div') ) )
 
-
+					let inputName = add( new HTextInput('Name:', timeline.name) )
 					
 					endparent()
 				endparent()
 
 			this.makeApplyOkButtons(
 				() => {
-					// changes here
+					this.editor.changeResourceName(timeline, inputName.getValue());
 				},
 				() => this.close()
 			);

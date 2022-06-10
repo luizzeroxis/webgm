@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement} from '../../common/H.js'
+import {parent, endparent, add, HElement, HTextInput} from '../../common/H.js'
 import HWindow from '../HWindow.js';
 
 export default class HWindowPath extends HWindow {
@@ -14,14 +14,14 @@ export default class HWindowPath extends HWindow {
 			parent( add( new HElement('div', {class: 'grid-resource resource-path'}) ) )
 				parent( add( new HElement('div') ) )
 
-
+					let inputName = add( new HTextInput('Name:', path.name) )
 					
 					endparent()
 				endparent()
 
 			this.makeApplyOkButtons(
 				() => {
-					// changes here
+					this.editor.changeResourceName(path, inputName.getValue());
 				},
 				() => this.close()
 			);

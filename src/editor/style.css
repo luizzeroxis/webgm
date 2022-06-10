@@ -31,6 +31,23 @@
 	width: 100%;
 }
 
+.h-multiline-text-input {
+	display: flex;
+	gap: 4px;
+	align-items: baseline;
+	flex-wrap: wrap;
+}
+
+.h-multiline-text-input > label {
+	width: 100%;
+}
+
+.h-multiline-text-input > textarea {
+	width: 100%;
+	height: 256px;
+	font: inherit;
+}
+
 body {
 	margin: 0;
 }

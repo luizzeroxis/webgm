@@ -195,6 +195,20 @@ export class HTextInput extends HLabelAndInput {
 	}
 }
 
+export class HMultilineTextInput extends HElement {
+	constructor(label, value, _class) {
+		parent( super('div', {class: classToString(classToArray(_class).concat(['h-multiline-text-input']))}) )
+			let id = '_id_' + uniqueID();
+			this.label = add( new HElement('label', {for: id}, label) )
+			this.textarea = add( new HElement('textarea', {id: id}) )
+			this.textarea.html.value = value;
+			endparent()
+	}
+	getValue() {
+		return this.textarea.html.value;
+	}
+}
+
 export class HNumberInput extends HLabelAndInput {
 	constructor(label, value, step, min, max, _class) {
 		super('number', label, value, _class);

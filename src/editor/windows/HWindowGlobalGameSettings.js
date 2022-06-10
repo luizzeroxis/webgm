@@ -1,5 +1,6 @@
-import {parent, endparent, add, HCheckBoxInput, HColorInput} from '../../common/H.js'
+import {parent, endparent, add, HElement, HTextInput, HMultilineTextInput, HCheckBoxInput, HColorInput,} from '../../common/H.js'
 import HWindow from '../HWindow.js';
+import HTabControl from '../HTabControl.js';
 
 export default class HWindowGlobalGameSettings extends HWindow {
 
@@ -12,17 +13,49 @@ export default class HWindowGlobalGameSettings extends HWindow {
 
 		parent(this.client)
 
-			this.inputColor = add( new HColorInput('Color outside the room region:', globalGameSettings.colorOutsideRoom) )
+			this.tabControl = add( new HTabControl() )
 
-			this.inputDisplayCursor = add( new HCheckBoxInput('Display the cursor', globalGameSettings.displayCursor) )
+			parent( this.tabControl.addTab('Graphics') )
 
-			this.inputKeyEscEndsGame = add( new HCheckBoxInput('Let <Esc> end the game', globalGameSettings.keyEscEndsGame) )
+				this.inputColor = add( new HColorInput('Color outside the room region:', globalGameSettings.colorOutsideRoom) )
+				this.inputDisplayCursor = add( new HCheckBoxInput('Display the cursor', globalGameSettings.displayCursor) )
+
+				endparent()
+
+			// parent( this.tabControl.addTab('Resolution') )
+			// 	endparent()
+
+			parent( this.tabControl.addTab('Other') )
+
+				this.inputKeyEscEndsGame = add( new HCheckBoxInput('Let <Esc> end the game', globalGameSettings.keyEscEndsGame) )
+
+				endparent()
+
+			// parent( this.tabControl.addTab('Loading') )
+			// 	endparent()
+
+			// parent( this.tabControl.addTab('Errors') )
+			// 	endparent()
+
+			parent( this.tabControl.addTab('Info') )
+
+				this.inputAuthor = add( new HTextInput('Author:', globalGameSettings.author) )
+				this.inputVersion = add( new HTextInput('Version:', globalGameSettings.version) )
+				// this.inputVersion = add( new HTextInput('Version:', globalGameSettings.version) )
+
+				this.inputInformation = add( new HMultilineTextInput('Information:', globalGameSettings.information) )
+
+				endparent()
 
 			this.makeApplyOkButtons(
 				() => {
 					globalGameSettings.colorOutsideRoom = this.inputColor.getValue();
 					globalGameSettings.displayCursor = this.inputDisplayCursor.getChecked();
 					globalGameSettings.keyEscEndsGame = this.inputKeyEscEndsGame.getChecked();
+
+					globalGameSettings.author = this.inputAuthor.getValue();
+					globalGameSettings.version = this.inputVersion.getValue();
+					globalGameSettings.information = this.inputInformation.getValue();
 				},
 				() => this.close()
 			);

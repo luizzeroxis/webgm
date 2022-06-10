@@ -16,7 +16,7 @@ export default class HWindowGameInformation extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					gameInformation.text = this.textareaText.value;
+					gameInformation.text = this.textareaText.html.value;
 					// changes here
 				},
 				() => this.close()

@@ -5,7 +5,7 @@ export class Project {
 			this.counter = {};
 
 			Project.getTypes().forEach(type => {
-				let typeName = type.getClassName();
+				const typeName = type.getClassName();
 				this.resources[typeName] = [];
 				this.counter[typeName] = 0;
 			})
@@ -22,7 +22,7 @@ export class Project {
 			this.counter = {};
 
 			Project.getTypes().forEach(type => {
-				let typeName = type.getClassName();
+				const typeName = type.getClassName();
 				this.resources[typeName] = object.resources[typeName].map(resource => new type(resource));
 				this.counter[typeName] = object.counter[typeName];
 			})

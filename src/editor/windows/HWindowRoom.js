@@ -34,7 +34,7 @@ export default class HWindowRoom extends HWindow {
 
 						this.selectObject = add( new HResourceSelect(this.editor, 'Object:', ProjectObject, true) )
 
-						var toolGroup = '_radio_'+uniqueID();
+						const toolGroup = '_radio_'+uniqueID();
 						this.radioAdd =      add( new HRadioInput(toolGroup, 'Add instance', true) )
 						this.radioMultiple = add( new HRadioInput(toolGroup, 'Add multiple instances') )
 						this.radioMove =     add( new HRadioInput(toolGroup, 'Move instance') )
@@ -58,32 +58,32 @@ export default class HWindowRoom extends HWindow {
 
 						this.inputBackgroundColor = add( new HColorInput('Background color:', room.backgroundColor) )
 
-						let getBackground = (index) => {
-							let currentBackground = this.paramBackgrounds[index];
+						const getBackground = (index) => {
+							const currentBackground = this.paramBackgrounds[index];
 							if (currentBackground == null) {
 								return new ProjectRoomBackground(); // default values used
 							}
 							return currentBackground;
 						}
 
-						let getOrCreateBackground = (index) => {
+						const getOrCreateBackground = (index) => {
 							if (this.paramBackgrounds[index] == null) {
 								this.paramBackgrounds[index] = new ProjectRoomBackground(); // default values used
 							}
 							return this.paramBackgrounds[index];
 						}
 
-						let getOrCreateCurrentBackground = () => {
-							let currentBackgroundId = this.selectBackgrounds.getValue();
+						const getOrCreateCurrentBackground = () => {
+							const currentBackgroundId = this.selectBackgrounds.getValue();
 							if (this.paramBackgrounds[currentBackgroundId] == null) {
 								this.paramBackgrounds[currentBackgroundId] = new ProjectRoomBackground();
 							}
 							return this.paramBackgrounds[currentBackgroundId];
 						}
 
-						let updateBackgroundProperties = () => {
-							let currentBackgroundId = this.selectBackgrounds.getValue();
-							let currentBackground = getBackground(currentBackgroundId);
+						const updateBackgroundProperties = () => {
+							const currentBackgroundId = this.selectBackgrounds.getValue();
+							const currentBackground = getBackground(currentBackgroundId);
 
 							this.inputBackgroundVisibleAtStart.setChecked(currentBackground.visibleAtStart);
 							this.selectResourceBackground.setValue(currentBackground.backgroundIndex);
@@ -96,8 +96,8 @@ export default class HWindowRoom extends HWindow {
 
 						parent(this.selectBackgrounds.select)
 							for (let i=0; i<8; ++i) {
-								let background = getBackground(i);
-								let _class = (background.visibleAtStart ? 'bold' : null);
+								const background = getBackground(i);
+								const _class = (background.visibleAtStart ? 'bold' : null);
 								this.selectBackgroundsOptions[i] = add( new HOption('Background '+i.toString(), i, _class) )
 							}
 							endparent()
@@ -111,8 +111,8 @@ export default class HWindowRoom extends HWindow {
 						this.inputBackgroundVisibleAtStart = add( new HCheckBoxInput('Visible when room starts') )
 						this.inputBackgroundVisibleAtStart.setOnChange(() => {
 
-							let currentBackgroundId = this.selectBackgrounds.getValue();
-							let currentBackground = getOrCreateBackground(currentBackgroundId);
+							const currentBackgroundId = this.selectBackgrounds.getValue();
+							const currentBackground = getOrCreateBackground(currentBackgroundId);
 
 							currentBackground.visibleAtStart = this.inputBackgroundVisibleAtStart.getChecked();
 
@@ -184,8 +184,8 @@ export default class HWindowRoom extends HWindow {
 					this.canvasPreview.html.onmousedown = (e) => {
 
 						this.mouseIsDown = true;
-						var pos = this.getMousePosition(e);
-						var snappedPos = this.snapMousePosition(pos);
+						const pos = this.getMousePosition(e);
+						const snappedPos = this.snapMousePosition(pos);
 
 						this.currentPos = snappedPos;
 
@@ -200,7 +200,7 @@ export default class HWindowRoom extends HWindow {
 
 						if (this.radioMove.getChecked()) {
 							{
-								let hover = this.getInstanceAtPosition(pos);
+								const hover = this.getInstanceAtPosition(pos);
 								if (hover) {
 									this.movingInstance = hover;
 								}
@@ -210,7 +210,7 @@ export default class HWindowRoom extends HWindow {
 
 						if (this.radioDelete.getChecked()) {
 							{
-								let hover = this.getInstanceAtPosition(pos);
+								const hover = this.getInstanceAtPosition(pos);
 								if (hover) {
 									this.paramInstances = this.paramInstances.filter(i => i != hover);
 								}
@@ -222,8 +222,8 @@ export default class HWindowRoom extends HWindow {
 					}
 
 					this.canvasPreview.html.onmousemove = (e) => {
-						var pos = this.getMousePosition(e);
-						var snappedPos = this.snapMousePosition(pos);
+						const pos = this.getMousePosition(e);
+						const snappedPos = this.snapMousePosition(pos);
 
 						if (this.mouseIsDown) {
 
@@ -236,7 +236,7 @@ export default class HWindowRoom extends HWindow {
 
 							if (this.radioMultiple.getChecked()) {
 								{
-									let hover = this.getInstanceAtPosition(pos);
+									const hover = this.getInstanceAtPosition(pos);
 									if (hover != this.movingInstance) {
 										this.currentPos = snappedPos;
 										this.movingInstance = this.addInstance(e);
@@ -247,7 +247,7 @@ export default class HWindowRoom extends HWindow {
 
 							if (this.radioDelete.getChecked()) {
 								{
-									let hover = this.getInstanceAtPosition(pos);
+									const hover = this.getInstanceAtPosition(pos);
 									if (hover) {
 										this.paramInstances = this.paramInstances.filter(i => i != hover);
 									}
@@ -264,7 +264,7 @@ export default class HWindowRoom extends HWindow {
 						this.spanId.html.textContent = '';
 
 						{
-							let hover = this.getInstanceAtPosition(pos);
+							const hover = this.getInstanceAtPosition(pos);
 							if (hover) {
 								this.spanObject.html.textContent = this.editor.project.resources.ProjectObject
 									.find(x => x.id == hover.object_index).name;
@@ -313,7 +313,7 @@ export default class HWindowRoom extends HWindow {
 
 					// In GM, these ids are saved instantly. Even if you close and don't save the room, it still uses the ids. In this project, ideally resource editors would only change the project when you press ok or apply. Because of that, we create the ProjectInstances without ids, and only when saving we fill in the ids.
 
-					for (let instance of this.paramInstances) {
+					for (const instance of this.paramInstances) {
 						if (instance.id == null) {
 							this.editor.project.lastId += 1;
 							instance.id = this.editor.project.lastId;
@@ -363,18 +363,18 @@ export default class HWindowRoom extends HWindow {
 	}
 
 	getMousePosition(e) {
-		var x = e.offsetX;
-		var y = e.offsetY;
+		const x = e.offsetX;
+		const y = e.offsetY;
 		return {x: x, y: y};
 	}
 
 	snapMousePosition(pos) {
-		var x = pos.x;
-		var y = pos.y;
+		let x = pos.x;
+		let y = pos.y;
 
 		if (this.inputSnapToGrid.getChecked()) {
-			var snapX = Math.max(1, parseInt(this.inputSnapX.getValue()) || 0);
-			var snapY = Math.max(1, parseInt(this.inputSnapY.getValue()) || 0);
+			const snapX = Math.max(1, parseInt(this.inputSnapX.getValue()) || 0);
+			const snapY = Math.max(1, parseInt(this.inputSnapY.getValue()) || 0);
 
 			x = Math.floor(x / snapX) * snapX;
 			y = Math.floor(y / snapY) * snapY;
@@ -386,7 +386,7 @@ export default class HWindowRoom extends HWindow {
 	addInstance(e) {
 		if (this.selectObject.getValue() == -1) return;
 
-		var i = new ProjectInstance();
+		const i = new ProjectInstance();
 		i.x = this.currentPos.x;
 		i.y = this.currentPos.y;
 		i.object_index = this.selectObject.getValue();
@@ -397,8 +397,8 @@ export default class HWindowRoom extends HWindow {
 
 	deleteUnderlying(e) {
 		if (this.inputDeleteUnderlying.getChecked()) {
-			for (var i = this.paramInstances.length - 1; i >= 0; i--) {
-				var instance = this.paramInstances[i];
+			for (let i = this.paramInstances.length - 1; i >= 0; i--) {
+				const instance = this.paramInstances[i];
 				if (instance != this.movingInstance && this.isInstanceAtPosition(instance, this.currentPos)) {
 					this.paramInstances.splice(i, 1);
 				}
@@ -407,8 +407,8 @@ export default class HWindowRoom extends HWindow {
 	}
 
 	getInstanceAtPosition(pos) {
-		for (var i = this.paramInstances.length - 1; i >= 0; i--) {
-			var instance = this.paramInstances[i];
+		for (let i = this.paramInstances.length - 1; i >= 0; i--) {
+			const instance = this.paramInstances[i];
 			if (this.isInstanceAtPosition(instance, pos)) {
 				return instance;
 			}
@@ -418,10 +418,10 @@ export default class HWindowRoom extends HWindow {
 	}
 
 	isInstanceAtPosition(instance, pos) {
-		var object = this.editor.project.resources.ProjectObject.find(x => x.id == instance.object_index);
-		var sprite = this.editor.project.resources.ProjectSprite.find(x => x.id == object.sprite_index);
+		const object = this.editor.project.resources.ProjectObject.find(x => x.id == instance.object_index);
+		const sprite = this.editor.project.resources.ProjectSprite.find(x => x.id == object.sprite_index);
 
-		var w=32, h=32, ox=0, oy=0;
+		let w=32, h=32, ox=0, oy=0;
 
 		if (sprite) {
 			ox = sprite.originx;
@@ -437,10 +437,10 @@ export default class HWindowRoom extends HWindow {
 			h = this.defaultInstanceImage.image.height;
 		}
 
-		var x1 = instance.x - ox;
-		var y1 = instance.y - oy;
-		var x2 = x1 + w;
-		var y2 = y1 + h;
+		const x1 = instance.x - ox;
+		const y1 = instance.y - oy;
+		const x2 = x1 + w;
+		const y2 = y1 + h;
 
 		if (pos.x >= x1 && pos.x < x2 && pos.y >= y1 && pos.y < y2) {
 			return true;
@@ -458,16 +458,16 @@ export default class HWindowRoom extends HWindow {
 		this.ctx.fillRect(0, 0, this.canvasPreview.html.width, this.canvasPreview.html.height);
 
 		// backgrounds
-		for (let roomBackground of this.paramBackgrounds) {
+		for (const roomBackground of this.paramBackgrounds) {
 			if (!roomBackground) continue;
 			if (roomBackground.isForeground == true) continue;
 			this.drawRoomBackground(roomBackground);
 		}
 
 		// instance
-		for (let roomInstance of this.paramInstances) {
-			let object = this.editor.project.resources.ProjectObject.find(x => x.id == roomInstance.object_index);
-			let sprite = this.editor.project.resources.ProjectSprite.find(x => x.id == object.sprite_index);
+		for (const roomInstance of this.paramInstances) {
+			const object = this.editor.project.resources.ProjectObject.find(x => x.id == roomInstance.object_index);
+			const sprite = this.editor.project.resources.ProjectSprite.find(x => x.id == object.sprite_index);
 			let image, ox=0, oy=0;
 
 			if (sprite) {
@@ -488,7 +488,7 @@ export default class HWindowRoom extends HWindow {
 		}
 
 		// foregrounds
-		for (let roomBackground of this.paramBackgrounds) {
+		for (const roomBackground of this.paramBackgrounds) {
 			if (!roomBackground) continue;
 			if (roomBackground.isForeground == false) continue;
 			this.drawRoomBackground(roomBackground);
@@ -501,17 +501,17 @@ export default class HWindowRoom extends HWindow {
 			this.ctx.fillStyle = 'white';
 			this.ctx.strokeStyle = 'white';
 
-			var snapx = parseInt(this.inputSnapX.getValue());
-			var snapy = parseInt(this.inputSnapY.getValue());
+			const snapx = parseInt(this.inputSnapX.getValue());
+			const snapy = parseInt(this.inputSnapY.getValue());
 
 			if (snapx > 0) {
-				for (var x = 0; x < this.canvasPreview.html.width; x += snapx) {
+				for (let x = 0; x < this.canvasPreview.html.width; x += snapx) {
 					this.drawLine(x, 0, x, this.canvasPreview.html.height);
 				}
 			}
 
 			if (snapy > 0) {
-				for (var y = 0; y < this.canvasPreview.html.height; y += snapy) {
+				for (let y = 0; y < this.canvasPreview.html.height; y += snapy) {
 					this.drawLine(0, y, this.canvasPreview.html.width, y);
 				}
 			}
@@ -523,10 +523,10 @@ export default class HWindowRoom extends HWindow {
 	drawRoomBackground(roomBackground) {
 		if (!roomBackground.visibleAtStart) return false;
 
-		var background = this.editor.project.resources.ProjectBackground.find(x => x.id == roomBackground.backgroundIndex);
+		const background = this.editor.project.resources.ProjectBackground.find(x => x.id == roomBackground.backgroundIndex);
 		if (!background) return false;
 
-		var image = background.image;
+		const image = background.image;
 		if (!image) return false;
 
 		// TODO stretch

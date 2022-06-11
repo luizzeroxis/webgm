@@ -85,7 +85,7 @@ export default class HResourceListItem extends HElement {
 	}
 
 	updateIcon() {
-		var src;
+		let src;
 
 		if (this.resource.constructor == ProjectSprite) {
 			if (this.resource.images.length > 0) {
@@ -102,7 +102,7 @@ export default class HResourceListItem extends HElement {
 		} else
 		if (this.resource.constructor == ProjectObject) {
 			if (this.resource.sprite_index >= 0) {
-				var sprite = this.editor.project.resources.ProjectSprite.find(x => x.id == this.resource.sprite_index);
+				const sprite = this.editor.project.resources.ProjectSprite.find(x => x.id == this.resource.sprite_index);
 				if (sprite) {
 					if (sprite.images.length > 0) {
 						src = sprite.images[0].image.src;

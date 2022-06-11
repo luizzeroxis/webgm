@@ -125,8 +125,8 @@ export default class BuiltInGlobals {
 
 	static lives = {type: 'integer', default: -1, async set (value, previous, indexes) {
 		if (value <= 0 && previous > 0) {
-			var OTHER_NO_MORE_LIVES = 6;
-			for (let instance of this.instances) {
+			const OTHER_NO_MORE_LIVES = 6;
+			for (const instance of this.instances) {
 				if (!instance.exists) continue;
 				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_NO_MORE_LIVES), instance);
 			}
@@ -135,8 +135,8 @@ export default class BuiltInGlobals {
 
 	static health = {type: 'real', default: 100, async set (value, previous, indexes) {
 		if (value <= 0 && previous > 0) {
-			var OTHER_NO_MORE_HEALTH = 9;
-			for (let instance of this.instances) {
+			const OTHER_NO_MORE_HEALTH = 9;
+			for (const instance of this.instances) {
 				if (!instance.exists) continue;
 				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_NO_MORE_HEALTH), instance);
 			}

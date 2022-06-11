@@ -46,7 +46,7 @@ export default class Instance {
 		this.vars.setBuiltIn('direction', direction);
 		this.vars.setBuiltIn('speed', speed);
 
-		var direction_radians = direction * (Math.PI / 180);
+		const direction_radians = direction * (Math.PI / 180);
 		this.vars.setBuiltIn('hspeed', Math.cos(direction_radians) * speed);
 		this.vars.setBuiltIn('vspeed', -Math.sin(direction_radians) * speed);
 	}

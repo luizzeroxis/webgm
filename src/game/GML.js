@@ -115,7 +115,7 @@ export default class GML {
 				return 0;
 			},
 			If: async ({_conditionExpression, _conditionExpressionNode, _code, _elseStatement}) => {
-				var condition = await this.interpretASTNode(_conditionExpression);
+				const condition = await this.interpretASTNode(_conditionExpression);
 				this.checkIsNumber(condition, 'Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpressionNode);
 				
 				if (this.toBool(condition)) {
@@ -125,7 +125,7 @@ export default class GML {
 				}
 			},
 			Repeat: async ({_timesExpression, _timesExpressionNode, _code}) => {
-				var times = await this.interpretASTNode(_timesExpression);
+				let times = await this.interpretASTNode(_timesExpression);
 				this.checkIsNumber(times, 'Repeat count must be a number ("' + times.toString() + '")', _timesExpressionNode);
 
 				times = toInteger(times);
@@ -148,7 +148,7 @@ export default class GML {
 			While: async ({_conditionExpression, _conditionExpressionNode, _code}) => {
 				while (true) {
 
-					var condition = await this.interpretASTNode(_conditionExpression);
+					const condition = await this.interpretASTNode(_conditionExpression);
 					this.checkIsNumber(condition, 'Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpressionNode);
 
 					if (!(this.toBool(condition))) break;
@@ -181,7 +181,7 @@ export default class GML {
 						}
 					}
 
-					var condition = await this.interpretASTNode(_conditionExpression);
+					const condition = await this.interpretASTNode(_conditionExpression);
 					this.checkIsNumber(condition, 'Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpressionNode);
 
 					if (this.toBool(condition)) break;
@@ -191,7 +191,7 @@ export default class GML {
 				await this.interpretASTNode(_initStatement);
 
 				while (true) {
-					var condition = await this.interpretASTNode(_conditionExpression);
+					const condition = await this.interpretASTNode(_conditionExpression);
 					this.checkIsNumber(condition, 'Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpressionNode);
 
 					if (!this.toBool(condition)) break;
@@ -212,20 +212,20 @@ export default class GML {
 
 			},
 			With: async ({_objectExpression, _objectExpressionNode, _code}) => {
-				var object = await this.interpretASTNode(_objectExpression);
+				const object = await this.interpretASTNode(_objectExpression);
 				this.checkIsNumber(object, 'Object id expected ("' + object.toString() + '" is not a number)', _objectExpressionNode);
 
-				var instances = this.objectReferenceToInstances(object);
+				const instances = this.objectReferenceToInstances(object);
 
 				if (instances == null) return;
 				if (instances == "global") {
 					throw this.makeErrorInGMLNode("Cannot use global in with statement.", _objectExpressionNode);
 				}
 
-				var previousInstance = this.currentInstance;
-				var previousOther = this.currentOther;
+				const previousInstance = this.currentInstance;
+				const previousOther = this.currentOther;
 
-				for (let instance of instances) {
+				for (const instance of instances) {
 					this.currentInstance = instance;
 					this.currentOther = previousInstance;
 					
@@ -259,10 +259,10 @@ export default class GML {
 				throw new ContinueException();
 			},
 			Function: async ({_name, _args}) => {
-				var name = _name; // no need to interpret?
-				var args = await this.interpretASTNode(_args);
+				const name = _name; // no need to interpret?
+				const args = await this.interpretASTNode(_args);
 
-				var script = this.game.project.resources.ProjectScript.find(x => x.name == name);
+				const script = this.game.project.resources.ProjectScript.find(x => x.name == name);
 
 				if (script) {
 					return this.execute(this.game.gmlCache.get(script), this.currentInstance, this.currentOther, args);
@@ -271,28 +271,28 @@ export default class GML {
 				}
 			},
 			VarDeclare: async ({_names}) => {
-				for (let name of _names) { // is _names always an array of strings?
+				for (const name of _names) { // is _names always an array of strings?
 					if (!this.vars.exists(name)) {
 						await this.vars.set(name, null);
 					} // TODO check what if the variable exists
 				}
 			},
 			GlobalVarDeclare: async ({_names}) => {
-				for (let name of _names) {
+				for (const name of _names) {
 					if (!this.game.globalVars.exists(name)) {
 						await this.game.globalVars.set(name, 0);
 					}
 				}
 			},
 			Assignment: async ({_variable, _variableNode, _expression}) => {
-				var varInfo = await this.interpretASTNode(_variable);
-				var value = await this.interpretASTNode(_expression);
+				const varInfo = await this.interpretASTNode(_variable);
+				const value = await this.interpretASTNode(_expression);
 				await this.varSet(varInfo, value, _variableNode);
 			},
 			// Note: In GM, assignment operations don't error out when they should, and they have weird behaviour. It's replicated here.
 			AssignmentAdd: async ({_variable, _variableNode, _expression}) => {
-				var varInfo = await this.interpretASTNode(_variable);
-				var value = await this.interpretASTNode(_expression);
+				const varInfo = await this.interpretASTNode(_variable);
+				const value = await this.interpretASTNode(_expression);
 				await this.varModify(varInfo, old => {
 					if (typeof old === typeof value) {
 						return old + value; // Works for both numbers (addition) and strings (concatenation).
@@ -301,8 +301,8 @@ export default class GML {
 				}, _variableNode);
 			},
 			AssignmentSubtract: async ({_variable, _variableNode, _expression}) => {
-				var varInfo = await this.interpretASTNode(_variable);
-				var value = await this.interpretASTNode(_expression);
+				const varInfo = await this.interpretASTNode(_variable);
+				const value = await this.interpretASTNode(_expression);
 				await this.varModify(varInfo, old => {
 					if (typeof old === 'number' && typeof value == 'number') {
 						return old - value;
@@ -311,8 +311,8 @@ export default class GML {
 				}, _variableNode);
 			},
 			AssignmentMultiply: async ({_variable, _variableNode, _expression}) => {
-				var varInfo = await this.interpretASTNode(_variable);
-				var value = await this.interpretASTNode(_expression);
+				const varInfo = await this.interpretASTNode(_variable);
+				const value = await this.interpretASTNode(_expression);
 				await this.varModify(varInfo, old => {
 					if (typeof old === 'number' && typeof value == 'string') {
 						// Yeah, wtf. *= repeats the string like in Python, but only if the original value was a real and the new one a string. I have no idea why.
@@ -325,8 +325,8 @@ export default class GML {
 				}, _variableNode);
 			},
 			AssignmentDivide: async ({_variable, _variableNode, _expression}) => {
-				var varInfo = await this.interpretASTNode(_variable);
-				var value = await this.interpretASTNode(_expression);
+				const varInfo = await this.interpretASTNode(_variable);
+				const value = await this.interpretASTNode(_expression);
 				await this.varModify(varInfo, old => {
 					if (typeof old === 'number' && typeof value == 'number') {
 						return old / value;
@@ -335,7 +335,7 @@ export default class GML {
 				}, _variableNode);
 			},
 			Variable: async ({_object, _objectNode, _name, _arrayIndexes}) => {
-				var varInfo = {};
+				const varInfo = {};
 				varInfo.name = _name; // no need to interpret?
 				varInfo.object = await this.interpretASTNode(_object);
 				if (varInfo.object != null) {
@@ -346,7 +346,7 @@ export default class GML {
 				return varInfo;
 			},
 			ArrayIndexes: async ({_index1, _index1Node, _index2, _index2Node}) => {
-				var indexes = [];
+				const indexes = [];
 
 				indexes.push(this.arrayIndexValidate(await this.interpretASTNode(_index1), _index1Node));
 				if (_index2 != null) {
@@ -356,136 +356,136 @@ export default class GML {
 				return indexes;
 			},
 			Not: async ({_a, _aNode}) => {
-				var a = this.toBool(this.checkIsNumber(await this.interpretASTNode(_a),
+				const a = this.toBool(this.checkIsNumber(await this.interpretASTNode(_a),
 					"Wrong type of arguments to unary operator.", _aNode));
 				return (!a) ? 1 : 0;
 			},
 			Negate: async ({_a, _aNode}) => {
-				var a = this.checkIsNumber(await this.interpretASTNode(_a),
+				const a = this.checkIsNumber(await this.interpretASTNode(_a),
 					"Wrong type of arguments to unary operator.", _aNode);
 				return (-a);
 			},
 			NegateBitwise: async ({_a, _aNode}) => {
-				var a = this.checkIsNumber(await this.interpretASTNode(_a),
+				const a = this.checkIsNumber(await this.interpretASTNode(_a),
 					"Wrong type of arguments to unary operator.", _aNode);
 				return (~a);
 			},
 			And: async ({_a, _aNode, _b, _bNode}) => {
-				var a = this.toBool(this.checkIsNumber(await this.interpretASTNode(_a),
+				const a = this.toBool(this.checkIsNumber(await this.interpretASTNode(_a),
 					"Wrong type of arguments for &&.", _a));
-				var b = this.toBool(this.checkIsNumber(await this.interpretASTNode(_b),
+				const b = this.toBool(this.checkIsNumber(await this.interpretASTNode(_b),
 					"Wrong type of arguments for &&.", _b));
 				return (a && b) ? 1 : 0;
 			},
 			Or: async ({_a, _aNode, _b, _bNode}) => {
-				var a = this.toBool(this.checkIsNumber(await this.interpretASTNode(_a),
+				const a = this.toBool(this.checkIsNumber(await this.interpretASTNode(_a),
 					"Wrong type of arguments for ||.", _a));
-				var b = this.toBool(this.checkIsNumber(await this.interpretASTNode(_b),
+				const b = this.toBool(this.checkIsNumber(await this.interpretASTNode(_b),
 					"Wrong type of arguments for ||.", _b));
 				return (a || b) ? 1 : 0;
 			},
 			Xor: async ({_a, _aNode, _b, _bNode}) => {
-				var a = this.toBool(this.checkIsNumber(await this.interpretASTNode(_a),
+				const a = this.toBool(this.checkIsNumber(await this.interpretASTNode(_a),
 					"Wrong type of arguments for ^^.", _a));
-				var b = this.toBool(this.checkIsNumber(await this.interpretASTNode(_b),
+				const b = this.toBool(this.checkIsNumber(await this.interpretASTNode(_b),
 					"Wrong type of arguments for ^^.", _b));
 				return (a != b) ? 1 : 0;
 			},
 			Less: async ({_a, _1Node, _b}) => {
-				var b = await this.interpretASTNode(_b);
-				var a = await this.interpretASTNode(_a);
+				const b = await this.interpretASTNode(_b);
+				const a = await this.interpretASTNode(_a);
 				this.checkIsSameType(a, b, "Cannot compare arguments.", _1Node);
 				return (a < b) ? 1 : 0;
 			},
 			LessOrEqual: async ({_a, _1Node, _b}) => {
-				var b = await this.interpretASTNode(_b);
-				var a = await this.interpretASTNode(_a);
+				const b = await this.interpretASTNode(_b);
+				const a = await this.interpretASTNode(_a);
 				this.checkIsSameType(a, b, "Cannot compare arguments.", _1Node);
 				return (a <= b) ? 1 : 0;
 			},
 			Equal: async ({_a, _1Node, _b}) => {
-				var b = await this.interpretASTNode(_b);
-				var a = await this.interpretASTNode(_a);
+				const b = await this.interpretASTNode(_b);
+				const a = await this.interpretASTNode(_a);
 				this.checkIsSameType(a, b, "Cannot compare arguments.", _1Node);
 				return (a === b) ? 1 : 0;
 			},
 			Different: async ({_a, _1Node, _b}) => {
-				var b = await this.interpretASTNode(_b);
-				var a = await this.interpretASTNode(_a);
+				const b = await this.interpretASTNode(_b);
+				const a = await this.interpretASTNode(_a);
 				this.checkIsSameType(a, b, "Cannot compare arguments.", _1Node);
 				return (a !== b) ? 1 : 0;
 			},
 			Greater: async ({_a, _1Node, _b}) => {
-				var b = await this.interpretASTNode(_b);
-				var a = await this.interpretASTNode(_a);
+				const b = await this.interpretASTNode(_b);
+				const a = await this.interpretASTNode(_a);
 				this.checkIsSameType(a, b, "Cannot compare arguments.", _1Node);
 				return (a > b) ? 1 : 0;
 			},
 			GreaterOrEqual: async ({_a, _1Node, _b}) => {
-				var b = await this.interpretASTNode(_b);
-				var a = await this.interpretASTNode(_a);
+				const b = await this.interpretASTNode(_b);
+				const a = await this.interpretASTNode(_a);
 				this.checkIsSameType(a, b, "Cannot compare arguments.", _1Node);
 				return (a >= b) ? 1 : 0;
 			},
 			BitwiseAnd: async ({_a, _aNode, _b, _bNode}) => {
-				var a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments for &.", _aNode);
-				var b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments for &.", _bNode);
+				const a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments for &.", _aNode);
+				const b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments for &.", _bNode);
 				return a & b;
 			},
 			BitwiseOr: async ({_a, _aNode, _b, _bNode}) => {
-				var a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments for |.", _aNode);
-				var b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments for |.", _bNode);
+				const a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments for |.", _aNode);
+				const b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments for |.", _bNode);
 				return a | b;
 			},
 			BitwiseXor: async ({_a, _aNode, _b, _bNode}) => {
-				var a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments for ^.", _aNode);
-				var b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments for ^.", _bNode);
+				const a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments for ^.", _aNode);
+				const b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments for ^.", _bNode);
 				return a ^ b;
 			},
 			BitwiseShiftLeft: async ({_a, _aNode, _b, _bNode}) => {
-				var a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments for <<.", _aNode);
-				var b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments for <<.", _bNode);
+				const a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments for <<.", _aNode);
+				const b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments for <<.", _bNode);
 				return a << b;
 			},
 			BitwiseShiftRight: async ({_a, _aNode, _b, _bNode}) => {
-				var a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments for >>.", _aNode);
-				var b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments for >>.", _bNode);
+				const a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments for >>.", _aNode);
+				const b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments for >>.", _bNode);
 				return a >> b;
 			},
 			Add: async ({_a, _1Node, _b}) => {
-				var a = await this.interpretASTNode(_a);
-				var b = await this.interpretASTNode(_b);
+				const a = await this.interpretASTNode(_a);
+				const b = await this.interpretASTNode(_b);
 				this.checkIsSameType(a, b, "Wrong type of arguments to +.", _1Node);
 				return a + b;
 			},
 			Subtract: async({_a, _aNode, _b, _bNode}) => {
-				var a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments to -.", _aNode);
-				var b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments to -.", _bNode);
+				const a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments to -.", _aNode);
+				const b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments to -.", _bNode);
 				return a - b;
 			},
 			Multiply: async({_a, _aNode, _b, _bNode}) => {
-				var a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments to *.", _aNode);
-				var b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments to *.", _bNode);
+				const a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments to *.", _aNode);
+				const b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments to *.", _bNode);
 				return a * b;
 			},
 			Divide: async({_a, _aNode, _b, _bNode}) => {
-				var a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments to /.", _aNode);
-				var b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments to /.", _bNode);
+				const a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments to /.", _aNode);
+				const b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments to /.", _bNode);
 				return a / b;
 			},
 			IntegerDivision: async ({_a, _aNode, _b, _bNode}) => {
-				var a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments to div.", _aNode);
-				var b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments to div.", _bNode);
+				const a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments to div.", _aNode);
+				const b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments to div.", _bNode);
 				return Math.floor(a / b);
 			},
 			Modulo: async ({_a, _aNode, _b, _bNode}) => {
-				var a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments to mod.", _aNode);
-				var b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments to mod.", _bNode);
+				const a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments to mod.", _aNode);
+				const b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments to mod.", _bNode);
 				return a % b; // TODO check negative numbers
 			},
 			VariableGet: async ({_variable, _variableNode}) => {
-				var varInfo = await this.interpretASTNode(_variable);
-				var value = this.varGet(varInfo, _variableNode);
+				const varInfo = await this.interpretASTNode(_variable);
+				const value = this.varGet(varInfo, _variableNode);
 				return value;
 			},
 		}
@@ -493,14 +493,14 @@ export default class GML {
 	}
 
 	compile(code, startRule) {
-		//var trace = this.grammar.trace(code).toString();
+		//const trace = this.grammar.trace(code).toString();
 		//console.log(trace);
 
-		var matchResult = this.grammar.match(code, startRule);
+		const matchResult = this.grammar.match(code, startRule);
 		//console.log(match);
 
 		if (matchResult.succeeded()) {
-			var ast = ohmExtras.toAST(matchResult, this.mapping);
+			const ast = ohmExtras.toAST(matchResult, this.mapping);
 			// console.log(ast);
 			return {succeeded: true, ast: ast};
 		}
@@ -510,24 +510,24 @@ export default class GML {
 
 	async execute(ast, instance, other, args=[], argRelative=false) {
 
-		var previousInstance = this.currentInstance;
-		var previousOther = this.currentOther;
+		const previousInstance = this.currentInstance;
+		const previousOther = this.currentOther;
 
 		this.currentInstance = instance;
 		this.currentOther = other;
 		
-		var savedVars = this.vars.saveAll();
+		const savedVars = this.vars.saveAll();
 		this.vars.clearAll();
 
 		// Save previous arguments
-		let previousArguments = this.game.arguments;
-		let previousArgumentRelative = this.game.argumentRelative;
+		const previousArguments = this.game.arguments;
+		const previousArgumentRelative = this.game.argumentRelative;
 
 		// Set new arguments
 		this.game.arguments = [...args]; // Copy just in case
 		this.game.argumentRelative = argRelative;
 
-		var result = 0;
+		let result = 0;
 
 		try {
 			result = await this.interpretASTNode(ast);
@@ -558,16 +558,16 @@ export default class GML {
 	
 	async builtInFunction(name, instance, other, args, relative=false) {
 
-		var func = BuiltInFunctions[name];
+		const func = BuiltInFunctions[name];
 
 		if (func) {
-			var previousInstance = this.currentInstance;
-			var previousOther = this.currentOther;
+			const previousInstance = this.currentInstance;
+			const previousOther = this.currentOther;
 
 			this.currentInstance = instance;
 			this.currentOther = other;
 
-			var result = await func.call(this, args, relative);
+			const result = await func.call(this, args, relative);
 
 			this.currentInstance = previousInstance;
 			this.currentOther = previousOther;
@@ -604,7 +604,7 @@ export default class GML {
 
 			} else {
 
-				var instances = this.objectReferenceToInstances(varInfo.object);
+				const instances = this.objectReferenceToInstances(varInfo.object);
 
 				if (instances == null) {
 					throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
@@ -654,7 +654,7 @@ export default class GML {
 
 			} else {
 
-				var instances = this.objectReferenceToInstances(varInfo.object);
+				const instances = this.objectReferenceToInstances(varInfo.object);
 				if (instances === null) {
 					throw this.makeErrorInGMLNode("Cannot assign to the variable", node);
 
@@ -665,7 +665,7 @@ export default class GML {
 					throw this.makeErrorInGMLNode("Cannot assign to the variable", node);
 
 				} else {
-					for (let instance of instances) {
+					for (const instance of instances) {
 						await instance.vars.set(varInfo.name, value, varInfo.indexes);
 					}
 
@@ -695,11 +695,11 @@ export default class GML {
 	objectReferenceToInstances(object) {
 
 		if (object >= 0 && object <= 100000) { // object index
-			let instances = this.game.instances.filter(instance => instance.exists && instance.object_index == object);
+			const instances = this.game.instances.filter(instance => instance.exists && instance.object_index == object);
 			return instances;
 
 		} else if (object > 100000) { // instance id
-			let instance = this.game.instances.find(instance => instance.exists && instance.id == object);
+			const instance = this.game.instances.find(instance => instance.exists && instance.id == object);
 			return instance ? [instance] : [];
 
 		} else if (object == -1 || object == -7) { // self or local
@@ -723,8 +723,8 @@ export default class GML {
 	}
 
 	async varModify(varInfo, valueFunc, node) {
-		var oldValue = this.varGet(varInfo, node);
-		var newValue = valueFunc(oldValue);
+		const oldValue = this.varGet(varInfo, node);
+		const newValue = valueFunc(oldValue);
 		await this.varSet(varInfo, newValue, node);
 	}
 
@@ -757,8 +757,8 @@ export default class GML {
 
 		// _iter
 		if (Array.isArray(node)) {
-			var results = [];
-			for (let child of node) {
+			const results = [];
+			for (const child of node) {
 				results.push(await this.interpretASTNode(child));
 			}
 			return results;
@@ -770,7 +770,7 @@ export default class GML {
 		}
 
 		// _nonterminal
-		var astAction = this.astActions[node.type];
+		const astAction = this.astActions[node.type];
 		if (astAction) {
 			return await astAction(node);
 		}
@@ -781,19 +781,24 @@ export default class GML {
 	makeErrorInGMLNode(message, node, isFatal=false) {
 		console.log(node);
 
-		var index = node.source.startIdx;
-		var lines = node.source.sourceString.split('\n');
-		var totalLength = 0;
+		const index = node.source.startIdx;
+		const lines = node.source.sourceString.split('\n');
+		let totalLength = 0;
 
-		for (var i = 0; i < lines.length; ++i) {
-			var lineLength = lines[i].length + 1;
+		let lineNumber = 1;
+		let gmlLine = "";
+		let position = 1;
+		let arrowString = "^";
+
+		for (let i = 0; i < lines.length; ++i) {
+			const lineLength = lines[i].length + 1;
 			totalLength += lineLength;
 			if (totalLength >= index) {
 
-				var lineNumber = i + 1;
-				var gmlLine = lines[i];
-				var position = (index - (totalLength - lineLength)) + 1;
-				var arrowString = " ".repeat(position-1) + "^";
+				lineNumber = i + 1;
+				gmlLine = lines[i];
+				position = (index - (totalLength - lineLength)) + 1;
+				arrowString = " ".repeat(position-1) + "^";
 
 				break;
 			}

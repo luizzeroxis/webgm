@@ -100,7 +100,7 @@ export default class Editor {
 
 	createResource(type) {
 
-		var resource = new type();
+		const resource = new type();
 		resource.id = this.project.counter[type.getClassName()];
 		resource.name = type.getName() + this.project.counter[type.getClassName()];
 
@@ -116,7 +116,7 @@ export default class Editor {
 	deleteResource(resource) {
 
 		if (confirm('You are about to delete '+resource.name+'. This will be permanent. Continue?')) {
-			var index = this.project.resources[resource.constructor.getClassName()].findIndex(x => x == resource);
+			const index = this.project.resources[resource.constructor.getClassName()].findIndex(x => x == resource);
 			this.project.resources[resource.constructor.getClassName()].splice(index, 1);
 
 			this.dispatcher.speak('deleteResource', resource);
@@ -157,7 +157,7 @@ export default class Editor {
 	// Called from HAreaMenu
 	openProjectFromFile(file) {
 
-		var promise;
+		let promise;
 
 		if (file.type == 'application/json') {
 			promise = VirtualFileSystem.readEntireFile(file)
@@ -256,9 +256,9 @@ export default class Editor {
 	// getActionType(action)
 	// getActionType(actionTypeLibrary, actionTypeId)
 	getActionType(...args) {
-		var actionTypeLibrary, actionTypeId;
+		let actionTypeLibrary, actionTypeId;
 
-		var [action] = args;
+		const [action] = args;
 		if (action instanceof ProjectAction) {
 			actionTypeLibrary = action.typeLibrary;
 			actionTypeId = action.typeId;
@@ -266,8 +266,8 @@ export default class Editor {
 			[actionTypeLibrary, actionTypeId] = args;
 		}
 
-		var library = this.libraries.find(x => x.name == actionTypeLibrary);
-		var actionType = library.items.find(x => x.id == actionTypeId);
+		const library = this.libraries.find(x => x.name == actionTypeLibrary);
+		const actionType = library.items.find(x => x.id == actionTypeId);
 		return actionType;
 	}
 

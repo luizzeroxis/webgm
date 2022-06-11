@@ -16,8 +16,8 @@ export default class HWindowAction extends HWindow {
 
 		this.title.html.textContent = this.actionType.description;
 
-		var actionTypeInfo = this.object.getActionTypeInfo();
-		var actionTypeInfoItem = actionTypeInfo.find(x => x.kind == this.actionType.kind && x.interfaceKind == this.actionType.interfaceKind);
+		const actionTypeInfo = this.object.getActionTypeInfo();
+		const actionTypeInfoItem = actionTypeInfo.find(x => x.kind == this.actionType.kind && x.interfaceKind == this.actionType.interfaceKind);
 
 		parent(this.client)
 
@@ -32,7 +32,7 @@ export default class HWindowAction extends HWindow {
 
 					add( new HElement('legend', {}, 'Applies to') )
 
-					var appliesToGroup = '_radio_'+uniqueID();
+					const appliesToGroup = '_radio_'+uniqueID();
 
 					this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, 'Self', (action.appliesTo == -1)) );
 					this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, 'Other', (action.appliesTo == -2)) );
@@ -126,25 +126,25 @@ export default class HWindowAction extends HWindow {
 	}
 
 	makeTextInterface(name, value) {
-		var input = add( new HTextInput(name, value) );
+		const input = add( new HTextInput(name, value) );
 		return {
 			getValue: () => input.getValue(),
 		}
 	}
 
 	makeDirectionInterface(name, value) {
-		var directions = parseArrowString(value);
-		var directionNames = ['down left', 'down', 'down right', 'left', 'stop', 'right', 'up left', 'up', 'up right'];
+		const directions = parseArrowString(value);
+		const directionNames = ['down left', 'down', 'down right', 'left', 'stop', 'right', 'up left', 'up', 'up right'];
 
-		var inputs = [];
+		const inputs = [];
 
 		add( new HElement('span', {}, name) )
 
 		parent( add( new HElement('div', {class: 'arrow-interface'}) ) );
 
-			for (var y=2; y>=0; --y)
-			for (var x=0; x<=2; ++x) {
-				var i = (3*y)+x;
+			for (let y=2; y>=0; --y)
+			for (let x=0; x<=2; ++x) {
+				const i = (3*y)+x;
 				inputs[i] = add( new HCheckBoxInput(directionNames[i], directions[i]) );
 			}
 
@@ -157,9 +157,9 @@ export default class HWindowAction extends HWindow {
 
 	makeMenuInterface(name, optionNames, value) {
 
-		var options = optionNames.map((text, index) => ({name: text, value: index}));
+		const options = optionNames.map((text, index) => ({name: text, value: index}));
 
-		var select = add( new HSelectWithOptions(name, options) );
+		const select = add( new HSelectWithOptions(name, options) );
 		select.setSelectedIndex(value);
 
 		return {
@@ -168,16 +168,16 @@ export default class HWindowAction extends HWindow {
 	}
 
 	makeColorInterface(name, value) {
-		var input = add( new HColorInput(name, decimalColorToHexColor(value)) );
+		const input = add( new HColorInput(name, decimalColorToHexColor(value)) );
 		return {
 			getValue: () => hexColorToDecimalColor(input.getValue()),
 		}
 	}
 
 	makeResourceInterface(name, resourceTypeName, value) {
-		var resourceType = this.object.constructor.actionArgResourceTypes[resourceTypeName];
+		const resourceType = this.object.constructor.actionArgResourceTypes[resourceTypeName];
 
-		var select = add( new HResourceSelect(this.editor, name, resourceType) )
+		const select = add( new HResourceSelect(this.editor, name, resourceType) )
 		select.setValue(value);
 
 		return {
@@ -187,7 +187,7 @@ export default class HWindowAction extends HWindow {
 
 	apply() {
 
-		for (var i = 0; i < this.action.args.length; i++) {
+		for (let i = 0; i < this.action.args.length; i++) {
 			this.action.args[i] = {kind: this.actionTypeArgs[i].kind, value: this.argsInterfaces[i].getValue()};
 		}
 

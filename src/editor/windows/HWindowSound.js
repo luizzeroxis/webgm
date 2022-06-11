@@ -16,9 +16,9 @@ export default class HWindowSound extends HWindow {
 			parent( add( new HElement('div', {class: 'grid-resource resource-sound'}) ) )
 				parent( add( new HElement('div') ) )
 
-					var paramSound = sound.sound;
+					let paramSound = sound.sound;
 
-					var inputName = add( new HTextInput('Name:', sound.name) )
+					const inputName = add( new HTextInput('Name:', sound.name) )
 
 					add( new HButton('Load Sound', () => {
 
@@ -32,7 +32,7 @@ export default class HWindowSound extends HWindow {
 
 					parent( add( new HElement('div', {class: 'preview'}) ) )
 
-						var audioPreview = add( new HElement('audio') )
+						const audioPreview = add( new HElement('audio') )
 						audioPreview.html.controls = true;
 						audioPreview.html.loop = true;
 						if (paramSound) {
@@ -40,7 +40,7 @@ export default class HWindowSound extends HWindow {
 						}
 						endparent()
 
-					var inputVolume = add( new HRangeInput('Volume:', sound.volume, 1/70, 0, 1) )
+					const inputVolume = add( new HRangeInput('Volume:', sound.volume, 1/70, 0, 1) )
 
 					endparent()
 				endparent();

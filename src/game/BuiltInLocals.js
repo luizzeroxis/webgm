@@ -12,25 +12,25 @@ export default class BuiltInLocals {
 	static ystart = {type: 'real', default: 0}
 
 	static hspeed = {type: 'real', default: 0, set (hspeed) {
-		var vspeed = this.vars.getBuiltIn('vspeed');
+		const vspeed = this.vars.getBuiltIn('vspeed');
 		this.vars.setBuiltIn('speed', Math.hypot(hspeed, vspeed));
 		this.vars.setBuiltIn('direction', Math.atan2(-vspeed, hspeed) * (180 / Math.PI));
 	}}
 
 	static vspeed = {type: 'real', default: 0, set (vspeed) {
-		var hspeed = this.vars.getBuiltIn('hspeed');
+		const hspeed = this.vars.getBuiltIn('hspeed');
 		this.vars.setBuiltIn('speed', Math.hypot(hspeed, vspeed));
 		this.vars.setBuiltIn('direction', Math.atan2(-vspeed, hspeed) * (180 / Math.PI));
 	}}
 
 	static direction = {type: 'real', default: 0, set (direction) {
-		var dir = direction * (Math.PI / 180);
+		const dir = direction * (Math.PI / 180);
 		this.vars.setBuiltIn('hspeed', Math.cos(dir) * this.vars.getBuiltIn('speed'));
 		this.vars.setBuiltIn('vspeed', -Math.sin(dir) * this.vars.getBuiltIn('speed'));
 	}}
 
 	static speed = {type: 'real', default: 0, set (speed) {
-		var dir = this.vars.getBuiltIn('direction') * (Math.PI / 180);
+		const dir = this.vars.getBuiltIn('direction') * (Math.PI / 180);
 		this.vars.setBuiltIn('hspeed', Math.cos(dir) * speed);
 		this.vars.setBuiltIn('vspeed', -Math.sin(dir) * speed);
 	}}
@@ -86,14 +86,14 @@ export default class BuiltInLocals {
 	static sprite_width = {readOnly: true, direct: true, directGet() {
 		if (this.sprite == null) return 0;
 
-		var image = this.sprite.images[this.getImageIndex()];
+		const image = this.sprite.images[this.getImageIndex()];
 		return image ? image.image.width : 1;
 	}}
 
 	static sprite_height = {readOnly: true, direct: true, directGet() {
 		if (this.sprite == null) return 0;
 
-		var image = this.sprite.images[this.getImageIndex()];
+		const image = this.sprite.images[this.getImageIndex()];
 		return image ? image.image.height : 1;
 	}}
 
@@ -126,28 +126,28 @@ export default class BuiltInLocals {
 	static bbox_left = {readOnly: true, direct: true, directGet() {
 		if (this.sprite == null) return -100000;
 
-		var image = this.sprite.images[this.getImageIndex()];
+		const image = this.sprite.images[this.getImageIndex()];
 		return this.vars.getBuiltIn('x') + (image ? -this.sprite.originx : 0);
 	}}
 
 	static bbox_right = {readOnly: true, direct: true, directGet() {
 		if (this.sprite == null) return -100000;
 
-		var image = this.sprite.images[this.getImageIndex()];
+		const image = this.sprite.images[this.getImageIndex()];
 		return this.vars.getBuiltIn('x') + (image ? -this.sprite.originx + image.image.width: 0);
 	}}
 
 	static bbox_top = {readOnly: true, direct: true, directGet() {
 		if (this.sprite == null) return -100000;
 
-		var image = this.sprite.images[this.getImageIndex()];
+		const image = this.sprite.images[this.getImageIndex()];
 		return this.vars.getBuiltIn('y') + (image ? -this.sprite.originy : 0);
 	}}
 
 	static bbox_bottom = {readOnly: true, direct: true, directGet() {
 		if (this.sprite == null) return -100000;
 
-		var image = this.sprite.images[this.getImageIndex()];
+		const image = this.sprite.images[this.getImageIndex()];
 		return this.vars.getBuiltIn('y') + (image ? -this.sprite.originy + image.image.height: 0);
 	}}
 

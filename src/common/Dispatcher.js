@@ -5,7 +5,7 @@ export default class Dispatcher {
 	}
 
 	listen(listeners) {
-		for (var subject in listeners) {
+		for (const subject in listeners) {
 			if (!this.listeners[subject]) this.listeners[subject] = [];
 			this.listeners[subject].push(listeners[subject]);
 		}
@@ -13,12 +13,10 @@ export default class Dispatcher {
 	}
 
 	stopListening(listeners) {
-		// console.log('stopListening:')
-		for (var subject in listeners) {
-			var index = this.listeners[subject].findIndex(x => x == listeners[subject]);
+		for (const subject in listeners) {
+			const index = this.listeners[subject].findIndex(x => x == listeners[subject]);
 			if (index >= 0) {
 				this.listeners[subject].splice(index, 1);
-				// console.log('*', subject, listeners[subject]);
 			}
 			if (this.listeners[subject].length == 0) {
 				delete this.listeners[subject];
@@ -28,7 +26,7 @@ export default class Dispatcher {
 
 	speak(subject, ...words) {
 		if (this.listeners[subject]) {
-			for (var listener in this.listeners[subject]) {
+			for (const listener in this.listeners[subject]) {
 				this.listeners[subject][listener](...words);
 			}
 		}

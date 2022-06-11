@@ -1,20 +1,20 @@
 //Bunch of random functions that make my life easier
 
 //= Base 64 =
-export var base64ToBlob = (base64Data, contentType) => {
+export function base64ToBlob (base64Data, contentType) {
 	contentType = contentType || '';
-	var sliceSize = 1024;
-	var byteCharacters = atob(base64Data);
-	var bytesLength = byteCharacters.length;
-	var slicesCount = Math.ceil(bytesLength / sliceSize);
-	var byteArrays = new Array(slicesCount);
+	const sliceSize = 1024;
+	const byteCharacters = atob(base64Data);
+	const bytesLength = byteCharacters.length;
+	const slicesCount = Math.ceil(bytesLength / sliceSize);
+	const byteArrays = new Array(slicesCount);
 
-	for (var sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
-		var begin = sliceIndex * sliceSize;
-		var end = Math.min(begin + sliceSize, bytesLength);
+	for (let sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
+		const begin = sliceIndex * sliceSize;
+		const end = Math.min(begin + sliceSize, bytesLength);
 
-		var bytes = new Array(end - begin);
-		for (var offset = begin, i = 0; offset < end; ++i, ++offset) {
+		const bytes = new Array(end - begin);
+		for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
 			bytes[i] = byteCharacters[offset].charCodeAt(0);
 		}
 		byteArrays[sliceIndex] = new Uint8Array(bytes);
@@ -23,7 +23,7 @@ export var base64ToBlob = (base64Data, contentType) => {
 }
 
 // decimal -> rgb
-export var decimalColorToRGBValues = (color) => {
+export function decimalColorToRGBValues(color) {
 	return {
 		r: color % 256,
 		g: Math.floor(color % (256*256) / 256),
@@ -32,40 +32,40 @@ export var decimalColorToRGBValues = (color) => {
 }
 
 // rgb -> decimal
-export var rgbValuesToDecimalColor = (rgb) => {
+export function rgbValuesToDecimalColor(rgb) {
 	return rgb.r + rgb.g * 256 + rgb.b * 256*256;
 }
 
 // decimal -> hex
-export var decimalColorToHexColor = (color) => {
-	var {r, g, b} = decimalColorToRGBValues(color);
-	var hr = r.toString(16).padStart(2, '0');
-	var hg = g.toString(16).padStart(2, '0');
-	var hb = b.toString(16).padStart(2, '0');
+export function decimalColorToHexColor(color) {
+	const {r, g, b} = decimalColorToRGBValues(color);
+	const hr = r.toString(16).padStart(2, '0');
+	const hg = g.toString(16).padStart(2, '0');
+	const hb = b.toString(16).padStart(2, '0');
 	return "#" + hr + hg + hb;
 }
 
 // hex -> decimal
-export var hexColorToDecimalColor = (hex) => {
-	var r = parseInt(hex.substr(1+2*0,2), 16);
-	var g = parseInt(hex.substr(1+2*1,2), 16);
-	var b = parseInt(hex.substr(1+2*2,2), 16);
+export function hexColorToDecimalColor(hex) {
+	const r = parseInt(hex.substr(1+2*0,2), 16);
+	const g = parseInt(hex.substr(1+2*1,2), 16);
+	const b = parseInt(hex.substr(1+2*2,2), 16);
 	return rgbValuesToDecimalColor({r, g, b})
 }
 
 // decimal -> hsv
-export var decimalColorToHSVValues = (color) => {
+export function decimalColorToHSVValues(color) {
 	return rgbValuesToHSVValues(decimalColorToRGBValues(color))
 }
 
 // rgb -> hsv
-export var rgbValuesToHSVValues = (rgb) => {
-	var {r, g, b} = rgb;
+export function rgbValuesToHSVValues(rgb) {
+	const {r, g, b} = rgb;
 	
-	var max = Math.max(r, g, b), min = Math.min(r, g, b);
-	var h, s, v = max;
+	const max = Math.max(r, g, b), min = Math.min(r, g, b);
+	let h, s, v = max;
 
-	var d = max - min;
+	const d = max - min;
 	s = max == 0 ? 0 : Math.floor(255 * d / max);
 
 	if (max == min) {
@@ -84,24 +84,24 @@ export var rgbValuesToHSVValues = (rgb) => {
 
 // rgb string stuff
 
-export var decimalColorToRGB = (color) => {
-	var c = decimalColorToRGBValues(color);
+export function decimalColorToRGB(color) {
+	const c = decimalColorToRGBValues(color);
 	return 'rgb('+c.r+','+c.g+','+c.b+')';
 }
 
-export var decimalColorAndAlphaToRGBA = (color, alpha) => {
-	var c = decimalColorToRGBValues(color);
+export function decimalColorAndAlphaToRGBA(color, alpha) {
+	const c = decimalColorToRGBValues(color);
 	return 'rgba('+c.r+','+c.g+','+c.b+','+alpha+')'
 }
 
-export var makeCSSFont = (family, size, bold, italic) => {
+export function makeCSSFont(family, size, bold, italic) {
 	return (italic ? 'italic ' : '') + (bold ? 'bold ' : '') + size + 'pt "' + family + '"';
 }
 
-export var parseArrowString = (string) => {
-	var values = [];
+export function parseArrowString(string) {
+	const values = [];
 
-	for (var i = 0; i < 9; ++i) {
+	for (let i = 0; i < 9; ++i) {
 		if (string[i] != "0") {
 			values.push(true);
 		} else {
@@ -112,10 +112,10 @@ export var parseArrowString = (string) => {
 	return values;
 }
 
-export var stringifyArrowValues = (values) => {
-	var string = "";
+export function stringifyArrowValues(values) {
+	let string = "";
 
-	for (var i = 0; i < 9; ++i) {
+	for (let i = 0; i < 9; ++i) {
 		if (values[i]) {
 			string += "1";
 		} else {
@@ -126,47 +126,47 @@ export var stringifyArrowValues = (values) => {
 	return string;
 }
 
-export var asString = (value) => {
+export function asString(value) {
 	if (typeof value != 'string') {
 		return value.toString();
 	}
 	return value;
 }
 
-export var forceString = (value) => {
+export function forceString(value) {
 	if (typeof value != 'string') {
 		return "";
 	}
 	return value;
 }
 
-export var forceReal = (value) => {
+export function forceReal(value) {
 	if (typeof value != 'number') {
 		return 0;
 	}
 	return value;
 }
 
-export var forceInteger = (value) => {
+export function forceInteger(value) {
 	return toInteger(forceReal(value));
 }
 
-export var forceBool = (value) => {
+export function forceBool(value) {
 	return (forceReal(value) > 0.5) ? 1 : 0;
 }
 
-export var forceUnit = (value) => {
+export function forceUnit(value) {
 	return Math.max(0, Math.min(forceReal(value), 1));
 }
 
-export var forceChar = (value) => {
-	var string = forceString(value);
+export function forceChar(value) {
+	const string = forceString(value);
 	return string != '' ? string[0] : '\0';
 }
 
-export var toInteger = (value) => {
+export function toInteger(value) {
 	if (Math.abs(value % 1) == 0.5) {
-		var integer = Math.trunc(value)
+		const integer = Math.trunc(value)
 		if (integer % 2 == 0) {
 			return integer;
 		} else {
@@ -177,7 +177,7 @@ export var toInteger = (value) => {
 	}
 }
 
-export var parseNewLineHash = (string) => {
+export function parseNewLineHash(string) {
 	// Replace # without backslash before and \r with \n, then replace \# with #.
 	return string.replaceAll(/(?<!\\)#|\r/g, "\n").replaceAll("\\#", "#");
 }

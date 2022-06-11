@@ -41,15 +41,15 @@ export default class HWindowObject extends HWindow {
 
 				parent( add( new HElement('div') ) ) // Properties area
 
-					var inputName = add( new HTextInput('Name:', object.name) )
+					const inputName = add( new HTextInput('Name:', object.name) )
 
 					this.selectSprite = add( new HResourceSelect(this.editor, 'Sprite:', ProjectSprite) )
 					this.selectSprite.setValue(object.sprite_index);
 
-					var inputVisible = add( new HCheckBoxInput('Visible', object.visible) )
-					var inputSolid = add( new HCheckBoxInput('Solid', object.solid) )
-					var inputDepth = add( new HNumberInput('Depth:', object.depth, 1) )
-					var inputPersistent = add( new HCheckBoxInput('Persistent', object.persistent) )
+					const inputVisible = add( new HCheckBoxInput('Visible', object.visible) )
+					const inputSolid = add( new HCheckBoxInput('Solid', object.solid) )
+					const inputDepth = add( new HNumberInput('Depth:', object.depth, 1) )
+					const inputPersistent = add( new HCheckBoxInput('Persistent', object.persistent) )
 
 					endparent()
 
@@ -81,8 +81,8 @@ export default class HWindowObject extends HWindow {
 					// Add event button
 					this.buttonEventAdd = add( new HButton('Add Event', () => {
 
-						var eventType = this.selectEventType.getValue();
-						var eventSubtype = 0;
+						const eventType = this.selectEventType.getValue();
+						let eventSubtype = 0;
 
 						if (this.subtypeValueFunction) {
 							eventSubtype = this.subtypeValueFunction();
@@ -92,7 +92,7 @@ export default class HWindowObject extends HWindow {
 						if (this.paramEvents.find(x => x.type == eventType && x.subtype == eventSubtype))
 							return;
 
-						var event = new ProjectEvent();
+						const event = new ProjectEvent();
 						event.type = eventType;
 						event.subtype = eventSubtype;
 						this.paramEvents.push(event);
@@ -110,7 +110,7 @@ export default class HWindowObject extends HWindow {
 					// Delete event button
 					this.buttonEventDelete = add( new HButton('Delete', () => {
 
-						var index = this.paramEvents.findIndex(event => this.selectEvents.getValue() == event.getNameId());
+						const index = this.paramEvents.findIndex(event => this.selectEvents.getValue() == event.getNameId());
 						if (index < 0) return;
 
 						if (this.paramEvents[index].actions.length > 0) 
@@ -135,11 +135,11 @@ export default class HWindowObject extends HWindow {
 
 					this.buttonEventChange = add( new HButton('Change', () => {
 
-						var event = this.getSelectedEvent();
+						const event = this.getSelectedEvent();
 						if (!event) return;
 
-						var eventType = this.selectEventType.getValue();
-						var eventSubtype = 0;
+						const eventType = this.selectEventType.getValue();
+						let eventSubtype = 0;
 
 						if (this.subtypeValueFunction) {
 							eventSubtype = this.subtypeValueFunction();
@@ -176,26 +176,26 @@ export default class HWindowObject extends HWindow {
 					})
 
 					this.buttonActionEdit = add( new HButton('Edit action', () => {
-						var event = this.getSelectedEvent();
+						const event = this.getSelectedEvent();
 						if (!event) return;
 
-						var actionIndex = this.selectActions.getSelectedIndex();
+						const actionIndex = this.selectActions.getSelectedIndex();
 						if (actionIndex < 0) return;
 						
-						var action = event.actions[actionIndex];
+						const action = event.actions[actionIndex];
 						if (!action) return;
 
 						this.openActionWindow(action);
 					}) )
 
 					this.buttonActionDelete = add( new HButton('Delete action', () => {
-						var event = this.getSelectedEvent();
+						const event = this.getSelectedEvent();
 						if (!event) return;
 
-						var actionIndex = this.selectActions.getSelectedIndex();
+						const actionIndex = this.selectActions.getSelectedIndex();
 						if (actionIndex < 0) return;
 
-						var action = event.actions[actionIndex];
+						const action = event.actions[actionIndex];
 						if (!action) return;
 
 						this.deleteActionWindow(action);
@@ -208,10 +208,10 @@ export default class HWindowObject extends HWindow {
 					}) )
 
 					this.buttonActionUp = add( new HButton('▲', () => {
-						var event = this.getSelectedEvent();
+						const event = this.getSelectedEvent();
 						if (!event) return;
 
-						var actionIndex = this.selectActions.getSelectedIndex();
+						const actionIndex = this.selectActions.getSelectedIndex();
 						if (actionIndex < 0 || actionIndex == 0) return;
 
 						event.actions.splice(actionIndex-1, 0, event.actions.splice(actionIndex, 1)[0]);
@@ -222,10 +222,10 @@ export default class HWindowObject extends HWindow {
 					}) )
 
 					this.buttonActionDown = add( new HButton('▼', () => {
-						var event = this.getSelectedEvent();
+						const event = this.getSelectedEvent();
 						if (!event) return;
 
-						var actionIndex = this.selectActions.getSelectedIndex();
+						const actionIndex = this.selectActions.getSelectedIndex();
 						if (actionIndex < 0 || actionIndex == event.actions.length-1) return;
 
 						event.actions.splice(actionIndex+1, 0, event.actions.splice(actionIndex, 1)[0]);
@@ -245,7 +245,7 @@ export default class HWindowObject extends HWindow {
 						
 						parent( this.librariesTabControl.addTab(library.name, (library.name == this.editor.preferences.get('defaultActionLibraryTab'))) )
 
-							var nextClass = null;
+							let nextClass = null;
 
 							parent( add( new HElement('div', {class: 'grid-action-types'}) ) )
 
@@ -260,15 +260,15 @@ export default class HWindowObject extends HWindow {
 									} else {
 										
 										// TODO add images to the buttons
-										var actionTypeButton = add( new HButton(null, () => {
+										const actionTypeButton = add( new HButton(null, () => {
 
-											var event = this.getSelectedEvent();
+											const event = this.getSelectedEvent();
 											if (!event) {
 												alert("You need to select or add an event before you can add actions.");
 												return;
 											}
 
-											var action = new ProjectAction();
+											const action = new ProjectAction();
 											action.typeLibrary = library.name;
 											action.typeId = actionType.id;
 											action.typeKind = actionType.kind;
@@ -284,7 +284,7 @@ export default class HWindowObject extends HWindow {
 											if (actionType.kind == 'normal' && actionType.interfaceKind == 'normal') {
 												// If kind and interface are normal, arguments come from the action type itself
 												action.args = actionType.args.map(typeArg => {
-													let actionArg = new ProjectActionArg();
+													const actionArg = new ProjectActionArg();
 													actionArg.kind = typeArg.kind;
 													actionArg.value = typeArg.default;
 													return actionArg;
@@ -294,7 +294,7 @@ export default class HWindowObject extends HWindow {
 												action.args = this.getActionTypeInfo()
 													.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind)
 													.args.map(typeArg => {
-														let actionArg = new ProjectActionArg();
+														const actionArg = new ProjectActionArg();
 														actionArg.kind = typeArg.kind;
 														actionArg.value = typeArg.default;
 														return actionArg;
@@ -399,16 +399,16 @@ export default class HWindowObject extends HWindow {
 	sortEvents() {
 		this.paramEvents.sort((a, b) => {
 
-			var aTypeId = Events.listEventTypes.find(x => x.value == a.type).id;
-			var bTypeId = Events.listEventTypes.find(x => x.value == b.type).id;
+			const aTypeId = Events.listEventTypes.find(x => x.value == a.type).id;
+			const bTypeId = Events.listEventTypes.find(x => x.value == b.type).id;
 
-			var compareTypeId = aTypeId - bTypeId;
+			const compareTypeId = aTypeId - bTypeId;
 			if (compareTypeId != 0) return compareTypeId;
 
-			var aSubtypeId = a.subtype;
-			var bSubtypeId = b.subtype;
+			const aSubtypeId = a.subtype;
+			const bSubtypeId = b.subtype;
 			
-			var compareSubtypeId = aSubtypeId - bSubtypeId;
+			const compareSubtypeId = aSubtypeId - bSubtypeId;
 			return compareSubtypeId;
 
 		})
@@ -416,7 +416,7 @@ export default class HWindowObject extends HWindow {
 
 	updateSelectEvents() {
 
-		var index = this.selectEvents.getSelectedIndex();
+		const index = this.selectEvents.getSelectedIndex();
 		this.selectEvents.removeOptions();
 
 		parent( this.selectEvents.select );
@@ -444,29 +444,29 @@ export default class HWindowObject extends HWindow {
 
 		removeChildren(this.divEventSubtype)
 
-		var eventType = this.selectEventType.getValue();
+		const eventType = this.selectEventType.getValue();
 
 		parent(this.divEventSubtype);
 
 			this.subtypeValueFunction = null;
 
 			if (eventType == 'step') {
-				let subtypeElement = add( new HSelectWithOptions('Step:', Events.listStepSubtypes))
+				const subtypeElement = add( new HSelectWithOptions('Step:', Events.listStepSubtypes))
 				this.subtypeValueFunction = () => subtypeElement.getValue();
 			} else
 
 			if (eventType == 'alarm') {
-				let subtypeElement = add( new HNumberInput('Alarm:', 0, 1, 0, 11) )
+				const subtypeElement = add( new HNumberInput('Alarm:', 0, 1, 0, 11) )
 				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
 			} else
 
 			if (eventType == 'keyboard' || eventType == 'keypress' || eventType == 'keyrelease') {
-				let subtypeElement = add( new HNumberInput('Key:', 0, 1, 0) )
+				const subtypeElement = add( new HNumberInput('Key:', 0, 1, 0) )
 				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
 			} else
 
 			if (eventType == 'mouse') {
-				let subtypeElement = add( new HSelectWithOptions('Mouse:', Events.listMouseSubtypes))
+				const subtypeElement = add( new HSelectWithOptions('Mouse:', Events.listMouseSubtypes))
 				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
 			} else
 
@@ -476,7 +476,7 @@ export default class HWindowObject extends HWindow {
 			} else
 
 			if (eventType == 'other') {
-				let subtypeElement = add( new HSelectWithOptions('Other:', Events.listOtherSubtypes))
+				const subtypeElement = add( new HSelectWithOptions('Other:', Events.listOtherSubtypes))
 				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
 			}
 
@@ -486,20 +486,20 @@ export default class HWindowObject extends HWindow {
 
 	updateSelectActions() {
 
-		var index = this.selectActions.getSelectedIndex();
+		const index = this.selectActions.getSelectedIndex();
 		this.selectActions.removeOptions();
 
-		var event = this.getSelectedEvent();
+		const event = this.getSelectedEvent();
 
 		if (event) {
 			parent(this.selectActions.select);
 				event.actions.forEach((action, i) => {
 
-					var actionType = this.editor.getActionType(action);
-					var listText = this.getActionListText(action, actionType);
-					var hintText = this.getActionHintText(action, actionType);
+					const actionType = this.editor.getActionType(action);
+					const listText = this.getActionListText(action, actionType);
+					const hintText = this.getActionHintText(action, actionType);
 					
-					let option = add( new HOption(
+					const option = add( new HOption(
 						(this.editor.preferences.get('hintTextInAction') ? hintText.text : listText.text), // text
 						null, // value
 						(listText.bold ? 'bold ' : '') + (listText.italic ? 'italic ' : '') // class
@@ -517,7 +517,7 @@ export default class HWindowObject extends HWindow {
 	}
 
 	updateActionsMenu() {
-		var event = this.getSelectedEvent();
+		const event = this.getSelectedEvent();
 		
 		if (this.selectActions.getSelectedIndex() < 0) {
 			this.buttonActionEdit.setDisabled(true);
@@ -578,7 +578,7 @@ export default class HWindowObject extends HWindow {
 
 	parseActionListOrHintText(textArray, action, actionType) {
 
-		var result = {
+		const result = {
 			bold: false,
 			italic: false,
 		};
@@ -587,7 +587,7 @@ export default class HWindowObject extends HWindow {
 			if (typeof part == 'string') return previous + part;
 			switch (part.type) {
 				case 'a': {
-					let actionArg = action.args[part.number];
+					const actionArg = action.args[part.number];
 
 					if (['expression', 'string', 'both', 'color'].includes(actionArg.kind)) {
 						return previous + actionArg.value.toString();
@@ -599,9 +599,9 @@ export default class HWindowObject extends HWindow {
 						return previous + actionType.args[part.number].menu[actionArg.value];
 
 					} else {
-						let resourceType = this.constructor.actionArgResourceTypes[actionArg.kind];
+						const resourceType = this.constructor.actionArgResourceTypes[actionArg.kind];
 						if (!resourceType) throw new Error('Impossible action arg kind '+actionArg.kind);
-						let resource = this.editor.project.resources[resourceType.getClassName()].find(x => x.id == actionArg.value);
+						const resource = this.editor.project.resources[resourceType.getClassName()].find(x => x.id == actionArg.value);
 						return previous + (resource ? resource.name : '<undefined>');
 					}
 				}
@@ -612,7 +612,7 @@ export default class HWindowObject extends HWindow {
 				case 'w': {
 					if (action.appliesTo == -1) return '';
 					if (action.appliesTo == -2) return 'for the other object: ';
-					let resource = this.editor.project.resources.ProjectObject.find(x => x.id == action.appliesTo);
+					const resource = this.editor.project.resources.ProjectObject.find(x => x.id == action.appliesTo);
 					return previous + 'for object ' + (resource ? resource.name : '<undefined>') + ': ';
 				}
 
@@ -631,13 +631,13 @@ export default class HWindowObject extends HWindow {
 
 	openActionWindow(action) {
 
-		var actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
+		const actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
 
-		var actionTypeInfo = this.getActionTypeInfo();
-		var actionTypeInfoItem = actionTypeInfo.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind);
+		const actionTypeInfo = this.getActionTypeInfo();
+		const actionTypeInfoItem = actionTypeInfo.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind);
 
 		if (actionTypeInfoItem.htmlclass) {
-			var w = this.editor.windowsArea.open(actionTypeInfoItem.htmlclass, action, action, this);
+			const w = this.editor.windowsArea.open(actionTypeInfoItem.htmlclass, action, action, this);
 			if (w) {
 				this.htmlActionWindows.push(w);
 			}
@@ -646,7 +646,7 @@ export default class HWindowObject extends HWindow {
 	}
 
 	deleteActionWindow(id) {
-		var index = this.htmlActionWindows.findIndex(x => x.id == id);
+		const index = this.htmlActionWindows.findIndex(x => x.id == id);
 		if (index >= 0) {
 			this.htmlActionWindows[index].close();
 			this.htmlActionWindows.splice(index, 1);

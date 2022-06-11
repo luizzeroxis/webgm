@@ -14,7 +14,7 @@ export default class HWindowPath extends HWindow {
 			parent( add( new HElement('div', {class: 'grid-resource resource-path'}) ) )
 				parent( add( new HElement('div') ) )
 
-					let inputName = add( new HTextInput('Name:', path.name) )
+					const inputName = add( new HTextInput('Name:', path.name) )
 					
 					endparent()
 				endparent()

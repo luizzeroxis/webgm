@@ -153,7 +153,7 @@ export default class BuiltInFunctions {
 		return str.charCodeAt(0);
 	}
 	static real ([str]) {
-		var float = parseFloat(str);
+		const float = parseFloat(str);
 		return (!Number.isNaN(float)) ? float : 0;
 	}
 	static string ([val]) {
@@ -427,7 +427,7 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static motion_add ([dir, speed]) {
-		var dir_radians = dir * (Math.PI / 180);
+		const dir_radians = dir * (Math.PI / 180);
 		this.currentInstance.setHspeedAndVspeed(
 			this.currentInstance.vars.getBuiltIn('hspeed') + Math.cos(dir_radians) * speed,
 			this.currentInstance.vars.getBuiltIn('vspeed') + -Math.sin(dir_radians) * speed
@@ -441,7 +441,7 @@ export default class BuiltInFunctions {
 		return !this.game.collisionInstanceOnInstances(this.currentInstance, this.game.instances, x, y, false) ? 1 : 0;
 	}
 	static place_meeting ([x, y, obj]) {
-		var instances = this.objectReferenceToInstances(obj);
+		const instances = this.objectReferenceToInstances(obj);
 		if (!Array.isArray(instances)) {return 0;}
 		return this.game.collisionInstanceOnInstances(this.currentInstance, instances, x, y, false) ? 1 : 0;
 	}
@@ -454,8 +454,8 @@ export default class BuiltInFunctions {
 
 		// TODO: figure out what GM really does.
 
-		var x, y;
-		for (var i=0; i<100; ++i) {
+		let x, y;
+		for (let i=0; i<100; ++i) {
 			x = Math.floor((Math.random() * this.game.room.width) / hsnap) * hsnap;
 			y = Math.floor((Math.random() * this.game.room.height) / vsnap) * vsnap;
 
@@ -475,7 +475,7 @@ export default class BuiltInFunctions {
 	}
 	static move_wrap ([hor, vert, margin]) {
 		if (hor) {
-			var x = this.currentInstance.vars.getBuiltIn('x');
+			const x = this.currentInstance.vars.getBuiltIn('x');
 			if (x >= this.game.room.width + margin) {
 				this.currentInstance.vars.setBuiltIn('x', x - this.game.room.width - margin*2);
 			} else
@@ -485,7 +485,7 @@ export default class BuiltInFunctions {
 		}
 
 		if (vert) {
-			var y = this.currentInstance.vars.getBuiltIn('y');
+			const y = this.currentInstance.vars.getBuiltIn('y');
 			if (y >= this.game.room.height + margin) {
 				this.currentInstance.vars.setBuiltIn('y', y - this.game.room.height - margin*2);
 			} else
@@ -496,8 +496,8 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static move_towards_point ([x, y, sp]) {
-		var cx = this.currentInstance.vars.getBuiltIn('x');
-		var cy = this.currentInstance.vars.getBuiltIn('y');
+		const cx = this.currentInstance.vars.getBuiltIn('x');
+		const cy = this.currentInstance.vars.getBuiltIn('y');
 		this.currentInstance.setDirectionAndSpeed(Math.atan2(-(y - cy), x - cx) * (180 / Math.PI), sp);
 		return 0;
 	}
@@ -664,7 +664,7 @@ export default class BuiltInFunctions {
 			return 0;
 		}
 
-		var instances = this.objectReferenceToInstances(obj);
+		const instances = this.objectReferenceToInstances(obj);
 
 		if (Array.isArray(instances)) {
 			if (instances.length > 0) {
@@ -679,7 +679,7 @@ export default class BuiltInFunctions {
 			return 0;
 		}
 
-		var instances = this.objectReferenceToInstances(obj);
+		const instances = this.objectReferenceToInstances(obj);
 		if (Array.isArray(instances)) {
 			return instances.length;
 		}
@@ -704,7 +704,7 @@ export default class BuiltInFunctions {
 	}
 	static async instance_create ([x, y, obj]) {
 
-		var object = this.game.getResourceById('ProjectObject', obj);
+		const object = this.game.getResourceById('ProjectObject', obj);
 		if (object == null) {
 			throw this.game.makeNonFatalError({
 					type: 'creating_instance_for_non_existing_object',
@@ -775,7 +775,7 @@ export default class BuiltInFunctions {
 	// ## Rooms
 
 	static room_goto ([numb]) {
-		var room = this.game.getResourceById('ProjectRoom', numb);
+		const room = this.game.getResourceById('ProjectRoom', numb);
 		if (room == null) {
 			throw this.game.makeFatalError({
 					type: 'unexisting_room_number',
@@ -795,14 +795,14 @@ export default class BuiltInFunctions {
 		return BuiltInFunctions.room_goto.call(this, [BuiltInFunctions.room_next.call(this, [this.game.room.id])]);
 	}
 	static room_previous ([numb]) {
-		var index = this.game.project.resources.ProjectRoom.findIndex(x => x.id == numb);
+		const index = this.game.project.resources.ProjectRoom.findIndex(x => x.id == numb);
 		if (index == null || index == 0) {
 			return -1;
 		}
 		return this.game.project.resources.ProjectRoom[index-1].id;
 	}
 	static room_next ([numb]) {
-		var index = this.game.project.resources.ProjectRoom.findIndex(x => x.id == numb);
+		const index = this.game.project.resources.ProjectRoom.findIndex(x => x.id == numb);
 		if (index == null || index == this.game.project.resources.ProjectRoom.length - 1) {
 			return -1;
 		}
@@ -1090,7 +1090,7 @@ export default class BuiltInFunctions {
 	static draw_sprite ([spriteIndex, subimg, x, y]) {
 
 		if (spriteIndex >= 0) {
-			var sprite = this.game.project.resources.ProjectSprite.find(x => x.id == spriteIndex)
+			const sprite = this.game.project.resources.ProjectSprite.find(x => x.id == spriteIndex)
 			if (sprite) {
 				this.game.drawSprite(sprite, subimg % sprite.images.length, x, y);
 			} else {
@@ -1240,7 +1240,7 @@ export default class BuiltInFunctions {
 	}
 	static draw_circle ([x , y, r, outline]) {
 
-		var style = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
+		const style = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 		this.game.ctx.fillStyle = style;
 		this.game.ctx.strokeStyle = style;
 
@@ -1257,9 +1257,9 @@ export default class BuiltInFunctions {
 	}
 	static draw_ellipse ([x1, y1, x2, y2, outline]) {
 
-		var style = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
-		var x = (x2 - x1) / 2 + x1;
-		var y = (y2 - y1) / 2 + y1;
+		const style = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
+		const x = (x2 - x1) / 2 + x1;
+		const y = (y2 - y1) / 2 + y1;
 
 		this.game.ctx.fillStyle = style;
 		this.game.ctx.strokeStyle = style;
@@ -1339,7 +1339,7 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static draw_getpixel ([x, y]) {
-		var data = this.game.ctx.getImageData(x, y, 1, 1);
+		const data = this.game.ctx.getImageData(x, y, 1, 1);
 		return rgbValuesToDecimalColor(data[0], data[1], data[2]);
 	}
 	static screen_save ([_]) {
@@ -1382,10 +1382,12 @@ export default class BuiltInFunctions {
 		// Look, I tried making this be like GM but it just doesn't add up. Hopefully will be fixed if and when we change to a custom font renderer
 		
 		// Calculate heights and initial y
-		var textMetrics = this.game.ctx.measureText("");
-		var height = Math.abs(textMetrics.fontBoundingBoxDescent) + Math.abs(textMetrics.fontBoundingBoxAscent);
+		const textMetrics = this.game.ctx.measureText("");
+		const height = Math.abs(textMetrics.fontBoundingBoxDescent) + Math.abs(textMetrics.fontBoundingBoxAscent);
 
-		var currentY;
+		const lines = parseNewLineHash(string).split('\n');
+
+		let currentY;
 		if (this.game.drawVAlign == 0) { // top
 			currentY = y;
 		} else if (this.game.drawVAlign == 1) { // middle
@@ -1394,9 +1396,7 @@ export default class BuiltInFunctions {
 			currentY = y - (height * lines.length);
 		}
 
-		var lines = parseNewLineHash(string).split('\n');
-
-		for (var line of lines) {
+		for (const line of lines) {
 			this.game.ctx.fillText(line, x, currentY);
 			currentY += height;
 		}
@@ -1842,7 +1842,7 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static async window_set_fullscreen ([full]) {
-		full = forceBool(full);
+		full = (forceReal(full) > 0.5);
 		await this.game.setFullscreen(full);
 		return 0;
 	}
@@ -2029,7 +2029,7 @@ export default class BuiltInFunctions {
 	// ## Basic sound functions
 
 	static sound_play ([index]) {
-		var sound = this.game.getResourceById('ProjectSound', index);
+		const sound = this.game.getResourceById('ProjectSound', index);
 		if (!sound) {
 			throw this.game.makeNonFatalError({
 				type: 'sound_does_not_exist',
@@ -2041,7 +2041,7 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static sound_loop ([index]) {
-		var sound = this.game.getResourceById('ProjectSound', index);
+		const sound = this.game.getResourceById('ProjectSound', index);
 		if (!sound) {
 			throw this.game.makeNonFatalError({
 				type: 'sound_does_not_exist',
@@ -2053,7 +2053,7 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static sound_stop ([index]) {
-		var sound = this.game.getResourceById('ProjectSound', index);
+		const sound = this.game.getResourceById('ProjectSound', index);
 		if (!sound) {
 			throw this.game.makeNonFatalError({
 				type: 'sound_does_not_exist',
@@ -2068,10 +2068,10 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static sound_isplaying ([index]) {
-		var sound = this.game.getResourceById('ProjectSound', index);
+		const sound = this.game.getResourceById('ProjectSound', index);
 		if (!sound) return 0;
 
-		for (let audioNode of this.game.sounds.get(sound).audioNodes) {
+		for (const audioNode of this.game.sounds.get(sound).audioNodes) {
 			if (!audioNode.mediaElement.ended) {
 				return 1;
 			}
@@ -2080,12 +2080,12 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static sound_volume ([index, value]) {
-		var sound = this.game.getResourceById('ProjectSound', index);
+		const sound = this.game.getResourceById('ProjectSound', index);
 		if (!sound) return 0; // TODO check if error
 
 		this.game.sounds.get(sound).volume = value;
 
-		for (let audioNode of this.game.sounds.get(sound).audioNodes) {
+		for (const audioNode of this.game.sounds.get(sound).audioNodes) {
 			audioNode.mediaElement.volume = value;
 		}
 
@@ -2337,6 +2337,7 @@ export default class BuiltInFunctions {
 	// ## Pop-up messages and questions
 
 	static show_message ([str]) {
+		str = asString(str);
 		this.game.clearIO();
 		alert(parseNewLineHash(str));
 		return 0;
@@ -2353,10 +2354,10 @@ export default class BuiltInFunctions {
 		str = forceString(str);
 		def = forceInteger(def);
 
-		var result = prompt(str, def);
+		const result = prompt(str, def);
 		if (result === null) return def;
 
-		var value = parseFloat(result);
+		const value = parseFloat(result);
 		if (Number.isNaN(value)) return def;
 
 		return toInteger(value);
@@ -2365,7 +2366,7 @@ export default class BuiltInFunctions {
 		str = forceString(str);
 		def = forceString(def);
 
-		var result = prompt(str, def);
+		const result = prompt(str, def);
 		if (result === null) return def;
 
 		return result;
@@ -2508,7 +2509,7 @@ export default class BuiltInFunctions {
 	// ## Sprites
 
 	static sprite_exists ([ind]) {
-		var sprite = this.game.getResourceById('ProjectSprite', ind);
+		const sprite = this.game.getResourceById('ProjectSprite', ind);
 		return sprite ? 1 : 0;
 	}
 	static sprite_get_name ([_]) {
@@ -2563,7 +2564,7 @@ export default class BuiltInFunctions {
 	// ## Sounds
 
 	static sound_exists ([ind]) {
-		var sound = this.game.getResourceById('ProjectSound', ind);
+		const sound = this.game.getResourceById('ProjectSound', ind);
 		return sound ? 1 : 0;
 	}
 	static sound_get_name ([_]) {
@@ -2590,7 +2591,7 @@ export default class BuiltInFunctions {
 	// ## Backgrounds
 
 	static background_exists ([ind]) {
-		var background = this.game.getResourceById('ProjectBackground', ind);
+		const background = this.game.getResourceById('ProjectBackground', ind);
 		return background ? 1 : 0;
 	}
 	static background_get_name ([_]) {
@@ -2613,7 +2614,7 @@ export default class BuiltInFunctions {
 	// ## Fonts
 
 	static font_exists ([ind]) {
-		var font = this.game.getResourceById('ProjectFont', ind);
+		const font = this.game.getResourceById('ProjectFont', ind);
 		return font ? 1 : 0;
 	}
 	static font_get_name ([_]) {
@@ -2644,7 +2645,7 @@ export default class BuiltInFunctions {
 	// ## Paths
 
 	static path_exists ([ind]) {
-		var path = this.game.getResourceById('ProjectPath', ind);
+		const path = this.game.getResourceById('ProjectPath', ind);
 		return path ? 1 : 0;
 	}
 	static path_get_name ([_]) {
@@ -2699,7 +2700,7 @@ export default class BuiltInFunctions {
 	// ## Scripts
 
 	static script_exists ([ind]) {
-		var script = this.game.getResourceById('ProjectScript', ind);
+		const script = this.game.getResourceById('ProjectScript', ind);
 		return script ? 1 : 0;
 	}
 	static script_get_name ([_]) {
@@ -2714,7 +2715,7 @@ export default class BuiltInFunctions {
 	// ## Time lines
 
 	static timeline_exists ([ind]) {
-		var timeline = this.game.getResourceById('ProjectTimeline', ind);
+		const timeline = this.game.getResourceById('ProjectTimeline', ind);
 		return timeline ? 1 : 0;
 	}
 	static timeline_get_name ([_]) {
@@ -2725,7 +2726,7 @@ export default class BuiltInFunctions {
 	// ## Objects
 
 	static object_exists ([ind]) {
-		var object = this.game.getResourceById('ProjectObject', ind);
+		const object = this.game.getResourceById('ProjectObject', ind);
 		return object ? 1 : 0;
 	}
 	static object_get_name ([_]) {
@@ -2768,7 +2769,7 @@ export default class BuiltInFunctions {
 	// ## Rooms
 
 	static room_exists ([ind]) {
-		var room = this.game.getResourceById('ProjectRoom', ind);
+		const room = this.game.getResourceById('ProjectRoom', ind);
 		return room ? 1 : 0;
 	}
 	static room_get_name ([_]) {
@@ -3020,7 +3021,7 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static script_execute ([scr, ...args]) {
-		var script = this.game.getResourceById('ProjectScript', scr);
+		const script = this.game.getResourceById('ProjectScript', scr);
 		if (script) {
 			return this.execute(this.game.gmlCache.get(script), this.currentInstance, this.currentOther, args);
 		} else {
@@ -4755,23 +4756,23 @@ export default class BuiltInFunctions {
 
 	static action_move ([directions, speed], relative) {
 
-		var values = parseArrowString(directions);
+		const values = parseArrowString(directions);
 
-		var angles = [
+		const angles = [
 			225, 270, 315,
 			180, null, 0,
 			135, 90, 45,
 		];
 
-		var possibleAngles = [];
+		const possibleAngles = [];
 
-		for (var i = 0; i < 9; ++i) {
+		for (let i = 0; i < 9; ++i) {
 			if (values[i]) {
 				possibleAngles.push(angles[i]);
 			}
 		}
 
-		var chosenAngle = possibleAngles[Math.floor( Math.random() * possibleAngles.length )];
+		const chosenAngle = possibleAngles[Math.floor( Math.random() * possibleAngles.length )];
 		
 		if (chosenAngle != null) {
 			speed = (!relative ? speed : this.currentInstance.vars.getBuiltIn('speed') + speed);
@@ -4855,14 +4856,14 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static action_wrap ([direction]) {
-		var horizontal = (direction == 0 || direction == 2);
-		var vertical = (direction == 1 || direction == 2);
+		const horizontal = (direction == 0 || direction == 2);
+		const vertical = (direction == 1 || direction == 2);
 
-		var spriteW = 0;
-		var spriteH = 0;
+		let spriteW = 0;
+		let spriteH = 0;
 
 		if (this.currentInstance.sprite) {
-			var image = this.currentInstance.sprite.images[this.currentInstance.getImageIndex()]
+			const image = this.currentInstance.sprite.images[this.currentInstance.getImageIndex()]
 			if (image) {
 				spriteW = image.image.width;
 				spriteH = image.image.height;
@@ -4870,7 +4871,7 @@ export default class BuiltInFunctions {
 		}
 
 		if (horizontal) {
-			var x = this.currentInstance.vars.getBuiltIn('x');
+			const x = this.currentInstance.vars.getBuiltIn('x');
 			if (x >= this.game.room.width &&
 				this.currentInstance.vars.getBuiltIn('hspeed') > 0) {
 				this.currentInstance.vars.setBuiltIn('x', x - this.game.room.width - spriteW);
@@ -4882,7 +4883,7 @@ export default class BuiltInFunctions {
 		}
 
 		if (vertical) {
-			var y = this.currentInstance.vars.getBuiltIn('y');
+			const y = this.currentInstance.vars.getBuiltIn('y');
 			if (y >= this.game.room.height &&
 				this.currentInstance.vars.getBuiltIn('vspeed') > 0) {
 				this.currentInstance.vars.setBuiltIn('y', y - this.game.room.height - spriteH);
@@ -5179,7 +5180,7 @@ export default class BuiltInFunctions {
 		return BuiltInFunctions.place_meeting.call(this, [x, y, object]);
 	}
 	static action_if_number ([object, number, operation]) {
-		var result = BuiltInFunctions.instance_number.call(this, [object]);
+		const result = BuiltInFunctions.instance_number.call(this, [object]);
 		if (operation == 0) { // Equal to
 			return (result === number) ? 1 : 0;
 		} else if (operation == 1) { // Smaller than
@@ -5215,7 +5216,7 @@ export default class BuiltInFunctions {
 	// ### Code
 
 	static action_execute_script ([script, argument0, argument1, argument2, argument3, argument4]) {
-		var scriptResource = this.game.getResourceById('ProjectScript', script);
+		const scriptResource = this.game.getResourceById('ProjectScript', script);
 
 		if (scriptResource) {
 			return this.execute(this.game.gmlCache.get(scriptResource), this.currentInstance, this.currentOther,
@@ -5261,7 +5262,7 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static action_if_score ([value, operation]) {
-		var score = this.game.globalVars.getBuiltIn("score");
+		const score = this.game.globalVars.getBuiltIn("score");
 		switch (operation) {
 			case 0: // equal to
 				return (score === value) ? 1 : 0;
@@ -5293,7 +5294,7 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static action_if_life ([value, operation]) {
-		var lives = this.game.globalVars.getBuiltIn("lives");
+		const lives = this.game.globalVars.getBuiltIn("lives");
 		switch (operation) {
 			case 0: // equal to
 				return (lives === value) ? 1 : 0;
@@ -5321,7 +5322,7 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static action_if_health ([value, operation]) {
-		var health = this.game.globalVars.getBuiltIn("health");
+		const health = this.game.globalVars.getBuiltIn("health");
 		switch (operation) {
 			case 0: // equal to
 				return (health === value) ? 1 : 0;

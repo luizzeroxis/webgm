@@ -17,7 +17,7 @@ export default class HTabControl extends HElement {
 			isSelected = (this.currentTabContent == null);
 		}
 
-		var tabContent = new HElement('div', {class: 'tab-content'})
+		const tabContent = new HElement('div', {class: 'tab-content'})
 
 		if (isSelected) {
 			this.showTabContent(tabContent);
@@ -25,7 +25,7 @@ export default class HTabControl extends HElement {
 
 		parent(this.tabButtonsDiv)
 
-			var radio = add( new HRadioInput(this.radioGroup, name, isSelected, 'tab-button') )
+			const radio = add( new HRadioInput(this.radioGroup, name, isSelected, 'tab-button') )
 			radio.setOnClick(() => {
 				this.showTabContent(tabContent);
 			});

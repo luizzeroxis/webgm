@@ -14,7 +14,7 @@ export default class HWindowTimeline extends HWindow {
 			parent( add( new HElement('div', {class: 'grid-resource resource-timeline'}) ) )
 				parent( add( new HElement('div') ) )
 
-					let inputName = add( new HTextInput('Name:', timeline.name) )
+					const inputName = add( new HTextInput('Name:', timeline.name) )
 					
 					endparent()
 				endparent()

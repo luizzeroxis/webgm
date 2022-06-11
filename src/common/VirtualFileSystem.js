@@ -7,7 +7,7 @@ export default class VirtualFileSystem {
 	static openDialog(accept, multiple=false) {
 
 		return new Promise((resolve, reject) => {
-			var f = new HElement('input');
+			const f = new HElement('input');
 			f.html.accept = accept;
 			f.html.type = 'file';
 			if (multiple) {
@@ -27,7 +27,7 @@ export default class VirtualFileSystem {
 	static readEntireFile(file) {
 
 		return new Promise((resolve, reject) => {
-			var reader = new FileReader();
+			const reader = new FileReader();
 			reader.onload = () => {
 				resolve(reader.result);
 			};
@@ -37,7 +37,7 @@ export default class VirtualFileSystem {
 	}
 
 	static save(blob, name) {
-		var a = new HElement('a');
+		const a = new HElement('a');
 		a.html.href = URL.createObjectURL(blob);
 		a.html.download = name;
 		a.html.click();

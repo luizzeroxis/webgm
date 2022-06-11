@@ -6,19 +6,19 @@ export class HElement {
 	constructor(...args) {
 
 		if (args.length == 1) {
-			let [html] = args;
+			const [html] = args;
 			if (html instanceof Element) {
 				this.html = html;
 			}
 		}
 
 		if (this.html == null) {
-			let [tag, attributes, text] = args;
+			const [tag, attributes, text] = args;
 
 			this.html = document.createElement(tag);
 
 			if (attributes) {
-				for (let [name, value] of Object.entries(attributes)) {
+				for (const [name, value] of Object.entries(attributes)) {
 					if (value != null) {
 						this.html.setAttribute(name, value);
 					}
@@ -38,7 +38,7 @@ export class HElement {
 	onRemove() {}
 }
 
-export let parentStack = [new HElement(document.body)];
+export const parentStack = [new HElement(document.body)];
 
 // Make the element the parent of newly added elements.
 export function parent(element) {
@@ -164,7 +164,7 @@ export class HCanvas extends HElement {
 	}
 	clear() {
 		// Haxs for cleaning canvas
-		var h = this.html.height;
+		const h = this.html.height;
 		this.html.height = 0;
 		this.html.height = h;
 	}
@@ -173,7 +173,7 @@ export class HCanvas extends HElement {
 export class HLabelAndInput extends HElement {
 	constructor(type, label, value, _class) {
 		parent( super('div', {class: classToString(classToArray(_class).concat(['h-label-and-input']))}) )
-			let id = '_id_' + uniqueID();
+			const id = '_id_' + uniqueID();
 			this.label = add( new HElement('label', {for: id}, label) )
 			this.input = add( new HElement('input', {id: id, type: type, value: value}) )
 			endparent()
@@ -198,7 +198,7 @@ export class HTextInput extends HLabelAndInput {
 export class HMultilineTextInput extends HElement {
 	constructor(label, value, _class) {
 		parent( super('div', {class: classToString(classToArray(_class).concat(['h-multiline-text-input']))}) )
-			let id = '_id_' + uniqueID();
+			const id = '_id_' + uniqueID();
 			this.label = add( new HElement('label', {for: id}, label) )
 			this.textarea = add( new HElement('textarea', {id: id}) )
 			this.textarea.html.value = value;
@@ -236,7 +236,7 @@ export class HColorInput extends HLabelAndInput {
 export class HCheckBoxInput extends HElement {
 	constructor(label, checked, _class) {
 		parent( super('div', {class: classToString(_class)}) )
-			let id = '_id_' + uniqueID();
+			const id = '_id_' + uniqueID();
 			this.input = add( new HElement('input', {id: id, type: 'checkbox',
 				...(checked ? {checked: 'checked'} : null)
 			}) )
@@ -257,7 +257,7 @@ export class HCheckBoxInput extends HElement {
 export class HRadioInput extends HElement {
 	constructor(group, label, checked, _class) {
 		parent( super('div', {class: classToString(_class)}) )
-			let id = '_id_' + uniqueID();
+			const id = '_id_' + uniqueID();
 			this.input = add( new HElement('input', {id: id, type: 'radio', name: group,
 				...(checked ? {checked: 'checked'} : null)
 			}) )
@@ -275,7 +275,7 @@ export class HRadioInput extends HElement {
 export class HSelect extends HElement {
 	constructor(label, _class) {
 		parent( super('div', {class: classToString(classToArray(_class).concat(['h-select']))}) )
-			let id = '_id_' + uniqueID();
+			const id = '_id_' + uniqueID();
 			this.label = add( new HElement('label', {for: id}, label) )
 			this.select = add( new HElement('select', {id: id}) )
 			endparent()
@@ -311,7 +311,7 @@ export class HSelectWithOptions extends HSelect {
 		super(label, _class);
 
 		parent(this.select)
-			for (let option of options) {
+			for (const option of options) {
 				add( new HOption(option.name, option.value) )
 			}
 			endparent()
@@ -337,7 +337,7 @@ export class HImage extends HElement {
 
 //// ID generator for unique elements
 
-var lastUniqueID = 0;
+let lastUniqueID = 0;
 
 export function uniqueID() {
 	return lastUniqueID++;
@@ -346,7 +346,7 @@ export function uniqueID() {
 //// Helpers
 
 // Make a element be able to receive drops of files from anywhere.
-export var setOnFileDrop = (element, onSelectFile, multiple=false) => {
+export function setOnFileDrop(element, onSelectFile, multiple=false) {
 
 	element.addEventListener('dragover', e => {
 		e.stopPropagation();
@@ -360,7 +360,7 @@ export var setOnFileDrop = (element, onSelectFile, multiple=false) => {
 				e.preventDefault();
 			}
 		} else {
-			var file = e.dataTransfer.files[0];
+			const file = e.dataTransfer.files[0];
 			if (file != undefined) {
 				if (!await onSelectFile(file)) {
 					e.preventDefault();

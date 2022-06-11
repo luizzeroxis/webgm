@@ -8,7 +8,7 @@ export default class Events {
 		{id:  5, value: 'keyboard',   name: 'Keyboard',    getFullName: (subtype) => 'Keyboard '+subtype},
 		{id:  6, value: 'mouse',      name: 'Mouse',       getFullName: (subtype) => Events.listMouseSubtypes.find(x=>x.value==subtype).name},
 		{id:  4, value: 'collision',  name: 'Collision',   getFullName: (subtype, project) => {
-			let object = project.resources.ProjectObject.find(x => x.id == subtype);
+			const object = project.resources.ProjectObject.find(x => x.id == subtype);
 			return 'Collision with ' + (object ? object.name : '<undefined>');
 		}},
 		{id:  7, value: 'other',      name: 'Other',       getFullName: (subtype) => Events.listOtherSubtypes.find(x=>x.value==subtype).name},

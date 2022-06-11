@@ -33,15 +33,15 @@ export default class ProjectSerializer {
 
 	static serializeZIP(project) {
 
-		var zip = new JSZip();
+		const zip = new JSZip();
 		zip.file("version", "2");
 
 		ProjectSerializer.initClasses();
 
-		var json = JSON.stringify(project, function(key, value) {
+		const json = JSON.stringify(project, function(key, value) {
 
 			if (value != null) {
-				var name = Object.keys(ProjectSerializer.classes).find(x => ProjectSerializer.classes[x] == value.constructor);
+				const name = Object.keys(ProjectSerializer.classes).find(x => ProjectSerializer.classes[x] == value.constructor);
 				if (name) {
 					value = {...value, $class: name};
 				}
@@ -78,8 +78,8 @@ export default class ProjectSerializer {
 
 	static unserializeZIP(blob) {
 
-		var zip = new JSZip();
-		var version;
+		const zip = new JSZip();
+		let version;
 
 		return new Promise((resolve, reject) => {
 			zip.loadAsync(blob)
@@ -87,7 +87,7 @@ export default class ProjectSerializer {
 			.catch(() => reject(new UnserializeException('Not a zip file.')));
 		})
 		.then(() => {
-			var file = zip.file("version");
+			const file = zip.file("version");
 			if (file == null) throw new UnserializeException('"version" file does not exist in zip file.');
 			return file.async("string");
 		})
@@ -97,7 +97,7 @@ export default class ProjectSerializer {
 			if (version < 1 || version > 2) throw new UnserializeException("Unsupported "+version.toString+" version.");
 		})
 		.then(() => {
-			var file = zip.file("project.json");
+			const file = zip.file("project.json");
 			if (file == null) throw new UnserializeException('"project.json" file does not exist in zip file.');
 			return file.async("string");
 		})
@@ -108,14 +108,15 @@ export default class ProjectSerializer {
 			}
 			if (version == 2) {
 
-				var promises = [];
+				let project;
+				const promises = [];
 
 				ProjectSerializer.initClasses();
 
 				try {
-					var project = JSON.parse(json, function(key, value) {
+					project = JSON.parse(json, function(key, value) {
 						if (value != null && value.$class) {
-							var obj = new (ProjectSerializer.classes[value.$class])();
+							let obj = new (ProjectSerializer.classes[value.$class])();
 							obj = Object.assign(obj, value);
 							delete obj.$class;
 							return obj;
@@ -136,7 +137,7 @@ export default class ProjectSerializer {
 				project.resources.ProjectSprite.forEach(sprite => {
 					sprite.images.forEach((image, index) => {
 
-						var file = zip.file("sprites/"+sprite.id+"/"+index);
+						const file = zip.file("sprites/"+sprite.id+"/"+index);
 						if (file == null) return;
 
 						promises.push(file.async('blob')
@@ -149,7 +150,7 @@ export default class ProjectSerializer {
 
 				project.resources.ProjectSound.forEach(sound => {
 
-					var file = zip.file("sounds/"+sound.id);
+					const file = zip.file("sounds/"+sound.id);
 					if (file == null) return;
 
 					promises.push(file.async('blob')
@@ -161,7 +162,7 @@ export default class ProjectSerializer {
 
 				project.resources.ProjectBackground.forEach(background => {
 
-					var file = zip.file("backgrounds/"+background.id);
+					const file = zip.file("backgrounds/"+background.id);
 					if (file == null) return;
 
 					promises.push(file.async('blob')
@@ -212,7 +213,7 @@ export default class ProjectSerializer {
 	}
 
 	static unserializeV1(json) {
-		var jsonObject;
+		let jsonObject;
 
 		try {
 			jsonObject = JSON.parse(json);
@@ -265,7 +266,7 @@ export default class ProjectSerializer {
 			})
 		});
 
-		var project = Object.assign(new Project(), jsonObject);
+		const project = Object.assign(new Project(), jsonObject);
 
 		return Promise.resolve(project);
 	}

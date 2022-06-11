@@ -89,14 +89,14 @@ export default class HAreaResources extends HElement {
 	// Add resource to resources tree in the proper type.
 	add(resource) {
 		parent(this.resourceTypes[resource.constructor.name]);
-			var r = add( new HResourceListItem(resource, this.editor) )
+			const r = add( new HResourceListItem(resource, this.editor) )
 			this.resources.push(r);
 			endparent();
 	}
 
 	// Delete resource from resources tree.
 	delete(resource) {
-		var index = this.resources.findIndex(x => x.id == resource);
+		const index = this.resources.findIndex(x => x.id == resource);
 		if (index>=0) {
 			remove(this.resources[index])
 			this.resources.splice(index, 1);
@@ -104,7 +104,7 @@ export default class HAreaResources extends HElement {
 	}
 
 	refresh() {
-		for (let resource of this.resources) {
+		for (const resource of this.resources) {
 			remove(resource)
 		}
 		Project.getTypes().forEach(type => {

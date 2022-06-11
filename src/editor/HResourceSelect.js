@@ -41,7 +41,7 @@ export default class HResourceSelect extends HSelect {
 	}
 
 	updateOptions() {
-		let previousValue = this.select.html.value;
+		const previousValue = this.select.html.value;
 
 		this.removeOptions();
 
@@ -64,7 +64,7 @@ export default class HResourceSelect extends HSelect {
 	}
 
 	getValue() {
-		var value = parseInt(super.getValue());
+		const value = parseInt(super.getValue());
 		if (Number.isNaN(value)) return -1;
 		return value;
 	}

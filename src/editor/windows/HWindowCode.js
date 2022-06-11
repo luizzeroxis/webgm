@@ -18,7 +18,7 @@ export default class HWindowCode extends HWindow {
 
 		parent(this.client)
 
-			var appliesToGroup = '_radio_'+uniqueID();
+			const appliesToGroup = '_radio_'+uniqueID();
 
 			this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, 'Self', (action.appliesTo == -1)) );
 			this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, 'Other', (action.appliesTo == -2)) );

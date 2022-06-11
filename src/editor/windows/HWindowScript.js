@@ -15,7 +15,7 @@ export default class HWindowScript extends HWindow {
 			parent( add( new HElement('div', {class: 'grid-resource resource-script'}) ) )
 				parent( add( new HElement('div') ) )
 
-					var inputName = add( new HTextInput('Name:', script.name) )
+					const inputName = add( new HTextInput('Name:', script.name) )
 
 					this.codeEditor = add( new HCodeEditor(script.code) )
 

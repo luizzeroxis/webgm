@@ -108,15 +108,15 @@ export class Game {
 
 		// If one instance calls a step stop exception, then even the other event type doesn't run
 		try {
-			for (let instance of this.instances) {
+			for (const instance of this.instances) {
 				if (!instance.exists) continue;
-				var OTHER_ROOM_END = 5;
+				const OTHER_ROOM_END = 5;
 				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
 			}
 
-			for (let instance of this.instances) {
+			for (const instance of this.instances) {
 				if (!instance.exists) continue;
-				var OTHER_GAME_END = 3;
+				const OTHER_GAME_END = 3;
 				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_END), instance);
 			}
 		} catch (e) {
@@ -203,7 +203,7 @@ export class Game {
 
 		// Mouse
 
-		var toEngineButton = button => {
+		const toEngineButton = button => {
 			return button == 1 ? 3 // middle button
 				: button == 2 ? 2 // right button
 				: button + 1; // every other button
@@ -224,7 +224,7 @@ export class Game {
 		this.input.addEventListener('mouseup', this.mouseUpHandler);
 
 		this.mouseMoveHandler = (e) => {
-			var rect = this.input.getBoundingClientRect();
+			const rect = this.input.getBoundingClientRect();
 			this.mouseX = Math.floor(Math.max(0, Math.min(e.clientX - rect.left, this.room.width || 0)));
 			this.mouseY = Math.floor(Math.max(0, Math.min(e.clientY - rect.top, this.room.height || 0)));
 
@@ -270,7 +270,7 @@ export class Game {
 
 	// Makes sure all resources are loaded, and parses GML code.
 	loadProject() {
-		var promises = [
+		const promises = [
 			this.loadSprites(),
 			this.loadSounds(),
 			this.loadBackgrounds(),
@@ -286,7 +286,7 @@ export class Game {
 
 	// Return a list of promises of loading sprite images.
 	loadSprites() {
-		var promises = [];
+		const promises = [];
 		this.project.resources.ProjectSprite.forEach(sprite => {
 			sprite.images.forEach((image, imageNumber) => {
 				image.load();
@@ -301,7 +301,7 @@ export class Game {
 
 	// Returns a list of promises of loading sounds.
 	loadSounds() {
-		var promises = [];
+		const promises = [];
 		this.project.resources.ProjectSound.forEach(sound => {
 			if (!sound.sound) return;
 			sound.sound.load();
@@ -317,7 +317,7 @@ export class Game {
 
 	// Returns a list of promises of loading background images.
 	loadBackgrounds() {
-		var promises = [];
+		const promises = [];
 		this.project.resources.ProjectBackground.forEach(background => {
 			if (!background.image) return;
 			background.image.load();
@@ -349,7 +349,7 @@ export class Game {
 	loadActionsObjects() {
 		this.project.resources.ProjectObject.every(object => {
 			return object.events.every(event => {
-				var parsedActions = new ActionsParser().parse(event.actions);
+				const parsedActions = new ActionsParser().parse(event.actions);
 				this.actionsCache.set(event, parsedActions);
 				return true;
 			})
@@ -425,10 +425,10 @@ export class Game {
 
 					} else if (action.typeKind == 'variable') {
 
-						var name = action.args[0].value;
-						var value = action.args[1].value;
-						var assignSymbol = action.relative ? " += " : " = ";
-						var code = name + assignSymbol + value;
+						const name = action.args[0].value;
+						const value = action.args[1].value;
+						const assignSymbol = action.relative ? " += " : " = ";
+						const code = name + assignSymbol + value;
 
 						return this.compileGMLAndCache(code, action, matchResult => {
 
@@ -490,7 +490,7 @@ export class Game {
 
 	// Compiles a GML code string and stores the result in a cache. mapKey is used when accessing gmlCache.
 	compileGMLAndCache(code, mapKey, failureFunction) {
-		var result = this.gml.compile(code);
+		const result = this.gml.compile(code);
 		if (result.succeeded) {
 			this.gmlCache.set(mapKey, result.ast);
 			return true;
@@ -509,7 +509,7 @@ export class Game {
 
 	// Run a step and set timeout for next step. With error catching.
 	async mainLoopForTimeout() {
-		var timeoutStepStart = performance.now();
+		const timeoutStepStart = performance.now();
 
 		// If one second has passed since last fps update, update it
 		if ((timeoutStepStart - this.lastFPSCheck) >= 1000) {
@@ -526,16 +526,16 @@ export class Game {
 			// Run main loop again, after a frame of time has passed.
 			// This means the game will slow down if a loop takes too much time.
 			
-			var timeoutStepMinTime = 1000 / this.globalVars.getBuiltIn('room_speed');
+			const timeoutStepMinTime = 1000 / this.globalVars.getBuiltIn('room_speed');
 
-			var timeoutStepEnd = performance.now();
+			const timeoutStepEnd = performance.now();
 
-			var timeoutStepTime = (timeoutStepEnd - timeoutStepStart);
-			var timeoutWaitTime = timeoutStepMinTime - timeoutStepTime;
+			const timeoutStepTime = (timeoutStepEnd - timeoutStepStart);
+			const timeoutWaitTime = timeoutStepMinTime - timeoutStepTime;
 
 			this.timeout = setTimeout(() => this.mainLoopForTimeout(), timeoutWaitTime);
 
-			// var timeoutTotalStepTime = timeoutStepTime + timeoutWaitTime;
+			// const timeoutTotalStepTime = timeoutStepTime + timeoutWaitTime;
 			// console.log("------");
 			// console.log("StepTime", timeoutStepTime);
 			// console.log("StepMinTime", timeoutStepMinTime);
@@ -601,20 +601,20 @@ export class Game {
 		this.mapEvents = this.getMapOfEvents();
 
 		// Begin step
-		for (let {event, instance} of this.getEventsOfTypeAndSubtype('step', 'begin')) {
+		for (const {event, instance} of this.getEventsOfTypeAndSubtype('step', 'begin')) {
 			if (!instance.exists) continue;
 			await this.doEvent(event, instance);
 		}
 
 		// Alarm
-		for (let [subtype, list] of this.getEventsOfType('alarm')) {
-			for (let {event, instance} of list) {
+		for (const [subtype, list] of this.getEventsOfType('alarm')) {
+			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 
 				// Update alarm (decrease by one) here, before running event
 				// Alarm stays 0 until next alarm check, where it becomes -1 forever (that's doom as heck)
 
-				var alarm = instance.vars.getBuiltInArray('alarm', [subtype]);
+				const alarm = instance.vars.getBuiltInArray('alarm', [subtype]);
 				if (alarm >= 0) {
 					instance.vars.setBuiltInArray('alarm', [subtype], alarm - 1);
 				}
@@ -626,8 +626,8 @@ export class Game {
 		}
 
 		// Keyboard
-		for (let [subtype, list] of this.getEventsOfType('keyboard')) {
-			for (let {event, instance} of list) {
+		for (const [subtype, list] of this.getEventsOfType('keyboard')) {
+			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 				if (this.getKey(subtype, this.key)) {
 					await this.doEvent(event, instance);
@@ -635,8 +635,8 @@ export class Game {
 			}
 		}
 
-		for (let [subtype, list] of this.getEventsOfType('keypress')) {
-			for (let {event, instance} of list) {
+		for (const [subtype, list] of this.getEventsOfType('keypress')) {
+			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 				if (this.getKey(subtype, this.keyPressed)) {
 					await this.doEvent(event, instance);
@@ -644,8 +644,8 @@ export class Game {
 			}
 		}
 
-		for (let [subtype, list] of this.getEventsOfType('keyrelease')) {
-			for (let {event, instance} of list) {
+		for (const [subtype, list] of this.getEventsOfType('keyrelease')) {
+			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 				if (this.getKey(subtype, this.keyReleased)) {
 					await this.doEvent(event, instance);
@@ -657,16 +657,16 @@ export class Game {
 
 		// TODO other mouse events
 
-		for (let [subtype, list] of this.getEventsOfType('mouse')) {
-			for (let {event, instance} of list) {
+		for (const [subtype, list] of this.getEventsOfType('mouse')) {
+			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 
-				var execute = false;
-				var eventInfo = Events.listMouseSubtypes.find(x => x.id == subtype);
+				let execute = false;
+				const eventInfo = Events.listMouseSubtypes.find(x => x.id == subtype);
 				if (eventInfo == null) return;
 
 				if (eventInfo.kind == 'button') {
-					var dict = {
+					const dict = {
 						'mouse': this.mouse,
 						'mousePressed': this.mousePressed,
 						'mouseReleased': this.mouseReleased,
@@ -698,27 +698,27 @@ export class Game {
 		}
 
 		// Step
-		for (let {event, instance} of this.getEventsOfTypeAndSubtype('step', 'normal')) {
+		for (const {event, instance} of this.getEventsOfTypeAndSubtype('step', 'normal')) {
 			if (!instance.exists) continue;
 			await this.doEvent(event, instance);
 		}
 
 		// Update instance variables and positions
 
-		for (let instance of this.instances) {
+		for (const instance of this.instances) {
 			if (!instance.exists) continue;
 
-			var hspeedOld = instance.vars.getBuiltIn('hspeed');
-			var vspeedOld = instance.vars.getBuiltIn('vspeed');
+			const hspeedOld = instance.vars.getBuiltIn('hspeed');
+			const vspeedOld = instance.vars.getBuiltIn('vspeed');
 
-			var hspeedNew = hspeedOld;
-			var vspeedNew = vspeedOld;
+			let hspeedNew = hspeedOld;
+			let vspeedNew = vspeedOld;
 
 			instance.vars.setBuiltIn('x', instance.vars.getBuiltIn('x') + hspeedOld);
 			instance.vars.setBuiltIn('y', instance.vars.getBuiltIn('y') + vspeedOld);
 
 			if (instance.vars.getBuiltIn('friction') != 0) {
-				var direction = instance.vars.getBuiltIn('direction') * (Math.PI / 180);
+				const direction = instance.vars.getBuiltIn('direction') * (Math.PI / 180);
 
 				if (hspeedOld != 0) {
 					hspeedNew = hspeedOld - Math.cos(direction) * instance.vars.getBuiltIn('friction');
@@ -748,10 +748,10 @@ export class Game {
 		}
 
 		// Collisions
-		for (let [subtype, list] of this.getEventsOfType('collision')) {
-			for (let {event, instance} of list) {
+		for (const [subtype, list] of this.getEventsOfType('collision')) {
+			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
-				for (let other of this.instances) {
+				for (const other of this.instances) {
 					if (!other.exists) continue;
 					if (!(other.object_index == subtype)) continue;
 					if (this.collisionInstanceOnInstance(instance, other)) {
@@ -764,7 +764,7 @@ export class Game {
 
 		// End step
 
-		for (let {event, instance} of this.getEventsOfTypeAndSubtype('step', 'end')) {
+		for (const {event, instance} of this.getEventsOfTypeAndSubtype('step', 'end')) {
 			if (!instance.exists) continue;
 			await this.doEvent(event, instance);
 		}
@@ -773,14 +773,14 @@ export class Game {
 		await this.drawViews();
 
 		// Update some instance variables
-		for (let instance of this.instances) {
+		for (const instance of this.instances) {
 			if (!instance.exists) continue;
 			instance.vars.setBuiltIn('xprevious', instance.vars.getBuiltIn('x'));
 			instance.vars.setBuiltIn('yprevious', instance.vars.getBuiltIn('y'));
 
-			var imageNumber = (instance.sprite ? instance.sprite.images.length : 0);
+			const imageNumber = (instance.sprite ? instance.sprite.images.length : 0);
 
-			var i = instance.vars.getBuiltIn('image_index') + instance.vars.getBuiltIn('image_speed');
+			let i = instance.vars.getBuiltIn('image_index') + instance.vars.getBuiltIn('image_speed');
 			if (i >= imageNumber) {
 				i -= imageNumber;
 			}
@@ -820,7 +820,7 @@ export class Game {
 
 		// Draw background backgrounds
 
-		for (let roomBackground of this.room.backgrounds) {
+		for (const roomBackground of this.room.backgrounds) {
 			if (!roomBackground) continue;
 			if (roomBackground.isForeground == true) continue;
 			this.drawRoomBackground(roomBackground);
@@ -830,16 +830,16 @@ export class Game {
 
 		// Draw instances
 
-		var instances_by_depth = this.instances
+		const instances_by_depth = this.instances
 			.filter(x => x.exists)
 			.sort((a, b) => a.vars.getBuiltIn('depth') - b.vars.getBuiltIn('depth'));
 
-		for (let instance of instances_by_depth) {
+		for (const instance of instances_by_depth) {
 			if (!instance.exists) continue;
 
 			// Only draw if visible
 			if (instance.vars.getBuiltIn('visible')) {
-				var drawEvent = this.getEventOfInstance(instance, 'draw');
+				const drawEvent = this.getEventOfInstance(instance, 'draw');
 
 				if (drawEvent) {
 					await this.doEvent(drawEvent, instance); 
@@ -855,7 +855,7 @@ export class Game {
 
 		// Draw foreground backgrounds
 
-		for (let roomBackground of this.room.backgrounds) {
+		for (const roomBackground of this.room.backgrounds) {
 			if (!roomBackground) continue;
 			if (roomBackground.isForeground == false) continue;
 			this.drawRoomBackground(roomBackground);
@@ -873,10 +873,10 @@ export class Game {
 	drawRoomBackground(roomBackground) {
 		if (!roomBackground.visibleAtStart) return false;
 
-		var background = this.getResourceById('ProjectBackground', roomBackground.backgroundIndex);
+		const background = this.getResourceById('ProjectBackground', roomBackground.backgroundIndex);
 		if (!background) return false;
 
-		var image = background.image;
+		const image = background.image;
 		if (!image) return false;
 
 		// TODO stretch, horizontalSpeed, verticalSpeed
@@ -912,17 +912,17 @@ export class Game {
 	async doEvent(event, instance, other=null) {
 		if (event == null) return;
 
-		var previousEvent = this.currentEvent;
-		var previousInstance = this.currentEventInstance;
-		var previousOther = this.currentEventOther;
+		const previousEvent = this.currentEvent;
+		const previousInstance = this.currentEventInstance;
+		const previousOther = this.currentEventOther;
 
 		this.currentEvent = event;
 		this.currentEventInstance = instance;
 		this.currentEventOther = other;
 
-		var parsedActions = this.actionsCache.get(event);
+		const parsedActions = this.actionsCache.get(event);
 
-		for (let treeAction of parsedActions) {
+		for (const treeAction of parsedActions) {
 			try {
 				await this.doTreeAction(treeAction);
 
@@ -954,9 +954,12 @@ export class Game {
 
 		this.currentEventActionNumber = treeAction.actionNumber;
 
+		let applyToInstances;
+		let otherInstance;
+
 		if (treeAction.appliesTo != undefined) {
-			var applyToInstances = this.getApplyToInstances(treeAction.appliesTo);
-			var otherInstance = this.currentEventOther || this.currentEventInstance;
+			applyToInstances = this.getApplyToInstances(treeAction.appliesTo);
+			otherInstance = this.currentEventOther || this.currentEventInstance;
 			if (treeAction.appliesTo == -2) { // other
 				otherInstance = this.currentEventInstance;
 			}
@@ -968,15 +971,15 @@ export class Game {
 
 				{
 					let result = true;
-					for (let applyToInstance of applyToInstances) {
+					for (const applyToInstance of applyToInstances) {
 						if (!applyToInstance.exists) continue;
 
-						var args = [];
-						for (let [i, x] of treeAction.args.entries()) {
+						const args = [];
+						for (const [i, x] of treeAction.args.entries()) {
 							args.push(await this.parseActionArg(x, i));
 						}
 
-						var currentResult;
+						let currentResult;
 						if (treeAction.type == 'executeFunction') {
 							currentResult = await this.gml.builtInFunction(treeAction.function, applyToInstance, otherInstance, args, treeAction.relative);
 						} else {
@@ -994,7 +997,7 @@ export class Game {
 
 			case 'if':
 				{
-					let result = await this.doTreeAction(treeAction.condition);
+					const result = await this.doTreeAction(treeAction.condition);
 					if (result) {
 						await this.doTreeAction(treeAction.ifTrue);
 					} else {
@@ -1004,7 +1007,7 @@ export class Game {
 				}
 
 			case 'block':
-				for (let blockTreeAction of treeAction) {
+				for (const blockTreeAction of treeAction) {
 					await this.doTreeAction(blockTreeAction);
 				}
 				break;
@@ -1013,21 +1016,23 @@ export class Game {
 				throw new ExitException();
 
 			case 'repeat':
-				var times = await this.parseActionArg(treeAction.times, 0);
-				for (let i=0; i<times; i++) {
-					await this.doTreeAction(treeAction.treeAction);
+				{
+					const times = await this.parseActionArg(treeAction.times, 0);
+					for (let i=0; i<times; i++) {
+						await this.doTreeAction(treeAction.treeAction);
+					}
+					break;
 				}
-				break;
 
 			case 'variable':
-				for (let applyToInstance of applyToInstances) {
+				for (const applyToInstance of applyToInstances) {
 					if (!applyToInstance.exists) continue;
 					await this.gml.execute(this.gmlCache.get(treeAction.action), applyToInstance, otherInstance);
 				}
 				break;
 
 			case 'code':
-				for (let applyToInstance of applyToInstances) {
+				for (const applyToInstance of applyToInstances) {
 					if (!applyToInstance.exists) continue;
 					await this.gml.execute(this.gmlCache.get(treeAction.action), applyToInstance, otherInstance);
 				}
@@ -1046,7 +1051,7 @@ export class Game {
 			// TODO check if this is really what gm is doing
 			// TODO maybe compile all these codes beforehand
 
-			var result = this.gml.compile(arg.value, "Expression");
+			const result = this.gml.compile(arg.value, "Expression");
 			if (!result.succeeded) {
 				throw this.makeFatalError({
 						type: 'compilation',
@@ -1066,14 +1071,14 @@ export class Game {
 	// Loads a room. Only use this inside the stepStopAction function, or at the beginning of the game.
 	async loadRoom(room) {
 
-		var isFirstRoom = (this.room == null);
+		const isFirstRoom = (this.room == null);
 
 		if (!isFirstRoom) {
 			// If one instance calls a step stop exception, then the entire chain stops
 			try {
-				for (let instance of this.instances) {
+				for (const instance of this.instances) {
 					if (!instance.exists) continue;
-					var OTHER_ROOM_END = 5;
+					const OTHER_ROOM_END = 5;
 					await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
 				}
 			} catch (e) {
@@ -1101,29 +1106,29 @@ export class Game {
 
 		// TODO Check if room is persistent
 
-		var createdInstances = [];
-		for (let roomInstance of room.instances) {
+		const createdInstances = [];
+		for (const roomInstance of room.instances) {
 			createdInstances.push(this.instanceCreateNoEvents(roomInstance.id, roomInstance.x, roomInstance.y, roomInstance.object_index, false));
 		}
 
-		for (let instance of createdInstances) {
+		for (const instance of createdInstances) {
 			// TODO run instance creation code
 			await this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
 		}
 
 		if (isFirstRoom) {
-			for (let instance of this.instances) {
+			for (const instance of this.instances) {
 				if (!instance.exists) continue;
-				var OTHER_GAME_START = 2;
+				const OTHER_GAME_START = 2;
 				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_START), instance);
 			}
 		}
 
 		// TODO run room creation code
 
-		for (let instance of this.instances) {
+		for (const instance of this.instances) {
 			if (!instance.exists) continue;
-			var OTHER_ROOM_START = 4;
+			const OTHER_ROOM_START = 4;
 			await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_START), instance);
 		}
 
@@ -1133,7 +1138,7 @@ export class Game {
 
 	// Create an instance in the room.
 	async instanceCreate(id, x, y, object) {
-		var instance = this.instanceCreateNoEvents(id, x, y, object);
+		const instance = this.instanceCreateNoEvents(id, x, y, object);
 		
 		await this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
 
@@ -1146,7 +1151,7 @@ export class Game {
 			id = this.lastId;
 		}
 
-		var instance = new Instance(id, x, y, object, this);
+		const instance = new Instance(id, x, y, object, this);
 		this.instances.push(instance);
 
 		return instance;
@@ -1165,7 +1170,7 @@ export class Game {
 		// spriteA.boundingBox == 'fullimage';
 		// spriteA.shape = 'rectangle';
 
-		var collisions = [
+		const collisions = [
 			{shape1: 'precise', shape2: 'precise', func: this.collisionInstancePreciseOnInstancePrecise},
 			{shape1: 'precise', shape2: 'rectangle', func: this.collisionInstanceRectangleOnInstanceRectangle},
 			// {shape1: 'precise', shape2: 'disk', func: this.collisionInstanceRectangleOnInstanceRectangle},
@@ -1178,7 +1183,7 @@ export class Game {
 			// {shape1: 'diamond', shape2: 'diamond', func: this.collisionInstanceRectangleOnInstanceRectangle},
 		];
 
-		for (let collision of collisions) {
+		for (const collision of collisions) {
 			if (instanceA.sprite.shape == collision.shape1 && instanceB.sprite.shape == collision.shape2) {
 				return collision.func(instanceA, instanceB, x, y);
 			} else
@@ -1194,10 +1199,10 @@ export class Game {
 	// Check if an instance is colliding with any of otherInstances.
 	collisionInstanceOnInstances(instance, otherInstances, x, y, solidOnly=false) {
 		// place_free / place_empty / place_meeting
-		for (let otherInstance of otherInstances) {
+		for (const otherInstance of otherInstances) {
 			if (!otherInstance.exists) continue;
 			if (solidOnly && (otherInstance.vars.getBuiltIn('solid') == 0)) continue;
-			var c = this.collisionInstanceOnInstance(instance, otherInstance, x, y);
+			const c = this.collisionInstanceOnInstance(instance, otherInstance, x, y);
 			if (c) return true;
 		}
 		return false;
@@ -1207,14 +1212,14 @@ export class Game {
 	collisionInstanceOnPoint(instance, point) {
 		if (instance.sprite == null || instance.sprite.images.length == 0) return false;
 
-		var collisions = [
+		const collisions = [
 			{shape: 'precise', func: this.collisionInstanceRectangleOnPoint},
 			{shape: 'rectangle', func: this.collisionInstanceRectangleOnPoint},
 			// {shape: 'disk', func: this.collisionInstanceRectangleOnPoint},
 			// {shape: 'diamond', func: this.collisionInstanceRectangleOnPoint},
 		];
 
-		for (let collision of collisions) {
+		for (const collision of collisions) {
 			if (instance.sprite.shape == collision.shape) {
 				return collision.func(instance, point);
 			}
@@ -1225,21 +1230,21 @@ export class Game {
 	collisionInstancePreciseOnInstancePrecise(a, b, aX, aY, bX, bY) {
 		aX = (aX == null) ? Math.floor(a.vars.getBuiltIn('x')) : aX;
 		aY = (aY == null) ? Math.floor(a.vars.getBuiltIn('y')) : aY;
-		let aImage = a.sprite.images[a.getImageIndex()];
-		let aX1 = aX - a.sprite.originx;
-		let aY1 = aY - a.sprite.originy;
-		let aX2 = aX1 + aImage.image.width;
-		let aY2 = aY1 + aImage.image.height;
+		const aImage = a.sprite.images[a.getImageIndex()];
+		const aX1 = aX - a.sprite.originx;
+		const aY1 = aY - a.sprite.originy;
+		const aX2 = aX1 + aImage.image.width;
+		const aY2 = aY1 + aImage.image.height;
 
 		bX = (bX == null) ? Math.floor(b.vars.getBuiltIn('x')) : bX;
 		bY = (bY == null) ? Math.floor(b.vars.getBuiltIn('y')) : bY;
-		let bImage = b.sprite.images[b.getImageIndex()];
-		let bX1 = bX - b.sprite.originx;
-		let bY1 = bY - b.sprite.originy;
-		let bX2 = bX1 + bImage.image.width;
-		let bY2 = bY1 + bImage.image.height;
+		const bImage = b.sprite.images[b.getImageIndex()];
+		const bX1 = bX - b.sprite.originx;
+		const bY1 = bY - b.sprite.originy;
+		const bX2 = bX1 + bImage.image.width;
+		const bY2 = bY1 + bImage.image.height;
 
-		let rectCol = (
+		const rectCol = (
 			aX1 <= bX1 + bImage.image.width &&
 			bX1 <= aX1 + aImage.image.width &&
 			aY1 <= bY1 + bImage.image.height &&
@@ -1248,31 +1253,31 @@ export class Game {
 
 		if (!rectCol) return false;
 
-		let offscreen = new OffscreenCanvas(aImage.image.width + bImage.image.width,
+		const offscreen = new OffscreenCanvas(aImage.image.width + bImage.image.width,
 			Math.max(aImage.image.height, bImage.image.height));
 
-		let offscreenCtx = offscreen.getContext('2d');
+		const offscreenCtx = offscreen.getContext('2d');
 		offscreenCtx.drawImage(aImage.image, 0, 0);
 		offscreenCtx.drawImage(bImage.image, aImage.image.width, 0);
 
-		let aData = offscreenCtx.getImageData(0, 0, aImage.image.width, aImage.image.height);
-		let bData = offscreenCtx.getImageData(aImage.image.width, 0, bImage.image.width, bImage.image.height);
+		const aData = offscreenCtx.getImageData(0, 0, aImage.image.width, aImage.image.height);
+		const bData = offscreenCtx.getImageData(aImage.image.width, 0, bImage.image.width, bImage.image.height);
 
-		let gX1 = Math.max(aX1, bX1);
-		let gY1 = Math.max(aY1, bY1);
-		let gX2 = Math.min(aX2, bX2);
-		let gY2 = Math.min(aY2, bY2);
+		const gX1 = Math.max(aX1, bX1);
+		const gY1 = Math.max(aY1, bY1);
+		const gX2 = Math.min(aX2, bX2);
+		const gY2 = Math.min(aY2, bY2);
 
 		for (let gX = gX1; gX < gX2; ++gX)
 		for (let gY = gY1; gY < gY2; ++gY) {
-			let aDataX = gX - aX1;
-			let aDataY = gY - aY1;
-			let aCol = (aData.data[(aDataY * aData.width + aDataX) * 4 + 3]) >= (255-a.sprite.alphaTolerance);
+			const aDataX = gX - aX1;
+			const aDataY = gY - aY1;
+			const aCol = (aData.data[(aDataY * aData.width + aDataX) * 4 + 3]) >= (255-a.sprite.alphaTolerance);
 			if (!aCol) continue;
 
-			let bDataX = gX - bX1;
-			let bDataY = gY - bY1;
-			let bCol = (bData.data[(bDataY * bData.width + bDataX) * 4 + 3]) >= (255-b.sprite.alphaTolerance);
+			const bDataX = gX - bX1;
+			const bDataY = gY - bY1;
+			const bCol = (bData.data[(bDataY * bData.width + bDataX) * 4 + 3]) >= (255-b.sprite.alphaTolerance);
 			if (bCol) {
 				return true;
 			}
@@ -1283,15 +1288,15 @@ export class Game {
 	collisionInstanceRectangleOnInstanceRectangle(a, b, aX, aY, bX, bY) {
 		aX = (aX == null) ? a.vars.getBuiltIn('x') : aX;
 		aY = (aY == null) ? a.vars.getBuiltIn('y') : aY;
-		let aX1 = aX - a.sprite.originx;
-		let aY1 = aY - a.sprite.originy
-		let aImage = a.sprite.images[a.getImageIndex()]
+		const aX1 = aX - a.sprite.originx;
+		const aY1 = aY - a.sprite.originy
+		const aImage = a.sprite.images[a.getImageIndex()]
 
 		bX = (bX == null) ? b.vars.getBuiltIn('x') : bX;
 		bY = (bY == null) ? b.vars.getBuiltIn('y') : bY;
-		let bX1 = bX - b.sprite.originx
-		let bY1 = bY - b.sprite.originy
-		let bImage = b.sprite.images[b.getImageIndex()]
+		const bX1 = bX - b.sprite.originx
+		const bY1 = bY - b.sprite.originy
+		const bImage = b.sprite.images[b.getImageIndex()]
 
 		return (
 			aX1 <= bX1 + bImage.image.width &&
@@ -1303,9 +1308,9 @@ export class Game {
 
 	// Check if an instance, with rectangular shape, and a point are colliding.
 	collisionInstanceRectangleOnPoint(instance, point) {
-		var instanceX = instance.vars.getBuiltIn('x') - instance.sprite.originx;
-		var instanceY = instance.vars.getBuiltIn('y') - instance.sprite.originy;
-		var instanceImage = instance.sprite.images[instance.getImageIndex()];
+		const instanceX = instance.vars.getBuiltIn('x') - instance.sprite.originx;
+		const instanceY = instance.vars.getBuiltIn('y') - instance.sprite.originy;
+		const instanceImage = instance.sprite.images[instance.getImageIndex()];
 
 		return (
 			point.x >= instanceX &&
@@ -1317,7 +1322,7 @@ export class Game {
 
 	// Draw a sprite with the image index at x and y.
 	drawSprite(sprite, imageIndex, x, y) {
-		var image = sprite.images[imageIndex];
+		const image = sprite.images[imageIndex];
 		if (image == null) return false;
 
 		this.ctx.drawImage(image.image, x-sprite.originx, y-sprite.originy);
@@ -1328,7 +1333,7 @@ export class Game {
 	// Play a sound, on loop or not.
 	playSound(sound, loop) {
 		this.startAudio();
-		var audioNode = this.audioContext.createMediaElementSource(new Audio(sound.sound.src));
+		const audioNode = this.audioContext.createMediaElementSource(new Audio(sound.sound.src));
 		audioNode.connect(this.audioContext.destination);
 		audioNode.mediaElement.volume = this.sounds.get(sound).volume;
 		audioNode.mediaElement.loop = loop;
@@ -1339,7 +1344,7 @@ export class Game {
 
 	// Stop all playing sounds from a sound resource.
 	stopSound(sound) {
-		for (let audioNode of this.sounds.get(sound).audioNodes) {
+		for (const audioNode of this.sounds.get(sound).audioNodes) {
 			audioNode.mediaElement.pause();
 			audioNode.disconnect();
 		}
@@ -1348,8 +1353,8 @@ export class Game {
 
 	// Stop all sounds being played.
 	stopAllSounds() {
-		for (let [sound, value] of this.sounds) {
-			for (let audioNode of value.audioNodes) {
+		for (const [sound, value] of this.sounds) {
+			for (const audioNode of value.audioNodes) {
 				audioNode.mediaElement.pause();
 				audioNode.disconnect();
 			}
@@ -1408,7 +1413,7 @@ export class Game {
 
 	// Compile and execute GML string.
 	async executeString(gml, instance, other, args) {
-		var result = this.gml.compile(gml);
+		const result = this.gml.compile(gml);
 		if (!result.succeeded) {
 			throw new NonFatalErrorException({
 					type: 'compilation',
@@ -1432,20 +1437,20 @@ export class Game {
 	// Returns a map containg all event-instance pairs that exist currently. It is structured like so:
 	// Map(<event type>, Map(<event subtype>, {event, instance}))
 	getMapOfEvents() {
-		var map = new Map();
+		const map = new Map();
 
-		for (let instance of this.instances) {
+		for (const instance of this.instances) {
 			if (!instance.exists) continue;
 
 			instance.object.events.forEach(event => {
 
-				var subtypes = map.get(event.type);
+				let subtypes = map.get(event.type);
 				if (subtypes == undefined) {
 					subtypes = new Map();
 					map.set(event.type, subtypes);
 				}
 
-				var eventInstancePairs = subtypes.get(event.subtype);
+				let eventInstancePairs = subtypes.get(event.subtype);
 				if (eventInstancePairs == undefined) {
 					eventInstancePairs = [];
 					subtypes.set(event.subtype, eventInstancePairs);
@@ -1461,16 +1466,16 @@ export class Game {
 
 	// From the map of events, get a list of event-instance pairs of that type and subtype.
 	getEventsOfTypeAndSubtype(type, subtype) {
-		var subtypes = this.mapEvents.get(type);
+		const subtypes = this.mapEvents.get(type);
 		if (!subtypes) return [];
-		var list = subtypes.get(subtype);
+		const list = subtypes.get(subtype);
 		if (!list) return [];
 		return list;
 	}
 
 	// From the map of events, get a list of event-instance pairs of that type, regardless of subtype.
 	getEventsOfType(type) {
-		var subtypes = this.mapEvents.get(type);
+		const subtypes = this.mapEvents.get(type);
 		if (!subtypes) return [];
 		return [...subtypes.entries()];
 	}
@@ -1523,11 +1528,11 @@ export class Game {
 	// object, event and actionNumber can be null to use the current values.
 	makeErrorOptions(isFatal, options, extraText, object=null, event=null, actionNumber=null) {
 
-		var _object = object==null ? this.currentEventInstance.object : object;
-		var _event = event==null ? this.currentEvent : event;
-		var _actionNumber = actionNumber==null ? this.currentEventActionNumber : actionNumber;
+		const _object = object==null ? this.currentEventInstance.object : object;
+		const _event = event==null ? this.currentEvent : event;
+		const _actionNumber = actionNumber==null ? this.currentEventActionNumber : actionNumber;
 
-		var base = {text:
+		const base = {text:
 			'\n___________________________________________\n'
 			+ (isFatal ? 'FATAL ' : '') + 'ERROR in\n'
 			+ 'action number ' + _actionNumber.toString() + '\n'

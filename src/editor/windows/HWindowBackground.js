@@ -16,10 +16,9 @@ export default class HWindowBackground extends HWindow {
 			parent( add( new HElement('div', {class: 'grid-resource resource-background'}) ) )
 				parent( add( new HElement('div') ) )
 
-					var paramName = background.name;
 					this.paramImage = background.image;
 
-					var inputName = add( new HTextInput('Name:', paramName) );
+					const inputName = add( new HTextInput('Name:', background.name) );
 
 					this.buttonLoadBackground = add( new HButton('Load Background', () => {
 
@@ -64,7 +63,7 @@ export default class HWindowBackground extends HWindow {
 	loadBackgroundFromFile(file) {
 		this.buttonLoadBackground.setDisabled(true);
 
-		var image = new AbstractImage(file);
+		const image = new AbstractImage(file);
 
 		image.promise.then(() => {
 			this.paramImage = image;

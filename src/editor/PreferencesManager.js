@@ -43,7 +43,7 @@ export default class PreferencesManager {
 	}
 
 	save() {
-		var valuesString = JSON.stringify(this.values);
+		const valuesString = JSON.stringify(this.values);
 		try {
 			window.localStorage.setItem('preferences', valuesString);
 		} catch (e) {

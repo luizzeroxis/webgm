@@ -4,7 +4,7 @@ export default class ThemeManager {
 		this.autoTheme = 'light';
 
 		// Update theme if on auto to match system
-		var media = window.matchMedia('(prefers-color-scheme: dark)');
+		const media = window.matchMedia('(prefers-color-scheme: dark)');
 		media.addEventListener('change', e => this.updateAutoTheme(e));
 		this.updateAutoTheme(media);
 
@@ -21,7 +21,7 @@ export default class ThemeManager {
 	}
 
 	applyTheme() {
-		var theme = this.editor.preferences.get('theme');
+		let theme = this.editor.preferences.get('theme');
 		if (theme == 'auto') {
 			theme = this.autoTheme;
 		}

@@ -32,7 +32,7 @@ export default class HAreaWindows extends HElement {
 			return null;
 		} else {
 			parent(this)
-				var w = add( new windowClass(this.editor, id, ...clientArgs) )
+				const w = add( new windowClass(this.editor, id, ...clientArgs) )
 				endparent()
 
 			this.windows.unshift(w);
@@ -43,13 +43,13 @@ export default class HAreaWindows extends HElement {
 
 	// Open or focus on a resource window.
 	openResource(resource) {
-		var windowClass = Editor.resourceTypesInfo.find(x => x.class == resource.constructor).windowClass;
+		const windowClass = Editor.resourceTypesInfo.find(x => x.class == resource.constructor).windowClass;
 		this.open(windowClass, resource, resource);
 	}
 
 	// Delete window instance.
 	delete(w) {
-		var index = this.windows.findIndex(x => x == w);
+		const index = this.windows.findIndex(x => x == w);
 		if (index>=0) {
 			remove(this.windows[index])
 			this.windows.splice(index, 1);
@@ -60,7 +60,7 @@ export default class HAreaWindows extends HElement {
 
 	// Delete window by id.
 	deleteId(id) {
-		var index = this.windows.findIndex(x => x.id == id);
+		const index = this.windows.findIndex(x => x.id == id);
 		if (index>=0) {
 			remove(this.windows[index])
 			this.windows.splice(index, 1);
@@ -71,7 +71,7 @@ export default class HAreaWindows extends HElement {
 
 	// Remove all windows.
 	clear() {
-		for (let w of this.windows) {
+		for (const w of this.windows) {
 			remove(w);
 		}
 		this.windows = [];
@@ -79,7 +79,7 @@ export default class HAreaWindows extends HElement {
 
 	// Move window with id to the top of the screen.
 	focus(id) {
-		var index = this.windows.findIndex(x => x.id == id);
+		const index = this.windows.findIndex(x => x.id == id);
 
 		// Move the window to the top of the array.
 		this.windows.unshift(this.windows.splice(index, 1)[0]);

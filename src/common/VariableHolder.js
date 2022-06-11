@@ -9,12 +9,12 @@ export default class VariableHolder {
 		this.builtInList = {};
 		this.customList = {};
 
-		for (var name in this.builtInClass) {
+		for (const name in this.builtInClass) {
 
 			if (!this.builtInClass[name].direct) {
 
 				if (typeof this.builtInClass[name].default == "function") {
-					var value = this.builtInClass[name].default.call(this);
+					let value = this.builtInClass[name].default.call(this);
 					if (Array.isArray(value)) {
 						value = value.map(x => ({value: x}));
 					}
@@ -41,8 +41,8 @@ export default class VariableHolder {
 	// Get variable value. Use when you don't know what kinda variable it is (e.g. from GML).
 	get(name, indexes) {
 
-		var varInfo = this.getVariableInfo(name);
-		var builtIn;
+		const varInfo = this.getVariableInfo(name);
+		let builtIn;
 		let dimensions;
 
 		if (varInfo == null) {
@@ -62,12 +62,12 @@ export default class VariableHolder {
 
 		// TODO get dimensions from built in when direct
 		// Get difference between dimensions of variable and amount of indexes
-		var difference = dimensions - indexes.length;
+		let difference = dimensions - indexes.length;
 
 		// If there are more dimensions than indexes specify
 		if (difference > 0) {
 			// Pad left indexes with 0s
-			var extra_indexes = new Array(difference).fill(0);
+			const extra_indexes = new Array(difference).fill(0);
 			indexes.unshift(...extra_indexes);
 		}
 
@@ -94,7 +94,7 @@ export default class VariableHolder {
 				throw new VariableException({type: 'index_not_in_bounds'});
 			}
 
-			for (let [i, index] of indexes.entries()) {
+			for (const [i, index] of indexes.entries()) {
 				if (index >= builtIn.directLength.call(this.caller, i)) {
 					throw new VariableException({type: 'index_not_in_bounds'});
 				}
@@ -106,7 +106,7 @@ export default class VariableHolder {
 		let variable = varInfo.reference;
 
 		// Find part of array that indexes are referencing
-		for (let index of indexes) {
+		for (const index of indexes) {
 			if (!Array.isArray(variable.value)) {
 				// If index is 0, keep same variable reference, even if it's not an array
 				if (index != 0) {
@@ -137,8 +137,8 @@ export default class VariableHolder {
 
 	// Get built in variable that is an array. Meant to be used by the code, doesn't do any checks.
 	getBuiltInArray(name, indexes) {
-		var variable = this.builtInList[name];
-		for (var index of indexes) {
+		let variable = this.builtInList[name];
+		for (const index of indexes) {
 			variable = variable.value[index];
 		}
 		return variable.value;
@@ -147,8 +147,8 @@ export default class VariableHolder {
 	// Set variable value. Use when you don't know what kinda variable it is (e.g. from GML).
 	async set(name, value, indexes, overrideReadOnly, callSet=true) {
 
-		var varInfo = this.getVariableInfo(name);
-		var builtIn;
+		let varInfo = this.getVariableInfo(name);
+		let builtIn;
 		let dimensions;
 
 		if (varInfo == null) {
@@ -195,12 +195,12 @@ export default class VariableHolder {
 		indexes = indexes || [];
 
 		// Get difference between dimensions of variable and amount of indexes
-		var difference = dimensions - indexes.length;
+		let difference = dimensions - indexes.length;
 
 		// If there are more dimensions than indexes specify
 		if (difference > 0) {
 			// Pad left indexes with 0s
-			var extra_indexes = new Array(difference).fill(0);
+			const extra_indexes = new Array(difference).fill(0);
 			indexes.unshift(...extra_indexes);
 		}
 
@@ -222,7 +222,7 @@ export default class VariableHolder {
 					indexes = new Array(dimensions).fill(0);
 				} else {
 					// Convert to higher dimension until there's no more difference.
-					for (var i=0; i<difference; ++i) {
+					for (let i=0; i<difference; ++i) {
 						// Move entire value (array or not) into index 0 of the new first dimension
 						varInfo.reference.dimensions++;
 						varInfo.reference.value = [ {value: varInfo.reference.value} ];
@@ -240,7 +240,7 @@ export default class VariableHolder {
 		let variable = varInfo.reference;
 
 		// Find part of array that indexes are referencing
-		for (var index of indexes) {
+		for (let index of indexes) {
 			if (!Array.isArray(variable.value)) {
 				if (builtIn) {
 					throw new Error("Built in is not an array. Did you forget to set the default properly?");
@@ -265,7 +265,7 @@ export default class VariableHolder {
 			variable = variable.value[index];
 		}
 
-		var previous = variable.value;
+		const previous = variable.value;
 
 		// Actually set variable
 		variable.value = value;
@@ -284,8 +284,8 @@ export default class VariableHolder {
 
 	// Get built in variable that is an array. Meant to be used by the code, doesn't do any checks or calls.
 	setBuiltInArray(name, indexes, value) {
-		var variable = this.builtInList[name];
-		for (var index of indexes) {
+		let variable = this.builtInList[name];
+		for (const index of indexes) {
 			variable = variable.value[index];
 		}
 		variable.value = value;
@@ -293,8 +293,8 @@ export default class VariableHolder {
 
 	// Same as setBuiltIn, but calls the set function.
 	setBuiltInCall(name, value) {
-		var variable = this.builtInList[name];
-		var previous = variable.value;
+		const variable = this.builtInList[name];
+		const previous = variable.value;
 
 		// Call built in set function
 		this.builtInClass[name].set.call(this.caller, value, previous);
@@ -304,12 +304,12 @@ export default class VariableHolder {
 
 	// Same as setBuiltInArray, but calls the set function.
 	setBuiltInArrayCall(name, indexes, value) {
-		var variable = this.builtInList[name];
-		for (var index of indexes) {
+		let variable = this.builtInList[name];
+		for (const index of indexes) {
 			variable = variable.value[index];
 		}
 
-		var previous = variable.value;
+		const previous = variable.value;
 		variable.value = value;
 
 		// Call built in set function
@@ -335,12 +335,12 @@ export default class VariableHolder {
 
 	// Save all information about a variable.
 	save(name) {
-		var varInfo = this.getVariableInfo(name);
+		const varInfo = this.getVariableInfo(name);
 		if (varInfo == null) {
 			throw new Error('wtf?');
 		}
 
-		var result = {};
+		const result = {};
 		result.dimensions = varInfo.reference.dimensions;
 		result.value = this.saveValue(varInfo.reference.value);
 		return result;
@@ -348,8 +348,8 @@ export default class VariableHolder {
 
 	// Load information saved by save().
 	load(name, saved) {
-		var list = this.customList;
-		var varInfo = this.getVariableInfo(name);
+		let list = this.customList;
+		const varInfo = this.getVariableInfo(name);
 		if (varInfo != null) {
 			list = varInfo.list;
 		}
@@ -375,8 +375,8 @@ export default class VariableHolder {
 
 	// Save a list.
 	saveList(list) {
-		var result = {};
-		for (var name of Object.keys(list)) {
+		const result = {};
+		for (const name of Object.keys(list)) {
 			result[name] = {}
 			result[name].dimensions = list[name].dimensions;
 			result[name].value = this.saveValue(list[name].value);

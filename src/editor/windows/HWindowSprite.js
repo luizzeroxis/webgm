@@ -16,12 +16,12 @@ export default class HWindowSprite extends HWindow {
 			parent( add( new HElement('div', {class: 'grid-resource resource-sprite'}) ) )
 				parent( add( new HElement('div') ) )
 
-					var paramName = sprite.name;
+					const paramName = sprite.name;
 					this.paramImages = sprite.images;
-					var paramOriginX = sprite.originx;
-					var paramOriginY = sprite.originy;
+					const paramOriginX = sprite.originx;
+					const paramOriginY = sprite.originy;
 
-					var inputName = add( new HTextInput('Name:', paramName) )
+					const inputName = add( new HTextInput('Name:', paramName) )
 
 					this.buttonLoadSprite = add( new HButton('Load Sprite', () => {
 
@@ -64,11 +64,11 @@ export default class HWindowSprite extends HWindow {
 
 						add( new HElement('legend', {}, 'Origin') )
 
-						var inputOriginX = add( new HNumberInput('X:', paramOriginX, 1, 0) )
-						var inputOriginY = add( new HNumberInput('Y:', paramOriginY, 1, 0) )
+						const inputOriginX = add( new HNumberInput('X:', paramOriginX, 1, 0) )
+						const inputOriginY = add( new HNumberInput('Y:', paramOriginY, 1, 0) )
 						
 						add( new HButton('Center', () => {
-							var w=16, h=16;
+							let w=16, h=16;
 							if (this.paramImages.length > 0) {
 								w = Math.floor(this.paramImages[0].image.width / 2);
 								h = Math.floor(this.paramImages[0].image.height / 2);
@@ -85,7 +85,7 @@ export default class HWindowSprite extends HWindow {
 					parent( add( new HElement('fieldset') ) )
 						add( new HElement('legend', {}, 'Collision Checking') )
 
-						var inputPreciseCollisionChecking = add( new HCheckBoxInput('Precise collision checking', (sprite.shape == 'precise')) )
+						const inputPreciseCollisionChecking = add( new HCheckBoxInput('Precise collision checking', (sprite.shape == 'precise')) )
 
 						endparent()
 					endparent()
@@ -119,9 +119,9 @@ export default class HWindowSprite extends HWindow {
 	loadSpriteFromFiles(files) {
 		this.buttonLoadSprite.setDisabled(true);
 
-		var images = [];
+		const images = [];
 
-		for (let file of files) {
+		for (const file of files) {
 			images.push(new AbstractImage(file));
 		}
 

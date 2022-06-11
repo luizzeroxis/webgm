@@ -185,16 +185,16 @@ export class Game {
 	startInput() {
 		// Keyboard
 		this.keyDownHandler = (e) => {
+			e.preventDefault();
 			this.key[e.which] = true;
 			this.keyPressed[e.which] = true;
-			e.preventDefault();
 		}
 		this.input.addEventListener('keydown', this.keyDownHandler);
 
 		this.keyUpHandler = (e) => {
+			e.preventDefault();
 			this.key[e.which] = false;
 			this.keyReleased[e.which] = true;
-			e.preventDefault();
 		}
 		this.input.addEventListener('keyup', this.keyUpHandler);
 
@@ -207,16 +207,16 @@ export class Game {
 		}
 
 		this.mouseDownHandler = (e) => {
+			e.preventDefault();
 			this.mouse[toEngineButton(e.button)] = true;
 			this.mousePressed[toEngineButton(e.button)] = true;
-			e.preventDefault();
 		}
 		this.input.addEventListener('mousedown', this.mouseDownHandler);
 
 		this.mouseUpHandler = (e) => {
+			e.preventDefault();
 			this.mouse[toEngineButton(e.button)] = false;
 			this.mouseReleased[toEngineButton(e.button)] = true;
-			e.preventDefault();
 		}
 		this.input.addEventListener('mouseup', this.mouseUpHandler);
 
@@ -231,8 +231,8 @@ export class Game {
 		this.input.addEventListener('mousemove', this.mouseMoveHandler);
 
 		this.wheelHandler = (e) => {
-			this.mouseWheel += e.deltaY;
 			e.preventDefault();
+			this.mouseWheel += e.deltaY;
 		}
 		this.input.addEventListener('wheel', this.wheelHandler);
 	}
@@ -792,6 +792,11 @@ export class Game {
 				};
 			}
 		}
+		if (this.project.globalGameSettings.ketF4SwitchesFullScreen) {
+			if (this.getKey(115, this.keyPressed)) {
+				this.setFullscreen(!this.getFullscreen());
+			}
+		}
 
 		// Reset keyboard/mouse states
 		this.clearIO();
@@ -1347,6 +1352,24 @@ export class Game {
 			}
 			value.audioNodes = [];
 		}
+	}
+
+	async setFullscreen(fullscreen) {
+		if (fullscreen) {
+			try {
+				await this.canvas.requestFullscreen();
+			} catch (e) {
+				console.log('window_set_fullscreen failed');
+			}
+		} else {
+			if (document.fullscreenElement) {
+				await document.exitFullscreen();
+			}
+		}
+	}
+
+	getFullscreen() {
+		return (document.fullscreenElement != null);
 	}
 
 	// Get state of a key. dict should be key, keyPressed or keyReleased.

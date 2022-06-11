@@ -28,6 +28,7 @@ export default class HWindowGlobalGameSettings extends HWindow {
 			parent( this.tabControl.addTab('Other') )
 
 				this.inputKeyEscEndsGame = add( new HCheckBoxInput('Let <Esc> end the game', globalGameSettings.keyEscEndsGame) )
+				this.inputKeyF4SwitchesFullscreen = add( new HCheckBoxInput('Let <F4> switch between screen modes', globalGameSettings.keyF4SwitchesFullscreen) )
 
 				endparent()
 
@@ -41,8 +42,6 @@ export default class HWindowGlobalGameSettings extends HWindow {
 
 				this.inputAuthor = add( new HTextInput('Author:', globalGameSettings.author) )
 				this.inputVersion = add( new HTextInput('Version:', globalGameSettings.version) )
-				// this.inputVersion = add( new HTextInput('Version:', globalGameSettings.version) )
-
 				this.inputInformation = add( new HMultilineTextInput('Information:', globalGameSettings.information) )
 
 				endparent()
@@ -52,6 +51,7 @@ export default class HWindowGlobalGameSettings extends HWindow {
 					globalGameSettings.colorOutsideRoom = this.inputColor.getValue();
 					globalGameSettings.displayCursor = this.inputDisplayCursor.getChecked();
 					globalGameSettings.keyEscEndsGame = this.inputKeyEscEndsGame.getChecked();
+					globalGameSettings.keyF4SwitchesFullscreen = this.inputKeyF4SwitchesFullscreen.getChecked();
 
 					globalGameSettings.author = this.inputAuthor.getValue();
 					globalGameSettings.version = this.inputVersion.getValue();

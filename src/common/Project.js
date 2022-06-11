@@ -1,7 +1,5 @@
 export class Project {
-
 	constructor(object) {
-
 		if (!object) {
 			this.resources = {};
 			this.counter = {};
@@ -34,7 +32,6 @@ export class Project {
 			this.extensionPackages = new ProjectExtensionPackages(object.extensionPackages);
 			this.lastId = object.lastId;
 		}
-
 	}
 
 	static getTypes() {
@@ -50,11 +47,9 @@ export class Project {
 			ProjectRoom
 		];
 	}
-
 }
 
 	export class ProjectSprite {
-
 		constructor(object) {
 			if (!object) {
 				this.id = null;
@@ -92,7 +87,6 @@ export class Project {
 		static getScreenName() { return 'Sprite'; }
 		static getScreenGroupName() { return 'Sprites'; }
 		static getClassName() { return 'ProjectSprite'; }
-
 	}
 
 	export class ProjectSound {
@@ -116,7 +110,6 @@ export class Project {
 	}
 
 	export class ProjectBackground {
-
 		constructor(object) {
 			if (!object) {
 				this.id = null;
@@ -152,7 +145,6 @@ export class Project {
 	}
 
 	export class ProjectPath {
-
 		constructor(object) {
 			if (!object) {
 				this.id = null;
@@ -171,13 +163,11 @@ export class Project {
 				this.closed = object.closed;
 				this.precision = object.precision;
 			}
-
 		}
 		static getName() { return 'path'; }
 		static getScreenName() { return 'Path'; }
 		static getScreenGroupName() { return 'Paths'; }
 		static getClassName() { return 'ProjectPath'; }
-
 	}
 
 		export class ProjectPathPoint {
@@ -560,7 +550,7 @@ export class ProjectGlobalGameSettings {
 
 			this.keyEscEndsGame = true;
 			this.keyF1ShowsGameInformation = true;
-			this.ketF4SwitchesFullScreen = true;
+			this.keyF4SwitchesFullscreen = true;
 			this.keyF5SavesF6Loads = true;
 			this.keyF9Screenshots = true;
 			this.versionMajor = 1;

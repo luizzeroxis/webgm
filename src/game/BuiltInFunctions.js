@@ -1841,13 +1841,13 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static window_set_fullscreen ([_]) {
-
+	static async window_set_fullscreen ([full]) {
+		full = forceBool(full);
+		await this.game.setFullscreen(full);
 		return 0;
 	}
-	static window_get_fullscreen ([_]) {
-
-		return 0;
+	static window_get_fullscreen ([]) {
+		return this.game.getFullscreen() ? 1 : 0;
 	}
 	static window_set_showborder ([_]) {
 

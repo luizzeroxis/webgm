@@ -508,7 +508,7 @@ export default class GML {
 		return {succeeded: false, matchResult: matchResult}; // TODO maybe not store this idk
 	}
 
-	async execute(ast, instance, other, args, argRelative=0) {
+	async execute(ast, instance, other, args=[], argRelative=false) {
 
 		var previousInstance = this.currentInstance;
 		var previousOther = this.currentOther;
@@ -520,16 +520,12 @@ export default class GML {
 		this.vars.clearAll();
 
 		// Save previous arguments
-		var savedArgs = this.game.globalVars.save('argument');
-		var savedArgRelative = this.game.globalVars.save('argument_relative');
+		let previousArguments = this.game.arguments;
+		let previousArgumentRelative = this.game.argumentRelative;
 
 		// Set new arguments
-		for (let i=0; i<16; i++) {
-			var value = 0;
-			if (Array.isArray(args) && args[i] != null) {value = args[i];}
-			this.game.globalVars.setBuiltInArrayCall('argument', [i], value); // This auto sets numbered arguments
-		}
-		this.game.globalVars.setBuiltIn('argument_relative', argRelative);
+		this.game.arguments = [...args]; // Copy just in case
+		this.game.argumentRelative = argRelative;
 
 		var result = 0;
 
@@ -552,14 +548,8 @@ export default class GML {
 			this.vars.loadAll(savedVars);
 
 			// Load previous arguments
-			this.game.globalVars.load('argument', savedArgs);
-
-			// Load numbered arguments from arguments array
-			for (let i=0; i<16; i++) {
-				this.game.globalVars.setBuiltIn('argument' + i.toString(), this.game.globalVars.getBuiltInArray('argument', [i]));
-			}
-
-			this.game.globalVars.load('argument_relative', savedArgRelative);
+			this.game.arguments = previousArguments;
+			this.game.argumentRelative = previousArgumentRelative;
 		}
 
 		return result;

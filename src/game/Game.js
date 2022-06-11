@@ -38,6 +38,9 @@ export class Game {
 
 		this.globalVars = null;
 		this.constants = null;
+		
+		this.arguments = [];
+		this.argumentRelative = false;
 
 		this.instances = [];
 		this.lastId = null;

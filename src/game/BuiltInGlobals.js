@@ -9,39 +9,38 @@ export default class BuiltInGlobals {
 
 	// GML Language Overview / Scripts
 
-	static argument = {default: ()=>new Array(16).fill(0), set (value, previous, indexes) {
-		while (indexes.length > 1 && indexes[0] == 0) {
-			indexes.shift();
+	static argument = {
+		direct: true, dimensions: 1,
+		directLength() {return 16;},
+		directGet(index) {
+			return this.arguments[index] != undefined ? this.arguments[index] : 0;
+		},
+		directSet(value, index) {
+			this.argument[index] = value;
+		},
+	}
+
+	static {
+		for (let i=0; i<16; ++i) {
+			this['argument' + i.toString()] = {
+				direct: true,
+				directGet() {
+					return this.arguments[i] != undefined ? this.arguments[i] : 0;
+				},
+				directSet(value) {
+					this.argument[i] = value;
+				},
+			};
 		}
-		if (indexes.length != 1) return;
+	}
 
-		this.globalVars.setBuiltIn('argument' + indexes[0].toString(), value);
-	}};
-
-	static argument0  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [0],  value) }};
-	static argument1  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [1],  value) }};
-	static argument2  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [2],  value) }};
-	static argument3  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [3],  value) }};
-	static argument4  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [4],  value) }};
-	static argument5  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [5],  value) }};
-	static argument6  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [6],  value) }};
-	static argument7  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [7],  value) }};
-	static argument8  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [8],  value) }};
-	static argument9  = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [9],  value) }};
-	static argument10 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [10], value) }};
-	static argument11 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [11], value) }};
-	static argument12 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [12], value) }};
-	static argument13 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [13], value) }};
-	static argument14 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [14], value) }};
-	static argument15 = {default: 0, set (value) { this.globalVars.setBuiltInArray('argument', [15], value) }};
-
-	static argument_relative = {default: 0, readOnly: true};
+	static argument_relative = {direct: true, readOnly: true,
+		directGet() {return this.argumentRelative;},
+	}
 
 	// Game play / Instances
 
-	static instance_count = {readOnly: true, direct: true, directGet() {
-		return this.instances.length;
-	}}
+	static instance_count = {readOnly: true, direct: true, directGet() {return this.instances.length;}};
 
 	static instance_id = {readOnly: true, direct: true, dimensions: 1,
 		directLength() {return this.instances.length},
@@ -197,41 +196,41 @@ export default class BuiltInGlobals {
 
 	static background_color = {type: 'integer', default: 12632256};
 	static background_showcolor = {type: 'bool', default: 1};
-	static background_visible = {type: 'bool', default: ()=>new Array(8).fill(0)};
-	static background_foreground = {type: 'bool', default: ()=>new Array(8).fill(0)};
-	static background_index = {type: 'integer', default: ()=>new Array(8).fill(-1)};
-	static background_x = {type: 'real', default: ()=>new Array(8).fill(0)};
-	static background_y = {type: 'real', default: ()=>new Array(8).fill(0)};
-	static background_width = {default: ()=>new Array(8).fill(0), readOnly: true};
-	static background_height = {default: ()=>new Array(8).fill(0), readOnly: true};
-	static background_htiled = {type: 'bool', default: ()=>new Array(8).fill(1)};
-	static background_vtiled = {type: 'bool', default: ()=>new Array(8).fill(1)};
-	static background_xscale = {type: 'real', default: ()=>new Array(8).fill(1)};
-	static background_yscale = {type: 'real', default: ()=>new Array(8).fill(1)};
-	static background_hspeed = {type: 'real', default: ()=>new Array(8).fill(0)};
-	static background_vspeed = {type: 'real', default: ()=>new Array(8).fill(0)};
-	static background_blend = {type: 'integer', default: ()=>new Array(8).fill(16777215)};
-	static background_alpha = {type: 'real', default: ()=>new Array(8).fill(1)}
+	static background_visible = {type: 'bool', dimensions: 1, default: ()=>new Array(8).fill(0)};
+	static background_foreground = {type: 'bool', dimensions: 1, default: ()=>new Array(8).fill(0)};
+	static background_index = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(-1)};
+	static background_x = {type: 'real', dimensions: 1, default: ()=>new Array(8).fill(0)};
+	static background_y = {type: 'real', dimensions: 1, default: ()=>new Array(8).fill(0)};
+	static background_width = {dimensions: 1, default: ()=>new Array(8).fill(0), readOnly: true};
+	static background_height = {dimensions: 1, default: ()=>new Array(8).fill(0), readOnly: true};
+	static background_htiled = {type: 'bool', dimensions: 1, default: ()=>new Array(8).fill(1)};
+	static background_vtiled = {type: 'bool', dimensions: 1, default: ()=>new Array(8).fill(1)};
+	static background_xscale = {type: 'real', dimensions: 1, default: ()=>new Array(8).fill(1)};
+	static background_yscale = {type: 'real', dimensions: 1, default: ()=>new Array(8).fill(1)};
+	static background_hspeed = {type: 'real', dimensions: 1, default: ()=>new Array(8).fill(0)};
+	static background_vspeed = {type: 'real', dimensions: 1, default: ()=>new Array(8).fill(0)};
+	static background_blend = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(16777215)};
+	static background_alpha = {type: 'real', dimensions: 1, default: ()=>new Array(8).fill(1)}
 
 	// Game Graphics / Views
 
 	static view_enabled = {type: 'bool', default: 0};
 	static view_current = {default: 0, readOnly: true};
-	static view_visible = {type: 'bool', default: ()=>new Array(8).fill(0)};
-	static view_xview = {type: 'integer', default: ()=>new Array(8).fill(0)};
-	static view_yview = {type: 'integer', default: ()=>new Array(8).fill(0)};
-	static view_wview = {type: 'integer', default: ()=>new Array(8).fill(640)};
-	static view_hview = {type: 'integer', default: ()=>new Array(8).fill(480)};
-	static view_xport = {type: 'integer', default: ()=>new Array(8).fill(0)};
-	static view_yport = {type: 'integer', default: ()=>new Array(8).fill(0)};
-	static view_wport = {type: 'integer', default: ()=>new Array(8).fill(640)};
-	static view_hport = {type: 'integer', default: ()=>new Array(8).fill(480)};
-	static view_angle = {type: 'real', default: ()=>new Array(8).fill(0)};
-	static view_hborder = {type: 'integer', default: ()=>new Array(8).fill(32)};
-	static view_vborder = {type: 'integer', default: ()=>new Array(8).fill(32)};
-	static view_hspeed = {type: 'integer', default: ()=>new Array(8).fill(-1)};
-	static view_vspeed = {type: 'integer', default: ()=>new Array(8).fill(-1)};
-	static view_object = {type: 'integer', default: ()=>new Array(8).fill(-1)};
+	static view_visible = {type: 'bool', dimensions: 1, default: ()=>new Array(8).fill(0)};
+	static view_xview = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(0)};
+	static view_yview = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(0)};
+	static view_wview = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(640)};
+	static view_hview = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(480)};
+	static view_xport = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(0)};
+	static view_yport = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(0)};
+	static view_wport = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(640)};
+	static view_hport = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(480)};
+	static view_angle = {type: 'real', dimensions: 1, default: ()=>new Array(8).fill(0)};
+	static view_hborder = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(32)};
+	static view_vborder = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(32)};
+	static view_hspeed = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(-1)};
+	static view_vspeed = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(-1)};
+	static view_object = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(-1)};
 
 	// Files, registry, and executing programs / Files
 

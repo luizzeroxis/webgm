@@ -34,7 +34,7 @@ export default class BuiltInGlobals {
 		}
 	}
 
-	static argument_relative = {direct: true, readOnly: true,
+	static argument_relative = {readOnly: true, direct: true,
 		directGet() {return this.argumentRelative;},
 	}
 
@@ -49,17 +49,21 @@ export default class BuiltInGlobals {
 
 	// Game play / Timing
 
-	static room_speed = {type: 'integer', default: 30, set (value) {
-		if (value <= 0) {
-			// TODO So, in GM you get 2 errors right after another. I have no idea how to replicate this.
-			throw new NonFatalErrorException({
-					type: 'trying_to_set_the_room_speed_to_a_value_less_or_equal_than_0',
-					text: '\n___________________________________________\n'
-						+ 'Trying to set the room speed to a value <= 0. (' + value.toString() + ')\n'
-				},
-			);
-		}
-	}};
+	static room_speed = {direct: true, type: 'integer',
+		directGet() {return this.room.speed;},
+		directSet(value) {
+			if (value <= 0) {
+				// TODO So, in GM you get 2 errors right after another. I have no idea how to replicate this.
+				throw new NonFatalErrorException({
+						type: 'trying_to_set_the_room_speed_to_a_value_less_or_equal_than_0',
+						text: '\n___________________________________________\n'
+							+ 'Trying to set the room speed to a value <= 0. (' + value.toString() + ')\n'
+					},
+				);
+			}
+			this.room.speed = value;
+		},
+	};
 
 	static fps = {readOnly: true, direct: true, directGet() {
 		return this.fps;
@@ -92,9 +96,13 @@ export default class BuiltInGlobals {
 
 	// Game play / Rooms
 	
-	static room = {type: 'integer', default: 0, set (value) {
-		BuiltInFunctions.room_goto.call(this.gml, [value]);
-	}};
+	static room = {direct: true, type: 'integer', 
+		directGet() {return this.room.resource.id;},
+		directSet(value) {
+			// TODO check if room value is changed immediately or only after room change
+			BuiltInFunctions.room_goto.call(this.gml, [value]);
+		},
+	};
 
 	static room_first = {readOnly: true, direct: true, directGet() {
 		return this.project.resources.ProjectRoom[0].id;

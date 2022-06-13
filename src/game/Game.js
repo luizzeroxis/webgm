@@ -526,7 +526,7 @@ export class Game {
 			// Run main loop again, after a frame of time has passed.
 			// This means the game will slow down if a loop takes too much time.
 			
-			const timeoutStepMinTime = 1000 / this.globalVars.getBuiltIn('room_speed');
+			const timeoutStepMinTime = 1000 / this.room.speed;
 
 			const timeoutStepEnd = performance.now();
 
@@ -814,8 +814,10 @@ export class Game {
 		// Currently there are no views. But the following should happen for every view.
 
 		// Draw background color
-		this.ctx.fillStyle = this.room.backgroundColor;
-		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		if (this.room.backgroundShowColor) {
+			this.ctx.fillStyle = this.room.backgroundColor;
+			this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		}
 		// this.ctx.fillStyle = "black";
 
 		// Draw background backgrounds
@@ -871,7 +873,7 @@ export class Game {
 	}
 
 	drawRoomBackground(roomBackground) {
-		if (!roomBackground.visibleAtStart) return false;
+		if (!roomBackground.visible) return false;
 
 		const background = this.getResourceById('ProjectBackground', roomBackground.backgroundIndex);
 		if (!background) return false;
@@ -1092,15 +1094,36 @@ export class Game {
 			this.instances = this.instances.filter(instance => instance.exists && instance.vars.getBuiltIn('persistent'))
 		}
 
-		this.room = room;
+		this.room = {
+			resource: room,
+			width: room.width,
+			height: room.height,
+			caption: room.caption,
+			speed: room.speed,
+			persistent: room.persistent,
+			backgroundShowColor: room.drawBackgroundColor,
+			backgroundColor: room.backgroundColor,
+			viewsEnabled: room.enableViews,
+			
+			backgrounds: room.backgrounds.map(background => ({
+				visible: background.visibleAtStart,
+				isForeground: background.isForeground,
+				backgroundIndex: background.backgroundIndex,
+				tileHorizontally: background.tileHorizontally,
+				tileVertically: background.tileVertically,
+				x: background.x,
+				y: background.y,
+				stretch: background.stretch,
+				horizontalSpeed: background.horizontalSpeed,
+				verticalSpeed: background.verticalSpeed,
+			})),
+
+			// tiles
+			// views
+		};
 
 		this.canvas.width = room.width;
 		this.canvas.height = room.height;
-
-		this.globalVars.setBuiltIn('room', room.id);
-		this.globalVars.setBuiltIn('room_speed', room.speed);
-
-		// TODO set background and views variables
 
 		this.clearIO();
 

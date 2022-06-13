@@ -789,10 +789,10 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static room_goto_previous ([]) {
-		return BuiltInFunctions.room_goto.call(this, [BuiltInFunctions.room_previous.call(this, [this.game.room.id])]);
+		return BuiltInFunctions.room_goto.call(this, [BuiltInFunctions.room_previous.call(this, [this.game.room.resource.id])]);
 	}
 	static room_goto_next ([]) {
-		return BuiltInFunctions.room_goto.call(this, [BuiltInFunctions.room_next.call(this, [this.game.room.id])]);
+		return BuiltInFunctions.room_goto.call(this, [BuiltInFunctions.room_next.call(this, [this.game.room.resource.id])]);
 	}
 	static room_previous ([numb]) {
 		const index = this.game.project.resources.ProjectRoom.findIndex(x => x.id == numb);
@@ -809,7 +809,7 @@ export default class BuiltInFunctions {
 		return this.game.project.resources.ProjectRoom[index+1].id;
 	}
 	static room_restart ([]) {
-		return BuiltInFunctions.room_goto.call(this, [this.game.room.id]);
+		return BuiltInFunctions.room_goto.call(this, [this.game.room.resource.id]);
 	}
 	static game_end ([]) {
 		this.game.stepStopAction = async () => {
@@ -5029,10 +5029,10 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 	static action_if_previous_room ([]) {
-		return (BuiltInFunctions.room_previous.call(this, [this.game.room.id]) != -1) ? 1 : 0;
+		return (BuiltInFunctions.room_previous.call(this, [this.game.room.resource.id]) != -1) ? 1 : 0;
 	}
 	static action_if_next_room ([]) {
-		return (BuiltInFunctions.room_next.call(this, [this.game.room.id]) != -1) ? 1 : 0;
+		return (BuiltInFunctions.room_next.call(this, [this.game.room.resource.id]) != -1) ? 1 : 0;
 	}
 
 	// ## main2

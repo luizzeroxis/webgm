@@ -40,7 +40,9 @@ export default class BuiltInGlobals {
 
 	// Game play / Instances
 
-	static instance_count = {readOnly: true, direct: true, directGet() {return this.instances.length;}};
+	static instance_count = {readOnly: true, direct: true,
+		directGet() {return this.instances.length;}
+	};
 
 	static instance_id = {readOnly: true, direct: true, dimensions: 1,
 		directLength() {return this.instances.length},
@@ -65,9 +67,9 @@ export default class BuiltInGlobals {
 		},
 	};
 
-	static fps = {readOnly: true, direct: true, directGet() {
-		return this.fps;
-	}};
+	static fps = {readOnly: true, direct: true,
+		directGet() {return this.fps;}
+	};
 
 	static current_time = {readOnly: true, direct: true, directGet() {
 		return Math.floor(performance.now());
@@ -117,8 +119,15 @@ export default class BuiltInGlobals {
 		return this.room.height;
 	}};
 	
-	static room_caption = {type: 'string', default: ""};
-	static room_persistent = {type: 'bool', default: 0};
+	static room_caption = {direct: true, type: 'string',
+		directGet() {return this.room.caption;},
+		directSet(value) {this.room.caption = value;},
+	};
+	static room_persistent = {direct: true, type: 'bool',
+		directGet() {return this.room.persistent;},
+		directSet(value) {this.room.persistent = value;},
+	};
+
 	static transition_kind = {type: 'integer', default: 0};
 
 	static transition_steps = {type: 'integer', default: 80, set (value) {
@@ -202,8 +211,15 @@ export default class BuiltInGlobals {
 
 	// Game Graphics / Backgrounds
 
-	static background_color = {type: 'integer', default: 12632256};
-	static background_showcolor = {type: 'bool', default: 1};
+	static background_color = {direct: true, type: 'integer',
+		directGet() {return this.room.backgroundColor;},
+		directSet(value) {this.room.backgroundColor = value;},
+	};
+	static background_showcolor = {direct: true, type: 'bool',
+		directGet() {return this.room.backgroundShowColor;},
+		directSet(value) {this.room.backgroundShowColor = value;},
+	};
+	
 	static background_visible = {type: 'bool', dimensions: 1, default: ()=>new Array(8).fill(0)};
 	static background_foreground = {type: 'bool', dimensions: 1, default: ()=>new Array(8).fill(0)};
 	static background_index = {type: 'integer', dimensions: 1, default: ()=>new Array(8).fill(-1)};

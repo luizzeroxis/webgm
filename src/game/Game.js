@@ -795,11 +795,33 @@ export class Game {
 				};
 			}
 		}
-		if (this.project.globalGameSettings.ketF4SwitchesFullScreen) {
+		// if (this.project.globalGameSettings.keyF1ShowsGameInformation) {
+		// 	if (this.getKey(112, this.keyPressed)) {
+		// 		// this.showGameInformation();
+		// 		// console.log('f1 pressed');
+		// 	}
+		// }
+		if (this.project.globalGameSettings.keyF4SwitchesFullscreen) {
 			if (this.getKey(115, this.keyPressed)) {
 				this.setFullscreen(!this.getFullscreen());
 			}
 		}
+		// if (this.project.globalGameSettings.keyF5SavesF6Loads) {
+		// 	if (this.getKey(116, this.keyPressed)) {
+		// 		// this.saveGame();
+		// 		// console.log('f5 pressed');
+		// 	}
+		// 	if (this.getKey(117, this.keyPressed)) {
+		// 		// this.loadGame();
+		// 		// console.log('f6 pressed');
+		// 	}
+		// }
+		// if (this.project.globalGameSettings.keyF9Screenshots) {
+		// 	if (this.getKey(120, this.keyPressed)) {
+		// 		// this.screenshotGame();
+		// 		// console.log('f9 pressed');
+		// 	}
+		// }
 
 		// Reset keyboard/mouse states
 		this.clearIO();

@@ -608,20 +608,21 @@ export default class GML {
 
 				if (instances == null) {
 					throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
+				}
 
-				} else if (instances == "global") {
+				if (instances == "global") {
 					// TODO: "global." vars should be in this.game.globalVars.
 					// There is a list that contains all "global." vars that have been "globalvar"'d.
 					// This would be checked when getting/setting vars with a dot and when "globalvar" declarations are called.
 					throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
-
-				} else {
-					if (instances.length > 0) {
-						if (instances[0].vars.exists(varInfo.name))
-							return instances[0].vars.get(varInfo.name, varInfo.indexes);
-					}
-					throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
 				}
+
+				if (instances.length > 0) {
+					if (instances[0].vars.exists(varInfo.name))
+						return instances[0].vars.get(varInfo.name, varInfo.indexes);
+				}
+
+				throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
 			}
 
 		} catch (e) {
@@ -630,9 +631,8 @@ export default class GML {
 					case 'index_not_in_bounds':
 						throw this.makeErrorInGMLNode("Unknown variable "+varInfo.name+" or array index out of bounds (it's out of bounds.)", node);
 				}
-			} else {
-				throw e;
 			}
+			throw e;
 		}
 
 	}
@@ -651,26 +651,28 @@ export default class GML {
 					return await this.game.globalVars.set(varInfo.name, value, varInfo.indexes);
 
 				await this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
+				return null;
 
 			} else {
 
 				const instances = this.objectReferenceToInstances(varInfo.object);
+
 				if (instances === null) {
 					throw this.makeErrorInGMLNode("Cannot assign to the variable", node);
+				}
 
-				} else if (instances == "global") {
+				if (instances == "global") {
 					// TODO: "global." vars should be in this.game.globalVars.
 					// There is a list that contains all "global." vars that have been "globalvar"'d.
 					// This would be checked when getting/setting vars with a dot and when "globalvar" declarations are called.
 					throw this.makeErrorInGMLNode("Cannot assign to the variable", node);
-
-				} else {
-					for (const instance of instances) {
-						await instance.vars.set(varInfo.name, value, varInfo.indexes);
-					}
-
 				}
 
+				for (const instance of instances) {
+					await instance.vars.set(varInfo.name, value, varInfo.indexes);
+				}
+
+				return null;
 			}
 
 		} catch (e) {
@@ -679,9 +681,8 @@ export default class GML {
 					case 'read_only':
 						throw this.makeErrorInGMLNode("Cannot assign to the variable ("+varInfo.name+" is read only)", node);
 				}
-			} else {
-				throw e;
 			}
+			throw e;
 		}
 
 	}

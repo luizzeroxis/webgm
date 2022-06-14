@@ -234,7 +234,8 @@ export default class VariableHolder {
 		// Check direct built ins, where data ins't store here, we use a function to set that data to elsewhere
 		if (builtIn && builtIn.direct) {
 			// TODO check some lengths and all
-			return builtIn.directSet.call(this.caller, value, ...indexes);
+			builtIn.directSet.call(this.caller, value, ...indexes);
+			return;
 		}
 
 		let variable = varInfo.reference;
@@ -272,7 +273,7 @@ export default class VariableHolder {
 
 		// Call built in set function
 		if (builtIn && callSet && this.caller != null && builtIn.set) {
-			await builtIn.set.call(this.caller, value, previous, indexes | []);
+			await builtIn.set.call(this.caller, value, previous, indexes || []);
 		}
 
 	}

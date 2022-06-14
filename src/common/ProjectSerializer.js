@@ -38,7 +38,7 @@ export default class ProjectSerializer {
 
 		ProjectSerializer.initClasses();
 
-		const json = JSON.stringify(project, function(key, value) {
+		const json = JSON.stringify(project, (key, value) => {
 
 			if (value != null) {
 				const name = Object.keys(ProjectSerializer.classes).find(x => ProjectSerializer.classes[x] == value.constructor);
@@ -114,7 +114,7 @@ export default class ProjectSerializer {
 				ProjectSerializer.initClasses();
 
 				try {
-					project = JSON.parse(json, function(key, value) {
+					project = JSON.parse(json, (key, value) => {
 						if (value != null && value.$class) {
 							let obj = new (ProjectSerializer.classes[value.$class])();
 							obj = Object.assign(obj, value);
@@ -177,6 +177,7 @@ export default class ProjectSerializer {
 				});
 			}
 
+			return null;
 		})
 
 	}

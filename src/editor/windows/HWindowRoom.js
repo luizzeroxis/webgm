@@ -384,7 +384,7 @@ export default class HWindowRoom extends HWindow {
 	}
 
 	addInstance(e) {
-		if (this.selectObject.getValue() == -1) return;
+		if (this.selectObject.getValue() == -1) return null;
 
 		const i = new ProjectInstance();
 		i.x = this.currentPos.x;

@@ -104,6 +104,8 @@ export default class ActionsParser {
 				}
 
 		}
+
+		throw new Error("Unknown action.typeKind "+action.typeKind.toString());
 	}
 
 	// This parses a block but not the begin action

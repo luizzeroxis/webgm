@@ -203,7 +203,7 @@ export class Game {
 
 		// Mouse
 
-		const toEngineButton = button => {
+		function toEngineButton(button) {
 			return button == 1 ? 3 // middle button
 				: button == 2 ? 2 // right button
 				: button + 1; // every other button
@@ -974,7 +974,7 @@ export class Game {
 	// Execute a node of the parsed actions tree.
 	async doTreeAction(treeAction) {
 
-		if (treeAction == null) return;
+		if (treeAction == null) return null;
 
 		this.currentEventActionNumber = treeAction.actionNumber;
 
@@ -1062,6 +1062,8 @@ export class Game {
 				}
 				break;
 		}
+
+		return null;
 	}
 
 	// Interpret a action argument to it's final value.
@@ -1269,6 +1271,8 @@ export class Game {
 				return collision.func(instance, point);
 			}
 		}
+
+		return false;
 	}
 
 	// Check if two instances, with precise shape, are colliding.
@@ -1327,6 +1331,8 @@ export class Game {
 				return true;
 			}
 		}
+
+		return false;
 	}
 
 	// Check if two instances, with rectangular shape, are colliding.

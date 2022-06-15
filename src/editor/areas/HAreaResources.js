@@ -22,21 +22,25 @@ export default class HAreaResources extends HElement {
 				Project.getTypes().forEach(type => {
 
 					parent( add( new HElement('li') ) )
-						// add( new HImage(FolderIcon, 'icon') );
-						add( new HElement('span', {}, type.getScreenGroupName()) )
-						add( new HButton('Create', () => {
-							this.editor.createResource(type);
-						}, 'right'))
+
+						parent( add( new HElement('div', {class: 'item'}) ) )
+							// add( new HImage(FolderIcon, 'icon') );
+							add( new HElement('div', {class: 'name'}, type.getScreenGroupName()) )
+							add( new HButton('Create', () => {
+								this.editor.createResource(type);
+							}))
+							endparent()
+
 						this.resourceTypes[type.name] = add ( new HElement('ul', {class: "resource"}) )
 						endparent()
 
 				})
 
 				parent( add( new HElement('li') ) );
-					add( new HImage(GameInformationIcon, 'icon') );
-					add( new HElement('span', {class: 'name'}, 'Game Information') )
 
-					parent( add( new HElement('div', {class: 'right'}) ) )
+					parent( add( new HElement('div', {class: 'item'}) ) )
+						add( new HImage(GameInformationIcon, 'icon') );
+						add( new HElement('div', {class: 'name'}, 'Game Information') )
 						add( new HButton('Edit', () => this.editor.windowsArea.open(HWindowGameInformation,
 							'game-information', this.editor.project.gameInformation)) )
 						endparent();
@@ -44,26 +48,22 @@ export default class HAreaResources extends HElement {
 					endparent();
 
 				parent( add( new HElement('li') ) );
-					add( new HImage(GameSettingsIcon, 'icon') );
-					add( new HElement('span', {class: 'name'}, 'Global Game Settings') )
-
-					parent( add( new HElement('div', {class: 'right'}) ) )
+					parent( add( new HElement('div', {class: 'item'}) ) )
+						add( new HImage(GameSettingsIcon, 'icon') );
+						add( new HElement('div', {class: 'name'}, 'Global Game Settings') )
 						add( new HButton('Edit', () => this.editor.windowsArea.open(HWindowGlobalGameSettings,
 							'global-game-settings', this.editor.project.globalGameSettings )) )
-						endparent();
+						endparent()
 
 					endparent();
 
 				// parent( add( new HElement('li') ) );
-				// 	add( new HImage(ExtensionPackagesIcon, 'icon') );
-				// 	add( new HElement('span', {class: 'name'}, 'Extension packages') )
-
-				// 	parent( add( new HElement('div', {class: 'right'}) ) )
+				// 	parent( add( new HElement('div', {class: 'item'}) ) )
+				// 		add( new HImage(ExtensionPackagesIcon, 'icon') );
+				// 		add( new HElement('div', {class: 'name'}, 'Extension packages') )
 				// 		add( new HButton('Edit', () => this.editor.openWindow(HWindowExtensionPackages,
 				// 			'extension-packages', this.editor.project.extensionPackages)) )
 				// 		endparent();
-
-				// 	endparent();
 
 				endparent()
 

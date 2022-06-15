@@ -11,8 +11,8 @@ export default class HWindow extends HElement {
 		parent(this)
 
 			parent( add( new HElement('div', {class: 'titlebar'}) ) )
-				this.title = add( new HElement('span') )
-				this.closeButton = add( new HButton('Close', () => this.close(), 'closebutton right') );
+				this.title = add( new HElement('div', {class: 'title'}) )
+				this.closeButton = add( new HButton('Close', () => this.close(), 'close') );
 				endparent()
 
 			this.client = add( new HElement('div', {class: 'client'}) )

@@ -15,16 +15,16 @@ export default class HResourceListItem extends HElement {
 
 		parent(this)
 
-			this.htmlIcon = add( new HImage(null, 'icon') );
-			this.htmlIcon.html.width = 16;
-			this.htmlIcon.html.height = 16;
+			parent( add( new HElement('div', {class: 'item'}) ) )
 
-			this.updateIcon();
-			
-			this.htmlName = add( new HElement('span', {class: 'name'}) )
-			this.htmlName.html.textContent = this.resource.name;
+				this.htmlIcon = add( new HImage(null, 'icon') );
+				this.htmlIcon.html.width = 16;
+				this.htmlIcon.html.height = 16;
 
-			parent( add( new HElement('div', {class: 'right'}) ) )
+				this.updateIcon();
+				
+				this.htmlName = add( new HElement('div', {class: 'name'}) )
+				this.htmlName.html.textContent = this.resource.name;
 
 				this.htmlEditButton = add( new HButton('Edit', () => this.properties()) )
 				this.htmlDeleteButton = add( new HButton('Delete', () => this.delete()) )

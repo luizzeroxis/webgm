@@ -107,21 +107,23 @@ body, button, input {
 	width: 8px;
 }
 
-.resources > ul > li {
-	padding-top: 4px;
-}
-
 .resources ul {
 	padding: 0;
 	list-style: none;
-
 }
-.resources li ul {
+
+.resources ul > li > .item {
+	display: flex;
+	align-items: center;
+	padding-bottom: 4px;
+}
+
+.resources ul > li > .item > .name {
+	flex: 1;
+}
+
+.resources li > ul {
 	padding-left: 1em;
-}
-
-.resources li {
-	clear: both;
 }
 
 .windows {
@@ -133,12 +135,17 @@ body, button, input {
 }
 
 .titlebar {
+	display: flex;
 	background-color: var(--titlebar-background);
-	overflow: auto;
+	align-items: center;
 }
 
-.right {
-	float: right;
+.titlebar .title {
+	flex: 1;
+}
+
+.titlebar .close {
+	align-self: flex-start;
 }
 
 .client {

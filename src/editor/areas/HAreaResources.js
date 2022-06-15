@@ -1,6 +1,7 @@
 import {parent, endparent, add, remove, HElement, HButton, HImage} from '../../common/H.js'
 import {Project} from '../../common/Project.js';
 import HResourceListItem from '../HResourceListItem.js';
+import FolderIcon from '../img/folder-icon.png';
 import GameInformationIcon from '../img/game-information-icon.png';
 import GameSettingsIcon from '../img/global-game-settings-icon.png';
 import HWindowGameInformation from '../windows/HWindowGameInformation.js';
@@ -24,7 +25,7 @@ export default class HAreaResources extends HElement {
 					parent( add( new HElement('li') ) )
 
 						parent( add( new HElement('div', {class: 'item'}) ) )
-							// add( new HImage(FolderIcon, 'icon') );
+							add( new HImage(FolderIcon, 'icon') );
 							add( new HElement('div', {class: 'name'}, type.getScreenGroupName()) )
 							add( new HButton('Create', () => {
 								this.editor.createResource(type);

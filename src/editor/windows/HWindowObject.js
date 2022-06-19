@@ -6,12 +6,12 @@ import {
 } from '../../common/Project.js';
 import HResourceSelect from '../HResourceSelect.js';
 import HTabControl from '../HTabControl.js';
-import HWindow from '../HWindow.js';
+import HPropertiesWindow from '../HPropertiesWindow.js';
 
 import HWindowAction from './HWindowAction.js';
 import HWindowCode from './HWindowCode.js';
 
-export default class HWindowObject extends HWindow {
+export default class HWindowObject extends HPropertiesWindow {
 
 	static actionArgResourceTypes = {
 		'sprite': ProjectSprite,
@@ -25,12 +25,12 @@ export default class HWindowObject extends HWindow {
 		'timeline': ProjectTimeline,
 	};
 
-	constructor(editor, id, object) {
-		super(editor, id);
+	constructor(manager, id, editor) {
+		super(manager, id, editor);
 
-		this.object = object;
+		this.object = id;
 
-		this.title.html.textContent = 'Edit Object '+object.name;
+		this.title.html.textContent = 'Edit Object '+this.object.name;
 		this.htmlActionWindows = [];
 
 		// Create paramEvents as copy
@@ -41,15 +41,15 @@ export default class HWindowObject extends HWindow {
 
 				parent( add( new HElement('div') ) ) // Properties area
 
-					const inputName = add( new HTextInput('Name:', object.name) )
+					const inputName = add( new HTextInput('Name:', this.object.name) )
 
 					this.selectSprite = add( new HResourceSelect(this.editor, 'Sprite:', ProjectSprite) )
-					this.selectSprite.setValue(object.sprite_index);
+					this.selectSprite.setValue(this.object.sprite_index);
 
-					const inputVisible = add( new HCheckBoxInput('Visible', object.visible) )
-					const inputSolid = add( new HCheckBoxInput('Solid', object.solid) )
-					const inputDepth = add( new HNumberInput('Depth:', object.depth, 1) )
-					const inputPersistent = add( new HCheckBoxInput('Persistent', object.persistent) )
+					const inputVisible = add( new HCheckBoxInput('Visible', this.object.visible) )
+					const inputSolid = add( new HCheckBoxInput('Solid', this.object.solid) )
+					const inputDepth = add( new HNumberInput('Depth:', this.object.depth, 1) )
+					const inputPersistent = add( new HCheckBoxInput('Persistent', this.object.persistent) )
 
 					endparent()
 
@@ -355,17 +355,17 @@ export default class HWindowObject extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(object, inputName.getValue());
-					this.editor.changeObjectSprite(object, this.selectSprite.getValue());
-					object.visible = inputVisible.getChecked();
-					object.solid = inputSolid.getChecked();
-					object.depth = parseInt(inputDepth.getValue());
-					object.persistent = inputPersistent.getChecked();
+					this.editor.changeResourceName(this.object, inputName.getValue());
+					this.editor.changeObjectSprite(this.object, this.selectSprite.getValue());
+					this.object.visible = inputVisible.getChecked();
+					this.object.solid = inputSolid.getChecked();
+					this.object.depth = parseInt(inputDepth.getValue());
+					this.object.persistent = inputPersistent.getChecked();
 					this.htmlActionWindows.forEach(w => {
 						w.apply();
 					})
 
-					object.events = this.paramEvents;
+					this.object.events = this.paramEvents;
 
 					// Make sure that paramEvents is a copy
 					this.copyProperties();
@@ -637,7 +637,7 @@ export default class HWindowObject extends HWindow {
 		const actionTypeInfoItem = actionTypeInfo.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind);
 
 		if (actionTypeInfoItem.htmlclass) {
-			const w = this.editor.windowsArea.open(actionTypeInfoItem.htmlclass, action, action, this);
+			const w = this.editor.windowsArea.open(actionTypeInfoItem.htmlclass, action, this);
 			if (w) {
 				this.htmlActionWindows.push(w);
 			}

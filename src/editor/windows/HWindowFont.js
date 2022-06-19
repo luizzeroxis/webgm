@@ -1,24 +1,24 @@
 import {parent, endparent, add, HElement, HTextInput, HNumberInput, HCheckBoxInput} from '../../common/H.js'
-import HWindow from '../HWindow.js';
+import HPropertiesWindow from '../HPropertiesWindow.js';
 
-export default class HWindowFont extends HWindow {
+export default class HWindowFont extends HPropertiesWindow {
 
-	constructor(editor, id, font) {
-		super(editor, id);
+	constructor(manager, id, editor) {
+		super(manager, id, editor);
 
-		this.font = font;
+		this.font = id;
 
-		this.title.html.textContent = 'Edit Font '+font.name;
+		this.title.html.textContent = 'Edit Font '+this.font.name;
 
 		parent(this.client)
 			parent( add( new HElement('div', {class: 'grid-resource resource-font'}) ) )
 				parent( add( new HElement('div') ) )
 
-					this.inputName = add( new HTextInput('Name:', font.name) )
-					this.inputFont = add( new HTextInput('Font:', font.font) )
-					this.inputSize = add( new HNumberInput('Size', font.size, 1, 1) )
-					this.inputBold = add( new HCheckBoxInput('Bold', font.bold) )
-					this.inputItalic = add( new HCheckBoxInput('Italic', font.italic) )
+					this.inputName = add( new HTextInput('Name:', this.font.name) )
+					this.inputFont = add( new HTextInput('Font:', this.font.font) )
+					this.inputSize = add( new HNumberInput('Size', this.font.size, 1, 1) )
+					this.inputBold = add( new HCheckBoxInput('Bold', this.font.bold) )
+					this.inputItalic = add( new HCheckBoxInput('Italic', this.font.italic) )
 
 					this.divPreview = add( new HElement('div', {class: 'preview'}, 'AaBbCcDd') );
 					this.inputFont.input.html.oninput = () => this.updatePreview();
@@ -33,11 +33,11 @@ export default class HWindowFont extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(font, this.inputName.getValue());
-					font.font = this.inputFont.getValue();
-					font.size = parseInt(this.inputSize.getValue());
-					font.bold = this.inputBold.getChecked();
-					font.italic = this.inputItalic.getChecked();
+					this.editor.changeResourceName(this.font, this.inputName.getValue());
+					this.font.font = this.inputFont.getValue();
+					this.font.size = parseInt(this.inputSize.getValue());
+					this.font.bold = this.inputBold.getChecked();
+					this.font.italic = this.inputItalic.getChecked();
 					// changes here
 				},
 				() => this.close()

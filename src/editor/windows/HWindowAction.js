@@ -2,17 +2,17 @@ import {parent, endparent, add, HElement, HTextInput, HColorInput, HCheckBoxInpu
 import {ProjectObject} from '../../common/Project.js';
 import {parseArrowString, stringifyArrowValues, decimalColorToHexColor, hexColorToDecimalColor} from '../../common/tools.js'
 import HResourceSelect from '../HResourceSelect.js';
-import HWindow from '../HWindow.js';
+import HPropertiesWindow from '../HPropertiesWindow.js';
 
-export default class HWindowAction extends HWindow {
+export default class HWindowAction extends HPropertiesWindow {
 
-	constructor(editor, id, action, object) {
-		super(editor, id);
+	constructor(manager, id, editor, object) {
+		super(manager, id, editor);
 
-		this.action = action;
+		this.action = id;
 		this.object = object;
 
-		this.actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
+		this.actionType = this.editor.getActionType(this.action.typeLibrary, this.action.typeId);
 
 		this.title.html.textContent = this.actionType.description;
 
@@ -34,14 +34,14 @@ export default class HWindowAction extends HWindow {
 
 					const appliesToGroup = '_radio_'+uniqueID();
 
-					this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, 'Self', (action.appliesTo == -1)) );
-					this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, 'Other', (action.appliesTo == -2)) );
-					this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, 'Object:', (action.appliesTo >= 0)) );
+					this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, 'Self', (this.action.appliesTo == -1)) );
+					this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, 'Other', (this.action.appliesTo == -2)) );
+					this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, 'Object:', (this.action.appliesTo >= 0)) );
 
 					this.selectObject = add( new HResourceSelect(this.editor, null, ProjectObject) )
 
-					if (action.appliesTo >= 0)
-						this.selectObject.setValue(action.appliesTo);
+					if (this.action.appliesTo >= 0)
+						this.selectObject.setValue(this.action.appliesTo);
 
 					endparent()
 
@@ -61,22 +61,22 @@ export default class HWindowAction extends HWindow {
 					case 'string':
 					case 'both':
 						if (this.actionType.interfaceKind == 'arrows' && i == 0) {
-							this.argsInterfaces[i] = this.makeDirectionInterface(argType.name, action.args[i].value);
+							this.argsInterfaces[i] = this.makeDirectionInterface(argType.name, this.action.args[i].value);
 						} else {
-							this.argsInterfaces[i] = this.makeTextInterface(argType.name, action.args[i].value);
+							this.argsInterfaces[i] = this.makeTextInterface(argType.name, this.action.args[i].value);
 						}
 						break;
 
 					case 'boolean':
-						this.argsInterfaces[i] = this.makeMenuInterface(argType.name, ['false', 'true'], action.args[i].value);
+						this.argsInterfaces[i] = this.makeMenuInterface(argType.name, ['false', 'true'], this.action.args[i].value);
 						break;
 
 					case 'menu':
-						this.argsInterfaces[i] = this.makeMenuInterface(argType.name, argType.menu, action.args[i].value);
+						this.argsInterfaces[i] = this.makeMenuInterface(argType.name, argType.menu, this.action.args[i].value);
 						break;
 
 					case 'color':
-						this.argsInterfaces[i] = this.makeColorInterface(argType.name, action.args[i].value);
+						this.argsInterfaces[i] = this.makeColorInterface(argType.name, this.action.args[i].value);
 						break;
 
 					case 'sprite':
@@ -88,7 +88,7 @@ export default class HWindowAction extends HWindow {
 					case 'room':
 					case 'font':
 					case 'timeline':
-						this.argsInterfaces[i] = this.makeResourceInterface(argType.name, argType.kind, action.args[i].value);
+						this.argsInterfaces[i] = this.makeResourceInterface(argType.name, argType.kind, this.action.args[i].value);
 						break;
 				}
 
@@ -100,7 +100,7 @@ export default class HWindowAction extends HWindow {
 			}
 
 			if (this.actionTypeHasRelative) {
-				this.inputRelative = add( new HCheckBoxInput("Relative", action.relative) );
+				this.inputRelative = add( new HCheckBoxInput("Relative", this.action.relative) );
 			}
 
 			this.actionTypeIsQuestion = this.actionType.isQuestion;
@@ -109,7 +109,7 @@ export default class HWindowAction extends HWindow {
 			}
 
 			if (this.actionTypeIsQuestion) {
-				this.inputNot = add( new HCheckBoxInput("NOT", action.not) );
+				this.inputNot = add( new HCheckBoxInput("NOT", this.action.not) );
 			}
 
 			this.makeApplyOkButtons(

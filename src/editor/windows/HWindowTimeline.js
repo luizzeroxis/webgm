@@ -1,27 +1,27 @@
 import {parent, endparent, add, HElement, HTextInput} from '../../common/H.js'
-import HWindow from '../HWindow.js';
+import HPropertiesWindow from '../HPropertiesWindow.js';
 
-export default class HWindowTimeline extends HWindow {
+export default class HWindowTimeline extends HPropertiesWindow {
 
-	constructor(editor, id, timeline) {
-		super(editor, id);
+	constructor(manager, id, editor) {
+		super(manager, id, editor);
 
-		this.timeline = timeline;
+		this.timeline = id;
 
-		this.title.html.textContent = 'Edit Time Line '+timeline.name;
+		this.title.html.textContent = 'Edit Time Line '+this.timeline.name;
 
 		parent(this.client)
 			parent( add( new HElement('div', {class: 'grid-resource resource-timeline'}) ) )
 				parent( add( new HElement('div') ) )
 
-					const inputName = add( new HTextInput('Name:', timeline.name) )
+					const inputName = add( new HTextInput('Name:', this.timeline.name) )
 					
 					endparent()
 				endparent()
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(timeline, inputName.getValue());
+					this.editor.changeResourceName(this.timeline, inputName.getValue());
 				},
 				() => this.close()
 			);

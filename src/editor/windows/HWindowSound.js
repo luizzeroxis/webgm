@@ -1,24 +1,24 @@
 import AbstractAudio from '../../common/AbstractAudio.js';
 import {parent, endparent, add, HElement, HButton, HTextInput, HRangeInput} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js';
-import HWindow from '../HWindow.js';
+import HPropertiesWindow from '../HPropertiesWindow.js';
 
-export default class HWindowSound extends HWindow {
+export default class HWindowSound extends HPropertiesWindow {
 
-	constructor(editor, id, sound) {
-		super(editor, id);
+	constructor(manager, id, editor) {
+		super(manager, id, editor);
 
-		this.sound = sound;
+		this.sound = id;
 
-		this.title.html.textContent = 'Edit Sound '+sound.name;
+		this.title.html.textContent = 'Edit Sound '+this.sound.name;
 
 		parent(this.client)
 			parent( add( new HElement('div', {class: 'grid-resource resource-sound'}) ) )
 				parent( add( new HElement('div') ) )
 
-					let paramSound = sound.sound;
+					let paramSound = this.sound.sound;
 
-					const inputName = add( new HTextInput('Name:', sound.name) )
+					const inputName = add( new HTextInput('Name:', this.sound.name) )
 
 					add( new HButton('Load Sound', () => {
 
@@ -40,16 +40,16 @@ export default class HWindowSound extends HWindow {
 						}
 						endparent()
 
-					const inputVolume = add( new HRangeInput('Volume:', sound.volume, 1/70, 0, 1) )
+					const inputVolume = add( new HRangeInput('Volume:', this.sound.volume, 1/70, 0, 1) )
 
 					endparent()
 				endparent();
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(sound, inputName.getValue());
-					sound.sound = paramSound;
-					sound.volume = parseFloat(inputVolume.getValue());
+					this.editor.changeResourceName(this.sound, inputName.getValue());
+					this.sound.sound = paramSound;
+					this.sound.volume = parseFloat(inputVolume.getValue());
 					//
 				},
 				() => this.close()

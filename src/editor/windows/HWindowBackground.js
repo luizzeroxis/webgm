@@ -1,24 +1,24 @@
 import AbstractImage from '../../common/AbstractImage.js'
 import {parent, endparent, add, HElement, HButton, HTextInput, HImage, setOnFileDrop} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js'
-import HWindow from '../HWindow.js';
+import HPropertiesWindow from '../HPropertiesWindow.js';
 
-export default class HWindowBackground extends HWindow {
+export default class HWindowBackground extends HPropertiesWindow {
 	
-	constructor(editor, id, background) {
-		super(editor, id);
+	constructor(manager, id, editor) {
+		super(manager, id, editor);
 
-		this.background = background;
+		this.background = id;
 
-		this.title.html.textContent = 'Edit Background '+background.name;
+		this.title.html.textContent = 'Edit Background '+this.background.name;
 
 		parent(this.client)
 			parent( add( new HElement('div', {class: 'grid-resource resource-background'}) ) )
 				parent( add( new HElement('div') ) )
 
-					this.paramImage = background.image;
+					this.paramImage = this.background.image;
 
-					const inputName = add( new HTextInput('Name:', background.name) );
+					const inputName = add( new HTextInput('Name:', this.background.name) );
 
 					this.buttonLoadBackground = add( new HButton('Load Background', () => {
 
@@ -49,8 +49,8 @@ export default class HWindowBackground extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(background, inputName.getValue());
-					this.editor.changeBackgroundImage(background, this.paramImage);
+					this.editor.changeResourceName(this.background, inputName.getValue());
+					this.editor.changeBackgroundImage(this.background, this.paramImage);
 				},
 				() => this.close()
 			);

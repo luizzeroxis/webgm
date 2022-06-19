@@ -1,10 +1,10 @@
 import {parent, endparent} from '../../common/H.js'
-import HWindow from '../HWindow.js';
+import HPropertiesWindow from '../HPropertiesWindow.js';
 
-export default class HWindowExtensionPackages extends HWindow {
+export default class HWindowExtensionPackages extends HPropertiesWindow {
 
-	constructor(editor, id) {
-		super(editor, id);
+	constructor(manager, id, editor) {
+		super(manager, id, editor);
 
 		this.title.html.textContent = 'Extension Packages';
 

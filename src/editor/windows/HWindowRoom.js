@@ -3,17 +3,17 @@ import {parent, endparent, add, HElement, HCanvas, HTextInput, HNumberInput, HCo
 import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground} from '../../common/Project.js'
 import HResourceSelect from '../HResourceSelect.js';
 import HTabControl from '../HTabControl.js';
-import HWindow from '../HWindow.js';
+import HPropertiesWindow from '../HPropertiesWindow.js';
 import DefaultInstanceIcon from '../img/default-instance-icon.png';
 
-export default class HWindowRoom extends HWindow {
+export default class HWindowRoom extends HPropertiesWindow {
 
-	constructor(editor, id, room) {
-		super(editor, id);
+	constructor(manager, id, editor) {
+		super(manager, id, editor);
 
-		this.room = room;
+		this.room = id;
 
-		this.title.html.textContent = 'Edit Room '+room.name;
+		this.title.html.textContent = 'Edit Room '+this.room.name;
 
 		// Create paramInstances and paramBackgrounds as copies
 		this.copyProperties();
@@ -47,16 +47,16 @@ export default class HWindowRoom extends HWindow {
 
 					parent( this.tabControl.addTab('Settings') )
 
-						this.inputName = add( new HTextInput('Name:', room.name) )
-						this.inputWidth = add( new HNumberInput('Width:', room.width, 1, 1) )
-						this.inputHeight = add( new HNumberInput('Height:', room.height, 1, 1) )
-						this.inputSpeed = add( new HNumberInput('Speed:', room.speed, 1, 1) )
+						this.inputName = add( new HTextInput('Name:', this.room.name) )
+						this.inputWidth = add( new HNumberInput('Width:', this.room.width, 1, 1) )
+						this.inputHeight = add( new HNumberInput('Height:', this.room.height, 1, 1) )
+						this.inputSpeed = add( new HNumberInput('Speed:', this.room.speed, 1, 1) )
 
 						endparent()
 					
 					parent( this.tabControl.addTab('Backgrounds') )
 
-						this.inputBackgroundColor = add( new HColorInput('Background color:', room.backgroundColor) )
+						this.inputBackgroundColor = add( new HColorInput('Background color:', this.room.backgroundColor) )
 
 						const getBackground = (index) => {
 							const currentBackground = this.paramBackgrounds[index];
@@ -175,7 +175,7 @@ export default class HWindowRoom extends HWindow {
 
 					// actual room area
 
-					this.canvasPreview = add( new HCanvas(room.width, room.height) );
+					this.canvasPreview = add( new HCanvas(this.room.width, this.room.height) );
 					this.ctx = this.canvasPreview.html.getContext('2d');
 					this.ctx.imageSmoothingEnabled = false;
 
@@ -301,15 +301,15 @@ export default class HWindowRoom extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(room, this.inputName.getValue());
+					this.editor.changeResourceName(this.room, this.inputName.getValue());
 
-					room.width = parseInt(this.inputWidth.getValue());
-					room.height = parseInt(this.inputHeight.getValue());
-					room.speed = parseInt(this.inputSpeed.getValue());
+					this.room.width = parseInt(this.inputWidth.getValue());
+					this.room.height = parseInt(this.inputHeight.getValue());
+					this.room.speed = parseInt(this.inputSpeed.getValue());
 
-					room.backgroundColor = this.inputBackgroundColor.getValue();
+					this.room.backgroundColor = this.inputBackgroundColor.getValue();
 
-					room.backgrounds = this.paramBackgrounds;
+					this.room.backgrounds = this.paramBackgrounds;
 
 					// In GM, these ids are saved instantly. Even if you close and don't save the room, it still uses the ids. In this project, ideally resource editors would only change the project when you press ok or apply. Because of that, we create the ProjectInstances without ids, and only when saving we fill in the ids.
 
@@ -320,7 +320,7 @@ export default class HWindowRoom extends HWindow {
 						}
 					}
 
-					room.instances = this.paramInstances;
+					this.room.instances = this.paramInstances;
 
 					// Make sure that paramInstances and paramBackgrounds are copies
 					this.copyProperties();

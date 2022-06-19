@@ -1,25 +1,25 @@
 import AbstractImage from '../../common/AbstractImage.js';
 import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HImage, HCheckBoxInput, setOnFileDrop} from '../../common/H.js'
 import VirtualFileSystem from '../../common/VirtualFileSystem.js';
-import HWindow from '../HWindow.js';
+import HPropertiesWindow from '../HPropertiesWindow.js';
 
-export default class HWindowSprite extends HWindow {
+export default class HWindowSprite extends HPropertiesWindow {
 
-	constructor(editor, id, sprite) {
-		super(editor, id);
+	constructor(manager, id, editor) {
+		super(manager, id, editor);
 
-		this.sprite = sprite;
+		this.sprite = id;
 		
-		this.title.html.textContent = 'Edit Sprite '+sprite.name;
+		this.title.html.textContent = 'Edit Sprite '+this.sprite.name;
 
 		parent(this.client)
 			parent( add( new HElement('div', {class: 'grid-resource resource-sprite'}) ) )
 				parent( add( new HElement('div') ) )
 
-					const paramName = sprite.name;
-					this.paramImages = sprite.images;
-					const paramOriginX = sprite.originx;
-					const paramOriginY = sprite.originy;
+					const paramName = this.sprite.name;
+					this.paramImages = this.sprite.images;
+					const paramOriginX = this.sprite.originx;
+					const paramOriginY = this.sprite.originy;
 
 					const inputName = add( new HTextInput('Name:', paramName) )
 
@@ -85,7 +85,7 @@ export default class HWindowSprite extends HWindow {
 					parent( add( new HElement('fieldset') ) )
 						add( new HElement('legend', {}, 'Collision Checking') )
 
-						const inputPreciseCollisionChecking = add( new HCheckBoxInput('Precise collision checking', (sprite.shape == 'precise')) )
+						const inputPreciseCollisionChecking = add( new HCheckBoxInput('Precise collision checking', (this.sprite.shape == 'precise')) )
 
 						endparent()
 					endparent()
@@ -100,11 +100,11 @@ export default class HWindowSprite extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(sprite, inputName.getValue());
-					this.editor.changeSpriteImages(sprite, this.paramImages);
-					this.editor.changeSpriteOrigin(sprite, parseInt(inputOriginX.getValue()), parseInt(inputOriginY.getValue()));
+					this.editor.changeResourceName(this.sprite, inputName.getValue());
+					this.editor.changeSpriteImages(this.sprite, this.paramImages);
+					this.editor.changeSpriteOrigin(this.sprite, parseInt(inputOriginX.getValue()), parseInt(inputOriginY.getValue()));
 
-					sprite.shape = inputPreciseCollisionChecking.getChecked() ? 'precise' : 'rectangle';
+					this.sprite.shape = inputPreciseCollisionChecking.getChecked() ? 'precise' : 'rectangle';
 				},
 				() => this.close()
 			);

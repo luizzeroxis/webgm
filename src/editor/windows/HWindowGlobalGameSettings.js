@@ -1,13 +1,13 @@
 import {parent, endparent, add, HTextInput, HMultilineTextInput, HCheckBoxInput, HColorInput,} from '../../common/H.js'
 import HTabControl from '../HTabControl.js';
-import HWindow from '../HWindow.js';
+import HPropertiesWindow from '../HPropertiesWindow.js';
 
-export default class HWindowGlobalGameSettings extends HWindow {
+export default class HWindowGlobalGameSettings extends HPropertiesWindow {
 
-	constructor(editor, id, globalGameSettings) {
-		super(editor, id);
+	constructor(manager, id, editor) {
+		super(manager, id, editor);
 
-		this.globalGameSettings = globalGameSettings;
+		this.globalGameSettings = id;
 
 		this.title.html.textContent = 'Global Game Settings';
 
@@ -17,8 +17,8 @@ export default class HWindowGlobalGameSettings extends HWindow {
 
 			parent( this.tabControl.addTab('Graphics') )
 
-				this.inputColor = add( new HColorInput('Color outside the room region:', globalGameSettings.colorOutsideRoom) )
-				this.inputDisplayCursor = add( new HCheckBoxInput('Display the cursor', globalGameSettings.displayCursor) )
+				this.inputColor = add( new HColorInput('Color outside the room region:', this.globalGameSettings.colorOutsideRoom) )
+				this.inputDisplayCursor = add( new HCheckBoxInput('Display the cursor', this.globalGameSettings.displayCursor) )
 
 				endparent()
 
@@ -27,8 +27,8 @@ export default class HWindowGlobalGameSettings extends HWindow {
 
 			parent( this.tabControl.addTab('Other') )
 
-				this.inputKeyEscEndsGame = add( new HCheckBoxInput('Let <Esc> end the game', globalGameSettings.keyEscEndsGame) )
-				this.inputKeyF4SwitchesFullscreen = add( new HCheckBoxInput('Let <F4> switch between screen modes', globalGameSettings.keyF4SwitchesFullscreen) )
+				this.inputKeyEscEndsGame = add( new HCheckBoxInput('Let <Esc> end the game', this.globalGameSettings.keyEscEndsGame) )
+				this.inputKeyF4SwitchesFullscreen = add( new HCheckBoxInput('Let <F4> switch between screen modes', this.globalGameSettings.keyF4SwitchesFullscreen) )
 
 				endparent()
 
@@ -40,22 +40,22 @@ export default class HWindowGlobalGameSettings extends HWindow {
 
 			parent( this.tabControl.addTab('Info') )
 
-				this.inputAuthor = add( new HTextInput('Author:', globalGameSettings.author) )
-				this.inputVersion = add( new HTextInput('Version:', globalGameSettings.version) )
-				this.inputInformation = add( new HMultilineTextInput('Information:', globalGameSettings.information) )
+				this.inputAuthor = add( new HTextInput('Author:', this.globalGameSettings.author) )
+				this.inputVersion = add( new HTextInput('Version:', this.globalGameSettings.version) )
+				this.inputInformation = add( new HMultilineTextInput('Information:', this.globalGameSettings.information) )
 
 				endparent()
 
 			this.makeApplyOkButtons(
 				() => {
-					globalGameSettings.colorOutsideRoom = this.inputColor.getValue();
-					globalGameSettings.displayCursor = this.inputDisplayCursor.getChecked();
-					globalGameSettings.keyEscEndsGame = this.inputKeyEscEndsGame.getChecked();
-					globalGameSettings.keyF4SwitchesFullscreen = this.inputKeyF4SwitchesFullscreen.getChecked();
+					this.globalGameSettings.colorOutsideRoom = this.inputColor.getValue();
+					this.globalGameSettings.displayCursor = this.inputDisplayCursor.getChecked();
+					this.globalGameSettings.keyEscEndsGame = this.inputKeyEscEndsGame.getChecked();
+					this.globalGameSettings.keyF4SwitchesFullscreen = this.inputKeyF4SwitchesFullscreen.getChecked();
 
-					globalGameSettings.author = this.inputAuthor.getValue();
-					globalGameSettings.version = this.inputVersion.getValue();
-					globalGameSettings.information = this.inputInformation.getValue();
+					this.globalGameSettings.author = this.inputAuthor.getValue();
+					this.globalGameSettings.version = this.inputVersion.getValue();
+					this.globalGameSettings.information = this.inputInformation.getValue();
 				},
 				() => this.close()
 			);

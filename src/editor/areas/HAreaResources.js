@@ -43,7 +43,7 @@ export default class HAreaResources extends HElement {
 						add( new HImage(GameInformationIcon, 'icon') );
 						add( new HElement('div', {class: 'name'}, 'Game Information') )
 						add( new HButton('Edit', () => this.editor.windowsArea.open(HWindowGameInformation,
-							'game-information', this.editor.project.gameInformation)) )
+							this.editor.project.gameInformation)) )
 						endparent();
 
 					endparent();
@@ -53,7 +53,7 @@ export default class HAreaResources extends HElement {
 						add( new HImage(GameSettingsIcon, 'icon') );
 						add( new HElement('div', {class: 'name'}, 'Global Game Settings') )
 						add( new HButton('Edit', () => this.editor.windowsArea.open(HWindowGlobalGameSettings,
-							'global-game-settings', this.editor.project.globalGameSettings )) )
+							this.editor.project.globalGameSettings )) )
 						endparent()
 
 					endparent();
@@ -63,7 +63,7 @@ export default class HAreaResources extends HElement {
 				// 		add( new HImage(ExtensionPackagesIcon, 'icon') );
 				// 		add( new HElement('div', {class: 'name'}, 'Extension packages') )
 				// 		add( new HButton('Edit', () => this.editor.openWindow(HWindowExtensionPackages,
-				// 			'extension-packages', this.editor.project.extensionPackages)) )
+				// 			this.editor.project.extensionPackages)) )
 				// 		endparent();
 
 				endparent()

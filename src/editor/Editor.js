@@ -24,7 +24,7 @@ import HAreaGame from './areas/HAreaGame.js';
 import HAreaMenu from './areas/HAreaMenu.js';
 import HAreaResources from './areas/HAreaResources.js';
 import HAreaWindows from './areas/HAreaWindows.js';
-import BuiltInLibraries from './BuiltInLibraries.js'
+import BuiltInLibraries from './BuiltInLibraries.js';
 import DefaultProjectFontIcon from './img/default-ProjectFont-icon.png';
 import DefaultProjectPathIcon from './img/default-ProjectPath-icon.png';
 import DefaultProjectRoomIcon from './img/default-ProjectRoom-icon.png';
@@ -151,7 +151,7 @@ export default class Editor {
 		this.project = new Project();
 
 		this.resourcesArea.refresh();
-		this.windowsArea.clear();
+		this.windowsArea.closeAll();
 	}
 
 	// Called from HAreaMenu
@@ -171,7 +171,7 @@ export default class Editor {
 				this.project = project;
 
 				this.resourcesArea.refresh();
-				this.windowsArea.clear();
+				this.windowsArea.closeAll();
 
 				this.projectName = file.name.substring(0, file.name.lastIndexOf('.'));
 

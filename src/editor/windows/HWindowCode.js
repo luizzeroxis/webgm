@@ -2,17 +2,17 @@ import {parent, endparent, add, HRadioInput, uniqueID} from '../../common/H.js'
 import {ProjectObject} from '../../common/Project.js';
 import HCodeEditor from '../HCodeEditor.js';
 import HResourceSelect from '../HResourceSelect.js';
-import HWindow from '../HWindow.js';
+import HPropertiesWindow from '../HPropertiesWindow.js';
 
-export default class HWindowCode extends HWindow {
+export default class HWindowCode extends HPropertiesWindow {
 
-	constructor(editor, id, action, object) {
-		super(editor, id);
+	constructor(manager, id, editor, object) {
+		super(manager, id, editor);
 
-		this.action = action;
+		this.action = id;
 		this.object = object;
 
-		this.actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
+		this.actionType = this.editor.getActionType(this.action.typeLibrary, this.action.typeId);
 
 		this.title.html.textContent = this.actionType.description;
 
@@ -20,15 +20,15 @@ export default class HWindowCode extends HWindow {
 
 			const appliesToGroup = '_radio_'+uniqueID();
 
-			this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, 'Self', (action.appliesTo == -1)) );
-			this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, 'Other', (action.appliesTo == -2)) );
-			this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, 'Object:', (action.appliesTo >= 0)) );
+			this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, 'Self', (this.action.appliesTo == -1)) );
+			this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, 'Other', (this.action.appliesTo == -2)) );
+			this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, 'Object:', (this.action.appliesTo >= 0)) );
 
 			this.selectObject = add( new HResourceSelect(this.editor, null, ProjectObject) )
-			if (action.appliesTo >= 0)
-				this.selectObject.setValue(action.appliesTo);
+			if (this.action.appliesTo >= 0)
+				this.selectObject.setValue(this.action.appliesTo);
 
-			this.codeEditor = add( new HCodeEditor(action.args[0].value) )
+			this.codeEditor = add( new HCodeEditor(this.action.args[0].value) )
 
 			this.makeApplyOkButtons(
 				() => {

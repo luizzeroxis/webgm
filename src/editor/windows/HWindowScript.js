@@ -1,31 +1,31 @@
 import {parent, endparent, add, HElement, HTextInput} from '../../common/H.js'
 import HCodeEditor from '../HCodeEditor.js';
-import HWindow from '../HWindow.js';
+import HPropertiesWindow from '../HPropertiesWindow.js';
 
-export default class HWindowScript extends HWindow {
+export default class HWindowScript extends HPropertiesWindow {
 	
-	constructor(editor, id, script) {
-		super(editor, id);
+	constructor(manager, id, editor) {
+		super(manager, id, editor);
 
-		this.script = script;
+		this.script = id;
 
-		this.title.html.textContent = 'Edit Script '+script.name;
+		this.title.html.textContent = 'Edit Script '+this.script.name;
 
 		parent(this.client)
 			parent( add( new HElement('div', {class: 'grid-resource resource-script'}) ) )
 				parent( add( new HElement('div') ) )
 
-					const inputName = add( new HTextInput('Name:', script.name) )
+					const inputName = add( new HTextInput('Name:', this.script.name) )
 
-					this.codeEditor = add( new HCodeEditor(script.code) )
+					this.codeEditor = add( new HCodeEditor(this.script.code) )
 
 					endparent()
 				endparent();
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(script, inputName.getValue());
-					script.code = this.codeEditor.getValue();
+					this.editor.changeResourceName(this.script, inputName.getValue());
+					this.script.code = this.codeEditor.getValue();
 				},
 				() => {
 					this.close()

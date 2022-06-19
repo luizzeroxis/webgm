@@ -5,6 +5,7 @@
 	--titlebar-background: #aaa;
 	--grid-resource-cell-border: #ccc;
 	--game-canvas-border: #888;
+	--window-background: #ffffff;
 }
 
 :root.dark {
@@ -14,6 +15,7 @@
 	--titlebar-background: #555;
 	--grid-resource-cell-border: #333;
 	--game-canvas-border: #777;
+	--window-background: #121212;
 }
 :root.light {
 	color-scheme: light;
@@ -46,6 +48,34 @@
 	width: 100%;
 	height: 256px;
 	font: inherit;
+}
+
+.h-floating-window {
+	position: absolute;
+	top: 0;
+	left: 0;
+	border: 1px solid var(--window-border);
+	background-color: var(--window-background);
+	resize: both;
+	overflow: auto;
+}
+
+.h-floating-window > .h-title-bar {
+	display: flex;
+	background-color: var(--titlebar-background);
+	align-items: center;
+}
+
+.h-floating-window > .h-title-bar > .h-title {
+	flex: 1;
+}
+
+.h-floating-window > .h-title-bar > .h-close {
+	align-self: flex-start;
+}
+
+.h-floating-window > .h-client {
+	padding: 8px;
 }
 
 body {
@@ -142,25 +172,25 @@ body, button, input {
 	display: grid;
 }
 
-.window {
+.windows .window {
 	border: 1px solid var(--window-border);
 }
 
-.titlebar {
+.windows .window .titlebar {
 	display: flex;
 	background-color: var(--titlebar-background);
 	align-items: center;
 }
 
-.titlebar .title {
+.windows .window .titlebar .title {
 	flex: 1;
 }
 
-.titlebar .close {
+.windows .window .titlebar .close {
 	align-self: flex-start;
 }
 
-.client {
+.windows .window .client {
 	padding: 8px;
 }
 

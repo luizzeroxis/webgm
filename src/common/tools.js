@@ -62,11 +62,14 @@ export function decimalColorToHSVValues(color) {
 export function rgbValuesToHSVValues(rgb) {
 	const {r, g, b} = rgb;
 	
-	const max = Math.max(r, g, b), min = Math.min(r, g, b);
-	let h, s, v = max;
+	const max = Math.max(r, g, b);
+	const min = Math.min(r, g, b);
 
 	const d = max - min;
-	s = max == 0 ? 0 : Math.floor(255 * d / max);
+
+	let h;
+	const s = (max == 0) ? 0 : Math.floor(255 * d / max);
+	const v = max;
 
 	if (max == min) {
 		h = 0; // achromatic

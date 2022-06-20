@@ -1404,7 +1404,7 @@ export class Game {
 
 	// Stop all sounds being played.
 	stopAllSounds() {
-		for (const [sound, value] of this.sounds) {
+		for (const value of this.sounds.values()) {
 			for (const audioNode of value.audioNodes) {
 				audioNode.mediaElement.pause();
 				audioNode.disconnect();

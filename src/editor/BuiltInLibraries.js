@@ -1,4 +1,4 @@
-const b = {type: 'b'}; // All text bold
+// const b = {type: 'b'}; // All text bold
 const i = {type: 'i'}; // All text italic
 const r = {type: 'r'}; // Replaced by 'relative '
 const n = {type: 'n'}; // Replaced by 'not '

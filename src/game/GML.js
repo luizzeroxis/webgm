@@ -246,16 +246,16 @@ export default class GML {
 				}
 
 			},
-			Exit: async () => {
+			Exit: () => {
 				throw new ExitException();
 			},
 			Return: async ({_value}) => {
 				throw new ReturnException(await this.interpretASTNode(_value));
 			},
-			Break: async () => {
+			Break: () => {
 				throw new BreakException();
 			},
-			Continue: async () => {
+			Continue: () => {
 				throw new ContinueException();
 			},
 			Function: async ({_name, _args}) => {

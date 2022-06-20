@@ -126,13 +126,13 @@ function callOnRemoveIfNotConnected(element) {
 	}
 }
 
-function classToString(_class) {
+function classToAttr(_class) {
 	if (Array.isArray(_class)) {
 		return _class.join(' ');
 	} else if (typeof _class == 'string') {
 		return _class;
 	} else {
-		return '';
+		return null;
 	}
 }
 
@@ -150,7 +150,7 @@ function classToArray(_class) {
 
 export class HButton extends HElement {
 	constructor(text, onClick, _class) {
-		super('button', {class: classToString(_class)}, text)
+		super('button', {class: classToAttr(_class)}, text)
 		this.html.addEventListener('click', onClick);
 	}
 	setDisabled(disabled) {
@@ -160,7 +160,7 @@ export class HButton extends HElement {
 
 export class HCanvas extends HElement {
 	constructor(width, height, _class) {
-		super('canvas', {class: classToString(_class), width: width, height: height});
+		super('canvas', {class: classToAttr(_class), width: width, height: height});
 	}
 	clear() {
 		// Haxs for cleaning canvas
@@ -172,7 +172,7 @@ export class HCanvas extends HElement {
 
 export class HLabelAndInput extends HElement {
 	constructor(type, label, value, _class) {
-		parent( super('div', {class: classToString(classToArray(_class).concat(['h-label-and-input']))}) )
+		parent( super('div', {class: classToAttr(classToArray(_class).concat(['h-label-and-input']))}) )
 			const id = '_id_' + uniqueID();
 			this.label = add( new HElement('label', {for: id}, label) )
 			this.input = add( new HElement('input', {id: id, type: type, value: value}) )
@@ -197,7 +197,7 @@ export class HTextInput extends HLabelAndInput {
 
 export class HMultilineTextInput extends HElement {
 	constructor(label, value, _class) {
-		parent( super('div', {class: classToString(classToArray(_class).concat(['h-multiline-text-input']))}) )
+		parent( super('div', {class: classToAttr(classToArray(_class).concat(['h-multiline-text-input']))}) )
 			const id = '_id_' + uniqueID();
 			this.label = add( new HElement('label', {for: id}, label) )
 			this.textarea = add( new HElement('textarea', {id: id}) )
@@ -235,7 +235,7 @@ export class HColorInput extends HLabelAndInput {
 
 export class HCheckBoxInput extends HElement {
 	constructor(label, checked, _class) {
-		parent( super('div', {class: classToString(_class)}) )
+		parent( super('div', {class: classToAttr(_class)}) )
 			const id = '_id_' + uniqueID();
 			this.input = add( new HElement('input', {id: id, type: 'checkbox',
 				...(checked ? {checked: 'checked'} : null)
@@ -256,7 +256,7 @@ export class HCheckBoxInput extends HElement {
 
 export class HRadioInput extends HElement {
 	constructor(group, label, checked, _class) {
-		parent( super('div', {class: classToString(_class)}) )
+		parent( super('div', {class: classToAttr(_class)}) )
 			const id = '_id_' + uniqueID();
 			this.input = add( new HElement('input', {id: id, type: 'radio', name: group,
 				...(checked ? {checked: 'checked'} : null)
@@ -274,7 +274,7 @@ export class HRadioInput extends HElement {
 
 export class HSelect extends HElement {
 	constructor(label, _class) {
-		parent( super('div', {class: classToString(classToArray(_class).concat(['h-select']))}) )
+		parent( super('div', {class: classToAttr(classToArray(_class).concat(['h-select']))}) )
 			const id = '_id_' + uniqueID();
 			this.label = add( new HElement('label', {for: id}, label) )
 			this.select = add( new HElement('select', {id: id}) )
@@ -302,7 +302,7 @@ export class HSelect extends HElement {
 
 export class HOption extends HElement {
 	constructor(text, value, _class) {
-		super('option', {class: classToString(_class), value: value}, text)
+		super('option', {class: classToAttr(_class), value: value}, text)
 	}
 }
 
@@ -324,7 +324,7 @@ export class HSelectWithOptions extends HSelect {
 
 export class HImage extends HElement {
 	constructor(src, _class) {
-		super('img', {class: classToString(_class), ...(src ? {src: src} : null)})
+		super('img', {class: classToAttr(_class), ...(src ? {src: src} : null)})
 	}
 	setSrc(src) {
 		if (src != null) {

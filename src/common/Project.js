@@ -599,7 +599,7 @@ export class ProjectGlobalGameSettings {
 	}
 }
 export class ProjectExtensionPackages {
-	constructor() {
+	// constructor() {
 
-	}
+	// }
 }

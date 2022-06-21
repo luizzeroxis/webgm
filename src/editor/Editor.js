@@ -178,7 +178,6 @@ export default class Editor {
 
 			} else {
 				alert('Error Loading: File seems to be corrupt.');
-				return;
 			}
 		}).catch(e => {
 			if (e instanceof UnserializeException) {

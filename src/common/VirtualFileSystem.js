@@ -2,8 +2,6 @@ import {HElement} from './H.js';
 
 export default class VirtualFileSystem {
 
-	constructor() {}
-
 	static openDialog(accept, multiple=false) {
 
 		return new Promise((resolve, reject) => {

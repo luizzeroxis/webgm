@@ -16,7 +16,7 @@ export default class HAreaMenu extends HElement {
 				this.editor.newProject();
 			}) )
 
-			add ( new HButton('Open', () => {
+			add( new HButton('Open', () => {
 				VirtualFileSystem.openDialog('application/zip,application/json')
 				.then(file => {
 					this.editor.openProjectFromFile(file);

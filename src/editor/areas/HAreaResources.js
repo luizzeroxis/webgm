@@ -18,7 +18,7 @@ export default class HAreaResources extends HElement {
 		this.resources = [];
 
 		parent(this)
-			parent( add ( new HElement('ul') ) )
+			parent( add( new HElement('ul') ) )
 
 				Project.getTypes().forEach(type => {
 
@@ -32,7 +32,7 @@ export default class HAreaResources extends HElement {
 							}))
 							endparent()
 
-						this.resourceTypes[type.name] = add ( new HElement('ul', {class: "resource"}) )
+						this.resourceTypes[type.name] = add( new HElement('ul', {class: "resource"}) )
 						endparent()
 
 				})

@@ -107,6 +107,8 @@
         "comma-spacing": "warn",
         "comma-style": "warn",
         "computed-property-spacing": "warn",
-        "dot-location": ["warn", "property"]
+        "dot-location": ["warn", "property"],
+        "eol-last": ["warn", "never"],
+        "func-call-spacing": "warn"
     }
 }

@@ -59,10 +59,10 @@ export default class BuiltInFunctions {
 		return Math.sqrt(x);
 	}
 	static sqr ([x]) {
-		return x*x;
+		return x * x;
 	}
 	static power ([x, n]) {
-		return Math.pow(x, n);
+		return x ** n;
 	}
 	static exp ([x]) {
 		return Math.exp(x);

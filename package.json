@@ -6,18 +6,20 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "webpack serve --open --config webpack.dev.js",
 		"build": "webpack --config webpack.prod.js",
-		"deploy": "git stash --include-untracked && webpack --config webpack.prod.js && gh-pages -d dist && git stash pop"
+		"deploy": "git stash --include-untracked && webpack --config webpack.prod.js && gh-pages -d dist && git stash pop",
+		"lint": "eslint src"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "GPL-3.0-or-later",
 	"devDependencies": {
 		"css-loader": "^6.7.1",
-		"eslint": "^8.17.0",
+		"eslint": "^8.18.0",
 		"eslint-plugin-import": "^2.26.0",
+		"eslint-webpack-plugin": "^3.1.1",
 		"gh-pages": "^4.0.0",
 		"html-webpack-plugin": "^5.5.0",
-		"mini-css-extract-plugin": "^2.6.0",
+		"mini-css-extract-plugin": "^2.6.1",
 		"style-loader": "^3.3.1",
 		"url-loader": "^4.1.1",
 		"webpack": "^5.73.0",

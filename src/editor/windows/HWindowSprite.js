@@ -106,7 +106,7 @@ export default class HWindowSprite extends HWindow {
 
 					sprite.shape = inputPreciseCollisionChecking.getChecked() ? 'precise' : 'rectangle';
 				},
-				() => this.close()
+				() => this.close(),
 			);
 
 			endparent();

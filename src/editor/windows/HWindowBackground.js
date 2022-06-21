@@ -52,7 +52,7 @@ export default class HWindowBackground extends HWindow {
 					this.editor.changeResourceName(background, inputName.getValue());
 					this.editor.changeBackgroundImage(background, this.paramImage);
 				},
-				() => this.close()
+				() => this.close(),
 			);
 			endparent();
 

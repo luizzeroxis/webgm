@@ -3,15 +3,15 @@ export default class Events {
 	static listEventTypes = [
 		{id:  0, value: 'create',     name: 'Create',      getFullName: () => 'Create'},
 		{id:  1, value: 'destroy',    name: 'Destroy',     getFullName: () => 'Destroy'},
-		{id:  3, value: 'step',       name: 'Step',        getFullName: (subtype) => Events.listStepSubtypes.find(x=>x.value==subtype).name},
+		{id:  3, value: 'step',       name: 'Step',        getFullName: (subtype) => Events.listStepSubtypes.find(x => x.value == subtype).name},
 		{id:  2, value: 'alarm',      name: 'Alarm',       getFullName: (subtype) => 'Alarm '+subtype},
 		{id:  5, value: 'keyboard',   name: 'Keyboard',    getFullName: (subtype) => 'Keyboard '+subtype},
-		{id:  6, value: 'mouse',      name: 'Mouse',       getFullName: (subtype) => Events.listMouseSubtypes.find(x=>x.value==subtype).name},
+		{id:  6, value: 'mouse',      name: 'Mouse',       getFullName: (subtype) => Events.listMouseSubtypes.find(x => x.value == subtype).name},
 		{id:  4, value: 'collision',  name: 'Collision',   getFullName: (subtype, project) => {
 			const object = project.resources.ProjectObject.find(x => x.id == subtype);
 			return 'Collision with ' + (object ? object.name : '<undefined>');
 		}},
-		{id:  7, value: 'other',      name: 'Other',       getFullName: (subtype) => Events.listOtherSubtypes.find(x=>x.value==subtype).name},
+		{id:  7, value: 'other',      name: 'Other',       getFullName: (subtype) => Events.listOtherSubtypes.find(x => x.value == subtype).name},
 		{id:  8, value: 'draw',       name: 'Draw',        getFullName: () => 'Draw'},
 		{id:  9, value: 'keypress',   name: 'Key press',   getFullName: (subtype) => 'Key press'+subtype},
 		{id: 10, value: 'keyrelease', name: 'Key release', getFullName: (subtype) => 'Key release'+subtype},

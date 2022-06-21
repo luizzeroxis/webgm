@@ -2,7 +2,7 @@ import Events from '../../common/Events.js';
 import {parent, endparent, add, removeChildren, HElement, HButton, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HOption, HSelectWithOptions, HImage} from '../../common/H.js'
 import {
 	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline,
-	ProjectEvent, ProjectAction, ProjectActionArg
+	ProjectEvent, ProjectAction, ProjectActionArg,
 } from '../../common/Project.js';
 import HResourceSelect from '../HResourceSelect.js';
 import HTabControl from '../HTabControl.js';
@@ -372,7 +372,7 @@ export default class HWindowObject extends HWindow {
 				},
 				() => {
 					this.close();
-				}
+				},
 			);
 			endparent();
 		
@@ -502,7 +502,7 @@ export default class HWindowObject extends HWindow {
 					const option = add( new HOption(
 						(this.editor.preferences.get('hintTextInAction') ? hintText.text : listText.text), // text
 						null, // value
-						(listText.bold ? 'bold ' : '') + (listText.italic ? 'italic ' : '') // class
+						(listText.bold ? 'bold ' : '') + (listText.italic ? 'italic ' : ''), // class
 					) )
 					option.html.title = hintText.text;
 

@@ -249,7 +249,7 @@ export class Game {
 
 		// Add resource names as constants
 		Project.getTypes().forEach(type => {
-			this.project.resources[type.getClassName()].forEach(x => {this.constants[x.name] = x.id});
+			this.project.resources[type.getClassName()].forEach(x => { this.constants[x.name] = x.id });
 		});
 
 		this.lastId = this.project.lastId;
@@ -404,7 +404,7 @@ export class Game {
 									matchResult: matchResult,
 								},
 								'COMPILATION ERROR in code action:\n' + matchResult.message + '\n',
-								object, event, actionNumber
+								object, event, actionNumber,
 							);
 
 						});
@@ -418,7 +418,7 @@ export class Game {
 									matchResult: matchResult,
 								},
 								'COMPILATION ERROR in code action (in action type in a library):\n' + matchResult.message + '\n',
-								object, event, actionNumber
+								object, event, actionNumber,
 							);
 
 						});
@@ -437,7 +437,7 @@ export class Game {
 									matchResult: matchResult,
 								},
 								'COMPILATION ERROR in code action (in variable set):\n' + matchResult.message + '\n',
-								object, event, actionNumber
+								object, event, actionNumber,
 							);
 
 						})
@@ -1470,7 +1470,7 @@ export class Game {
 					type: 'compilation',
 					location: 'executeString',
 					matchResult: result.matchResult,
-					text: 'COMPILATION ERROR in string to be executed\n' + result.matchResult.message + '\n'
+					text: 'COMPILATION ERROR in string to be executed\n' + result.matchResult.message + '\n',
 				},
 			);
 		}

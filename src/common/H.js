@@ -238,7 +238,7 @@ export class HCheckBoxInput extends HElement {
 		parent( super('div', {class: classToAttr(_class)}) )
 			const id = '_id_' + uniqueID();
 			this.input = add( new HElement('input', {id: id, type: 'checkbox',
-				...(checked ? {checked: 'checked'} : null)
+				...(checked ? {checked: 'checked'} : null),
 			}) )
 			this.label = add( new HElement('label', {for: id}, label) )
 			endparent()
@@ -259,7 +259,7 @@ export class HRadioInput extends HElement {
 		parent( super('div', {class: classToAttr(_class)}) )
 			const id = '_id_' + uniqueID();
 			this.input = add( new HElement('input', {id: id, type: 'radio', name: group,
-				...(checked ? {checked: 'checked'} : null)
+				...(checked ? {checked: 'checked'} : null),
 			}) )
 			this.label = add( new HElement('label', {for: id}, label) )
 			endparent()

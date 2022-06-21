@@ -36,7 +36,7 @@ export default class HWindowPreferences extends HWindow {
 					});
 					this.editor.preferences.save();
 				},
-				() => this.close()
+				() => this.close(),
 			)
 
 			endparent()

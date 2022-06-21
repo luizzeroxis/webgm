@@ -44,7 +44,7 @@ export class Project {
 			ProjectFont,
 			ProjectTimeline,
 			ProjectObject,
-			ProjectRoom
+			ProjectRoom,
 		];
 	}
 }

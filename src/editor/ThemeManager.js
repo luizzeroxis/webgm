@@ -11,7 +11,7 @@ export default class ThemeManager {
 		this.editor.preferences.dispatcher.listen({
 			'change': () => {
 				this.applyTheme();
-			}
+			},
 		})
 	}
 

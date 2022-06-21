@@ -1,4 +1,4 @@
-import {parent, endparent, add, HTextInput, HMultilineTextInput, HCheckBoxInput, HColorInput,} from '../../common/H.js'
+import {parent, endparent, add, HTextInput, HMultilineTextInput, HCheckBoxInput, HColorInput} from '../../common/H.js'
 import HTabControl from '../HTabControl.js';
 import HWindow from '../HWindow.js';
 
@@ -57,7 +57,7 @@ export default class HWindowGlobalGameSettings extends HWindow {
 					globalGameSettings.version = this.inputVersion.getValue();
 					globalGameSettings.information = this.inputInformation.getValue();
 				},
-				() => this.close()
+				() => this.close(),
 			);
 			endparent();
 	}

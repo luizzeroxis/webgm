@@ -334,7 +334,7 @@ export default class BuiltInLibraries {
 								kind: "menu",
 								menu: ["horizontal", "vertical", "in both directions"],
 								default: 0,
-							}
+							},
 						],
 					},
 					/*
@@ -1016,8 +1016,8 @@ export default class BuiltInLibraries {
 								name: "redraw:",
 								kind: "boolean",
 								default: true,
-							}
-						]
+							},
+						],
 					},
 					/*
 					{
@@ -1179,8 +1179,8 @@ export default class BuiltInLibraries {
 								name: "message:",
 								kind: "both",
 								default: "",
-							}
-						]
+							},
+						],
 					},
 					/*
 					{
@@ -1853,7 +1853,7 @@ export default class BuiltInLibraries {
 								kind: "expression",
 								default: "0",
 							},
-						]
+						],
 					},
 					{
 						id: 605,
@@ -1918,7 +1918,7 @@ export default class BuiltInLibraries {
 								menu: ["equal to", "smaller than", "larger than"],
 								default: "0",
 							},
-						]
+						],
 					},
 					/*
 					{
@@ -1945,7 +1945,7 @@ export default class BuiltInLibraries {
 					},
 					*/
 					
-				]
+				],
 			},
 			{
 				name: "score",

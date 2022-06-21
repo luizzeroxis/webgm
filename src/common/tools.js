@@ -27,7 +27,7 @@ export function decimalColorToRGBValues(color) {
 	return {
 		r: color % 256,
 		g: Math.floor(color % (256*256) / 256),
-		b: Math.floor(color % (256*256*256) / (256*256))
+		b: Math.floor(color % (256*256*256) / (256*256)),
 	}
 }
 
@@ -47,9 +47,9 @@ export function decimalColorToHexColor(color) {
 
 // hex -> decimal
 export function hexColorToDecimalColor(hex) {
-	const r = parseInt(hex.substr(1+2*0,2), 16);
-	const g = parseInt(hex.substr(1+2*1,2), 16);
-	const b = parseInt(hex.substr(1+2*2,2), 16);
+	const r = parseInt(hex.substr(1+2*0, 2), 16);
+	const g = parseInt(hex.substr(1+2*1, 2), 16);
+	const b = parseInt(hex.substr(1+2*2, 2), 16);
 	return rgbValuesToDecimalColor({r, g, b})
 }
 

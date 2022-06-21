@@ -19,7 +19,7 @@ export default class HWindowGameInformation extends HWindow {
 					gameInformation.text = this.textareaText.html.value;
 					// changes here
 				},
-				() => this.close()
+				() => this.close(),
 			);
 			endparent();
 	}

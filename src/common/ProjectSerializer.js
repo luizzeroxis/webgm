@@ -25,7 +25,7 @@ import {
 	ProjectRoomView,
 	ProjectGameInformation,
 	ProjectGlobalGameSettings,
-	ProjectExtensionPackages
+	ProjectExtensionPackages,
 } from './Project.js';
 import {base64ToBlob} from './tools.js'
 

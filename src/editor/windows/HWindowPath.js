@@ -23,7 +23,7 @@ export default class HWindowPath extends HWindow {
 				() => {
 					this.editor.changeResourceName(path, inputName.getValue());
 				},
-				() => this.close()
+				() => this.close(),
 			);
 			endparent();
 	}

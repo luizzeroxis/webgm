@@ -430,7 +430,7 @@ export default class BuiltInFunctions {
 		const dir_radians = dir * (Math.PI / 180);
 		this.currentInstance.setHspeedAndVspeed(
 			this.currentInstance.vars.getBuiltIn('hspeed') + Math.cos(dir_radians) * speed,
-			this.currentInstance.vars.getBuiltIn('vspeed') + -Math.sin(dir_radians) * speed
+			this.currentInstance.vars.getBuiltIn('vspeed') + -Math.sin(dir_radians) * speed,
 		);
 		return 0;
 	}
@@ -442,7 +442,7 @@ export default class BuiltInFunctions {
 	}
 	static place_meeting ([x, y, obj]) {
 		const instances = this.objectReferenceToInstances(obj);
-		if (!Array.isArray(instances)) {return 0;}
+		if (!Array.isArray(instances)) { return 0; }
 		return this.game.collisionInstanceOnInstances(this.currentInstance, instances, x, y, false) ? 1 : 0;
 	}
 	static place_snapped ([hsnap, vsnap]) {
@@ -1238,7 +1238,7 @@ export default class BuiltInFunctions {
 
 		return 0;
 	}
-	static draw_circle ([x , y, r, outline]) {
+	static draw_circle ([x, y, r, outline]) {
 
 		const style = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 		this.game.ctx.fillStyle = style;

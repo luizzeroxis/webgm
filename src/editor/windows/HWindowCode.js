@@ -37,7 +37,7 @@ export default class HWindowCode extends HWindow {
 				() => {
 					this.object.deleteActionWindow(this.id);
 					this.close();
-				}
+				},
 			);
 
 			this.codeEditor.setNextElem(this.applyButton);

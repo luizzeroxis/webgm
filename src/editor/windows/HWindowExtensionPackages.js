@@ -14,7 +14,7 @@ export default class HWindowExtensionPackages extends HWindow {
 				() => {
 					// changes here
 				},
-				() => this.close()
+				() => this.close(),
 			);
 			endparent();
 	}

@@ -14,7 +14,7 @@ import {
 	ProjectFont,
 	ProjectTimeline,
 	ProjectObject,
-	ProjectRoom
+	ProjectRoom,
 } from '../common/Project.js';
 import ProjectSerializer from '../common/ProjectSerializer.js';
 import VirtualFileSystem from '../common/VirtualFileSystem.js';
@@ -247,7 +247,7 @@ export default class Editor {
 				if (e) {
 					throw e;
 				}
-			}
+			},
 		})
 
 		this.game.start();

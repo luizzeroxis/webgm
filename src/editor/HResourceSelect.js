@@ -31,7 +31,7 @@ export default class HResourceSelect extends HSelect {
 			changeResourceName: i => {
 				if (i.constructor != this.resourceType) return;
 				this.selectOptions[i.id].html.textContent = i.name;
-			}
+			},
 			// TODO sprite changes?
 		})
 	}

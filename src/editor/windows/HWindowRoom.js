@@ -319,7 +319,7 @@ export default class HWindowRoom extends HWindow {
 				},
 				() => {
 					this.close()
-				}
+				},
 			);
 			endparent();
 
@@ -558,8 +558,8 @@ export default class HWindowRoom extends HWindow {
 		this.ctx.translate(0.5, 0.5)
 
 		this.ctx.beginPath();
-		this.ctx.moveTo(x1,y1);
-		this.ctx.lineTo(x2,y2);
+		this.ctx.moveTo(x1, y1);
+		this.ctx.lineTo(x2, y2);
 		//this.ctx.closePath();
 		this.ctx.stroke();
 

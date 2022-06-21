@@ -29,7 +29,7 @@ export default class HWindowScript extends HWindow {
 				},
 				() => {
 					this.close()
-				}
+				},
 			);
 
 			this.codeEditor.setNextElem(this.applyButton);

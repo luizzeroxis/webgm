@@ -23,7 +23,7 @@ export default class HWindowTimeline extends HWindow {
 				() => {
 					this.editor.changeResourceName(timeline, inputName.getValue());
 				},
-				() => this.close()
+				() => this.close(),
 			);
 			endparent();
 	}

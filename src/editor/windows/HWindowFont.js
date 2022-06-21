@@ -40,7 +40,7 @@ export default class HWindowFont extends HWindow {
 					font.italic = this.inputItalic.getChecked();
 					// changes here
 				},
-				() => this.close()
+				() => this.close(),
 			);
 			endparent();
 	}

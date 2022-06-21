@@ -52,7 +52,7 @@ export default class HWindowSound extends HWindow {
 					sound.volume = parseFloat(inputVolume.getValue());
 					//
 				},
-				() => this.close()
+				() => this.close(),
 			);
 			endparent();
 

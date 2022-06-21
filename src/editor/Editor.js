@@ -20,7 +20,6 @@ import ProjectSerializer from '../common/ProjectSerializer.js';
 import VirtualFileSystem from '../common/VirtualFileSystem.js';
 import {Game} from '../game/Game.js';
 
-import HAreaGame from './areas/HAreaGame.js';
 import HAreaMenu from './areas/HAreaMenu.js';
 import HAreaResources from './areas/HAreaResources.js';
 import HAreaWindows from './areas/HAreaWindows.js';
@@ -35,6 +34,7 @@ import PreferencesManager from './PreferencesManager.js';
 import ThemeManager from './ThemeManager.js';
 import HWindowBackground from './windows/HWindowBackground.js';
 import HWindowFont from './windows/HWindowFont.js';
+import HWindowGame from './windows/HWindowGame.js';
 import HWindowObject from './windows/HWindowObject.js';
 import HWindowPath from './windows/HWindowPath.js';
 import HWindowRoom from './windows/HWindowRoom.js';
@@ -70,6 +70,8 @@ export default class Editor {
 		this.preferences = new PreferencesManager();
 		this.themeManager = new ThemeManager(this);
 
+		this.gameWindow = null;
+
 		// Libraries
 		this.libraries = BuiltInLibraries.getList();
 
@@ -83,7 +85,6 @@ export default class Editor {
 				this.menuArea = add( new HAreaMenu(this) )
 				this.resourcesArea = add( new HAreaResources(this) )
 				this.windowsArea = add( new HAreaWindows(this) )
-				this.gameArea = add( new HAreaGame() )
 
 				endparent()
 
@@ -208,19 +209,21 @@ export default class Editor {
 			return;
 		}
 
+		this.gameWindow = this.windowsArea.open(HWindowGame, 'game');
+
 		this.menuArea.runButton.setDisabled(true);
 		this.menuArea.stopButton.setDisabled(false);
 
 		if (this.preferences.get('scrollToGameOnRun')) {
-			this.gameArea.scrollIntoView();
+			this.gameWindow.html.scrollIntoView();
 		}
 		if (this.preferences.get('focusCanvasOnRun')) {
-			this.gameArea.focus();
+			this.gameWindow.canvas.html.focus({preventScroll: true});
 		}
 
-		this.game = new Game(this.project, this.gameArea.canvas.html, this.gameArea.canvas.html);
+		this.game = new Game(this.project, this.gameWindow.canvas.html, this.gameWindow.canvas.html);
 
-		this.game.dispatcher.listen({
+		const gameListeners = this.game.dispatcher.listen({
 			close: e => {
 
 				if (e instanceof WebGMException) {
@@ -231,8 +234,14 @@ export default class Editor {
 				this.menuArea.stopButton.setDisabled(true);
 
 				if (this.preferences.get('clearCanvasOnStop')) {
-					this.gameArea.clearCanvas();
+					this.gameWindow.canvas.clear();
 				}
+
+				if (this.gameWindow.userClosed) {
+					this.windowsArea.delete(this.gameWindow);
+				}
+
+				this.game.dispatcher.stopListening(gameListeners);
 
 				this.game = null;
 
@@ -243,7 +252,7 @@ export default class Editor {
 		})
 
 		this.game.start();
-				
+
 	}
 
 	// Called from HAreaMenu and runGame

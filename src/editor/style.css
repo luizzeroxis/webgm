@@ -4,7 +4,6 @@
 	--window-border: #aaa;
 	--titlebar-background: #aaa;
 	--grid-resource-cell-border: #ccc;
-	--game-canvas-border: #888;
 }
 
 :root.dark {
@@ -13,7 +12,6 @@
 	--window-border: #555;
 	--titlebar-background: #555;
 	--grid-resource-cell-border: #333;
-	--game-canvas-border: #777;
 }
 :root.light {
 	color-scheme: light;
@@ -259,7 +257,6 @@ body, button, input {
 
 .game canvas {
 	display: block;
-	border: 1px solid var(--game-canvas-border);
 	margin: 0 auto;
 }
 

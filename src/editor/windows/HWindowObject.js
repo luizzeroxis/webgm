@@ -637,8 +637,11 @@ export default class HWindowObject extends HWindow {
 		const actionTypeInfoItem = actionTypeInfo.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind);
 
 		if (actionTypeInfoItem.htmlclass) {
-			const w = this.editor.windowsArea.open(actionTypeInfoItem.htmlclass, action, action, this);
+			let w = this.editor.windowsArea.getId(action);
 			if (w) {
+				this.editor.windowsArea.focus(action);
+			} else {
+				w = this.editor.windowsArea.open(actionTypeInfoItem.htmlclass, action, action, this);
 				this.htmlActionWindows.push(w);
 			}
 		}

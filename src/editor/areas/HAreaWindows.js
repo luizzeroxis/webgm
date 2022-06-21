@@ -27,24 +27,28 @@ export default class HAreaWindows extends HElement {
 
 	// Open a new window or focus on a existing one. windowClass is class that extends HWindow. It will send id, the editor and ...clientArgs as arguments. If a window with the same id is opened, it will focus on it, and return null. Otherwise it returns the newly created instance.
 	open(windowClass, id, ...clientArgs) {
-		if (this.windows.find(x => x.id == id)) {
+		let w = this.getId(id);
+		if (w) {
 			this.focus(id);
-			return null;
 		} else {
 			parent(this)
-				const w = add( new windowClass(this.editor, id, ...clientArgs) )
+				w = add( new windowClass(this.editor, id, ...clientArgs) )
 				endparent()
 
 			this.windows.unshift(w);
 			this.organize();
-			return w;
 		}
+		return w;
 	}
 
 	// Open or focus on a resource window.
 	openResource(resource) {
 		const windowClass = Editor.resourceTypesInfo.find(x => x.class == resource.constructor).windowClass;
 		this.open(windowClass, resource, resource);
+	}
+
+	getId(id) {
+		return this.windows.find(x => x.id == id);
 	}
 
 	// Delete window instance.

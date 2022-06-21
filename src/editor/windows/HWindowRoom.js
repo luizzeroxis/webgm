@@ -199,21 +199,17 @@ export default class HWindowRoom extends HWindow {
 						} else
 
 						if (this.radioMove.getChecked()) {
-							{
-								const hover = this.getInstanceAtPosition(pos);
-								if (hover) {
-									this.movingInstance = hover;
-								}
+							const hover = this.getInstanceAtPosition(pos);
+							if (hover) {
+								this.movingInstance = hover;
 							}
 
 						} else
 
 						if (this.radioDelete.getChecked()) {
-							{
-								const hover = this.getInstanceAtPosition(pos);
-								if (hover) {
-									this.paramInstances = this.paramInstances.filter(i => i != hover);
-								}
+							const hover = this.getInstanceAtPosition(pos);
+							if (hover) {
+								this.paramInstances = this.paramInstances.filter(i => i != hover);
 							}
 						}
 
@@ -235,22 +231,18 @@ export default class HWindowRoom extends HWindow {
 							} else
 
 							if (this.radioMultiple.getChecked()) {
-								{
-									const hover = this.getInstanceAtPosition(pos);
-									if (hover != this.movingInstance) {
-										this.currentPos = snappedPos;
-										this.movingInstance = this.addInstance(e);
-										this.deleteUnderlying(e);
-									}
+								const hover = this.getInstanceAtPosition(pos);
+								if (hover != this.movingInstance) {
+									this.currentPos = snappedPos;
+									this.movingInstance = this.addInstance(e);
+									this.deleteUnderlying(e);
 								}
 							} else
 
 							if (this.radioDelete.getChecked()) {
-								{
-									const hover = this.getInstanceAtPosition(pos);
-									if (hover) {
-										this.paramInstances = this.paramInstances.filter(i => i != hover);
-									}
+								const hover = this.getInstanceAtPosition(pos);
+								if (hover) {
+									this.paramInstances = this.paramInstances.filter(i => i != hover);
 								}
 							}
 

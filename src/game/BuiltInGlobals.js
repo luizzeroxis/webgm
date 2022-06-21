@@ -20,6 +20,8 @@ export default class BuiltInGlobals {
 		},
 	}
 
+	// Not yet supported by terser/webpack, this is defined at the end of the file
+	/*
 	static {
 		for (let i=0; i<16; ++i) {
 			this['argument' + i.toString()] = {
@@ -33,6 +35,7 @@ export default class BuiltInGlobals {
 			};
 		}
 	}
+	*/
 
 	static argument_relative = {readOnly: true, direct: true,
 		directGet() {return this.argumentRelative;},
@@ -267,4 +270,18 @@ export default class BuiltInGlobals {
 
 	static secure_mode = {default: 0, readOnly: true};
 	
+}
+
+// Static initialization
+
+for (let i=0; i<16; ++i) {
+	BuiltInGlobals['argument' + i.toString()] = {
+		direct: true,
+		directGet() {
+			return BuiltInGlobals.arguments[i] != undefined ? BuiltInGlobals.arguments[i] : 0;
+		},
+		directSet(value) {
+			BuiltInGlobals.argument[i] = value;
+		},
+	};
 }

@@ -60,12 +60,12 @@ export class Project {
 
 				this.separateCollisionMasks = false;
 				this.alphaTolerance = 0;
-				this.boundingBox = 'automatic';
+				this.boundingBox = "automatic";
 				this.bbLeft = 31;
 				this.bbTop = 31;
 				this.bbRight = 0;
 				this.bbBottom = 0;
-				this.shape = 'precise';
+				this.shape = "precise";
 			} else {
 				this.id = object.id;
 				this.name = object.name;
@@ -84,10 +84,10 @@ export class Project {
 			}
 		}
 
-		static getName() { return 'sprite'; }
-		static getScreenName() { return 'Sprite'; }
-		static getScreenGroupName() { return 'Sprites'; }
-		static getClassName() { return 'ProjectSprite'; }
+		static getName() { return "sprite"; }
+		static getScreenName() { return "Sprite"; }
+		static getScreenGroupName() { return "Sprites"; }
+		static getClassName() { return "ProjectSprite"; }
 	}
 
 	export class ProjectSound {
@@ -105,10 +105,10 @@ export class Project {
 			}
 		}
 
-		static getName() { return 'sound'; }
-		static getScreenName() { return 'Sound'; }
-		static getScreenGroupName() { return 'Sounds'; }
-		static getClassName() { return 'ProjectSound'; }
+		static getName() { return "sound"; }
+		static getScreenName() { return "Sound"; }
+		static getScreenGroupName() { return "Sounds"; }
+		static getClassName() { return "ProjectSound"; }
 	}
 
 	export class ProjectBackground {
@@ -140,10 +140,10 @@ export class Project {
 			}
 		}
 
-		static getName() { return 'background'; }
-		static getScreenName() { return 'Background'; }
-		static getScreenGroupName() { return 'Backgrounds'; }
-		static getClassName() { return 'ProjectBackground'; }
+		static getName() { return "background"; }
+		static getScreenName() { return "Background"; }
+		static getScreenGroupName() { return "Backgrounds"; }
+		static getClassName() { return "ProjectBackground"; }
 	}
 
 	export class ProjectPath {
@@ -153,7 +153,7 @@ export class Project {
 				this.name = null;
 				this.points = []; // ProjectPathPoint
 				this.backgroundRoomIndex = -1;
-				this.connectionKind = 'lines';
+				this.connectionKind = "lines";
 				this.closed = true;
 				this.precision = 4;
 			} else {
@@ -167,10 +167,10 @@ export class Project {
 			}
 		}
 
-		static getName() { return 'path'; }
-		static getScreenName() { return 'Path'; }
-		static getScreenGroupName() { return 'Paths'; }
-		static getClassName() { return 'ProjectPath'; }
+		static getName() { return "path"; }
+		static getScreenName() { return "Path"; }
+		static getScreenGroupName() { return "Paths"; }
+		static getClassName() { return "ProjectPath"; }
 	}
 
 		export class ProjectPathPoint {
@@ -200,10 +200,10 @@ export class Project {
 			}
 		}
 
-		static getName() { return 'script'; }
-		static getScreenName() { return 'Script'; }
-		static getScreenGroupName() { return 'Scripts'; }
-		static getClassName() { return 'ProjectScript'; }
+		static getName() { return "script"; }
+		static getScreenName() { return "Script"; }
+		static getScreenGroupName() { return "Scripts"; }
+		static getClassName() { return "ProjectScript"; }
 	}
 
 	export class ProjectFont {
@@ -211,7 +211,7 @@ export class Project {
 			if (!object) {
 				this.id = null;
 				this.name = null;
-				this.font = 'Arial';
+				this.font = "Arial";
 				this.size = 12;
 				this.bold = false;
 				this.italic = false;
@@ -225,10 +225,10 @@ export class Project {
 			}
 		}
 
-		static getName() { return 'font'; }
-		static getScreenName() { return 'Font'; }
-		static getScreenGroupName() { return 'Fonts'; }
-		static getClassName() { return 'ProjectFont'; }
+		static getName() { return "font"; }
+		static getScreenName() { return "Font"; }
+		static getScreenGroupName() { return "Fonts"; }
+		static getClassName() { return "ProjectFont"; }
 	}
 
 	export class ProjectTimeline {
@@ -244,10 +244,10 @@ export class Project {
 			}
 		}
 
-		static getName() { return 'timeline'; }
-		static getScreenName() { return 'Time Line'; }
-		static getScreenGroupName() { return 'Time Lines'; }
-		static getClassName() { return 'ProjectTimeline'; }
+		static getName() { return "timeline"; }
+		static getScreenName() { return "Time Line"; }
+		static getScreenGroupName() { return "Time Lines"; }
+		static getClassName() { return "ProjectTimeline"; }
 	}
 
 		export class ProjectTimelineMoment {
@@ -289,10 +289,10 @@ export class Project {
 			}
 		}
 
-		static getName() { return 'object'; }
-		static getScreenName() { return 'Object'; }
-		static getScreenGroupName() { return 'Objects'; }
-		static getClassName() { return 'ProjectObject'; }
+		static getName() { return "object"; }
+		static getScreenName() { return "Object"; }
+		static getScreenGroupName() { return "Objects"; }
+		static getClassName() { return "ProjectObject"; }
 	}
 
 		export class ProjectEvent {
@@ -313,7 +313,7 @@ export class Project {
 			}
 
 			getName() {
-				return this.type + ' ' + this.subtype;
+				return this.type + " " + this.subtype;
 			}
 		}
 
@@ -371,7 +371,7 @@ export class Project {
 
 				this.instances = []; // ProjectInstance
 
-				this.caption = '';
+				this.caption = "";
 				this.width = 640;
 				this.height = 480;
 				this.speed = 30;
@@ -410,10 +410,10 @@ export class Project {
 			}
 		}
 
-		static getName() { return 'room'; }
-		static getScreenName() { return 'Room'; }
-		static getScreenGroupName() { return 'Rooms'; }
-		static getClassName() { return 'ProjectRoom'; }
+		static getName() { return "room"; }
+		static getScreenName() { return "Room"; }
+		static getScreenGroupName() { return "Rooms"; }
+		static getClassName() { return "ProjectRoom"; }
 	}
 
 		export class ProjectInstance {
@@ -525,7 +525,7 @@ export class Project {
 export class ProjectGameInformation {
 	constructor(object) {
 		if (!object) {
-			this.text = '';
+			this.text = "";
 			this.separateWindow = false;
 			this.windowCaption = "Game Information";
 			this.left = -1;
@@ -555,7 +555,7 @@ export class ProjectGlobalGameSettings {
 	constructor(object) {
 		if (!object) {
 			this.startInFullScreen = false;
-			this.colorOutsideRoom = '#000000';
+			this.colorOutsideRoom = "#000000";
 			this.displayCursor = true;
 
 			this.keyEscEndsGame = true;

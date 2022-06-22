@@ -1,4 +1,4 @@
-import {parent, endparent, add, remove, HSelect, HOption} from '../common/H.js'
+import {parent, endparent, add, remove, HSelect, HOption} from "../common/H.js"
 
 export default class HResourceSelect extends HSelect {
 	constructor(editor, label, resourceType, noNone=false) {
@@ -48,7 +48,7 @@ export default class HResourceSelect extends HSelect {
 		parent(this.select)
 
 			if (!this.noNone) {
-				add( new HOption('<none>', -1) )
+				add( new HOption("<none>", -1) )
 			}
 
 			this.editor.project.resources[this.resourceType.getClassName()].forEach(resource => {

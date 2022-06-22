@@ -1,6 +1,6 @@
 export class WebGMException extends Error {
 	constructor(messageOrObject) {
-		if (typeof messageOrObject != 'object') {
+		if (typeof messageOrObject != "object") {
 			super(messageOrObject);
 		} else {
 			if (messageOrObject.text) {

@@ -127,8 +127,8 @@ function callOnRemoveIfNotConnected(element) {
 
 function classToAttr(_class) {
 	if (Array.isArray(_class)) {
-		return _class.join(' ');
-	} else if (typeof _class == 'string') {
+		return _class.join(" ");
+	} else if (typeof _class == "string") {
 		return _class;
 	} else {
 		return null;
@@ -136,8 +136,8 @@ function classToAttr(_class) {
 }
 
 function classToArray(_class) {
-	if (typeof _class == 'string') {
-		return _class.split(' ');
+	if (typeof _class == "string") {
+		return _class.split(" ");
 	} else if (Array.isArray(_class)) {
 		return _class;
 	} else {
@@ -149,8 +149,8 @@ function classToArray(_class) {
 
 export class HButton extends HElement {
 	constructor(text, onClick, _class) {
-		super('button', {class: classToAttr(_class)}, text)
-		this.html.addEventListener('click', onClick);
+		super("button", {class: classToAttr(_class)}, text)
+		this.html.addEventListener("click", onClick);
 	}
 
 	setDisabled(disabled) {
@@ -160,7 +160,7 @@ export class HButton extends HElement {
 
 export class HCanvas extends HElement {
 	constructor(width, height, _class) {
-		super('canvas', {class: classToAttr(_class), width: width, height: height});
+		super("canvas", {class: classToAttr(_class), width: width, height: height});
 	}
 
 	clear() {
@@ -173,10 +173,10 @@ export class HCanvas extends HElement {
 
 export class HLabelAndInput extends HElement {
 	constructor(type, label, value, _class) {
-		parent( super('div', {class: classToAttr(classToArray(_class).concat(['h-label-and-input']))}) )
-			const id = '_id_' + uniqueID();
-			this.label = add( new HElement('label', {for: id}, label) )
-			this.input = add( new HElement('input', {id: id, type: type, value: value}) )
+		parent( super("div", {class: classToAttr(classToArray(_class).concat(["h-label-and-input"]))}) )
+			const id = "_id_" + uniqueID();
+			this.label = add( new HElement("label", {for: id}, label) )
+			this.input = add( new HElement("input", {id: id, type: type, value: value}) )
 			endparent()
 	}
 
@@ -189,22 +189,22 @@ export class HLabelAndInput extends HElement {
 	}
 
 	setOnChange(onChange) {
-		this.input.html.addEventListener('change', onChange);
+		this.input.html.addEventListener("change", onChange);
 	}
 }
 
 export class HTextInput extends HLabelAndInput {
 	constructor(label, value, _class) {
-		super('text', label, value, _class);
+		super("text", label, value, _class);
 	}
 }
 
 export class HMultilineTextInput extends HElement {
 	constructor(label, value, _class) {
-		parent( super('div', {class: classToAttr(classToArray(_class).concat(['h-multiline-text-input']))}) )
-			const id = '_id_' + uniqueID();
-			this.label = add( new HElement('label', {for: id}, label) )
-			this.textarea = add( new HElement('textarea', {id: id}) )
+		parent( super("div", {class: classToAttr(classToArray(_class).concat(["h-multiline-text-input"]))}) )
+			const id = "_id_" + uniqueID();
+			this.label = add( new HElement("label", {for: id}, label) )
+			this.textarea = add( new HElement("textarea", {id: id}) )
 			this.textarea.html.value = value;
 			endparent()
 	}
@@ -216,7 +216,7 @@ export class HMultilineTextInput extends HElement {
 
 export class HNumberInput extends HLabelAndInput {
 	constructor(label, value, step, min, max, _class) {
-		super('number', label, value, _class);
+		super("number", label, value, _class);
 		this.input.html.step = step;
 		this.input.html.min = min;
 		this.input.html.max = max;
@@ -225,7 +225,7 @@ export class HNumberInput extends HLabelAndInput {
 
 export class HRangeInput extends HLabelAndInput {
 	constructor(label, value, step, min, max, _class) {
-		super('range', label, value, _class);
+		super("range", label, value, _class);
 		this.input.html.step = step;
 		this.input.html.min = min;
 		this.input.html.max = max;
@@ -234,19 +234,19 @@ export class HRangeInput extends HLabelAndInput {
 
 export class HColorInput extends HLabelAndInput {
 	constructor(label, value, _class) {
-		super('color', label, value, _class);
+		super("color", label, value, _class);
 	}
 }
 
 export class HCheckBoxInput extends HElement {
 	constructor(label, checked, _class) {
-		parent( super('div', {class: classToAttr(_class)}) )
-			const id = '_id_' + uniqueID();
-			this.input = add( new HElement('input', {
-				id: id, type: 'checkbox',
-				...(checked ? {checked: 'checked'} : null),
+		parent( super("div", {class: classToAttr(_class)}) )
+			const id = "_id_" + uniqueID();
+			this.input = add( new HElement("input", {
+				id: id, type: "checkbox",
+				...(checked ? {checked: "checked"} : null),
 			}) )
-			this.label = add( new HElement('label', {for: id}, label) )
+			this.label = add( new HElement("label", {for: id}, label) )
 			endparent()
 	}
 
@@ -259,19 +259,19 @@ export class HCheckBoxInput extends HElement {
 	}
 
 	setOnChange(onChange) {
-		this.input.html.addEventListener('change', onChange);
+		this.input.html.addEventListener("change", onChange);
 	}
 }
 
 export class HRadioInput extends HElement {
 	constructor(group, label, checked, _class) {
-		parent( super('div', {class: classToAttr(_class)}) )
-			const id = '_id_' + uniqueID();
-			this.input = add( new HElement('input', {
-				id: id, type: 'radio', name: group,
-				...(checked ? {checked: 'checked'} : null),
+		parent( super("div", {class: classToAttr(_class)}) )
+			const id = "_id_" + uniqueID();
+			this.input = add( new HElement("input", {
+				id: id, type: "radio", name: group,
+				...(checked ? {checked: "checked"} : null),
 			}) )
-			this.label = add( new HElement('label', {for: id}, label) )
+			this.label = add( new HElement("label", {for: id}, label) )
 			endparent()
 	}
 
@@ -280,16 +280,16 @@ export class HRadioInput extends HElement {
 	}
 
 	setOnClick(onClick) {
-		this.input.html.addEventListener('click', onClick);
+		this.input.html.addEventListener("click", onClick);
 	}
 }
 
 export class HSelect extends HElement {
 	constructor(label, _class) {
-		parent( super('div', {class: classToAttr(classToArray(_class).concat(['h-select']))}) )
-			const id = '_id_' + uniqueID();
-			this.label = add( new HElement('label', {for: id}, label) )
-			this.select = add( new HElement('select', {id: id}) )
+		parent( super("div", {class: classToAttr(classToArray(_class).concat(["h-select"]))}) )
+			const id = "_id_" + uniqueID();
+			this.label = add( new HElement("label", {for: id}, label) )
+			this.select = add( new HElement("select", {id: id}) )
 			endparent()
 	}
 
@@ -310,7 +310,7 @@ export class HSelect extends HElement {
 	}
 
 	setOnChange(onChange) {
-		this.select.html.addEventListener('change', onChange);
+		this.select.html.addEventListener("change", onChange);
 	}
 
 	removeOptions() {
@@ -320,7 +320,7 @@ export class HSelect extends HElement {
 
 export class HOption extends HElement {
 	constructor(text, value, _class) {
-		super('option', {class: classToAttr(_class), value: value}, text)
+		super("option", {class: classToAttr(_class), value: value}, text)
 	}
 }
 
@@ -342,14 +342,14 @@ export class HSelectWithOptions extends HSelect {
 
 export class HImage extends HElement {
 	constructor(src, _class) {
-		super('img', {class: classToAttr(_class), ...(src ? {src: src} : null)})
+		super("img", {class: classToAttr(_class), ...(src ? {src: src} : null)})
 	}
 
 	setSrc(src) {
 		if (src != null) {
 			this.html.src = src;
 		} else {
-			this.html.removeAttribute('src');
+			this.html.removeAttribute("src");
 		}
 	}
 }
@@ -366,12 +366,12 @@ export function uniqueID() {
 
 // Make a element be able to receive drops of files from anywhere.
 export function setOnFileDrop(element, onSelectFile, multiple=false) {
-	element.addEventListener('dragover', e => {
+	element.addEventListener("dragover", e => {
 		e.stopPropagation();
 		e.preventDefault();
 	})
 
-	element.addEventListener('drop', async e => {
+	element.addEventListener("drop", async e => {
 		e.stopPropagation();
 		if (multiple) {
 			if (!await onSelectFile(e.dataTransfer.files)) {

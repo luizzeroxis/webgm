@@ -1,4 +1,5 @@
 {
+    "root": true,
     "env": {
         "browser": true,
         "es2022": true
@@ -125,6 +126,7 @@
         "no-trailing-spaces": "warn",
         "no-whitespace-before-property": "warn",
         "operator-linebreak": ["warn", "before"],
-        "padded-blocks": ["warn", "never"]
+        "padded-blocks": ["warn", "never"],
+        "quotes": "warn"
     }
 }

@@ -1,10 +1,10 @@
-import AbstractImage from '../../common/AbstractImage.js'
-import {parent, endparent, add, HElement, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from '../../common/H.js'
-import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground} from '../../common/Project.js'
-import HResourceSelect from '../HResourceSelect.js';
-import HTabControl from '../HTabControl.js';
-import HWindow from '../HWindow.js';
-import DefaultInstanceIcon from '../img/default-instance-icon.png';
+import AbstractImage from "../../common/AbstractImage.js"
+import {parent, endparent, add, HElement, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from "../../common/H.js"
+import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground} from "../../common/Project.js"
+import HResourceSelect from "../HResourceSelect.js";
+import HTabControl from "../HTabControl.js";
+import HWindow from "../HWindow.js";
+import DefaultInstanceIcon from "../img/default-instance-icon.png";
 
 export default class HWindowRoom extends HWindow {
 	constructor(editor, id, room) {
@@ -12,50 +12,50 @@ export default class HWindowRoom extends HWindow {
 
 		this.room = room;
 
-		this.title.html.textContent = 'Edit Room '+room.name;
+		this.title.html.textContent = "Edit Room "+room.name;
 
 		// Create paramInstances and paramBackgrounds as copies
 		this.copyProperties();
 
 		parent(this.client)
-			parent( add( new HElement('div', {class: 'grid-resource resource-room'}) ) )
-				parent( add( new HElement('div') ) )
+			parent( add( new HElement("div", {class: "grid-resource resource-room"}) ) )
+				parent( add( new HElement("div") ) )
 
 					// left area
 
-					this.inputSnapX = add( new HNumberInput('Snap X:', 16, 1, 1) )
-					this.inputSnapY = add( new HNumberInput('Snap Y:', 16, 1, 1) )
-					this.inputShowGrid = add( new HCheckBoxInput('Show grid', true) )
+					this.inputSnapX = add( new HNumberInput("Snap X:", 16, 1, 1) )
+					this.inputSnapY = add( new HNumberInput("Snap Y:", 16, 1, 1) )
+					this.inputShowGrid = add( new HCheckBoxInput("Show grid", true) )
 
 					this.tabControl = add( new HTabControl() )
 
-					parent( this.tabControl.addTab('Instances') )
+					parent( this.tabControl.addTab("Instances") )
 
-						this.selectObject = add( new HResourceSelect(this.editor, 'Object:', ProjectObject, true) )
+						this.selectObject = add( new HResourceSelect(this.editor, "Object:", ProjectObject, true) )
 
-						const toolGroup = '_radio_'+uniqueID();
-						this.radioAdd = add( new HRadioInput(toolGroup, 'Add instance', true) )
-						this.radioMultiple = add( new HRadioInput(toolGroup, 'Add multiple instances') )
-						this.radioMove = add( new HRadioInput(toolGroup, 'Move instance') )
-						this.radioDelete = add( new HRadioInput(toolGroup, 'Delete instance') )
+						const toolGroup = "_radio_"+uniqueID();
+						this.radioAdd = add( new HRadioInput(toolGroup, "Add instance", true) )
+						this.radioMultiple = add( new HRadioInput(toolGroup, "Add multiple instances") )
+						this.radioMove = add( new HRadioInput(toolGroup, "Move instance") )
+						this.radioDelete = add( new HRadioInput(toolGroup, "Delete instance") )
 
-						this.inputSnapToGrid = add( new HCheckBoxInput('Snap to grid', true) )
-						this.inputDeleteUnderlying = add( new HCheckBoxInput('Delete underlying', false) )
-
-						endparent()
-
-					parent( this.tabControl.addTab('Settings') )
-
-						this.inputName = add( new HTextInput('Name:', room.name) )
-						this.inputWidth = add( new HNumberInput('Width:', room.width, 1, 1) )
-						this.inputHeight = add( new HNumberInput('Height:', room.height, 1, 1) )
-						this.inputSpeed = add( new HNumberInput('Speed:', room.speed, 1, 1) )
+						this.inputSnapToGrid = add( new HCheckBoxInput("Snap to grid", true) )
+						this.inputDeleteUnderlying = add( new HCheckBoxInput("Delete underlying", false) )
 
 						endparent()
 
-					parent( this.tabControl.addTab('Backgrounds') )
+					parent( this.tabControl.addTab("Settings") )
 
-						this.inputBackgroundColor = add( new HColorInput('Background color:', room.backgroundColor) )
+						this.inputName = add( new HTextInput("Name:", room.name) )
+						this.inputWidth = add( new HNumberInput("Width:", room.width, 1, 1) )
+						this.inputHeight = add( new HNumberInput("Height:", room.height, 1, 1) )
+						this.inputSpeed = add( new HNumberInput("Speed:", room.speed, 1, 1) )
+
+						endparent()
+
+					parent( this.tabControl.addTab("Backgrounds") )
+
+						this.inputBackgroundColor = add( new HColorInput("Background color:", room.backgroundColor) )
 
 						const getBackground = (index) => {
 							const currentBackground = this.paramBackgrounds[index];
@@ -90,14 +90,14 @@ export default class HWindowRoom extends HWindow {
 							this.inputTileVertically.setChecked(currentBackground.tileVertically);
 						}
 
-						this.selectBackgrounds = add( new HSelect('Backgrounds:', 'backgrounds') )
+						this.selectBackgrounds = add( new HSelect("Backgrounds:", "backgrounds") )
 						this.selectBackgroundsOptions = [];
 
 						parent(this.selectBackgrounds.select)
 							for (let i=0; i<8; ++i) {
 								const background = getBackground(i);
-								const _class = (background.visibleAtStart ? 'bold' : null);
-								this.selectBackgroundsOptions[i] = add( new HOption('Background '+i.toString(), i, _class) )
+								const _class = (background.visibleAtStart ? "bold" : null);
+								this.selectBackgroundsOptions[i] = add( new HOption("Background "+i.toString(), i, _class) )
 							}
 							endparent()
 
@@ -107,7 +107,7 @@ export default class HWindowRoom extends HWindow {
 							updateBackgroundProperties();
 						})
 
-						this.inputBackgroundVisibleAtStart = add( new HCheckBoxInput('Visible when room starts') )
+						this.inputBackgroundVisibleAtStart = add( new HCheckBoxInput("Visible when room starts") )
 						this.inputBackgroundVisibleAtStart.setOnChange(() => {
 							const currentBackgroundId = this.selectBackgrounds.getValue();
 							const currentBackground = getOrCreateBackground(currentBackgroundId);
@@ -115,9 +115,9 @@ export default class HWindowRoom extends HWindow {
 							currentBackground.visibleAtStart = this.inputBackgroundVisibleAtStart.getChecked();
 
 							if (currentBackground.visibleAtStart) {
-								this.selectBackgroundsOptions[currentBackgroundId].html.classList.add('bold');
+								this.selectBackgroundsOptions[currentBackgroundId].html.classList.add("bold");
 							} else {
-								this.selectBackgroundsOptions[currentBackgroundId].html.classList.remove('bold');
+								this.selectBackgroundsOptions[currentBackgroundId].html.classList.remove("bold");
 							}
 
 							this.updateCanvasPreview();
@@ -129,13 +129,13 @@ export default class HWindowRoom extends HWindow {
 							this.updateCanvasPreview();
 						})
 
-						this.inputTileHorizontally = add( new HCheckBoxInput('Tile Hor.') )
+						this.inputTileHorizontally = add( new HCheckBoxInput("Tile Hor.") )
 						this.inputTileHorizontally.setOnChange(() => {
 							getOrCreateCurrentBackground().tileHorizontally = this.inputTileHorizontally.getChecked();
 							this.updateCanvasPreview();
 						})
 
-						this.inputTileVertically = add( new HCheckBoxInput('Tile Vert.') )
+						this.inputTileVertically = add( new HCheckBoxInput("Tile Vert.") )
 						this.inputTileVertically.setOnChange(() => {
 							getOrCreateCurrentBackground().tileVertically = this.inputTileVertically.getChecked();
 							this.updateCanvasPreview();
@@ -145,17 +145,17 @@ export default class HWindowRoom extends HWindow {
 
 						endparent()
 
-					parent( add( new HElement('div', {}, 'X: ') ) )
-						this.spanX = add( new HElement('span', {}, '0') );
+					parent( add( new HElement("div", {}, "X: ") ) )
+						this.spanX = add( new HElement("span", {}, "0") );
 						endparent()
-					parent( add( new HElement('div', {}, 'Y: ') ) )
-						this.spanY = add( new HElement('span', {}, '0') );
+					parent( add( new HElement("div", {}, "Y: ") ) )
+						this.spanY = add( new HElement("span", {}, "0") );
 						endparent()
-					parent( add( new HElement('div', {}, 'Object: ') ) )
-						this.spanObject = add( new HElement('span') );
+					parent( add( new HElement("div", {}, "Object: ") ) )
+						this.spanObject = add( new HElement("span") );
 						endparent()
-					parent( add( new HElement('div', {}, 'ID: ') ) )
-						this.spanId = add( new HElement('span') );
+					parent( add( new HElement("div", {}, "ID: ") ) )
+						this.spanId = add( new HElement("span") );
 						endparent()
 
 					// updates
@@ -168,12 +168,12 @@ export default class HWindowRoom extends HWindow {
 					this.inputBackgroundColor.setOnChange(() => this.updateCanvasPreview())
 
 					endparent()
-				parent( add( new HElement('div', {class: 'preview'}) ) )
+				parent( add( new HElement("div", {class: "preview"}) ) )
 
 					// actual room area
 
 					this.canvasPreview = add( new HCanvas(room.width, room.height) );
-					this.ctx = this.canvasPreview.html.getContext('2d');
+					this.ctx = this.canvasPreview.html.getContext("2d");
 					this.ctx.imageSmoothingEnabled = false;
 
 					// TODO: account for sprite size when moving and deleting
@@ -244,8 +244,8 @@ export default class HWindowRoom extends HWindow {
 
 						this.spanX.html.textContent = snappedPos.x;
 						this.spanY.html.textContent = snappedPos.y;
-						this.spanObject.html.textContent = '';
-						this.spanId.html.textContent = '';
+						this.spanObject.html.textContent = "";
+						this.spanId.html.textContent = "";
 
 						{
 							const hover = this.getInstanceAtPosition(pos);
@@ -477,9 +477,9 @@ export default class HWindowRoom extends HWindow {
 
 		// grid
 		if (this.inputShowGrid.getChecked()) {
-			this.ctx.globalCompositeOperation = 'difference';
-			this.ctx.fillStyle = 'white';
-			this.ctx.strokeStyle = 'white';
+			this.ctx.globalCompositeOperation = "difference";
+			this.ctx.fillStyle = "white";
+			this.ctx.strokeStyle = "white";
 
 			const snapx = parseInt(this.inputSnapX.getValue());
 			const snapy = parseInt(this.inputSnapY.getValue());
@@ -496,7 +496,7 @@ export default class HWindowRoom extends HWindow {
 				}
 			}
 
-			this.ctx.globalCompositeOperation = 'source-over';
+			this.ctx.globalCompositeOperation = "source-over";
 		}
 	}
 

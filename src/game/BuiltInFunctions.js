@@ -1,5 +1,5 @@
-import {EngineException} from '../common/Exceptions.js';
-import {decimalColorToHSVValues, decimalColorAndAlphaToRGBA, decimalColorToRGB, rgbValuesToDecimalColor, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger, parseNewLineHash} from '../common/tools.js'
+import {EngineException} from "../common/Exceptions.js";
+import {decimalColorToHSVValues, decimalColorAndAlphaToRGBA, decimalColorToRGB, rgbValuesToDecimalColor, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger, parseNewLineHash} from "../common/tools.js"
 
 export default class BuiltInFunctions {
 	// this = GML
@@ -177,11 +177,11 @@ export default class BuiltInFunctions {
 	}
 
 	static is_real ([x]) {
-		return (typeof x == 'number') ? 1 : 0;
+		return (typeof x == "number") ? 1 : 0;
 	}
 
 	static is_string ([x]) {
-		return (typeof x == 'string') ? 1 : 0;
+		return (typeof x == "string") ? 1 : 0;
 	}
 
 	// ## String handling functions
@@ -538,8 +538,8 @@ export default class BuiltInFunctions {
 	static motion_add ([dir, speed]) {
 		const dir_radians = dir * (Math.PI / 180);
 		this.currentInstance.setHspeedAndVspeed(
-			this.currentInstance.vars.getBuiltIn('hspeed') + Math.cos(dir_radians) * speed,
-			this.currentInstance.vars.getBuiltIn('vspeed') + -Math.sin(dir_radians) * speed,
+			this.currentInstance.vars.getBuiltIn("hspeed") + Math.cos(dir_radians) * speed,
+			this.currentInstance.vars.getBuiltIn("vspeed") + -Math.sin(dir_radians) * speed,
 		);
 		return 0;
 	}
@@ -559,7 +559,7 @@ export default class BuiltInFunctions {
 	}
 
 	static place_snapped ([hsnap, vsnap]) {
-		return (this.currentInstance.vars.getBuiltIn('x') % hsnap == 0) && (this.currentInstance.vars.getBuiltIn('y') % vsnap == 0)
+		return (this.currentInstance.vars.getBuiltIn("x") % hsnap == 0) && (this.currentInstance.vars.getBuiltIn("y") % vsnap == 0)
 	}
 
 	static move_random ([hsnap, vsnap]) {
@@ -574,8 +574,8 @@ export default class BuiltInFunctions {
 			y = Math.floor((Math.random() * this.game.room.height) / vsnap) * vsnap;
 
 			if (!this.game.collisionInstanceOnInstances(this.currentInstance, this.game.instances, x, y, true)) {
-				this.currentInstance.vars.setBuiltIn('x', x);
-				this.currentInstance.vars.setBuiltIn('y', y);
+				this.currentInstance.vars.setBuiltIn("x", x);
+				this.currentInstance.vars.setBuiltIn("y", y);
 				break;
 			}
 		}
@@ -584,37 +584,37 @@ export default class BuiltInFunctions {
 	}
 
 	static move_snap ([hsnap, vsnap]) {
-		this.currentInstance.vars.setBuiltIn('x', Math.floor(this.currentInstance.vars.getBuiltIn('x') / hsnap) * hsnap);
-		this.currentInstance.vars.setBuiltIn('y', Math.floor(this.currentInstance.vars.getBuiltIn('y') / vsnap) * vsnap);
+		this.currentInstance.vars.setBuiltIn("x", Math.floor(this.currentInstance.vars.getBuiltIn("x") / hsnap) * hsnap);
+		this.currentInstance.vars.setBuiltIn("y", Math.floor(this.currentInstance.vars.getBuiltIn("y") / vsnap) * vsnap);
 		return 0;
 	}
 
 	static move_wrap ([hor, vert, margin]) {
 		if (hor) {
-			const x = this.currentInstance.vars.getBuiltIn('x');
+			const x = this.currentInstance.vars.getBuiltIn("x");
 			if (x >= this.game.room.width + margin) {
-				this.currentInstance.vars.setBuiltIn('x', x - this.game.room.width - margin*2);
+				this.currentInstance.vars.setBuiltIn("x", x - this.game.room.width - margin*2);
 			} else
 			if (x < 0 - margin) {
-				this.currentInstance.vars.setBuiltIn('x', this.game.room.width + x + margin*2);
+				this.currentInstance.vars.setBuiltIn("x", this.game.room.width + x + margin*2);
 			}
 		}
 
 		if (vert) {
-			const y = this.currentInstance.vars.getBuiltIn('y');
+			const y = this.currentInstance.vars.getBuiltIn("y");
 			if (y >= this.game.room.height + margin) {
-				this.currentInstance.vars.setBuiltIn('y', y - this.game.room.height - margin*2);
+				this.currentInstance.vars.setBuiltIn("y", y - this.game.room.height - margin*2);
 			} else
 			if (y < 0 - margin) {
-				this.currentInstance.vars.setBuiltIn('y', this.game.room.height + y - margin*2);
+				this.currentInstance.vars.setBuiltIn("y", this.game.room.height + y - margin*2);
 			}
 		}
 		return 0;
 	}
 
 	static move_towards_point ([x, y, sp]) {
-		const cx = this.currentInstance.vars.getBuiltIn('x');
-		const cy = this.currentInstance.vars.getBuiltIn('y');
+		const cx = this.currentInstance.vars.getBuiltIn("x");
+		const cy = this.currentInstance.vars.getBuiltIn("y");
 		this.currentInstance.setDirectionAndSpeed(Math.atan2(-(y - cy), x - cx) * (180 / Math.PI), sp);
 		return 0;
 	}
@@ -860,12 +860,12 @@ export default class BuiltInFunctions {
 	}
 
 	static async instance_create ([x, y, obj]) {
-		const object = this.game.getResourceById('ProjectObject', obj);
+		const object = this.game.getResourceById("ProjectObject", obj);
 		if (object == null) {
 			throw this.game.makeNonFatalError({
-					type: 'creating_instance_for_non_existing_object',
+					type: "creating_instance_for_non_existing_object",
 					objectIndex: obj,
-				}, 'Creating instance for non-existing object: ' + obj.toString());
+				}, "Creating instance for non-existing object: " + obj.toString());
 		}
 
 		return await this.game.instanceCreate(null, x, y, obj);
@@ -877,7 +877,7 @@ export default class BuiltInFunctions {
 	}
 
 	static async instance_destroy ([]) {
-		await this.game.doEvent(this.game.getEventOfInstance(this.currentInstance, 'destroy'), this.currentInstance);
+		await this.game.doEvent(this.game.getEventOfInstance(this.currentInstance, "destroy"), this.currentInstance);
 		this.currentInstance.exists = false;
 		return 0;
 	}
@@ -941,12 +941,12 @@ export default class BuiltInFunctions {
 	// ## Rooms
 
 	static room_goto ([numb]) {
-		const room = this.game.getResourceById('ProjectRoom', numb);
+		const room = this.game.getResourceById("ProjectRoom", numb);
 		if (room == null) {
 			throw this.game.makeFatalError({
-					type: 'unexisting_room_number',
+					type: "unexisting_room_number",
 					numb: numb,
-				}, 'Unexisting room number: ' + numb.toString());
+				}, "Unexisting room number: " + numb.toString());
 		}
 		this.game.stepStopAction = async () => {
 			await this.game.loadRoom(room);
@@ -1324,15 +1324,15 @@ export default class BuiltInFunctions {
 				this.game.drawSprite(sprite, subimg % sprite.images.length, x, y);
 			} else {
 				throw this.game.makeNonFatalError({
-					type: 'trying_to_draw_non_existing_sprite',
+					type: "trying_to_draw_non_existing_sprite",
 					spriteIndex: spriteIndex,
-				}, 'Trying to draw non-existing sprite. (' + spriteIndex.toString() +')');
+				}, "Trying to draw non-existing sprite. (" + spriteIndex.toString() +")");
 			}
 		} else {
 			throw this.game.makeNonFatalError({
-				type: 'trying_to_draw_non_existing_sprite',
+				type: "trying_to_draw_non_existing_sprite",
 				spriteIndex: spriteIndex,
-			}, 'Trying to draw non-existing sprite. (' + spriteIndex.toString() +')');
+			}, "Trying to draw non-existing sprite. (" + spriteIndex.toString() +")");
 		}
 
 		return 0;
@@ -1651,8 +1651,8 @@ export default class BuiltInFunctions {
 		this.game.ctx.font = this.game.cssFontsCache[this.game.drawFont];
 
 		// holy shit now this is epic
-		this.game.ctx.textAlign = (['left', 'center', 'right'])[this.game.drawHAlign];
-		this.game.ctx.textBaseline = (['top', 'middle', 'bottom'])[this.game.drawVAlign];
+		this.game.ctx.textAlign = (["left", "center", "right"])[this.game.drawHAlign];
+		this.game.ctx.textBaseline = (["top", "middle", "bottom"])[this.game.drawVAlign];
 
 		// Look, I tried making this be like GM but it just doesn't add up. Hopefully will be fixed if and when we change to a custom font renderer
 
@@ -1660,7 +1660,7 @@ export default class BuiltInFunctions {
 		const textMetrics = this.game.ctx.measureText("");
 		const height = Math.abs(textMetrics.fontBoundingBoxDescent) + Math.abs(textMetrics.fontBoundingBoxAscent);
 
-		const lines = parseNewLineHash(string).split('\n');
+		const lines = parseNewLineHash(string).split("\n");
 
 		let currentY;
 		if (this.game.drawVAlign == 0) { // top
@@ -2447,12 +2447,12 @@ export default class BuiltInFunctions {
 	// ## Basic sound functions
 
 	static sound_play ([index]) {
-		const sound = this.game.getResourceById('ProjectSound', index);
+		const sound = this.game.getResourceById("ProjectSound", index);
 		if (!sound) {
 			throw this.game.makeNonFatalError({
-				type: 'sound_does_not_exist',
+				type: "sound_does_not_exist",
 				soundIndex: index,
-			}, 'Sound does not exist. (' + index.toString() +')');
+			}, "Sound does not exist. (" + index.toString() +")");
 		}
 
 		this.game.playSound(sound, false);
@@ -2460,12 +2460,12 @@ export default class BuiltInFunctions {
 	}
 
 	static sound_loop ([index]) {
-		const sound = this.game.getResourceById('ProjectSound', index);
+		const sound = this.game.getResourceById("ProjectSound", index);
 		if (!sound) {
 			throw this.game.makeNonFatalError({
-				type: 'sound_does_not_exist',
+				type: "sound_does_not_exist",
 				soundIndex: index,
-			}, 'Sound does not exist. (' + index.toString() +')');
+			}, "Sound does not exist. (" + index.toString() +")");
 		}
 
 		this.game.playSound(sound, true);
@@ -2473,12 +2473,12 @@ export default class BuiltInFunctions {
 	}
 
 	static sound_stop ([index]) {
-		const sound = this.game.getResourceById('ProjectSound', index);
+		const sound = this.game.getResourceById("ProjectSound", index);
 		if (!sound) {
 			throw this.game.makeNonFatalError({
-				type: 'sound_does_not_exist',
+				type: "sound_does_not_exist",
 				soundIndex: index,
-			}, 'Sound does not exist. (' + index.toString() +')');
+			}, "Sound does not exist. (" + index.toString() +")");
 		}
 
 		this.game.stopSound(sound);
@@ -2490,7 +2490,7 @@ export default class BuiltInFunctions {
 	}
 
 	static sound_isplaying ([index]) {
-		const sound = this.game.getResourceById('ProjectSound', index);
+		const sound = this.game.getResourceById("ProjectSound", index);
 		if (!sound) return 0;
 
 		for (const audioNode of this.game.sounds.get(sound).audioNodes) {
@@ -2503,7 +2503,7 @@ export default class BuiltInFunctions {
 	}
 
 	static sound_volume ([index, value]) {
-		const sound = this.game.getResourceById('ProjectSound', index);
+		const sound = this.game.getResourceById("ProjectSound", index);
 		if (!sound) return 0; // TODO check if error
 
 		this.game.sounds.get(sound).volume = value;
@@ -3019,7 +3019,7 @@ export default class BuiltInFunctions {
 	// ## Sprites
 
 	static sprite_exists ([ind]) {
-		const sprite = this.game.getResourceById('ProjectSprite', ind);
+		const sprite = this.game.getResourceById("ProjectSprite", ind);
 		return sprite ? 1 : 0;
 	}
 
@@ -3086,7 +3086,7 @@ export default class BuiltInFunctions {
 	// ## Sounds
 
 	static sound_exists ([ind]) {
-		const sound = this.game.getResourceById('ProjectSound', ind);
+		const sound = this.game.getResourceById("ProjectSound", ind);
 		return sound ? 1 : 0;
 	}
 
@@ -3118,7 +3118,7 @@ export default class BuiltInFunctions {
 	// ## Backgrounds
 
 	static background_exists ([ind]) {
-		const background = this.game.getResourceById('ProjectBackground', ind);
+		const background = this.game.getResourceById("ProjectBackground", ind);
 		return background ? 1 : 0;
 	}
 
@@ -3145,7 +3145,7 @@ export default class BuiltInFunctions {
 	// ## Fonts
 
 	static font_exists ([ind]) {
-		const font = this.game.getResourceById('ProjectFont', ind);
+		const font = this.game.getResourceById("ProjectFont", ind);
 		return font ? 1 : 0;
 	}
 
@@ -3182,7 +3182,7 @@ export default class BuiltInFunctions {
 	// ## Paths
 
 	static path_exists ([ind]) {
-		const path = this.game.getResourceById('ProjectPath', ind);
+		const path = this.game.getResourceById("ProjectPath", ind);
 		return path ? 1 : 0;
 	}
 
@@ -3249,7 +3249,7 @@ export default class BuiltInFunctions {
 	// ## Scripts
 
 	static script_exists ([ind]) {
-		const script = this.game.getResourceById('ProjectScript', ind);
+		const script = this.game.getResourceById("ProjectScript", ind);
 		return script ? 1 : 0;
 	}
 
@@ -3266,7 +3266,7 @@ export default class BuiltInFunctions {
 	// ## Time lines
 
 	static timeline_exists ([ind]) {
-		const timeline = this.game.getResourceById('ProjectTimeline', ind);
+		const timeline = this.game.getResourceById("ProjectTimeline", ind);
 		return timeline ? 1 : 0;
 	}
 
@@ -3278,7 +3278,7 @@ export default class BuiltInFunctions {
 	// ## Objects
 
 	static object_exists ([ind]) {
-		const object = this.game.getResourceById('ProjectObject', ind);
+		const object = this.game.getResourceById("ProjectObject", ind);
 		return object ? 1 : 0;
 	}
 
@@ -3330,7 +3330,7 @@ export default class BuiltInFunctions {
 	// ## Rooms
 
 	static room_exists ([ind]) {
-		const room = this.game.getResourceById('ProjectRoom', ind);
+		const room = this.game.getResourceById("ProjectRoom", ind);
 		return room ? 1 : 0;
 	}
 
@@ -3634,14 +3634,14 @@ export default class BuiltInFunctions {
 	}
 
 	static script_execute ([scr, ...args]) {
-		const script = this.game.getResourceById('ProjectScript', scr);
+		const script = this.game.getResourceById("ProjectScript", scr);
 		if (script) {
 			return this.execute(this.game.gmlCache.get(script), this.currentInstance, this.currentOther, args);
 		} else {
 			throw this.game.makeNonFatalError({
-					type: 'trying_to_execute_non_existing_script',
+					type: "trying_to_execute_non_existing_script",
 					scriptIndex: scr,
-				}, 'Trying to execute non-existing script. (' + scr.toString() +')');
+				}, "Trying to execute non-existing script. (" + scr.toString() +")");
 		}
 	}
 
@@ -5749,10 +5749,10 @@ export default class BuiltInFunctions {
 		const chosenAngle = possibleAngles[Math.floor( Math.random() * possibleAngles.length )];
 
 		if (chosenAngle != null) {
-			speed = (!relative ? speed : this.currentInstance.vars.getBuiltIn('speed') + speed);
+			speed = (!relative ? speed : this.currentInstance.vars.getBuiltIn("speed") + speed);
 			this.currentInstance.setDirectionAndSpeed(chosenAngle, speed);
 		} else {
-			this.currentInstance.vars.setBuiltIn('speed', 0);
+			this.currentInstance.vars.setBuiltIn("speed", 0);
 		}
 
 		return 0;
@@ -5771,8 +5771,8 @@ export default class BuiltInFunctions {
 		// If not relative: x - instance.x (you subtract to make instance the center)
 		// If relative: x - instance.x + instance.x == x
 		if (!relative) {
-			x -= this.currentInstance.vars.getBuiltIn('x');
-			y -= this.currentInstance.vars.getBuiltIn('y');
+			x -= this.currentInstance.vars.getBuiltIn("x");
+			y -= this.currentInstance.vars.getBuiltIn("y");
 		}
 
 		this.currentInstance.setDirectionAndSpeed(Math.atan2(-y, x) * (180 / Math.PI), speed);
@@ -5780,54 +5780,54 @@ export default class BuiltInFunctions {
 	}
 
 	static action_set_hspeed ([horSpeed], relative) {
-		horSpeed = (!relative ? horSpeed : this.currentInstance.vars.getBuiltIn('hspeed') + horSpeed);
-		this.currentInstance.vars.setBuiltInCall('hspeed', horSpeed);
+		horSpeed = (!relative ? horSpeed : this.currentInstance.vars.getBuiltIn("hspeed") + horSpeed);
+		this.currentInstance.vars.setBuiltInCall("hspeed", horSpeed);
 		return 0;
 	}
 
 	static action_set_vspeed ([vertSpeed], relative) {
-		vertSpeed = (!relative ? vertSpeed : this.currentInstance.vars.getBuiltIn('vspeed') + vertSpeed);
-		this.currentInstance.vars.setBuiltInCall('vspeed', vertSpeed);
+		vertSpeed = (!relative ? vertSpeed : this.currentInstance.vars.getBuiltIn("vspeed") + vertSpeed);
+		this.currentInstance.vars.setBuiltInCall("vspeed", vertSpeed);
 		return 0;
 	}
 
 	static action_set_gravity ([direction, gravity], relative) {
-		direction = (!relative ? direction : this.currentInstance.vars.getBuiltIn('gravity_direction') + direction); // lol
-		this.currentInstance.vars.setBuiltIn('gravity_direction', direction);
-		gravity = (!relative ? gravity : this.currentInstance.vars.getBuiltIn('gravity') + gravity);
-		this.currentInstance.vars.setBuiltIn('gravity', gravity);
+		direction = (!relative ? direction : this.currentInstance.vars.getBuiltIn("gravity_direction") + direction); // lol
+		this.currentInstance.vars.setBuiltIn("gravity_direction", direction);
+		gravity = (!relative ? gravity : this.currentInstance.vars.getBuiltIn("gravity") + gravity);
+		this.currentInstance.vars.setBuiltIn("gravity", gravity);
 		return 0;
 	}
 
 	static action_reverse_xdir ([]) {
-		this.currentInstance.vars.setBuiltInCall('hspeed', this.currentInstance.vars.getBuiltIn('hspeed') * -1);
+		this.currentInstance.vars.setBuiltInCall("hspeed", this.currentInstance.vars.getBuiltIn("hspeed") * -1);
 		return 0;
 	}
 
 	static action_reverse_ydir ([]) {
-		this.currentInstance.vars.setBuiltInCall('vspeed', this.currentInstance.vars.getBuiltIn('vspeed') * -1);
+		this.currentInstance.vars.setBuiltInCall("vspeed", this.currentInstance.vars.getBuiltIn("vspeed") * -1);
 		return 0;
 	}
 
 	static action_set_friction ([friction], relative) {
-		friction = (!relative ? friction : this.currentInstance.vars.getBuiltIn('friction') + friction);
-		this.currentInstance.vars.setBuiltIn('friction', friction);
+		friction = (!relative ? friction : this.currentInstance.vars.getBuiltIn("friction") + friction);
+		this.currentInstance.vars.setBuiltIn("friction", friction);
 		return 0;
 	}
 
 	// ### Jump
 
 	static action_move_to ([x, y], relative) {
-		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
-		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
-		this.currentInstance.vars.setBuiltIn('x', x);
-		this.currentInstance.vars.setBuiltIn('y', y);
+		x = (!relative ? x : this.currentInstance.vars.getBuiltIn("x") + x);
+		y = (!relative ? y : this.currentInstance.vars.getBuiltIn("y") + y);
+		this.currentInstance.vars.setBuiltIn("x", x);
+		this.currentInstance.vars.setBuiltIn("y", y);
 		return 0;
 	}
 
 	static action_move_start ([]) {
-		this.currentInstance.vars.setBuiltIn('x', this.currentInstance.vars.getBuiltIn('xstart'));
-		this.currentInstance.vars.setBuiltIn('y', this.currentInstance.vars.getBuiltIn('ystart'));
+		this.currentInstance.vars.setBuiltIn("x", this.currentInstance.vars.getBuiltIn("xstart"));
+		this.currentInstance.vars.setBuiltIn("y", this.currentInstance.vars.getBuiltIn("ystart"));
 		return 0;
 	}
 
@@ -5857,26 +5857,26 @@ export default class BuiltInFunctions {
 		}
 
 		if (horizontal) {
-			const x = this.currentInstance.vars.getBuiltIn('x');
+			const x = this.currentInstance.vars.getBuiltIn("x");
 			if (x >= this.game.room.width
-				&& this.currentInstance.vars.getBuiltIn('hspeed') > 0) {
-				this.currentInstance.vars.setBuiltIn('x', x - this.game.room.width - spriteW);
+				&& this.currentInstance.vars.getBuiltIn("hspeed") > 0) {
+				this.currentInstance.vars.setBuiltIn("x", x - this.game.room.width - spriteW);
 			} else
 			if (x < 0
-				&& this.currentInstance.vars.getBuiltIn('hspeed') < 0) {
-				this.currentInstance.vars.setBuiltIn('x', this.game.room.width + x + spriteW);
+				&& this.currentInstance.vars.getBuiltIn("hspeed") < 0) {
+				this.currentInstance.vars.setBuiltIn("x", this.game.room.width + x + spriteW);
 			}
 		}
 
 		if (vertical) {
-			const y = this.currentInstance.vars.getBuiltIn('y');
+			const y = this.currentInstance.vars.getBuiltIn("y");
 			if (y >= this.game.room.height
-				&& this.currentInstance.vars.getBuiltIn('vspeed') > 0) {
-				this.currentInstance.vars.setBuiltIn('y', y - this.game.room.height - spriteH);
+				&& this.currentInstance.vars.getBuiltIn("vspeed") > 0) {
+				this.currentInstance.vars.setBuiltIn("y", y - this.game.room.height - spriteH);
 			} else
 			if (y < 0
-				&& this.currentInstance.vars.getBuiltIn('vspeed') < 0) {
-				this.currentInstance.vars.setBuiltIn('y', this.game.room.height + y + spriteH);
+				&& this.currentInstance.vars.getBuiltIn("vspeed") < 0) {
+				this.currentInstance.vars.setBuiltIn("y", this.game.room.height + y + spriteH);
 			}
 		}
 
@@ -5936,8 +5936,8 @@ export default class BuiltInFunctions {
 	// ### Objects
 
 	static async action_create_object ([object, x, y], relative) {
-		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
-		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
+		x = (!relative ? x : this.currentInstance.vars.getBuiltIn("x") + x);
+		y = (!relative ? y : this.currentInstance.vars.getBuiltIn("y") + y);
 
 		await BuiltInFunctions.instance_create.call(this, [x, y, object]);
 
@@ -5972,11 +5972,11 @@ export default class BuiltInFunctions {
 	/// ### Sprite
 
 	static action_sprite_set ([sprite, subimage, speed]) {
-		this.currentInstance.vars.setBuiltInCall('sprite_index', sprite);
+		this.currentInstance.vars.setBuiltInCall("sprite_index", sprite);
 		if (subimage != -1) {
-			this.currentInstance.vars.setBuiltIn('image_index', subimage);
+			this.currentInstance.vars.setBuiltIn("image_index", subimage);
 		}
-		this.currentInstance.vars.setBuiltIn('image_speed', speed);
+		this.currentInstance.vars.setBuiltIn("image_speed", speed);
 		return 0;
 	}
 
@@ -6046,8 +6046,8 @@ export default class BuiltInFunctions {
 	// ### Timing
 
 	static action_set_alarm ([numberOfSteps, inAlarmNo], relative) {
-		numberOfSteps = (!relative ? numberOfSteps : this.currentInstance.vars.getBuiltInArray('alarm', [inAlarmNo]) + numberOfSteps);
-		this.currentInstance.vars.setBuiltInArray('alarm', [inAlarmNo], numberOfSteps);
+		numberOfSteps = (!relative ? numberOfSteps : this.currentInstance.vars.getBuiltInArray("alarm", [inAlarmNo]) + numberOfSteps);
+		this.currentInstance.vars.setBuiltInArray("alarm", [inAlarmNo], numberOfSteps);
 		return 0;
 	}
 
@@ -6181,8 +6181,8 @@ export default class BuiltInFunctions {
 	// ### Questions
 
 	static action_if_empty ([x, y, objects], relative) {
-		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
-		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
+		x = (!relative ? x : this.currentInstance.vars.getBuiltIn("x") + x);
+		y = (!relative ? y : this.currentInstance.vars.getBuiltIn("y") + y);
 		if (objects == 0) { // Only solid
 			return BuiltInFunctions.place_free.call(this, [x, y]);
 		} else if (objects == 1) { // All
@@ -6192,8 +6192,8 @@ export default class BuiltInFunctions {
 	}
 
 	static action_if_collision ([x, y, objects], relative) {
-		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
-		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
+		x = (!relative ? x : this.currentInstance.vars.getBuiltIn("x") + x);
+		y = (!relative ? y : this.currentInstance.vars.getBuiltIn("y") + y);
 		if (objects == 0) { // Only solid
 			return !(BuiltInFunctions.place_free.call(this, [x, y]));
 		} else if (objects == 1) { // All
@@ -6203,8 +6203,8 @@ export default class BuiltInFunctions {
 	}
 
 	static action_if_object ([object, x, y], relative) {
-		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
-		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
+		x = (!relative ? x : this.currentInstance.vars.getBuiltIn("x") + x);
+		y = (!relative ? y : this.currentInstance.vars.getBuiltIn("y") + y);
 		return BuiltInFunctions.place_meeting.call(this, [x, y, object]);
 	}
 
@@ -6250,7 +6250,7 @@ export default class BuiltInFunctions {
 	// ### Code
 
 	static action_execute_script ([script, argument0, argument1, argument2, argument3, argument4]) {
-		const scriptResource = this.game.getResourceById('ProjectScript', script);
+		const scriptResource = this.game.getResourceById("ProjectScript", script);
 
 		if (scriptResource) {
 			return this.execute(this.game.gmlCache.get(scriptResource), this.currentInstance, this.currentOther,
@@ -6264,10 +6264,10 @@ export default class BuiltInFunctions {
 	static action_if_variable ([variable, value, operation]) {
 		if (typeof variable !== typeof value) {
 			throw this.game.makeNonFatalError({
-					type: 'cannot_compare_arguments',
+					type: "cannot_compare_arguments",
 					a: variable,
 					b: value,
-				}, 'Cannot compare arguments. (' + variable.toString() +' has a different type than ' + value.toString() + ')');
+				}, "Cannot compare arguments. (" + variable.toString() +" has a different type than " + value.toString() + ")");
 		}
 
 		switch (operation) {
@@ -6511,9 +6511,9 @@ export default class BuiltInFunctions {
 	// ### Drawing
 
 	static action_draw_sprite ([sprite, x, y, subimage], relative) {
-		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
-		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
-		subimage = (subimage != -1) ? subimage : this.currentInstance.vars.getBuiltIn('image_index');
+		x = (!relative ? x : this.currentInstance.vars.getBuiltIn("x") + x);
+		y = (!relative ? y : this.currentInstance.vars.getBuiltIn("y") + y);
+		subimage = (subimage != -1) ? subimage : this.currentInstance.vars.getBuiltIn("image_index");
 		BuiltInFunctions.draw_sprite.call(this, [sprite, subimage, x, y])
 		return 0;
 	}
@@ -6524,8 +6524,8 @@ export default class BuiltInFunctions {
 	}
 
 	static action_draw_text ([text, x, y], relative) {
-		x = (!relative ? x : this.currentInstance.vars.getBuiltIn('x') + x);
-		y = (!relative ? y : this.currentInstance.vars.getBuiltIn('y') + y);
+		x = (!relative ? x : this.currentInstance.vars.getBuiltIn("x") + x);
+		y = (!relative ? y : this.currentInstance.vars.getBuiltIn("y") + y);
 		BuiltInFunctions.draw_text.call(this, [x, y, text]);
 		return 0;
 	}
@@ -6536,10 +6536,10 @@ export default class BuiltInFunctions {
 	}
 
 	static action_draw_rectangle ([x1, y1, x2, y2, filled], relative) {
-		x1 = (!relative ? x1 : this.currentInstance.vars.getBuiltIn('x') + x1);
-		y1 = (!relative ? y1 : this.currentInstance.vars.getBuiltIn('y') + y1);
-		x2 = (!relative ? x2 : this.currentInstance.vars.getBuiltIn('x') + x2);
-		y2 = (!relative ? y2 : this.currentInstance.vars.getBuiltIn('y') + y2);
+		x1 = (!relative ? x1 : this.currentInstance.vars.getBuiltIn("x") + x1);
+		y1 = (!relative ? y1 : this.currentInstance.vars.getBuiltIn("y") + y1);
+		x2 = (!relative ? x2 : this.currentInstance.vars.getBuiltIn("x") + x2);
+		y2 = (!relative ? y2 : this.currentInstance.vars.getBuiltIn("y") + y2);
 		BuiltInFunctions.draw_rectangle.call(this, [x1, y1, x2, y2, filled]); // 0=filled, 1=outline
 		return 0;
 	}
@@ -6555,10 +6555,10 @@ export default class BuiltInFunctions {
 	}
 
 	static action_draw_ellipse ([x1, y1, x2, y2, filled], relative) {
-		x1 = (!relative ? x1 : this.currentInstance.vars.getBuiltIn('x') + x1);
-		y1 = (!relative ? y1 : this.currentInstance.vars.getBuiltIn('y') + y1);
-		x2 = (!relative ? x2 : this.currentInstance.vars.getBuiltIn('x') + x2);
-		y2 = (!relative ? y2 : this.currentInstance.vars.getBuiltIn('y') + y2);
+		x1 = (!relative ? x1 : this.currentInstance.vars.getBuiltIn("x") + x1);
+		y1 = (!relative ? y1 : this.currentInstance.vars.getBuiltIn("y") + y1);
+		x2 = (!relative ? x2 : this.currentInstance.vars.getBuiltIn("x") + x2);
+		y2 = (!relative ? y2 : this.currentInstance.vars.getBuiltIn("y") + y2);
 		BuiltInFunctions.draw_ellipse.call(this, [x1, y1, x2, y2, filled]); // 0=filled, 1=outline
 		return 0;
 	}
@@ -6569,10 +6569,10 @@ export default class BuiltInFunctions {
 	}
 
 	static action_draw_line ([x1, y1, x2, y2], relative) {
-		x1 = (!relative ? x1 : this.currentInstance.vars.getBuiltIn('x') + x1);
-		y1 = (!relative ? y1 : this.currentInstance.vars.getBuiltIn('y') + y1);
-		x2 = (!relative ? x2 : this.currentInstance.vars.getBuiltIn('x') + x2);
-		y2 = (!relative ? y2 : this.currentInstance.vars.getBuiltIn('y') + y2);
+		x1 = (!relative ? x1 : this.currentInstance.vars.getBuiltIn("x") + x1);
+		y1 = (!relative ? y1 : this.currentInstance.vars.getBuiltIn("y") + y1);
+		x2 = (!relative ? x2 : this.currentInstance.vars.getBuiltIn("x") + x2);
+		y2 = (!relative ? y2 : this.currentInstance.vars.getBuiltIn("y") + y2);
 		BuiltInFunctions.draw_line.call(this, [x1, y1, x2, y2]);
 		return 0;
 	}

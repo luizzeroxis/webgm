@@ -1,8 +1,8 @@
-import JSZip from 'jszip';
+import JSZip from "jszip";
 
-import AbstractAudio from './AbstractAudio.js'
-import AbstractImage from './AbstractImage.js'
-import {UnserializeException} from './Exceptions.js';
+import AbstractAudio from "./AbstractAudio.js"
+import AbstractImage from "./AbstractImage.js"
+import {UnserializeException} from "./Exceptions.js";
 import {
 	Project,
 	ProjectSprite,
@@ -26,8 +26,8 @@ import {
 	ProjectGameInformation,
 	ProjectGlobalGameSettings,
 	ProjectExtensionPackages,
-} from './Project.js';
-import {base64ToBlob} from './tools.js'
+} from "./Project.js";
+import {base64ToBlob} from "./tools.js"
 
 export default class ProjectSerializer {
 	static serializeZIP(project) {
@@ -69,7 +69,7 @@ export default class ProjectSerializer {
 			}
 		})
 
-		return zip.generateAsync({type: 'blob'});
+		return zip.generateAsync({type: "blob"});
 	}
 
 	static unserializeZIP(blob) {
@@ -79,11 +79,11 @@ export default class ProjectSerializer {
 		return new Promise((resolve, reject) => {
 			zip.loadAsync(blob)
 			.then(() => resolve())
-			.catch(() => reject(new UnserializeException('Not a zip file.')));
+			.catch(() => reject(new UnserializeException("Not a zip file.")));
 		})
 		.then(() => {
 			const file = zip.file("version");
-			if (file == null) throw new UnserializeException('"version" file does not exist in zip file.');
+			if (file == null) throw new UnserializeException("\"version\" file does not exist in zip file.");
 			return file.async("string");
 		})
 		.then(versionString => {
@@ -93,7 +93,7 @@ export default class ProjectSerializer {
 		})
 		.then(() => {
 			const file = zip.file("project.json");
-			if (file == null) throw new UnserializeException('"project.json" file does not exist in zip file.');
+			if (file == null) throw new UnserializeException("\"project.json\" file does not exist in zip file.");
 			return file.async("string");
 		})
 		.then(json => {
@@ -117,7 +117,7 @@ export default class ProjectSerializer {
 						return value;
 					});
 				} catch (e) {
-					throw new UnserializeException('Error parsing "project.json" file.');
+					throw new UnserializeException("Error parsing \"project.json\" file.");
 				}
 
 				Project.getTypes().forEach(x => {
@@ -132,7 +132,7 @@ export default class ProjectSerializer {
 						const file = zip.file("sprites/"+sprite.id+"/"+index);
 						if (file == null) return;
 
-						promises.push(file.async('blob')
+						promises.push(file.async("blob")
 						.then(blob => {
 							sprite.images[index] = new AbstractImage(blob);
 						}));
@@ -143,7 +143,7 @@ export default class ProjectSerializer {
 					const file = zip.file("sounds/"+sound.id);
 					if (file == null) return;
 
-					promises.push(file.async('blob')
+					promises.push(file.async("blob")
 						.then(blob => {
 							sound.sound = new AbstractAudio(blob);
 						}));
@@ -153,7 +153,7 @@ export default class ProjectSerializer {
 					const file = zip.file("backgrounds/"+background.id);
 					if (file == null) return;
 
-					promises.push(file.async('blob')
+					promises.push(file.async("blob")
 						.then(blob => {
 							background.image = new AbstractImage(blob);
 						}));
@@ -221,7 +221,7 @@ export default class ProjectSerializer {
 				//convert sprites from base64 to blobs
 				if (type == ProjectSprite) {
 					resource.images = resource.images.map(image => {
-						return new AbstractImage( base64ToBlob(image, 'image/png') );
+						return new AbstractImage( base64ToBlob(image, "image/png") );
 					})
 				}
 

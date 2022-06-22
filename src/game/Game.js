@@ -1,15 +1,15 @@
-import Dispatcher from '../common/Dispatcher.js'
-import Events from '../common/Events.js';
-import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from '../common/Exceptions.js';
-import {Project} from '../common/Project.js';
-import {makeCSSFont} from '../common/tools.js';
-import VariableHolder from '../common/VariableHolder.js';
+import Dispatcher from "../common/Dispatcher.js"
+import Events from "../common/Events.js";
+import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from "../common/Exceptions.js";
+import {Project} from "../common/Project.js";
+import {makeCSSFont} from "../common/tools.js";
+import VariableHolder from "../common/VariableHolder.js";
 
-import ActionsParser from './ActionsParser.js';
-import BuiltInConstants from './BuiltInConstants.js';
-import BuiltInGlobals from './BuiltInGlobals.js';
-import GML from './GML.js';
-import Instance from './Instance.js';
+import ActionsParser from "./ActionsParser.js";
+import BuiltInConstants from "./BuiltInConstants.js";
+import BuiltInGlobals from "./BuiltInGlobals.js";
+import GML from "./GML.js";
+import Instance from "./Instance.js";
 
 export class Game {
 	constructor (project, canvas, input) {
@@ -106,13 +106,13 @@ export class Game {
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
 				const OTHER_ROOM_END = 5;
-				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
+				await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_ROOM_END), instance);
 			}
 
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
 				const OTHER_GAME_END = 3;
-				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_END), instance);
+				await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_GAME_END), instance);
 			}
 		} catch (e) {
 			if (e instanceof StepStopException) {
@@ -156,22 +156,22 @@ export class Game {
 		this.canvas.classList.remove("no-cursor");
 
 		// input
-		this.input.removeEventListener('keydown', this.keyDownHandler)
-		this.input.removeEventListener('keyup', this.keyUpHandler)
-		this.input.removeEventListener('mousedown', this.mouseDownHandler)
-		this.input.removeEventListener('mouseup', this.mouseUpHandler)
-		this.input.removeEventListener('mousemove', this.mouseMoveHandler)
-		this.input.removeEventListener('wheel', this.wheelHandler)
+		this.input.removeEventListener("keydown", this.keyDownHandler)
+		this.input.removeEventListener("keyup", this.keyUpHandler)
+		this.input.removeEventListener("mousedown", this.mouseDownHandler)
+		this.input.removeEventListener("mouseup", this.mouseUpHandler)
+		this.input.removeEventListener("mousemove", this.mouseMoveHandler)
+		this.input.removeEventListener("wheel", this.wheelHandler)
 
 		// audio
 		this.stopAllSounds();
 
-		this.dispatcher.speak('close', e);
+		this.dispatcher.speak("close", e);
 	}
 
 	// Called by start, inits the canvas.
 	startCanvas() {
-		this.ctx = this.canvas.getContext('2d');
+		this.ctx = this.canvas.getContext("2d");
 		this.ctx.imageSmoothingEnabled = false;
 
 		if (!this.project.globalGameSettings.displayCursor) {
@@ -187,14 +187,14 @@ export class Game {
 			this.key[e.which] = true;
 			this.keyPressed[e.which] = true;
 		}
-		this.input.addEventListener('keydown', this.keyDownHandler);
+		this.input.addEventListener("keydown", this.keyDownHandler);
 
 		this.keyUpHandler = (e) => {
 			e.preventDefault();
 			this.key[e.which] = false;
 			this.keyReleased[e.which] = true;
 		}
-		this.input.addEventListener('keyup', this.keyUpHandler);
+		this.input.addEventListener("keyup", this.keyUpHandler);
 
 		// Mouse
 
@@ -209,30 +209,30 @@ export class Game {
 			this.mouse[toEngineButton(e.button)] = true;
 			this.mousePressed[toEngineButton(e.button)] = true;
 		}
-		this.input.addEventListener('mousedown', this.mouseDownHandler);
+		this.input.addEventListener("mousedown", this.mouseDownHandler);
 
 		this.mouseUpHandler = (e) => {
 			e.preventDefault();
 			this.mouse[toEngineButton(e.button)] = false;
 			this.mouseReleased[toEngineButton(e.button)] = true;
 		}
-		this.input.addEventListener('mouseup', this.mouseUpHandler);
+		this.input.addEventListener("mouseup", this.mouseUpHandler);
 
 		this.mouseMoveHandler = (e) => {
 			const rect = this.input.getBoundingClientRect();
 			this.mouseX = Math.floor(Math.max(0, Math.min(e.clientX - rect.left, this.room.width || 0)));
 			this.mouseY = Math.floor(Math.max(0, Math.min(e.clientY - rect.top, this.room.height || 0)));
 
-			this.globalVars.setBuiltIn('mouse_x', this.mouseX);
-			this.globalVars.setBuiltIn('mouse_y', this.mouseY);
+			this.globalVars.setBuiltIn("mouse_x", this.mouseX);
+			this.globalVars.setBuiltIn("mouse_y", this.mouseY);
 		}
-		this.input.addEventListener('mousemove', this.mouseMoveHandler);
+		this.input.addEventListener("mousemove", this.mouseMoveHandler);
 
 		this.wheelHandler = (e) => {
 			e.preventDefault();
 			this.mouseWheel += e.deltaY;
 		}
-		this.input.addEventListener('wheel', this.wheelHandler);
+		this.input.addEventListener("wheel", this.wheelHandler);
 	}
 
 	// Called by start, inits general engine stuff.
@@ -254,7 +254,7 @@ export class Game {
 		if (!this.audioContext) {
 			this.audioContext = new AudioContext();
 		} else {
-			if (this.audioContext.state == 'suspended') {
+			if (this.audioContext.state == "suspended") {
 				this.audioContext.resume();
 			}
 		}
@@ -365,14 +365,14 @@ export class Game {
 		this.project.resources.ProjectScript.every(script => {
 			return this.compileGMLAndCache(script.code, script, matchResult => {
 				throw new FatalErrorException({
-					type: 'compilation',
-					location: 'script',
+					type: "compilation",
+					location: "script",
 					locationScript: script,
 					matchResult: matchResult,
 					text:
-						'\n___________________________________________\n'
-						+ 'COMPILATION ERROR in Script: ' + script.name + '\n\n'
-						+ matchResult.message + '\n',
+						"\n___________________________________________\n"
+						+ "COMPILATION ERROR in Script: " + script.name + "\n\n"
+						+ matchResult.message + "\n",
 				});
 			});
 		})
@@ -386,27 +386,27 @@ export class Game {
 		this.project.resources.ProjectObject.every(object => {
 			return object.events.every(event => {
 				return event.actions.every((action, actionNumber) => {
-					if (action.typeKind == 'code') {
+					if (action.typeKind == "code") {
 						return this.compileGMLAndCache(action.args[0].value, action, matchResult => {
 							throw this.makeFatalError({
-									type: 'compilation',
+									type: "compilation",
 									matchResult: matchResult,
 								},
-								'COMPILATION ERROR in code action:\n' + matchResult.message + '\n',
+								"COMPILATION ERROR in code action:\n" + matchResult.message + "\n",
 								object, event, actionNumber,
 							);
 						});
-					} else if (action.typeKind == 'normal' && action.typeExecution == 'code') {
+					} else if (action.typeKind == "normal" && action.typeExecution == "code") {
 						return this.compileGMLAndCache(action.args[0].value, action, matchResult => {
 							throw this.makeFatalError({
-									type: 'compilation',
+									type: "compilation",
 									matchResult: matchResult,
 								},
-								'COMPILATION ERROR in code action (in action type in a library):\n' + matchResult.message + '\n',
+								"COMPILATION ERROR in code action (in action type in a library):\n" + matchResult.message + "\n",
 								object, event, actionNumber,
 							);
 						});
-					} else if (action.typeKind == 'variable') {
+					} else if (action.typeKind == "variable") {
 						const name = action.args[0].value;
 						const value = action.args[1].value;
 						const assignSymbol = action.relative ? " += " : " = ";
@@ -414,10 +414,10 @@ export class Game {
 
 						return this.compileGMLAndCache(code, action, matchResult => {
 							throw this.makeFatalError({
-									type: 'compilation',
+									type: "compilation",
 									matchResult: matchResult,
 								},
-								'COMPILATION ERROR in code action (in variable set):\n' + matchResult.message + '\n',
+								"COMPILATION ERROR in code action (in variable set):\n" + matchResult.message + "\n",
 								object, event, actionNumber,
 							);
 						})
@@ -434,29 +434,29 @@ export class Game {
 			if (!room.instances.every(instance => {
 				return this.compileGMLAndCache(instance.creationCode, instance, matchResult => {
 					throw new FatalErrorException({
-						type: 'compilation',
-						location: 'instanceCreationCode',
+						type: "compilation",
+						location: "instanceCreationCode",
 						locationInstance: instance,
 						locationRoom: room,
 						matchResult: matchResult,
 						text:
-							'\n___________________________________________\n'
-							+ 'COMPILATION ERROR in creation code for instance ' + instance.id + ' in room ' + room.name + '\n\n'
-							+ matchResult.message + '\n',
+							"\n___________________________________________\n"
+							+ "COMPILATION ERROR in creation code for instance " + instance.id + " in room " + room.name + "\n\n"
+							+ matchResult.message + "\n",
 					});
 				});
 			})) return false;
 
 			return this.compileGMLAndCache(room.creationCode, room, matchResult => {
 				throw new FatalErrorException({
-					type: 'compilation',
-					location: 'roomCreationCode',
+					type: "compilation",
+					location: "roomCreationCode",
 					locationRoom: room,
 					matchResult: matchResult,
 					text:
-						'\n___________________________________________\n'
-						+ 'COMPILATION ERROR in creation code of room ' + room.name + '\n\n'
-						+ matchResult.message + '\n',
+						"\n___________________________________________\n"
+						+ "COMPILATION ERROR in creation code of room " + room.name + "\n\n"
+						+ matchResult.message + "\n",
 				});
 			});
 		})
@@ -572,31 +572,31 @@ export class Game {
 		this.mapEvents = this.getMapOfEvents();
 
 		// Begin step
-		for (const {event, instance} of this.getEventsOfTypeAndSubtype('step', 'begin')) {
+		for (const {event, instance} of this.getEventsOfTypeAndSubtype("step", "begin")) {
 			if (!instance.exists) continue;
 			await this.doEvent(event, instance);
 		}
 
 		// Alarm
-		for (const [subtype, list] of this.getEventsOfType('alarm')) {
+		for (const [subtype, list] of this.getEventsOfType("alarm")) {
 			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 
 				// Update alarm (decrease by one) here, before running event
 				// Alarm stays 0 until next alarm check, where it becomes -1 forever (that's doom as heck)
 
-				const alarm = instance.vars.getBuiltInArray('alarm', [subtype]);
+				const alarm = instance.vars.getBuiltInArray("alarm", [subtype]);
 				if (alarm >= 0) {
-					instance.vars.setBuiltInArray('alarm', [subtype], alarm - 1);
+					instance.vars.setBuiltInArray("alarm", [subtype], alarm - 1);
 				}
-				if (instance.vars.getBuiltInArray('alarm', [subtype]) == 0) {
+				if (instance.vars.getBuiltInArray("alarm", [subtype]) == 0) {
 					await this.doEvent(event, instance);
 				}
 			}
 		}
 
 		// Keyboard
-		for (const [subtype, list] of this.getEventsOfType('keyboard')) {
+		for (const [subtype, list] of this.getEventsOfType("keyboard")) {
 			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 				if (this.getKey(subtype, this.key)) {
@@ -605,7 +605,7 @@ export class Game {
 			}
 		}
 
-		for (const [subtype, list] of this.getEventsOfType('keypress')) {
+		for (const [subtype, list] of this.getEventsOfType("keypress")) {
 			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 				if (this.getKey(subtype, this.keyPressed)) {
@@ -614,7 +614,7 @@ export class Game {
 			}
 		}
 
-		for (const [subtype, list] of this.getEventsOfType('keyrelease')) {
+		for (const [subtype, list] of this.getEventsOfType("keyrelease")) {
 			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 				if (this.getKey(subtype, this.keyReleased)) {
@@ -627,7 +627,7 @@ export class Game {
 
 		// TODO other mouse events
 
-		for (const [subtype, list] of this.getEventsOfType('mouse')) {
+		for (const [subtype, list] of this.getEventsOfType("mouse")) {
 			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 
@@ -635,11 +635,11 @@ export class Game {
 				const eventInfo = Events.listMouseSubtypes.find(x => x.id == subtype);
 				if (eventInfo == null) return;
 
-				if (eventInfo.kind == 'button') {
+				if (eventInfo.kind == "button") {
 					const dict = {
-						'mouse': this.mouse,
-						'mousePressed': this.mousePressed,
-						'mouseReleased': this.mouseReleased,
+						"mouse": this.mouse,
+						"mousePressed": this.mousePressed,
+						"mouseReleased": this.mouseReleased,
 					}[eventInfo.when]; // wacky
 
 					execute = this.getMouse(eventInfo.button, dict);
@@ -649,13 +649,13 @@ export class Game {
 						execute = this.collisionInstanceOnPoint(instance, {x: this.mouseX, y: this.mouseY});
 					}
 				} else
-				if (eventInfo.kind == 'enter-release') {
+				if (eventInfo.kind == "enter-release") {
 					// TODO not implemented
 				} else
-				if (eventInfo.kind == 'wheel-up') {
+				if (eventInfo.kind == "wheel-up") {
 					execute = (this.mouseWheel < 0);
 				} else
-				if (eventInfo.kind == 'wheel-down') {
+				if (eventInfo.kind == "wheel-down") {
 					execute = (this.mouseWheel > 0);
 				}
 
@@ -666,7 +666,7 @@ export class Game {
 		}
 
 		// Step
-		for (const {event, instance} of this.getEventsOfTypeAndSubtype('step', 'normal')) {
+		for (const {event, instance} of this.getEventsOfTypeAndSubtype("step", "normal")) {
 			if (!instance.exists) continue;
 			await this.doEvent(event, instance);
 		}
@@ -676,36 +676,36 @@ export class Game {
 		for (const instance of this.instances) {
 			if (!instance.exists) continue;
 
-			const hspeedOld = instance.vars.getBuiltIn('hspeed');
-			const vspeedOld = instance.vars.getBuiltIn('vspeed');
+			const hspeedOld = instance.vars.getBuiltIn("hspeed");
+			const vspeedOld = instance.vars.getBuiltIn("vspeed");
 
 			let hspeedNew = hspeedOld;
 			let vspeedNew = vspeedOld;
 
-			instance.vars.setBuiltIn('x', instance.vars.getBuiltIn('x') + hspeedOld);
-			instance.vars.setBuiltIn('y', instance.vars.getBuiltIn('y') + vspeedOld);
+			instance.vars.setBuiltIn("x", instance.vars.getBuiltIn("x") + hspeedOld);
+			instance.vars.setBuiltIn("y", instance.vars.getBuiltIn("y") + vspeedOld);
 
-			if (instance.vars.getBuiltIn('friction') != 0) {
-				const direction = instance.vars.getBuiltIn('direction') * (Math.PI / 180);
+			if (instance.vars.getBuiltIn("friction") != 0) {
+				const direction = instance.vars.getBuiltIn("direction") * (Math.PI / 180);
 
 				if (hspeedOld != 0) {
-					hspeedNew = hspeedOld - Math.cos(direction) * instance.vars.getBuiltIn('friction');
+					hspeedNew = hspeedOld - Math.cos(direction) * instance.vars.getBuiltIn("friction");
 					if (Math.sign(hspeedNew) != Math.sign(hspeedOld)) { // If changed sign, that is, going in the opposite direction, don't do that
 						hspeedNew = 0;
 					}
 				}
 
 				if (vspeedOld != 0) {
-					vspeedNew = vspeedOld - -Math.sin(direction) * instance.vars.getBuiltIn('friction');
+					vspeedNew = vspeedOld - -Math.sin(direction) * instance.vars.getBuiltIn("friction");
 					if (Math.sign(vspeedNew) != Math.sign(vspeedOld)) {
 						vspeedNew = 0;
 					}
 				}
 			}
 
-			if (instance.vars.getBuiltIn('gravity') != 0) {
-				hspeedNew += Math.cos(instance.vars.getBuiltIn('gravity_direction') * (Math.PI / 180)) * instance.vars.getBuiltIn('gravity');
-				vspeedNew += -Math.sin(instance.vars.getBuiltIn('gravity_direction') * (Math.PI / 180)) * instance.vars.getBuiltIn('gravity');
+			if (instance.vars.getBuiltIn("gravity") != 0) {
+				hspeedNew += Math.cos(instance.vars.getBuiltIn("gravity_direction") * (Math.PI / 180)) * instance.vars.getBuiltIn("gravity");
+				vspeedNew += -Math.sin(instance.vars.getBuiltIn("gravity_direction") * (Math.PI / 180)) * instance.vars.getBuiltIn("gravity");
 			}
 
 			instance.setHspeedAndVspeed(hspeedNew, vspeedNew);
@@ -714,7 +714,7 @@ export class Game {
 		}
 
 		// Collisions
-		for (const [subtype, list] of this.getEventsOfType('collision')) {
+		for (const [subtype, list] of this.getEventsOfType("collision")) {
 			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 				for (const other of this.instances) {
@@ -730,7 +730,7 @@ export class Game {
 
 		// End step
 
-		for (const {event, instance} of this.getEventsOfTypeAndSubtype('step', 'end')) {
+		for (const {event, instance} of this.getEventsOfTypeAndSubtype("step", "end")) {
 			if (!instance.exists) continue;
 			await this.doEvent(event, instance);
 		}
@@ -741,16 +741,16 @@ export class Game {
 		// Update some instance variables
 		for (const instance of this.instances) {
 			if (!instance.exists) continue;
-			instance.vars.setBuiltIn('xprevious', instance.vars.getBuiltIn('x'));
-			instance.vars.setBuiltIn('yprevious', instance.vars.getBuiltIn('y'));
+			instance.vars.setBuiltIn("xprevious", instance.vars.getBuiltIn("x"));
+			instance.vars.setBuiltIn("yprevious", instance.vars.getBuiltIn("y"));
 
 			const imageNumber = (instance.sprite ? instance.sprite.images.length : 0);
 
-			let i = instance.vars.getBuiltIn('image_index') + instance.vars.getBuiltIn('image_speed');
+			let i = instance.vars.getBuiltIn("image_index") + instance.vars.getBuiltIn("image_speed");
 			if (i >= imageNumber) {
 				i -= imageNumber;
 			}
-			instance.vars.setBuiltIn('image_index', i);
+			instance.vars.setBuiltIn("image_index", i);
 		}
 
 		// Check global game settings default keys
@@ -821,21 +821,21 @@ export class Game {
 
 		const instances_by_depth = this.instances
 			.filter(x => x.exists)
-			.sort((a, b) => a.vars.getBuiltIn('depth') - b.vars.getBuiltIn('depth'));
+			.sort((a, b) => a.vars.getBuiltIn("depth") - b.vars.getBuiltIn("depth"));
 
 		for (const instance of instances_by_depth) {
 			if (!instance.exists) continue;
 
 			// Only draw if visible
-			if (instance.vars.getBuiltIn('visible')) {
-				const drawEvent = this.getEventOfInstance(instance, 'draw');
+			if (instance.vars.getBuiltIn("visible")) {
+				const drawEvent = this.getEventOfInstance(instance, "draw");
 
 				if (drawEvent) {
 					await this.doEvent(drawEvent, instance);
 				} else {
 					// No draw event, draw sprite if it has one.
 					if (instance.sprite) {
-						this.drawSprite(instance.sprite, instance.getImageIndex(), instance.vars.getBuiltIn('x'), instance.vars.getBuiltIn('y'));
+						this.drawSprite(instance.sprite, instance.getImageIndex(), instance.vars.getBuiltIn("x"), instance.vars.getBuiltIn("y"));
 					}
 				}
 			}
@@ -852,7 +852,7 @@ export class Game {
 		// Draw mouse cursor
 
 		if (this.cursorSprite) {
-			this.drawSprite(this.cursorSprite, this.cursorImageIndex, this.globalVars.getBuiltIn('mouse_x'), this.globalVars.getBuiltIn('mouse_y'));
+			this.drawSprite(this.cursorSprite, this.cursorImageIndex, this.globalVars.getBuiltIn("mouse_x"), this.globalVars.getBuiltIn("mouse_y"));
 			this.cursorImageIndex = ((++this.cursorImageIndex) % this.cursorSprite.images.length);
 		}
 	}
@@ -860,7 +860,7 @@ export class Game {
 	drawRoomBackground(roomBackground) {
 		if (!roomBackground.visible) return false;
 
-		const background = this.getResourceById('ProjectBackground', roomBackground.backgroundIndex);
+		const background = this.getResourceById("ProjectBackground", roomBackground.backgroundIndex);
 		if (!background) return false;
 
 		const image = background.image;
@@ -949,8 +949,8 @@ export class Game {
 		}
 
 		switch (treeAction.type) {
-			case 'executeFunction':
-			case 'executeCode':
+			case "executeFunction":
+			case "executeCode":
 
 				{
 					let result = true;
@@ -963,7 +963,7 @@ export class Game {
 						}
 
 						let currentResult;
-						if (treeAction.type == 'executeFunction') {
+						if (treeAction.type == "executeFunction") {
 							currentResult = await this.gml.builtInFunction(treeAction.function, applyToInstance, otherInstance, args, treeAction.relative);
 						} else {
 							currentResult = await this.gml.execute(this.gmlCache.get(treeAction.action), applyToInstance, otherInstance, args, treeAction.relative);
@@ -977,7 +977,7 @@ export class Game {
 					return result;
 				}
 
-			case 'if':
+			case "if":
 				{
 					const result = await this.doTreeAction(treeAction.condition);
 					if (result) {
@@ -988,16 +988,16 @@ export class Game {
 					break;
 				}
 
-			case 'block':
+			case "block":
 				for (const blockTreeAction of treeAction) {
 					await this.doTreeAction(blockTreeAction);
 				}
 				break;
 
-			case 'exit':
+			case "exit":
 				throw new ExitException();
 
-			case 'repeat':
+			case "repeat":
 				{
 					const times = await this.parseActionArg(treeAction.times, 0);
 					for (let i=0; i<times; i++) {
@@ -1006,14 +1006,14 @@ export class Game {
 					break;
 				}
 
-			case 'variable':
+			case "variable":
 				for (const applyToInstance of applyToInstances) {
 					if (!applyToInstance.exists) continue;
 					await this.gml.execute(this.gmlCache.get(treeAction.action), applyToInstance, otherInstance);
 				}
 				break;
 
-			case 'code':
+			case "code":
 				for (const applyToInstance of applyToInstances) {
 					if (!applyToInstance.exists) continue;
 					await this.gml.execute(this.gmlCache.get(treeAction.action), applyToInstance, otherInstance);
@@ -1026,22 +1026,22 @@ export class Game {
 
 	// Interpret a action argument to it's final value.
 	async parseActionArg(arg, argNumber) {
-		if (arg.kind == 'both') {
-			if (arg.value[0] != `'` && arg.value[0] != `"`) {
+		if (arg.kind == "both") {
+			if (arg.value[0] != "'" && arg.value[0] != "\"") {
 				return arg.value;
 			}
 		}
-		if (arg.kind == 'both' || arg.kind == 'expression') {
+		if (arg.kind == "both" || arg.kind == "expression") {
 			// TODO check if this is really what gm is doing
 			// TODO maybe compile all these codes beforehand
 
 			const result = this.gml.compile(arg.value, "Expression");
 			if (!result.succeeded) {
 				throw this.makeFatalError({
-						type: 'compilation',
+						type: "compilation",
 						matchResult: result.matchResult,
 					},
-					'COMPILATION ERROR in argument '+ argNumber.toString() +'\n' + result.matchResult.message + '\n',
+					"COMPILATION ERROR in argument "+ argNumber.toString() +"\n" + result.matchResult.message + "\n",
 				);
 			}
 
@@ -1062,7 +1062,7 @@ export class Game {
 				for (const instance of this.instances) {
 					if (!instance.exists) continue;
 					const OTHER_ROOM_END = 5;
-					await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_END), instance);
+					await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_ROOM_END), instance);
 				}
 			} catch (e) {
 				if (e instanceof StepStopException) {
@@ -1072,7 +1072,7 @@ export class Game {
 				}
 			}
 
-			this.instances = this.instances.filter(instance => instance.exists && instance.vars.getBuiltIn('persistent'))
+			this.instances = this.instances.filter(instance => instance.exists && instance.vars.getBuiltIn("persistent"))
 		}
 
 		this.room = {
@@ -1117,14 +1117,14 @@ export class Game {
 
 		for (const instance of createdInstances) {
 			// TODO run instance creation code
-			await this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
+			await this.doEvent(this.getEventOfInstance(instance, "create"), instance);
 		}
 
 		if (isFirstRoom) {
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
 				const OTHER_GAME_START = 2;
-				await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_GAME_START), instance);
+				await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_GAME_START), instance);
 			}
 		}
 
@@ -1133,7 +1133,7 @@ export class Game {
 		for (const instance of this.instances) {
 			if (!instance.exists) continue;
 			const OTHER_ROOM_START = 4;
-			await this.doEvent(this.getEventOfInstance(instance, 'other', OTHER_ROOM_START), instance);
+			await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_ROOM_START), instance);
 		}
 
 		await this.drawViews();
@@ -1143,7 +1143,7 @@ export class Game {
 	async instanceCreate(id, x, y, object) {
 		const instance = this.instanceCreateNoEvents(id, x, y, object);
 
-		await this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
+		await this.doEvent(this.getEventOfInstance(instance, "create"), instance);
 
 		return instance.id;
 	}
@@ -1173,11 +1173,11 @@ export class Game {
 		// spriteA.shape = 'rectangle';
 
 		const collisions = [
-			{shape1: 'precise', shape2: 'precise', func: this.collisionInstancePreciseOnInstancePrecise},
-			{shape1: 'precise', shape2: 'rectangle', func: this.collisionInstanceRectangleOnInstanceRectangle},
+			{shape1: "precise", shape2: "precise", func: this.collisionInstancePreciseOnInstancePrecise},
+			{shape1: "precise", shape2: "rectangle", func: this.collisionInstanceRectangleOnInstanceRectangle},
 			// {shape1: 'precise', shape2: 'disk', func: this.collisionInstanceRectangleOnInstanceRectangle},
 			// {shape1: 'precise', shape2: 'diamond', func: this.collisionInstanceRectangleOnInstanceRectangle},
-			{shape1: 'rectangle', shape2: 'rectangle', func: this.collisionInstanceRectangleOnInstanceRectangle},
+			{shape1: "rectangle", shape2: "rectangle", func: this.collisionInstanceRectangleOnInstanceRectangle},
 			// {shape1: 'rectangle', shape2: 'disk', func: this.collisionInstanceRectangleOnInstanceRectangle},
 			// {shape1: 'rectangle', shape2: 'diamond', func: this.collisionInstanceRectangleOnInstanceRectangle},
 			// {shape1: 'disk', shape2: 'disk', func: this.collisionInstanceRectangleOnInstanceRectangle},
@@ -1202,7 +1202,7 @@ export class Game {
 		// place_free / place_empty / place_meeting
 		for (const otherInstance of otherInstances) {
 			if (!otherInstance.exists) continue;
-			if (solidOnly && (otherInstance.vars.getBuiltIn('solid') == 0)) continue;
+			if (solidOnly && (otherInstance.vars.getBuiltIn("solid") == 0)) continue;
 			const c = this.collisionInstanceOnInstance(instance, otherInstance, x, y);
 			if (c) return true;
 		}
@@ -1214,8 +1214,8 @@ export class Game {
 		if (instance.sprite == null || instance.sprite.images.length == 0) return false;
 
 		const collisions = [
-			{shape: 'precise', func: this.collisionInstanceRectangleOnPoint},
-			{shape: 'rectangle', func: this.collisionInstanceRectangleOnPoint},
+			{shape: "precise", func: this.collisionInstanceRectangleOnPoint},
+			{shape: "rectangle", func: this.collisionInstanceRectangleOnPoint},
 			// {shape: 'disk', func: this.collisionInstanceRectangleOnPoint},
 			// {shape: 'diamond', func: this.collisionInstanceRectangleOnPoint},
 		];
@@ -1231,16 +1231,16 @@ export class Game {
 
 	// Check if two instances, with precise shape, are colliding.
 	collisionInstancePreciseOnInstancePrecise(a, b, aX, aY, bX, bY) {
-		aX = (aX == null) ? Math.floor(a.vars.getBuiltIn('x')) : aX;
-		aY = (aY == null) ? Math.floor(a.vars.getBuiltIn('y')) : aY;
+		aX = (aX == null) ? Math.floor(a.vars.getBuiltIn("x")) : aX;
+		aY = (aY == null) ? Math.floor(a.vars.getBuiltIn("y")) : aY;
 		const aImage = a.sprite.images[a.getImageIndex()];
 		const aX1 = aX - a.sprite.originx;
 		const aY1 = aY - a.sprite.originy;
 		const aX2 = aX1 + aImage.image.width;
 		const aY2 = aY1 + aImage.image.height;
 
-		bX = (bX == null) ? Math.floor(b.vars.getBuiltIn('x')) : bX;
-		bY = (bY == null) ? Math.floor(b.vars.getBuiltIn('y')) : bY;
+		bX = (bX == null) ? Math.floor(b.vars.getBuiltIn("x")) : bX;
+		bY = (bY == null) ? Math.floor(b.vars.getBuiltIn("y")) : bY;
 		const bImage = b.sprite.images[b.getImageIndex()];
 		const bX1 = bX - b.sprite.originx;
 		const bY1 = bY - b.sprite.originy;
@@ -1259,7 +1259,7 @@ export class Game {
 		const offscreen = new OffscreenCanvas(aImage.image.width + bImage.image.width,
 			Math.max(aImage.image.height, bImage.image.height));
 
-		const offscreenCtx = offscreen.getContext('2d');
+		const offscreenCtx = offscreen.getContext("2d");
 		offscreenCtx.drawImage(aImage.image, 0, 0);
 		offscreenCtx.drawImage(bImage.image, aImage.image.width, 0);
 
@@ -1291,14 +1291,14 @@ export class Game {
 
 	// Check if two instances, with rectangular shape, are colliding.
 	collisionInstanceRectangleOnInstanceRectangle(a, b, aX, aY, bX, bY) {
-		aX = (aX == null) ? a.vars.getBuiltIn('x') : aX;
-		aY = (aY == null) ? a.vars.getBuiltIn('y') : aY;
+		aX = (aX == null) ? a.vars.getBuiltIn("x") : aX;
+		aY = (aY == null) ? a.vars.getBuiltIn("y") : aY;
 		const aX1 = aX - a.sprite.originx;
 		const aY1 = aY - a.sprite.originy
 		const aImage = a.sprite.images[a.getImageIndex()]
 
-		bX = (bX == null) ? b.vars.getBuiltIn('x') : bX;
-		bY = (bY == null) ? b.vars.getBuiltIn('y') : bY;
+		bX = (bX == null) ? b.vars.getBuiltIn("x") : bX;
+		bY = (bY == null) ? b.vars.getBuiltIn("y") : bY;
 		const bX1 = bX - b.sprite.originx
 		const bY1 = bY - b.sprite.originy
 		const bImage = b.sprite.images[b.getImageIndex()]
@@ -1313,8 +1313,8 @@ export class Game {
 
 	// Check if an instance, with rectangular shape, and a point are colliding.
 	collisionInstanceRectangleOnPoint(instance, point) {
-		const instanceX = instance.vars.getBuiltIn('x') - instance.sprite.originx;
-		const instanceY = instance.vars.getBuiltIn('y') - instance.sprite.originy;
+		const instanceX = instance.vars.getBuiltIn("x") - instance.sprite.originx;
+		const instanceY = instance.vars.getBuiltIn("y") - instance.sprite.originy;
 		const instanceImage = instance.sprite.images[instance.getImageIndex()];
 
 		return (
@@ -1372,7 +1372,7 @@ export class Game {
 			try {
 				await this.canvas.requestFullscreen();
 			} catch (e) {
-				console.log('window_set_fullscreen failed');
+				console.log("window_set_fullscreen failed");
 			}
 		} else {
 			if (document.fullscreenElement) {
@@ -1421,10 +1421,10 @@ export class Game {
 		const result = this.gml.compile(gml);
 		if (!result.succeeded) {
 			throw new NonFatalErrorException({
-					type: 'compilation',
-					location: 'executeString',
+					type: "compilation",
+					location: "executeString",
 					matchResult: result.matchResult,
-					text: 'COMPILATION ERROR in string to be executed\n' + result.matchResult.message + '\n',
+					text: "COMPILATION ERROR in string to be executed\n" + result.matchResult.message + "\n",
 				},
 			);
 		}
@@ -1535,14 +1535,14 @@ export class Game {
 		const _actionNumber = actionNumber==null ? this.currentEventActionNumber : actionNumber;
 
 		const base = {text:
-			'\n___________________________________________\n'
-			+ (isFatal ? 'FATAL ' : '') + 'ERROR in\n'
-			+ 'action number ' + _actionNumber.toString() + '\n'
-			+ 'of ' + Events.getEventName(_event) + ' Event\n'
-			+ 'for object ' + _object.name + ':\n\n'
+			"\n___________________________________________\n"
+			+ (isFatal ? "FATAL " : "") + "ERROR in\n"
+			+ "action number " + _actionNumber.toString() + "\n"
+			+ "of " + Events.getEventName(_event) + " Event\n"
+			+ "for object " + _object.name + ":\n\n"
 			+ extraText,
 
-			location: 'object',
+			location: "object",
 			locationActionNumber: _actionNumber,
 			locationEvent: _event,
 			locationObject: _object,

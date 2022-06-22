@@ -1,10 +1,10 @@
 /* eslint-env node, commonjs */
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const {mergeWithRules} = require('webpack-merge');
-const WorkboxPlugin = require('workbox-webpack-plugin');
+const {mergeWithRules} = require("webpack-merge");
+const WorkboxPlugin = require("workbox-webpack-plugin");
 
-const common = require('./webpack.common.js');
+const common = require("./webpack.common.js");
 
 module.exports = mergeWithRules({
 	module: {
@@ -15,7 +15,7 @@ module.exports = mergeWithRules({
 	},
 
 })(common, {
-	mode: 'production',
+	mode: "production",
 	module: {
 		rules: [
 			{

@@ -1,16 +1,16 @@
 /* eslint-env node, commonjs */
 
-const path = require('path');
+const path = require("path");
 
-const ESLintPlugin = require('eslint-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ESLintPlugin = require("eslint-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-	entry: './src/index.js',
+	entry: "./src/index.js",
 	output: {
-		path: path.resolve(__dirname, 'dist'),
-		filename: '[name].bundle.js',
+		path: path.resolve(__dirname, "dist"),
+		filename: "[name].bundle.js",
 	},
 	module: {
 		rules: [
@@ -19,16 +19,16 @@ module.exports = {
 				use: [
 					// 'style-loader',
 					// MiniCssExtractPlugin.loader,
-					'css-loader',
+					"css-loader",
 				],
 			},
 			{
 				test: /\.png$/,
 				use: [
 					{
-						loader: 'url-loader',
+						loader: "url-loader",
 						options: {
-							mimetype: 'image/png',
+							mimetype: "image/png",
 						},
 					},
 				],
@@ -37,21 +37,21 @@ module.exports = {
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
-			title: 'webgm',
+			title: "webgm",
 		}),
 		new MiniCssExtractPlugin(),
 		new ESLintPlugin({
-			files: path.resolve(__dirname, 'src'),
+			files: path.resolve(__dirname, "src"),
 		}),
 	],
 	optimization: {
-		runtimeChunk: 'single',
+		runtimeChunk: "single",
 		splitChunks: {
 			cacheGroups: {
 				vendor: {
 					test: /[\\/]node_modules[\\/]/,
-					name: 'vendors',
-					chunks: 'all',
+					name: "vendors",
+					chunks: "all",
 				},
 			},
 		},

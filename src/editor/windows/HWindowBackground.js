@@ -1,7 +1,7 @@
-import AbstractImage from '../../common/AbstractImage.js'
-import {parent, endparent, add, HElement, HButton, HTextInput, HImage, setOnFileDrop} from '../../common/H.js'
-import VirtualFileSystem from '../../common/VirtualFileSystem.js'
-import HWindow from '../HWindow.js';
+import AbstractImage from "../../common/AbstractImage.js"
+import {parent, endparent, add, HElement, HButton, HTextInput, HImage, setOnFileDrop} from "../../common/H.js"
+import VirtualFileSystem from "../../common/VirtualFileSystem.js"
+import HWindow from "../HWindow.js";
 
 export default class HWindowBackground extends HWindow {
 	constructor(editor, id, background) {
@@ -9,34 +9,34 @@ export default class HWindowBackground extends HWindow {
 
 		this.background = background;
 
-		this.title.html.textContent = 'Edit Background '+background.name;
+		this.title.html.textContent = "Edit Background "+background.name;
 
 		parent(this.client)
-			parent( add( new HElement('div', {class: 'grid-resource resource-background'}) ) )
-				parent( add( new HElement('div') ) )
+			parent( add( new HElement("div", {class: "grid-resource resource-background"}) ) )
+				parent( add( new HElement("div") ) )
 
 					this.paramImage = background.image;
 
-					const inputName = add( new HTextInput('Name:', background.name) );
+					const inputName = add( new HTextInput("Name:", background.name) );
 
-					this.buttonLoadBackground = add( new HButton('Load Background', () => {
-						VirtualFileSystem.openDialog('image/*')
+					this.buttonLoadBackground = add( new HButton("Load Background", () => {
+						VirtualFileSystem.openDialog("image/*")
 						.then(file => {
 							this.loadBackgroundFromFile(file);
 						});
 					}) )
 
-					parent( add( new HElement('div', {}, 'Width: ')) )
-						this.divWidth = add( new HElement('span', {}, '0') )
+					parent( add( new HElement("div", {}, "Width: ")) )
+						this.divWidth = add( new HElement("span", {}, "0") )
 						endparent()
 
-					parent( add( new HElement('div', {}, 'Height: ')) )
-						this.divHeight = add( new HElement('span', {}, '0') )
+					parent( add( new HElement("div", {}, "Height: ")) )
+						this.divHeight = add( new HElement("span", {}, "0") )
 						endparent()
 
 					endparent()
 
-				parent( add( new HElement('div', {class: 'preview'}) ) )
+				parent( add( new HElement("div", {class: "preview"}) ) )
 					this.imgBackground = add( new HImage() )
 					endparent()
 
@@ -85,8 +85,8 @@ export default class HWindowBackground extends HWindow {
 			})
 		} else {
 			this.imgBackground.setSrc(null);
-			this.divWidth.html.textContent = '0';
-			this.divHeight.html.textContent = '0';
+			this.divWidth.html.textContent = "0";
+			this.divHeight.html.textContent = "0";
 		}
 	}
 }

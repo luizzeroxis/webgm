@@ -1,12 +1,12 @@
-import {parent, endparent, add, HElement, HButton, HImage} from '../common/H.js'
-import {ProjectSprite, ProjectSound, ProjectBackground, ProjectObject} from '../common/Project.js';
+import {parent, endparent, add, HElement, HButton, HImage} from "../common/H.js"
+import {ProjectSprite, ProjectSound, ProjectBackground, ProjectObject} from "../common/Project.js";
 
-import Editor from './Editor.js';
-import DefaultProjectSoundIcon from './img/default-ProjectSound-icon.png';
+import Editor from "./Editor.js";
+import DefaultProjectSoundIcon from "./img/default-ProjectSound-icon.png";
 
 export default class HResourceListItem extends HElement {
 	constructor(resource, editor) {
-		super('li')
+		super("li")
 
 		this.id = resource;
 		this.resource = resource;
@@ -14,19 +14,19 @@ export default class HResourceListItem extends HElement {
 
 		parent(this)
 
-			parent( add( new HElement('div', {class: 'item'}) ) )
+			parent( add( new HElement("div", {class: "item"}) ) )
 
-				this.htmlIcon = add( new HImage(null, 'icon') );
+				this.htmlIcon = add( new HImage(null, "icon") );
 				this.htmlIcon.html.width = 16;
 				this.htmlIcon.html.height = 16;
 
 				this.updateIcon();
 
-				this.htmlName = add( new HElement('div', {class: 'name'}) )
+				this.htmlName = add( new HElement("div", {class: "name"}) )
 				this.htmlName.html.textContent = this.resource.name;
 
-				this.htmlEditButton = add( new HButton('Edit', () => this.properties()) )
-				this.htmlDeleteButton = add( new HButton('Delete', () => this.delete()) )
+				this.htmlEditButton = add( new HButton("Edit", () => this.properties()) )
+				this.htmlDeleteButton = add( new HButton("Delete", () => this.delete()) )
 
 				endparent()
 			endparent()

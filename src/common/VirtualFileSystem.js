@@ -1,11 +1,11 @@
-import {HElement} from './H.js';
+import {HElement} from "./H.js";
 
 export default class VirtualFileSystem {
 	static openDialog(accept, multiple=false) {
 		return new Promise((resolve, reject) => {
-			const f = new HElement('input');
+			const f = new HElement("input");
 			f.html.accept = accept;
-			f.html.type = 'file';
+			f.html.type = "file";
 			if (multiple) {
 				f.html.multiple = true;
 			}
@@ -30,7 +30,7 @@ export default class VirtualFileSystem {
 	}
 
 	static save(blob, name) {
-		const a = new HElement('a');
+		const a = new HElement("a");
 		a.html.href = URL.createObjectURL(blob);
 		a.html.download = name;
 		a.html.click();

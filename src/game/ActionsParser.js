@@ -21,24 +21,24 @@ export default class ActionsParser {
 
 		// normal, begin group, end group, else, exit, repeat, variable, code
 		switch (action.typeKind) {
-			case 'normal':
+			case "normal":
 				{
 					let treeAction = {args: action.args,
 						appliesTo: action.appliesTo, relative: action.relative,
 						action: action, actionNumber: this.actionNumber-1};
 
-					if (action.typeExecution == 'function') {
-						treeAction.type = 'executeFunction';
+					if (action.typeExecution == "function") {
+						treeAction.type = "executeFunction";
 						treeAction.function = action.typeExecutionFunction;
-					} else if (action.typeExecution == 'code') {
-						treeAction.type = 'executeCode';
+					} else if (action.typeExecution == "code") {
+						treeAction.type = "executeCode";
 						treeAction.code = action.typeExecutionCode;
 					} else {
 						return null;
 					}
 
 					if (action.typeIsQuestion) {
-						treeAction = {type: 'if', condition: treeAction};
+						treeAction = {type: "if", condition: treeAction};
 
 						const treeIfTrue = this.parseAction();
 						let treeIfFalse = null;
@@ -60,43 +60,43 @@ export default class ActionsParser {
 					return treeAction;
 				}
 
-			case 'begin':
+			case "begin":
 				{
 					const actions = this.parseBlock();
 					if (actions.length > 0) {
-						const treeAction = {type: 'block', actions: actions};
+						const treeAction = {type: "block", actions: actions};
 						return treeAction;
 					}
 					return null;
 				}
 
-			case 'end':
-			case 'else':
+			case "end":
+			case "else":
 				return null;
 
-			case 'exit':
+			case "exit":
 				{
-					const treeAction = {type: 'exit'};
+					const treeAction = {type: "exit"};
 					return treeAction;
 				}
 
-			case 'repeat':
+			case "repeat":
 				{
-					const treeAction = {type: 'repeat', times: action.args[0], treeAction: this.parseAction()};
+					const treeAction = {type: "repeat", times: action.args[0], treeAction: this.parseAction()};
 					return treeAction;
 				}
 
-			case 'variable':
+			case "variable":
 				{
-					const treeAction = {type: 'variable', name: action.args[0], value: action.args[1],
+					const treeAction = {type: "variable", name: action.args[0], value: action.args[1],
 						appliesTo: action.appliesTo, relative: action.relative,
 						action: action, actionNumber: this.actionNumber-1};
 					return treeAction;
 				}
 
-			case 'code':
+			case "code":
 				{
-					const treeAction = {type: 'code', code: action.args[0],
+					const treeAction = {type: "code", code: action.args[0],
 						appliesTo: action.appliesTo,
 						action: action, actionNumber: this.actionNumber-1};
 					return treeAction;
@@ -113,7 +113,7 @@ export default class ActionsParser {
 		while (this.actionNumber < this.actions.length) {
 			// Peek at next action to see if it is end
 			const action = this.actions[this.actionNumber];
-			if (action.typeKind == 'end') {
+			if (action.typeKind == "end") {
 				this.actionNumber++;
 				break;
 			}
@@ -129,7 +129,7 @@ export default class ActionsParser {
 	parseElseIfExists() {
 		const action = this.actions[this.actionNumber];
 		if (action == null) return false;
-		if (action.typeKind == 'else') {
+		if (action.typeKind == "else") {
 			this.actionNumber++;
 			return true;
 		}

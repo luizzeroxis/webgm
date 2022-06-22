@@ -2,7 +2,7 @@
 
 //= Base 64 =
 export function base64ToBlob (base64Data, contentType) {
-	contentType = contentType || '';
+	contentType = contentType || "";
 	const sliceSize = 1024;
 	const byteCharacters = atob(base64Data);
 	const bytesLength = byteCharacters.length;
@@ -39,9 +39,9 @@ export function rgbValuesToDecimalColor(rgb) {
 // decimal -> hex
 export function decimalColorToHexColor(color) {
 	const {r, g, b} = decimalColorToRGBValues(color);
-	const hr = r.toString(16).padStart(2, '0');
-	const hg = g.toString(16).padStart(2, '0');
-	const hb = b.toString(16).padStart(2, '0');
+	const hr = r.toString(16).padStart(2, "0");
+	const hg = g.toString(16).padStart(2, "0");
+	const hb = b.toString(16).padStart(2, "0");
 	return "#" + hr + hg + hb;
 }
 
@@ -89,16 +89,16 @@ export function rgbValuesToHSVValues(rgb) {
 
 export function decimalColorToRGB(color) {
 	const c = decimalColorToRGBValues(color);
-	return 'rgb('+c.r+','+c.g+','+c.b+')';
+	return "rgb("+c.r+","+c.g+","+c.b+")";
 }
 
 export function decimalColorAndAlphaToRGBA(color, alpha) {
 	const c = decimalColorToRGBValues(color);
-	return 'rgba('+c.r+','+c.g+','+c.b+','+alpha+')'
+	return "rgba("+c.r+","+c.g+","+c.b+","+alpha+")"
 }
 
 export function makeCSSFont(family, size, bold, italic) {
-	return (italic ? 'italic ' : '') + (bold ? 'bold ' : '') + size + 'pt "' + family + '"';
+	return (italic ? "italic " : "") + (bold ? "bold " : "") + size + "pt \"" + family + "\"";
 }
 
 export function parseArrowString(string) {
@@ -130,21 +130,21 @@ export function stringifyArrowValues(values) {
 }
 
 export function asString(value) {
-	if (typeof value != 'string') {
+	if (typeof value != "string") {
 		return value.toString();
 	}
 	return value;
 }
 
 export function forceString(value) {
-	if (typeof value != 'string') {
+	if (typeof value != "string") {
 		return "";
 	}
 	return value;
 }
 
 export function forceReal(value) {
-	if (typeof value != 'number') {
+	if (typeof value != "number") {
 		return 0;
 	}
 	return value;
@@ -164,7 +164,7 @@ export function forceUnit(value) {
 
 export function forceChar(value) {
 	const string = forceString(value);
-	return string != '' ? string[0] : '\0';
+	return string != "" ? string[0] : "\0";
 }
 
 export function toInteger(value) {

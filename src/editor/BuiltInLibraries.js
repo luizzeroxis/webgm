@@ -1,9 +1,9 @@
 // const b = {type: 'b'}; // All text bold
-const i = {type: 'i'}; // All text italic
-const r = {type: 'r'}; // Replaced by 'relative '
-const n = {type: 'n'}; // Replaced by 'not '
-const w = {type: 'w'}; // Replaced by 'for the other object: ' or 'for object <name of object>: ' if apply to is not self
-const a = Array.from(new Array(6).keys()).map(x => ({type: 'a', number: x})); // Replaced by argument value
+const i = {type: "i"}; // All text italic
+const r = {type: "r"}; // Replaced by 'relative '
+const n = {type: "n"}; // Replaced by 'not '
+const w = {type: "w"}; // Replaced by 'for the other object: ' or 'for object <name of object>: ' if apply to is not self
+const a = Array.from(new Array(6).keys()).map(x => ({type: "a", number: x})); // Replaced by argument value
 
 export default class BuiltInLibraries {
 	static getList() {

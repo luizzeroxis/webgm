@@ -1,4 +1,4 @@
-import {WebGMException} from './Exceptions.js';
+import {WebGMException} from "./Exceptions.js";
 
 export default class AbstractImage {
 	constructor(res, load=true) {

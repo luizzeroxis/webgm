@@ -1,13 +1,13 @@
-import {parent, endparent, add, remove, HElement, HRadioInput, uniqueID} from '../common/H.js'
+import {parent, endparent, add, remove, HElement, HRadioInput, uniqueID} from "../common/H.js"
 
 export default class HTabControl extends HElement {
 	constructor() {
-		parent( super('div') )
-			this.tabButtonsDiv = add( new HElement('div', {class: 'tab-buttons'}) )
+		parent( super("div") )
+			this.tabButtonsDiv = add( new HElement("div", {class: "tab-buttons"}) )
 			this.currentTabContent = null;
 			endparent()
 
-		this.radioGroup = '_radio_'+uniqueID();
+		this.radioGroup = "_radio_"+uniqueID();
 	}
 
 	addTab(name, isSelected) {
@@ -15,7 +15,7 @@ export default class HTabControl extends HElement {
 			isSelected = (this.currentTabContent == null);
 		}
 
-		const tabContent = new HElement('div', {class: 'tab-content'})
+		const tabContent = new HElement("div", {class: "tab-content"})
 
 		if (isSelected) {
 			this.showTabContent(tabContent);
@@ -23,7 +23,7 @@ export default class HTabControl extends HElement {
 
 		parent(this.tabButtonsDiv)
 
-			const radio = add( new HRadioInput(this.radioGroup, name, isSelected, 'tab-button') )
+			const radio = add( new HRadioInput(this.radioGroup, name, isSelected, "tab-button") )
 			radio.setOnClick(() => {
 				this.showTabContent(tabContent);
 			});

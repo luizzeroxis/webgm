@@ -1,8 +1,8 @@
-import {parent, endparent, add, HElement, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, uniqueID} from '../../common/H.js'
-import {ProjectObject} from '../../common/Project.js';
-import {parseArrowString, stringifyArrowValues, decimalColorToHexColor, hexColorToDecimalColor} from '../../common/tools.js'
-import HResourceSelect from '../HResourceSelect.js';
-import HWindow from '../HWindow.js';
+import {parent, endparent, add, HElement, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, uniqueID} from "../../common/H.js"
+import {ProjectObject} from "../../common/Project.js";
+import {parseArrowString, stringifyArrowValues, decimalColorToHexColor, hexColorToDecimalColor} from "../../common/tools.js"
+import HResourceSelect from "../HResourceSelect.js";
+import HWindow from "../HWindow.js";
 
 export default class HWindowAction extends HWindow {
 	constructor(editor, id, action, object) {
@@ -26,15 +26,15 @@ export default class HWindowAction extends HWindow {
 			}
 
 			if (this.actionTypeHasApplyTo) {
-				parent( add( new HElement('fieldset') ) )
+				parent( add( new HElement("fieldset") ) )
 
-					add( new HElement('legend', {}, 'Applies to') )
+					add( new HElement("legend", {}, "Applies to") )
 
-					const appliesToGroup = '_radio_'+uniqueID();
+					const appliesToGroup = "_radio_"+uniqueID();
 
-					this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, 'Self', (action.appliesTo == -1)) );
-					this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, 'Other', (action.appliesTo == -2)) );
-					this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, 'Object:', (action.appliesTo >= 0)) );
+					this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, "Self", (action.appliesTo == -1)) );
+					this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, "Other", (action.appliesTo == -2)) );
+					this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, "Object:", (action.appliesTo >= 0)) );
 
 					this.selectObject = add( new HResourceSelect(this.editor, null, ProjectObject) )
 
@@ -53,37 +53,37 @@ export default class HWindowAction extends HWindow {
 
 			this.actionTypeArgs.forEach((argType, i) => {
 				switch (argType.kind) {
-					case 'expression':
-					case 'string':
-					case 'both':
-						if (this.actionType.interfaceKind == 'arrows' && i == 0) {
+					case "expression":
+					case "string":
+					case "both":
+						if (this.actionType.interfaceKind == "arrows" && i == 0) {
 							this.argsInterfaces[i] = this.makeDirectionInterface(argType.name, action.args[i].value);
 						} else {
 							this.argsInterfaces[i] = this.makeTextInterface(argType.name, action.args[i].value);
 						}
 						break;
 
-					case 'boolean':
-						this.argsInterfaces[i] = this.makeMenuInterface(argType.name, ['false', 'true'], action.args[i].value);
+					case "boolean":
+						this.argsInterfaces[i] = this.makeMenuInterface(argType.name, ["false", "true"], action.args[i].value);
 						break;
 
-					case 'menu':
+					case "menu":
 						this.argsInterfaces[i] = this.makeMenuInterface(argType.name, argType.menu, action.args[i].value);
 						break;
 
-					case 'color':
+					case "color":
 						this.argsInterfaces[i] = this.makeColorInterface(argType.name, action.args[i].value);
 						break;
 
-					case 'sprite':
-					case 'sound':
-					case 'background':
-					case 'path':
-					case 'script':
-					case 'object':
-					case 'room':
-					case 'font':
-					case 'timeline':
+					case "sprite":
+					case "sound":
+					case "background":
+					case "path":
+					case "script":
+					case "object":
+					case "room":
+					case "font":
+					case "timeline":
 						this.argsInterfaces[i] = this.makeResourceInterface(argType.name, argType.kind, action.args[i].value);
 						break;
 				}
@@ -129,13 +129,13 @@ export default class HWindowAction extends HWindow {
 
 	makeDirectionInterface(name, value) {
 		const directions = parseArrowString(value);
-		const directionNames = ['down left', 'down', 'down right', 'left', 'stop', 'right', 'up left', 'up', 'up right'];
+		const directionNames = ["down left", "down", "down right", "left", "stop", "right", "up left", "up", "up right"];
 
 		const inputs = [];
 
-		add( new HElement('span', {}, name) )
+		add( new HElement("span", {}, name) )
 
-		parent( add( new HElement('div', {class: 'arrow-interface'}) ) );
+		parent( add( new HElement("div", {class: "arrow-interface"}) ) );
 
 			for (let y=2; y>=0; --y)
 			for (let x=0; x<=2; ++x) {

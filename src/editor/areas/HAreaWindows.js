@@ -1,9 +1,9 @@
-import {parent, endparent, add, remove, HElement} from '../../common/H.js'
-import Editor from '../Editor.js';
+import {parent, endparent, add, remove, HElement} from "../../common/H.js"
+import Editor from "../Editor.js";
 
 export default class HAreaWindows extends HElement {
 	constructor(editor) {
-		super('div', {class: 'windows'})
+		super("div", {class: "windows"})
 
 		this.editor = editor;
 		this.windows = [];

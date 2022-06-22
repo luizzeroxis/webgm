@@ -1,7 +1,7 @@
-import AbstractAudio from '../../common/AbstractAudio.js';
-import {parent, endparent, add, HElement, HButton, HTextInput, HRangeInput} from '../../common/H.js'
-import VirtualFileSystem from '../../common/VirtualFileSystem.js';
-import HWindow from '../HWindow.js';
+import AbstractAudio from "../../common/AbstractAudio.js";
+import {parent, endparent, add, HElement, HButton, HTextInput, HRangeInput} from "../../common/H.js"
+import VirtualFileSystem from "../../common/VirtualFileSystem.js";
+import HWindow from "../HWindow.js";
 
 export default class HWindowSound extends HWindow {
 	constructor(editor, id, sound) {
@@ -9,27 +9,27 @@ export default class HWindowSound extends HWindow {
 
 		this.sound = sound;
 
-		this.title.html.textContent = 'Edit Sound '+sound.name;
+		this.title.html.textContent = "Edit Sound "+sound.name;
 
 		parent(this.client)
-			parent( add( new HElement('div', {class: 'grid-resource resource-sound'}) ) )
-				parent( add( new HElement('div') ) )
+			parent( add( new HElement("div", {class: "grid-resource resource-sound"}) ) )
+				parent( add( new HElement("div") ) )
 
 					let paramSound = sound.sound;
 
-					const inputName = add( new HTextInput('Name:', sound.name) )
+					const inputName = add( new HTextInput("Name:", sound.name) )
 
-					add( new HButton('Load Sound', () => {
-						VirtualFileSystem.openDialog('audio/*')
+					add( new HButton("Load Sound", () => {
+						VirtualFileSystem.openDialog("audio/*")
 						.then(file => {
 							paramSound = new AbstractAudio(file);
 							audioPreview.html.src = paramSound.src;
 						})
 					}) )
 
-					parent( add( new HElement('div', {class: 'preview'}) ) )
+					parent( add( new HElement("div", {class: "preview"}) ) )
 
-						const audioPreview = add( new HElement('audio') )
+						const audioPreview = add( new HElement("audio") )
 						audioPreview.html.controls = true;
 						audioPreview.html.loop = true;
 						if (paramSound) {
@@ -37,7 +37,7 @@ export default class HWindowSound extends HWindow {
 						}
 						endparent()
 
-					const inputVolume = add( new HRangeInput('Volume:', sound.volume, 1/70, 0, 1) )
+					const inputVolume = add( new HRangeInput("Volume:", sound.volume, 1/70, 0, 1) )
 
 					endparent()
 				endparent();

@@ -1,5 +1,5 @@
-import {VariableException} from './Exceptions.js';
-import {forceString, forceReal, forceInteger, forceBool, forceUnit, forceChar} from './tools.js';
+import {VariableException} from "./Exceptions.js";
+import {forceString, forceReal, forceInteger, forceBool, forceUnit, forceChar} from "./tools.js";
 
 export default class VariableHolder {
 	constructor(caller, builtInClass) {
@@ -42,7 +42,7 @@ export default class VariableHolder {
 
 		if (varInfo == null) {
 			// This should never happen
-			throw new Error('Variable does not exist, did you forget to check beforehand?');
+			throw new Error("Variable does not exist, did you forget to check beforehand?");
 		}
 
 		// Get dimensions of varInfo
@@ -79,19 +79,19 @@ export default class VariableHolder {
 
 			// If there are still indexes left, then it's just wrong.
 			if (difference != 0) {
-				throw new VariableException({type: 'index_not_in_bounds'});
+				throw new VariableException({type: "index_not_in_bounds"});
 			}
 		}
 
 		// Check direct built ins, where data isn't stored here, we use a funcion to get that data from elsewhere
 		if (builtIn && builtIn.direct) {
 			if (indexes.length != dimensions) {
-				throw new VariableException({type: 'index_not_in_bounds'});
+				throw new VariableException({type: "index_not_in_bounds"});
 			}
 
 			for (const [i, index] of indexes.entries()) {
 				if (index >= builtIn.directLength.call(this.caller, i)) {
-					throw new VariableException({type: 'index_not_in_bounds'});
+					throw new VariableException({type: "index_not_in_bounds"});
 				}
 			}
 
@@ -105,12 +105,12 @@ export default class VariableHolder {
 			if (!Array.isArray(variable.value)) {
 				// If index is 0, keep same variable reference, even if it's not an array
 				if (index != 0) {
-					throw new VariableException({type: 'index_not_in_bounds'});
+					throw new VariableException({type: "index_not_in_bounds"});
 				}
 			} else {
 				// Index should be inside size
 				if (index >= variable.value.length) {
-					throw new VariableException({type: 'index_not_in_bounds'});
+					throw new VariableException({type: "index_not_in_bounds"});
 				}
 				// Sometimes the variable is undefined because indexes have been jumped.
 				if (variable.value[index] == undefined) {
@@ -159,7 +159,7 @@ export default class VariableHolder {
 			dimensions = (builtIn.dimensions == undefined ? 0 : builtIn.dimensions);
 
 			if (builtIn.readOnly && !overrideReadOnly) {
-				throw new VariableException({type: 'read_only'});
+				throw new VariableException({type: "read_only"});
 			}
 
 			if (builtIn.direct) {
@@ -167,17 +167,17 @@ export default class VariableHolder {
 			}
 
 			if (builtIn.type != null) {
-				if (builtIn.type == 'string') {
+				if (builtIn.type == "string") {
 					value = forceString(value);
-				} else if (builtIn.type == 'real') {
+				} else if (builtIn.type == "real") {
 					value = forceReal(value);
-				} else if (builtIn.type == 'integer') {
+				} else if (builtIn.type == "integer") {
 					value = forceInteger(value);
-				} else if (builtIn.type == 'bool') {
+				} else if (builtIn.type == "bool") {
 					value = forceBool(value);
-				} else if (builtIn.type == 'unit') {
+				} else if (builtIn.type == "unit") {
 					value = forceUnit(value);
-				} else if (builtIn.type == 'char') {
+				} else if (builtIn.type == "char") {
 					value = forceChar(value);
 				}
 			}
@@ -330,7 +330,7 @@ export default class VariableHolder {
 	save(name) {
 		const varInfo = this.getVariableInfo(name);
 		if (varInfo == null) {
-			throw new Error('wtf?');
+			throw new Error("wtf?");
 		}
 
 		const result = {};

@@ -1,4 +1,4 @@
-import {WebGMException} from './Exceptions.js';
+import {WebGMException} from "./Exceptions.js";
 
 export default class AbstractAudio {
 	constructor(res, load=true) {

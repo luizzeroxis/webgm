@@ -1,8 +1,8 @@
-import {parent, endparent, add, HRadioInput, uniqueID} from '../../common/H.js'
-import {ProjectObject} from '../../common/Project.js';
-import HCodeEditor from '../HCodeEditor.js';
-import HResourceSelect from '../HResourceSelect.js';
-import HWindow from '../HWindow.js';
+import {parent, endparent, add, HRadioInput, uniqueID} from "../../common/H.js"
+import {ProjectObject} from "../../common/Project.js";
+import HCodeEditor from "../HCodeEditor.js";
+import HResourceSelect from "../HResourceSelect.js";
+import HWindow from "../HWindow.js";
 
 export default class HWindowCode extends HWindow {
 	constructor(editor, id, action, object) {
@@ -17,11 +17,11 @@ export default class HWindowCode extends HWindow {
 
 		parent(this.client)
 
-			const appliesToGroup = '_radio_'+uniqueID();
+			const appliesToGroup = "_radio_"+uniqueID();
 
-			this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, 'Self', (action.appliesTo == -1)) );
-			this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, 'Other', (action.appliesTo == -2)) );
-			this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, 'Object:', (action.appliesTo >= 0)) );
+			this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, "Self", (action.appliesTo == -1)) );
+			this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, "Other", (action.appliesTo == -2)) );
+			this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, "Object:", (action.appliesTo >= 0)) );
 
 			this.selectObject = add( new HResourceSelect(this.editor, null, ProjectObject) )
 			if (action.appliesTo >= 0)

@@ -1,11 +1,11 @@
-import ohm, {extras as ohmExtras} from 'ohm-js';
+import ohm, {extras as ohmExtras} from "ohm-js";
 
-import {ExitException, ReturnException, BreakException, ContinueException, VariableException} from '../common/Exceptions.js';
-import {toInteger} from '../common/tools.js';
-import VariableHolder from '../common/VariableHolder.js';
+import {ExitException, ReturnException, BreakException, ContinueException, VariableException} from "../common/Exceptions.js";
+import {toInteger} from "../common/tools.js";
+import VariableHolder from "../common/VariableHolder.js";
 
-import BuiltInFunctions from './BuiltInFunctions.js';
-import GMLGrammar from './GMLGrammar.js';
+import BuiltInFunctions from "./BuiltInFunctions.js";
+import GMLGrammar from "./GMLGrammar.js";
 
 export default class GML {
 	constructor(game) {
@@ -115,7 +115,7 @@ export default class GML {
 			},
 			If: async ({_conditionExpression, _conditionExpressionNode, _code, _elseStatement}) => {
 				const condition = await this.interpretASTNode(_conditionExpression);
-				this.checkIsNumber(condition, 'Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpressionNode);
+				this.checkIsNumber(condition, "Expression expected (condition \"" + condition.toString() + "\" is not a number)", _conditionExpressionNode);
 
 				if (this.toBool(condition)) {
 					await this.interpretASTNode(_code);
@@ -125,7 +125,7 @@ export default class GML {
 			},
 			Repeat: async ({_timesExpression, _timesExpressionNode, _code}) => {
 				let times = await this.interpretASTNode(_timesExpression);
-				this.checkIsNumber(times, 'Repeat count must be a number ("' + times.toString() + '")', _timesExpressionNode);
+				this.checkIsNumber(times, "Repeat count must be a number (\"" + times.toString() + "\")", _timesExpressionNode);
 
 				times = toInteger(times);
 
@@ -146,7 +146,7 @@ export default class GML {
 			While: async ({_conditionExpression, _conditionExpressionNode, _code}) => {
 				while (true) {
 					const condition = await this.interpretASTNode(_conditionExpression);
-					this.checkIsNumber(condition, 'Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpressionNode);
+					this.checkIsNumber(condition, "Expression expected (condition \"" + condition.toString() + "\" is not a number)", _conditionExpressionNode);
 
 					if (!(this.toBool(condition))) break;
 
@@ -178,7 +178,7 @@ export default class GML {
 					}
 
 					const condition = await this.interpretASTNode(_conditionExpression);
-					this.checkIsNumber(condition, 'Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpressionNode);
+					this.checkIsNumber(condition, "Expression expected (condition \"" + condition.toString() + "\" is not a number)", _conditionExpressionNode);
 
 					if (this.toBool(condition)) break;
 				}
@@ -188,7 +188,7 @@ export default class GML {
 
 				while (true) {
 					const condition = await this.interpretASTNode(_conditionExpression);
-					this.checkIsNumber(condition, 'Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpressionNode);
+					this.checkIsNumber(condition, "Expression expected (condition \"" + condition.toString() + "\" is not a number)", _conditionExpressionNode);
 
 					if (!this.toBool(condition)) break;
 
@@ -208,7 +208,7 @@ export default class GML {
 			},
 			With: async ({_objectExpression, _objectExpressionNode, _code}) => {
 				const object = await this.interpretASTNode(_objectExpression);
-				this.checkIsNumber(object, 'Object id expected ("' + object.toString() + '" is not a number)', _objectExpressionNode);
+				this.checkIsNumber(object, "Object id expected (\"" + object.toString() + "\" is not a number)", _objectExpressionNode);
 
 				const instances = this.objectReferenceToInstances(object);
 
@@ -298,7 +298,7 @@ export default class GML {
 				const varInfo = await this.interpretASTNode(_variable);
 				const value = await this.interpretASTNode(_expression);
 				await this.varModify(varInfo, old => {
-					if (typeof old === 'number' && typeof value == 'number') {
+					if (typeof old === "number" && typeof value == "number") {
 						return old - value;
 					}
 					return old;
@@ -308,11 +308,11 @@ export default class GML {
 				const varInfo = await this.interpretASTNode(_variable);
 				const value = await this.interpretASTNode(_expression);
 				await this.varModify(varInfo, old => {
-					if (typeof old === 'number' && typeof value == 'string') {
+					if (typeof old === "number" && typeof value == "string") {
 						// Yeah, wtf. *= repeats the string like in Python, but only if the original value was a real and the new one a string. I have no idea why.
 						return value.repeat(old);
 					}
-					if (typeof old === 'number' && typeof value == 'number') {
+					if (typeof old === "number" && typeof value == "number") {
 						return old * value;
 					}
 					return old;
@@ -322,7 +322,7 @@ export default class GML {
 				const varInfo = await this.interpretASTNode(_variable);
 				const value = await this.interpretASTNode(_expression);
 				await this.varModify(varInfo, old => {
-					if (typeof old === 'number' && typeof value == 'number') {
+					if (typeof old === "number" && typeof value == "number") {
 						return old / value;
 					}
 					return old;
@@ -564,10 +564,10 @@ export default class GML {
 			return result;
 		} else {
 			throw this.game.makeNonFatalError({
-					type: 'unknown_function_or_script',
+					type: "unknown_function_or_script",
 					functionOrScriptName: name,
 				},
-				'Unknown function or script: '+name,
+				"Unknown function or script: "+name,
 			);
 		}
 	}
@@ -610,7 +610,7 @@ export default class GML {
 		} catch (e) {
 			if (e instanceof VariableException) {
 				switch (e.type) {
-					case 'index_not_in_bounds':
+					case "index_not_in_bounds":
 						throw this.makeErrorInGMLNode("Unknown variable "+varInfo.name+" or array index out of bounds (it's out of bounds.)", node);
 				}
 			}
@@ -653,7 +653,7 @@ export default class GML {
 		} catch (e) {
 			if (e instanceof VariableException) {
 				switch (e.type) {
-					case 'read_only':
+					case "read_only":
 						throw this.makeErrorInGMLNode("Cannot assign to the variable ("+varInfo.name+" is read only)", node);
 				}
 			}
@@ -748,7 +748,7 @@ export default class GML {
 		console.log(node);
 
 		const index = node.source.startIdx;
-		const lines = node.source.sourceString.split('\n');
+		const lines = node.source.sourceString.split("\n");
 		let totalLength = 0;
 
 		let lineNumber = 1;
@@ -770,13 +770,13 @@ export default class GML {
 		}
 
 		return this.game.makeError(isFatal, {
-				type: 'error_in_code',
+				type: "error_in_code",
 				node: node,
 				subType: message,
 			},
-			'Error in code at line ' + lineNumber + ':\n'
-			+ gmlLine + '\n' + arrowString + '\n'
-			+ 'at position ' + position + ': ' + message + '\n',
+			"Error in code at line " + lineNumber + ":\n"
+			+ gmlLine + "\n" + arrowString + "\n"
+			+ "at position " + position + ": " + message + "\n",
 		);
 	}
 }

@@ -1,5 +1,5 @@
-import {parent, endparent, add, HElement} from '../../common/H.js'
-import HWindow from '../HWindow.js';
+import {parent, endparent, add, HElement} from "../../common/H.js"
+import HWindow from "../HWindow.js";
 
 export default class HWindowGameInformation extends HWindow {
 	constructor(editor, id, gameInformation) {
@@ -7,11 +7,11 @@ export default class HWindowGameInformation extends HWindow {
 
 		this.gameInformation = gameInformation;
 
-		this.title.html.textContent = 'Game Information';
+		this.title.html.textContent = "Game Information";
 
 		parent(this.client)
 
-			this.textareaText = add( new HElement('textarea', {class: 'code'}, gameInformation.text) )
+			this.textareaText = add( new HElement("textarea", {class: "code"}, gameInformation.text) )
 
 			this.makeApplyOkButtons(
 				() => {

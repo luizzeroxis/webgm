@@ -1,8 +1,8 @@
 /* eslint-env node, commonjs */
 
-const {mergeWithRules} = require('webpack-merge');
+const {mergeWithRules} = require("webpack-merge");
 
-const common = require('./webpack.common.js');
+const common = require("./webpack.common.js");
 
 module.exports = mergeWithRules({
 	module: {
@@ -13,10 +13,10 @@ module.exports = mergeWithRules({
 	},
 
 })(common, {
-	mode: 'development',
-	devtool: 'inline-source-map',
+	mode: "development",
+	devtool: "inline-source-map",
 	devServer: {
-		static: './dist',
+		static: "./dist",
 		hot: false,
 		liveReload: false,
 	},
@@ -25,7 +25,7 @@ module.exports = mergeWithRules({
 			{
 				test: /\.css$/,
 				use: [
-					'style-loader',
+					"style-loader",
 				],
 			},
 		],

@@ -1,8 +1,8 @@
 //The editor class
 
-import Dispatcher from '../common/Dispatcher.js'
-import {WebGMException, UnserializeException} from '../common/Exceptions.js';
-import {parent, endparent, add, HElement, setOnFileDrop} from '../common/H.js'
+import Dispatcher from "../common/Dispatcher.js"
+import {WebGMException, UnserializeException} from "../common/Exceptions.js";
+import {parent, endparent, add, HElement, setOnFileDrop} from "../common/H.js"
 import {
 	Project,
 	ProjectAction,
@@ -15,35 +15,35 @@ import {
 	ProjectTimeline,
 	ProjectObject,
 	ProjectRoom,
-} from '../common/Project.js';
-import ProjectSerializer from '../common/ProjectSerializer.js';
-import VirtualFileSystem from '../common/VirtualFileSystem.js';
-import {Game} from '../game/Game.js';
+} from "../common/Project.js";
+import ProjectSerializer from "../common/ProjectSerializer.js";
+import VirtualFileSystem from "../common/VirtualFileSystem.js";
+import {Game} from "../game/Game.js";
 
-import HAreaMenu from './areas/HAreaMenu.js';
-import HAreaResources from './areas/HAreaResources.js';
-import HAreaWindows from './areas/HAreaWindows.js';
-import BuiltInLibraries from './BuiltInLibraries.js'
-import DefaultProjectFontIcon from './img/default-ProjectFont-icon.png';
-import DefaultProjectPathIcon from './img/default-ProjectPath-icon.png';
-import DefaultProjectRoomIcon from './img/default-ProjectRoom-icon.png';
-import DefaultProjectScriptIcon from './img/default-ProjectScript-icon.png';
-import DefaultProjectSoundIcon from './img/default-ProjectSound-icon.png';
-import DefaultProjectTimelineIcon from './img/default-ProjectTimeline-icon.png';
-import PreferencesManager from './PreferencesManager.js';
-import ThemeManager from './ThemeManager.js';
-import HWindowBackground from './windows/HWindowBackground.js';
-import HWindowFont from './windows/HWindowFont.js';
-import HWindowGame from './windows/HWindowGame.js';
-import HWindowObject from './windows/HWindowObject.js';
-import HWindowPath from './windows/HWindowPath.js';
-import HWindowRoom from './windows/HWindowRoom.js';
-import HWindowScript from './windows/HWindowScript.js';
-import HWindowSound from './windows/HWindowSound.js';
-import HWindowSprite from './windows/HWindowSprite.js';
-import HWindowTimeline from './windows/HWindowTimeline.js';
+import HAreaMenu from "./areas/HAreaMenu.js";
+import HAreaResources from "./areas/HAreaResources.js";
+import HAreaWindows from "./areas/HAreaWindows.js";
+import BuiltInLibraries from "./BuiltInLibraries.js"
+import DefaultProjectFontIcon from "./img/default-ProjectFont-icon.png";
+import DefaultProjectPathIcon from "./img/default-ProjectPath-icon.png";
+import DefaultProjectRoomIcon from "./img/default-ProjectRoom-icon.png";
+import DefaultProjectScriptIcon from "./img/default-ProjectScript-icon.png";
+import DefaultProjectSoundIcon from "./img/default-ProjectSound-icon.png";
+import DefaultProjectTimelineIcon from "./img/default-ProjectTimeline-icon.png";
+import PreferencesManager from "./PreferencesManager.js";
+import ThemeManager from "./ThemeManager.js";
+import HWindowBackground from "./windows/HWindowBackground.js";
+import HWindowFont from "./windows/HWindowFont.js";
+import HWindowGame from "./windows/HWindowGame.js";
+import HWindowObject from "./windows/HWindowObject.js";
+import HWindowPath from "./windows/HWindowPath.js";
+import HWindowRoom from "./windows/HWindowRoom.js";
+import HWindowScript from "./windows/HWindowScript.js";
+import HWindowSound from "./windows/HWindowSound.js";
+import HWindowSprite from "./windows/HWindowSprite.js";
+import HWindowTimeline from "./windows/HWindowTimeline.js";
 
-import './style.css';
+import "./style.css";
 
 export default class Editor {
 	static resourceTypesInfo = [
@@ -61,7 +61,7 @@ export default class Editor {
 	constructor() {
 		this.project = new Project();
 		this.game = null;
-		this.projectName = 'game';
+		this.projectName = "game";
 
 		this.dispatcher = new Dispatcher();
 
@@ -74,11 +74,11 @@ export default class Editor {
 		this.libraries = BuiltInLibraries.getList();
 
 		// Areas
-		this.div = parent( new HElement('div', {class: 'editor'}) )
+		this.div = parent( new HElement("div", {class: "editor"}) )
 
-			add( new HElement('div', {}, 'Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!') )
+			add( new HElement("div", {}, "Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!") )
 
-			parent( add( new HElement('div', {class: 'grid'}) ) )
+			parent( add( new HElement("div", {class: "grid"}) ) )
 
 				this.menuArea = add( new HAreaMenu(this) )
 				this.resourcesArea = add( new HAreaResources(this) )
@@ -105,44 +105,44 @@ export default class Editor {
 		this.project.counter[type.getClassName()]++;
 		this.project.resources[type.getClassName()].push(resource);
 
-		this.dispatcher.speak('createResource', resource);
+		this.dispatcher.speak("createResource", resource);
 
 		return resource;
 	}
 
 	deleteResource(resource) {
-		if (confirm('You are about to delete '+resource.name+'. This will be permanent. Continue?')) {
+		if (confirm("You are about to delete "+resource.name+". This will be permanent. Continue?")) {
 			const index = this.project.resources[resource.constructor.getClassName()].findIndex(x => x == resource);
 			this.project.resources[resource.constructor.getClassName()].splice(index, 1);
 
-			this.dispatcher.speak('deleteResource', resource);
+			this.dispatcher.speak("deleteResource", resource);
 		}
 	}
 
 	changeResourceName(resource, name) {
 		resource.name = name;
-		this.dispatcher.speak('changeResourceName', resource);
+		this.dispatcher.speak("changeResourceName", resource);
 	}
 
 	changeSpriteImages(sprite, images) {
 		sprite.images = images;
-		this.dispatcher.speak('changeSpriteImages', sprite);
+		this.dispatcher.speak("changeSpriteImages", sprite);
 	}
 
 	changeSpriteOrigin(sprite, originx, originy) {
 		sprite.originx = originx;
 		sprite.originy = originy;
-		this.dispatcher.speak('changeSpriteOrigin', sprite);
+		this.dispatcher.speak("changeSpriteOrigin", sprite);
 	}
 
 	changeBackgroundImage(background, image) {
 		background.image = image;
-		this.dispatcher.speak('changeBackgroundImage', background);
+		this.dispatcher.speak("changeBackgroundImage", background);
 	}
 
 	changeObjectSprite(object, sprite) {
 		object.sprite_index = sprite;
-		this.dispatcher.speak('changeObjectSprite', object);
+		this.dispatcher.speak("changeObjectSprite", object);
 	}
 
 	// Called from HAreaMenu
@@ -157,7 +157,7 @@ export default class Editor {
 	openProjectFromFile(file) {
 		let promise;
 
-		if (file.type == 'application/json') {
+		if (file.type == "application/json") {
 			promise = VirtualFileSystem.readEntireFile(file)
 			.then(json => ProjectSerializer.unserializeV1(json))
 		} else {
@@ -171,9 +171,9 @@ export default class Editor {
 				this.resourcesArea.refresh();
 				this.windowsArea.clear();
 
-				this.projectName = file.name.substring(0, file.name.lastIndexOf('.'));
+				this.projectName = file.name.substring(0, file.name.lastIndexOf("."));
 			} else {
-				alert('Error Loading: File seems to be corrupt.');
+				alert("Error Loading: File seems to be corrupt.");
 			}
 		}).catch(e => {
 			if (e instanceof UnserializeException) {
@@ -197,19 +197,19 @@ export default class Editor {
 		this.stopGame();
 
 		if (this.project.resources.ProjectRoom.length <= 0) {
-			alert('A game must have at least one room to run.');
+			alert("A game must have at least one room to run.");
 			return;
 		}
 
-		this.gameWindow = this.windowsArea.open(HWindowGame, 'game');
+		this.gameWindow = this.windowsArea.open(HWindowGame, "game");
 
 		this.menuArea.runButton.setDisabled(true);
 		this.menuArea.stopButton.setDisabled(false);
 
-		if (this.preferences.get('scrollToGameOnRun')) {
+		if (this.preferences.get("scrollToGameOnRun")) {
 			this.gameWindow.html.scrollIntoView();
 		}
-		if (this.preferences.get('focusCanvasOnRun')) {
+		if (this.preferences.get("focusCanvasOnRun")) {
 			this.gameWindow.canvas.html.focus({preventScroll: true});
 		}
 
@@ -224,7 +224,7 @@ export default class Editor {
 				this.menuArea.runButton.setDisabled(false);
 				this.menuArea.stopButton.setDisabled(true);
 
-				if (this.preferences.get('clearCanvasOnStop')) {
+				if (this.preferences.get("clearCanvasOnStop")) {
 					this.gameWindow.canvas.clear();
 				}
 

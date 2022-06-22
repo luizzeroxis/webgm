@@ -8,7 +8,6 @@ import BuiltInFunctions from './BuiltInFunctions.js';
 import GMLGrammar from './GMLGrammar.js';
 
 export default class GML {
-
 	constructor(game) {
 		this.game = game;
 
@@ -143,11 +142,9 @@ export default class GML {
 						}
 					}
 				}
-
 			},
 			While: async ({_conditionExpression, _conditionExpressionNode, _code}) => {
 				while (true) {
-
 					const condition = await this.interpretASTNode(_conditionExpression);
 					this.checkIsNumber(condition, 'Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpressionNode);
 
@@ -168,7 +165,6 @@ export default class GML {
 			},
 			DoUntil: async({_code, _conditionExpression, _conditionExpressionNode}) => {
 				while (true) {
-
 					try {
 						await this.interpretASTNode(_code);
 					} catch (e) {
@@ -209,7 +205,6 @@ export default class GML {
 					}
 					await this.interpretASTNode(_iterationStatement);
 				}
-
 			},
 			With: async ({_objectExpression, _objectExpressionNode, _code}) => {
 				const object = await this.interpretASTNode(_objectExpression);
@@ -244,7 +239,6 @@ export default class GML {
 						this.currentOther = previousOther;
 					}
 				}
-
 			},
 			Exit: () => {
 				throw new ExitException();
@@ -489,7 +483,6 @@ export default class GML {
 				return value;
 			},
 		}
-
 	}
 
 	compile(code, startRule) {
@@ -509,7 +502,6 @@ export default class GML {
 	}
 
 	async execute(ast, instance, other, args=[], argRelative=false) {
-
 		const previousInstance = this.currentInstance;
 		const previousOther = this.currentOther;
 
@@ -540,7 +532,6 @@ export default class GML {
 				throw e;
 			}
 		} finally {
-
 			this.currentInstance = previousInstance;
 			this.currentOther = previousOther;
 
@@ -553,11 +544,9 @@ export default class GML {
 		}
 
 		return result;
-
 	}
 
 	async builtInFunction(name, instance, other, args, relative=false) {
-
 		const func = BuiltInFunctions[name];
 
 		if (func) {
@@ -573,7 +562,6 @@ export default class GML {
 			this.currentOther = previousOther;
 
 			return result;
-
 		} else {
 			throw this.game.makeNonFatalError({
 					type: 'unknown_function_or_script',
@@ -585,11 +573,8 @@ export default class GML {
 	}
 
 	varGet(varInfo, node) {
-
 		try {
-
 			if (varInfo.object == null) {
-
 				if (this.game.constants[varInfo.name] != null)
 					return this.game.constants[varInfo.name];
 				if (this.vars.exists(varInfo.name))
@@ -601,9 +586,7 @@ export default class GML {
 					return this.currentInstance.vars.get(varInfo.name, varInfo.indexes);
 
 				throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
-
 			} else {
-
 				const instances = this.objectReferenceToInstances(varInfo.object);
 
 				if (instances == null) {
@@ -624,7 +607,6 @@ export default class GML {
 
 				throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
 			}
-
 		} catch (e) {
 			if (e instanceof VariableException) {
 				switch (e.type) {
@@ -634,15 +616,11 @@ export default class GML {
 			}
 			throw e;
 		}
-
 	}
 
 	async varSet(varInfo, value, node) {
-
 		try {
-
 			if (varInfo.object == null) {
-
 				if (this.game.constants[varInfo.name] != null)
 					throw this.makeErrorInGMLNode("Variable name expected. (it's a constant)", node);
 				if (this.vars.exists(varInfo.name))
@@ -652,9 +630,7 @@ export default class GML {
 
 				await this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
 				return null;
-
 			} else {
-
 				const instances = this.objectReferenceToInstances(varInfo.object);
 
 				if (instances === null) {
@@ -674,7 +650,6 @@ export default class GML {
 
 				return null;
 			}
-
 		} catch (e) {
 			if (e instanceof VariableException) {
 				switch (e.type) {
@@ -684,7 +659,6 @@ export default class GML {
 			}
 			throw e;
 		}
-
 	}
 
 	/*
@@ -694,30 +668,22 @@ export default class GML {
 	- null
 	*/
 	objectReferenceToInstances(object) {
-
 		if (object >= 0 && object <= 100000) { // object index
 			const instances = this.game.instances.filter(instance => instance.exists && instance.object_index == object);
 			return instances;
-
 		} else if (object > 100000) { // instance id
 			const instance = this.game.instances.find(instance => instance.exists && instance.id == object);
 			return instance ? [instance] : [];
-
 		} else if (object == -1 || object == -7) { // self or local
 			return [this.currentInstance].filter(instance => instance.exists);
-
 		} else if (object == -2) { // other
 			return [this.currentOther].filter(instance => instance.exists);
-
 		} else if (object == -3) { // all
 			return this.game.instances.filter(instance => instance.exists);
-
 		} else if (object == -4) { // noone
 			return null;
-
 		} else if (object == -5) { // global
 			return "global";
-
 		} else {
 			return null;
 		}
@@ -755,7 +721,6 @@ export default class GML {
 	}
 
 	async interpretASTNode(node) {
-
 		// _iter
 		if (Array.isArray(node)) {
 			const results = [];
@@ -795,7 +760,6 @@ export default class GML {
 			const lineLength = lines[i].length + 1;
 			totalLength += lineLength;
 			if (totalLength >= index) {
-
 				lineNumber = i + 1;
 				gmlLine = lines[i];
 				position = (index - (totalLength - lineLength)) + 1;
@@ -815,5 +779,4 @@ export default class GML {
 			+ 'at position ' + position + ': ' + message + '\n',
 		);
 	}
-
 }

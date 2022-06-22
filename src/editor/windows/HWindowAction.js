@@ -5,7 +5,6 @@ import HResourceSelect from '../HResourceSelect.js';
 import HWindow from '../HWindow.js';
 
 export default class HWindowAction extends HWindow {
-
 	constructor(editor, id, action, object) {
 		super(editor, id);
 
@@ -27,7 +26,6 @@ export default class HWindowAction extends HWindow {
 			}
 
 			if (this.actionTypeHasApplyTo) {
-
 				parent( add( new HElement('fieldset') ) )
 
 					add( new HElement('legend', {}, 'Applies to') )
@@ -44,7 +42,6 @@ export default class HWindowAction extends HWindow {
 						this.selectObject.setValue(action.appliesTo);
 
 					endparent()
-
 			}
 
 			this.actionTypeArgs = this.actionType.args;
@@ -55,7 +52,6 @@ export default class HWindowAction extends HWindow {
 			this.argsInterfaces = [];
 
 			this.actionTypeArgs.forEach((argType, i) => {
-
 				switch (argType.kind) {
 					case 'expression':
 					case 'string':
@@ -91,7 +87,6 @@ export default class HWindowAction extends HWindow {
 						this.argsInterfaces[i] = this.makeResourceInterface(argType.name, argType.kind, action.args[i].value);
 						break;
 				}
-
 			})
 
 			this.actionTypeHasRelative = this.actionType.hasRelative;
@@ -156,7 +151,6 @@ export default class HWindowAction extends HWindow {
 	}
 
 	makeMenuInterface(name, optionNames, value) {
-
 		const options = optionNames.map((text, index) => ({name: text, value: index}));
 
 		const select = add( new HSelectWithOptions(name, options) );
@@ -186,7 +180,6 @@ export default class HWindowAction extends HWindow {
 	}
 
 	apply() {
-
 		for (let i = 0; i < this.action.args.length; i++) {
 			this.action.args[i] = {kind: this.actionTypeArgs[i].kind, value: this.argsInterfaces[i].getValue()};
 		}
@@ -208,7 +201,5 @@ export default class HWindowAction extends HWindow {
 
 		// Update action in event in object
 		this.object.updateSelectActions();
-
 	}
-
 }

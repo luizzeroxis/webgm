@@ -3,7 +3,6 @@ import HTabControl from '../HTabControl.js';
 import HWindow from '../HWindow.js';
 
 export default class HWindowGlobalGameSettings extends HWindow {
-
 	constructor(editor, id, globalGameSettings) {
 		super(editor, id);
 

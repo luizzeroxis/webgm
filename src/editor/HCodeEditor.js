@@ -1,7 +1,6 @@
 import {parent, endparent, add, HElement} from '../common/H.js'
 
 export default class HCodeEditor extends HElement {
-
 	constructor(code) {
 		super('div')
 
@@ -30,5 +29,4 @@ export default class HCodeEditor extends HElement {
 	getValue() {
 		return this.textareaCode.html.value;
 	}
-
 }

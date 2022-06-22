@@ -3,7 +3,6 @@ import VirtualFileSystem from '../../common/VirtualFileSystem.js';
 import HWindowPreferences from '../windows/HWindowPreferences.js';
 
 export default class HAreaMenu extends HElement {
-
 	constructor(editor) {
 		super('div', {class: 'menu'})
 
@@ -44,5 +43,4 @@ export default class HAreaMenu extends HElement {
 
 			endparent()
 	}
-
 }

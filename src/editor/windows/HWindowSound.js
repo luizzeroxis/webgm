@@ -4,7 +4,6 @@ import VirtualFileSystem from '../../common/VirtualFileSystem.js';
 import HWindow from '../HWindow.js';
 
 export default class HWindowSound extends HWindow {
-
 	constructor(editor, id, sound) {
 		super(editor, id);
 
@@ -21,13 +20,11 @@ export default class HWindowSound extends HWindow {
 					const inputName = add( new HTextInput('Name:', sound.name) )
 
 					add( new HButton('Load Sound', () => {
-
 						VirtualFileSystem.openDialog('audio/*')
 						.then(file => {
 							paramSound = new AbstractAudio(file);
 							audioPreview.html.src = paramSound.src;
 						})
-
 					}) )
 
 					parent( add( new HElement('div', {class: 'preview'}) ) )
@@ -55,6 +52,5 @@ export default class HWindowSound extends HWindow {
 				() => this.close(),
 			);
 			endparent();
-
 	}
 }

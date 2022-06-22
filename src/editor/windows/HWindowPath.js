@@ -2,7 +2,6 @@ import {parent, endparent, add, HElement, HTextInput} from '../../common/H.js'
 import HWindow from '../HWindow.js';
 
 export default class HWindowPath extends HWindow {
-
 	constructor(editor, id, path) {
 		super(editor, id);
 

@@ -124,6 +124,7 @@
         "no-multiple-empty-lines": "warn",
         "no-trailing-spaces": "warn",
         "no-whitespace-before-property": "warn",
-        "operator-linebreak": ["warn", "before"]
+        "operator-linebreak": ["warn", "before"],
+        "padded-blocks": ["warn", "never"]
     }
 }

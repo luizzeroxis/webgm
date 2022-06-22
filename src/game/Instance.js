@@ -3,9 +3,7 @@ import VariableHolder from '../common/VariableHolder.js';
 import BuiltInLocals from './BuiltInLocals.js';
 
 export default class Instance {
-
 	constructor (id, x, y, object_index, game) {
-
 		this.id = id;
 		this.object_index = object_index;
 		this.game = game;
@@ -35,7 +33,6 @@ export default class Instance {
 		this.vars.setBuiltIn('yprevious', y);
 		this.vars.setBuiltIn('xstart', x);
 		this.vars.setBuiltIn('ystart', y);
-
 	}
 
 	getImageIndex() {
@@ -58,5 +55,4 @@ export default class Instance {
 		this.vars.setBuiltIn('speed', Math.hypot(hspeed, vspeed));
 		this.vars.setBuiltIn('direction', Math.atan2(-vspeed, hspeed) * (180 / Math.PI));
 	}
-
 }

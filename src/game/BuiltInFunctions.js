@@ -2,7 +2,6 @@ import {EngineException} from '../common/Exceptions.js';
 import {decimalColorToHSVValues, decimalColorAndAlphaToRGBA, decimalColorToRGB, rgbValuesToDecimalColor, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger, parseNewLineHash} from '../common/tools.js'
 
 export default class BuiltInFunctions {
-
 	// this = GML
 
 	// # Computing things
@@ -861,7 +860,6 @@ export default class BuiltInFunctions {
 	}
 
 	static async instance_create ([x, y, obj]) {
-
 		const object = this.game.getResourceById('ProjectObject', obj);
 		if (object == null) {
 			throw this.game.makeNonFatalError({
@@ -1320,7 +1318,6 @@ export default class BuiltInFunctions {
 	// ## Drawing sprites and backgrounds
 
 	static draw_sprite ([spriteIndex, subimg, x, y]) {
-
 		if (spriteIndex >= 0) {
 			const sprite = this.game.project.resources.ProjectSprite.find(x => x.id == spriteIndex)
 			if (sprite) {
@@ -1446,7 +1443,6 @@ export default class BuiltInFunctions {
 	}
 
 	static draw_line ([x1, y1, x2, y2]) {
-
 		this.game.ctx.strokeStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 
 		this.game.ctx.save();
@@ -1469,7 +1465,6 @@ export default class BuiltInFunctions {
 	}
 
 	static draw_rectangle ([x1, y1, x2, y2, outline]) {
-
 		this.game.ctx.fillStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 		this.game.ctx.strokeStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 
@@ -1496,7 +1491,6 @@ export default class BuiltInFunctions {
 	}
 
 	static draw_circle ([x, y, r, outline]) {
-
 		const style = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 		this.game.ctx.fillStyle = style;
 		this.game.ctx.strokeStyle = style;
@@ -1514,7 +1508,6 @@ export default class BuiltInFunctions {
 	}
 
 	static draw_ellipse ([x1, y1, x2, y2, outline]) {
-
 		const style = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 		const x = (x2 - x1) / 2 + x1;
 		const y = (y2 - y1) / 2 + y1;
@@ -5737,7 +5730,6 @@ export default class BuiltInFunctions {
 	// ### Move
 
 	static action_move ([directions, speed], relative) {
-
 		const values = parseArrowString(directions);
 
 		const angles = [
@@ -6898,5 +6890,4 @@ export default class BuiltInFunctions {
 		// return 0;
 	}
 	*/
-
 }

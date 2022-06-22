@@ -5,7 +5,6 @@ import Editor from './Editor.js';
 import DefaultProjectSoundIcon from './img/default-ProjectSound-icon.png';
 
 export default class HResourceListItem extends HElement {
-
 	constructor(resource, editor) {
 		super('li')
 
@@ -31,11 +30,9 @@ export default class HResourceListItem extends HElement {
 
 				endparent()
 			endparent()
-
 	}
 
 	onAdd() {
-
 		this.listeners = this.editor.dispatcher.listen({
 			changeResourceName: i => {
 				if (i !== this.resource) return;
@@ -77,7 +74,6 @@ export default class HResourceListItem extends HElement {
 				},
 			})}
 		}
-
 	}
 
 	onRemove() {
@@ -123,5 +119,4 @@ export default class HResourceListItem extends HElement {
 	delete() {
 		this.editor.deleteResource(this.resource);
 	}
-
 }

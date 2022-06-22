@@ -2,7 +2,6 @@ import {parent, endparent, add, HElement} from '../../common/H.js'
 import HWindow from '../HWindow.js';
 
 export default class HWindowGameInformation extends HWindow {
-
 	constructor(editor, id, gameInformation) {
 		super(editor, id);
 

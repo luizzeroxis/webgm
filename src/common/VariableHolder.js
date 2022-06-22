@@ -2,7 +2,6 @@ import {VariableException} from './Exceptions.js';
 import {forceString, forceReal, forceInteger, forceBool, forceUnit, forceChar} from './tools.js';
 
 export default class VariableHolder {
-
 	constructor(caller, builtInClass) {
 		this.caller = caller;
 		this.builtInClass = builtInClass;
@@ -10,9 +9,7 @@ export default class VariableHolder {
 		this.customList = {};
 
 		for (const name in this.builtInClass) {
-
 			if (!this.builtInClass[name].direct) {
-
 				if (typeof this.builtInClass[name].default == "function") {
 					let value = this.builtInClass[name].default.call(this);
 					if (Array.isArray(value)) {
@@ -24,7 +21,6 @@ export default class VariableHolder {
 				} else {
 					throw new Error("Non-direct built in variable has no default!");
 				}
-
 			} else {
 
 				// this.builtInList[name] = {}; // TODO Temporary
@@ -40,7 +36,6 @@ export default class VariableHolder {
 
 	// Get variable value. Use when you don't know what kinda variable it is (e.g. from GML).
 	get(name, indexes) {
-
 		const varInfo = this.getVariableInfo(name);
 		let builtIn;
 		let dimensions;
@@ -127,7 +122,6 @@ export default class VariableHolder {
 		}
 
 		return variable.value;
-
 	}
 
 	// Get built in variable that isn't an array. Meant to be used by the code, doesn't do any checks.
@@ -146,7 +140,6 @@ export default class VariableHolder {
 
 	// Set variable value. Use when you don't know what kinda variable it is (e.g. from GML).
 	async set(name, value, indexes, overrideReadOnly, callSet=true) {
-
 		let varInfo = this.getVariableInfo(name);
 		let builtIn;
 		let dimensions;
@@ -275,7 +268,6 @@ export default class VariableHolder {
 		if (builtIn && callSet && this.caller != null && builtIn.set) {
 			await builtIn.set.call(this.caller, value, previous, indexes || []);
 		}
-
 	}
 
 	// Set built in variable that ins't an array. Meant to be used by the code, doesn't do any checks or calls.
@@ -401,5 +393,4 @@ export default class VariableHolder {
 		this.builtInList = {};
 		this.customList = {};
 	}
-
 }

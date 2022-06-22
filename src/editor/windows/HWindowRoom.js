@@ -7,7 +7,6 @@ import HWindow from '../HWindow.js';
 import DefaultInstanceIcon from '../img/default-instance-icon.png';
 
 export default class HWindowRoom extends HWindow {
-
 	constructor(editor, id, room) {
 		super(editor, id);
 
@@ -110,7 +109,6 @@ export default class HWindowRoom extends HWindow {
 
 						this.inputBackgroundVisibleAtStart = add( new HCheckBoxInput('Visible when room starts') )
 						this.inputBackgroundVisibleAtStart.setOnChange(() => {
-
 							const currentBackgroundId = this.selectBackgrounds.getValue();
 							const currentBackground = getOrCreateBackground(currentBackgroundId);
 
@@ -123,7 +121,6 @@ export default class HWindowRoom extends HWindow {
 							}
 
 							this.updateCanvasPreview();
-
 						})
 
 						this.selectResourceBackground = add( new HResourceSelect(this.editor, null, ProjectBackground) )
@@ -182,7 +179,6 @@ export default class HWindowRoom extends HWindow {
 					// TODO: account for sprite size when moving and deleting
 
 					this.canvasPreview.html.onmousedown = (e) => {
-
 						this.mouseIsDown = true;
 						const pos = this.getMousePosition(e);
 						const snappedPos = this.snapMousePosition(pos);
@@ -203,7 +199,6 @@ export default class HWindowRoom extends HWindow {
 							if (hover) {
 								this.movingInstance = hover;
 							}
-
 						} else
 
 						if (this.radioDelete.getChecked()) {
@@ -214,7 +209,6 @@ export default class HWindowRoom extends HWindow {
 						}
 
 						this.updateCanvasPreview();
-
 					}
 
 					this.canvasPreview.html.onmousemove = (e) => {
@@ -222,7 +216,6 @@ export default class HWindowRoom extends HWindow {
 						const snappedPos = this.snapMousePosition(pos);
 
 						if (this.mouseIsDown) {
-
 							if (this.radioAdd.getChecked() || this.radioMove.getChecked()) {
 								if (this.movingInstance) {
 									this.movingInstance.x = snappedPos.x;
@@ -247,7 +240,6 @@ export default class HWindowRoom extends HWindow {
 							}
 
 							this.updateCanvasPreview();
-
 						}
 
 						this.spanX.html.textContent = snappedPos.x;
@@ -267,7 +259,6 @@ export default class HWindowRoom extends HWindow {
 								}
 							}
 						}
-
 					}
 
 					// is this... right?
@@ -322,7 +313,6 @@ export default class HWindowRoom extends HWindow {
 				},
 			);
 			endparent();
-
 	}
 
 	onAdd() {
@@ -442,7 +432,6 @@ export default class HWindowRoom extends HWindow {
 	}
 
 	updateCanvasPreview() {
-
 		this.canvasPreview.html.width = this.inputWidth.getValue();
 		this.canvasPreview.html.height = this.inputHeight.getValue();
 
@@ -488,7 +477,6 @@ export default class HWindowRoom extends HWindow {
 
 		// grid
 		if (this.inputShowGrid.getChecked()) {
-
 			this.ctx.globalCompositeOperation = 'difference';
 			this.ctx.fillStyle = 'white';
 			this.ctx.strokeStyle = 'white';
@@ -536,7 +524,6 @@ export default class HWindowRoom extends HWindow {
 
 			for (let x = xStart; x < this.canvasPreview.html.width; x += background.image.image.width) {
 				for (let y = yStart; y < this.canvasPreview.html.height; y += background.image.image.height) {
-
 					this.ctx.drawImage(image.image, x, y);
 
 					if (!roomBackground.tileVertically) {
@@ -547,13 +534,11 @@ export default class HWindowRoom extends HWindow {
 					break;
 				}
 			}
-
 		})
 		return true;
 	}
 
 	drawLine(x1, y1, x2, y2) {
-
 		this.ctx.save();
 		this.ctx.translate(0.5, 0.5)
 
@@ -564,7 +549,5 @@ export default class HWindowRoom extends HWindow {
 		this.ctx.stroke();
 
 		this.ctx.restore();
-
 	}
-
 }

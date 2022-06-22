@@ -12,7 +12,6 @@ import HWindowAction from './HWindowAction.js';
 import HWindowCode from './HWindowCode.js';
 
 export default class HWindowObject extends HWindow {
-
 	static actionArgResourceTypes = {
 		'sprite': ProjectSprite,
 		'sound': ProjectSound,
@@ -80,7 +79,6 @@ export default class HWindowObject extends HWindow {
 
 					// Add event button
 					this.buttonEventAdd = add( new HButton('Add Event', () => {
-
 						const eventType = this.selectEventType.getValue();
 						let eventSubtype = 0;
 
@@ -104,12 +102,10 @@ export default class HWindowObject extends HWindow {
 						this.updateEventsMenu();
 						this.updateSelectActions();
 						this.updateActionsMenu();
-
 					}) )
 
 					// Delete event button
 					this.buttonEventDelete = add( new HButton('Delete', () => {
-
 						const index = this.paramEvents.findIndex(event => this.selectEvents.getValue() == event.getNameId());
 						if (index < 0) return;
 
@@ -128,13 +124,11 @@ export default class HWindowObject extends HWindow {
 						this.updateEventsMenu();
 						this.updateSelectActions();
 						this.updateActionsMenu();
-
 					}) )
 
 					// Change event button
 
 					this.buttonEventChange = add( new HButton('Change', () => {
-
 						const event = this.getSelectedEvent();
 						if (!event) return;
 
@@ -159,7 +153,6 @@ export default class HWindowObject extends HWindow {
 						// this.updateEventsMenu();
 						// this.updateSelectActions();
 						// this.updateActionsMenu();
-
 					}) )
 
 					endparent();
@@ -204,7 +197,6 @@ export default class HWindowObject extends HWindow {
 
 						this.updateSelectActions();
 						this.updateActionsMenu();
-
 					}) )
 
 					this.buttonActionUp = add( new HButton('▲', () => {
@@ -242,7 +234,6 @@ export default class HWindowObject extends HWindow {
 					this.librariesTabControl = add( new HTabControl() )
 
 					this.editor.libraries.forEach(library => {
-
 						parent( this.librariesTabControl.addTab(library.name, (library.name == this.editor.preferences.get('defaultActionLibraryTab'))) )
 
 							let nextClass = null;
@@ -250,18 +241,13 @@ export default class HWindowObject extends HWindow {
 							parent( add( new HElement('div', {class: 'grid-action-types'}) ) )
 
 								library.items.forEach(actionType => {
-
 									if (actionType.kind == "label") {
 										add( new HElement('div', {class: 'label'}, actionType.name) );
-
 									} else if (actionType.kind == "separator") {
 										nextClass = 'new-row';
-
 									} else {
-
 										// TODO add images to the buttons
 										const actionTypeButton = add( new HButton(null, () => {
-
 											const event = this.getSelectedEvent();
 											if (!event) {
 												alert("You need to select or add an event before you can add actions.");
@@ -308,7 +294,6 @@ export default class HWindowObject extends HWindow {
 											this.updateSelectActions();
 											this.selectActions.setSelectedIndex(event.actions.length-1)
 											this.updateActionsMenu();
-
 										}, 'action-type') )
 
 										if (nextClass) {
@@ -325,15 +310,12 @@ export default class HWindowObject extends HWindow {
 										} else {
 											actionTypeButton.html.textContent = actionType.description;
 										}
-
 									}
-
 								})
 
 								endparent()
 
 							endparent()
-
 					})
 
 					endparent();
@@ -375,7 +357,6 @@ export default class HWindowObject extends HWindow {
 				},
 			);
 			endparent();
-
 	}
 
 	onAdd() {
@@ -398,7 +379,6 @@ export default class HWindowObject extends HWindow {
 
 	sortEvents() {
 		this.paramEvents.sort((a, b) => {
-
 			const aTypeId = Events.listEventTypes.find(x => x.value == a.type).id;
 			const bTypeId = Events.listEventTypes.find(x => x.value == b.type).id;
 
@@ -410,12 +390,10 @@ export default class HWindowObject extends HWindow {
 
 			const compareSubtypeId = aSubtypeId - bSubtypeId;
 			return compareSubtypeId;
-
 		})
 	}
 
 	updateSelectEvents() {
-
 		const index = this.selectEvents.getSelectedIndex();
 		this.selectEvents.removeOptions();
 
@@ -426,7 +404,6 @@ export default class HWindowObject extends HWindow {
 			endparent();
 
 		this.selectEvents.setSelectedIndex(Math.min(index, this.paramEvents.length-1));
-
 	}
 
 	updateEventsMenu() {
@@ -437,11 +414,9 @@ export default class HWindowObject extends HWindow {
 			this.buttonEventChange.setDisabled(false);
 			this.buttonEventDelete.setDisabled(false);
 		}
-
 	}
 
 	updateDivEventSubtype() {
-
 		removeChildren(this.divEventSubtype)
 
 		const eventType = this.selectEventType.getValue();
@@ -481,11 +456,9 @@ export default class HWindowObject extends HWindow {
 			}
 
 			endparent()
-
 	}
 
 	updateSelectActions() {
-
 		const index = this.selectActions.getSelectedIndex();
 		this.selectActions.removeOptions();
 
@@ -494,7 +467,6 @@ export default class HWindowObject extends HWindow {
 		if (event) {
 			parent(this.selectActions.select);
 				event.actions.forEach((action, i) => {
-
 					const actionType = this.editor.getActionType(action);
 					const listText = this.getActionListText(action, actionType);
 					const hintText = this.getActionHintText(action, actionType);
@@ -505,7 +477,6 @@ export default class HWindowObject extends HWindow {
 						(listText.bold ? 'bold ' : '') + (listText.italic ? 'italic ' : ''), // class
 					) )
 					option.html.title = hintText.text;
-
 				})
 				endparent()
 
@@ -513,7 +484,6 @@ export default class HWindowObject extends HWindow {
 		}
 
 		this.updateActionsMenu();
-
 	}
 
 	updateActionsMenu() {
@@ -530,7 +500,6 @@ export default class HWindowObject extends HWindow {
 			this.buttonActionUp.setDisabled(this.selectActions.getSelectedIndex() == 0);
 			this.buttonActionDown.setDisabled(this.selectActions.getSelectedIndex() == event.actions.length-1);
 		}
-
 	}
 
 	getSelectedEvent() {
@@ -577,7 +546,6 @@ export default class HWindowObject extends HWindow {
 	}
 
 	parseActionListOrHintText(textArray, action, actionType) {
-
 		const result = {
 			bold: false,
 			italic: false,
@@ -591,13 +559,10 @@ export default class HWindowObject extends HWindow {
 
 					if (['expression', 'string', 'both', 'color'].includes(actionArg.kind)) {
 						return previous + actionArg.value.toString();
-
 					} else if ('boolean' == actionArg.kind) {
 						return previous + (actionArg.value ? 'true' : 'false');
-
 					} else if ('menu' == actionArg.kind) {
 						return previous + actionType.args[part.number].menu[actionArg.value];
-
 					} else {
 						const resourceType = this.constructor.actionArgResourceTypes[actionArg.kind];
 						if (!resourceType) throw new Error('Impossible action arg kind '+actionArg.kind);
@@ -630,7 +595,6 @@ export default class HWindowObject extends HWindow {
 	}
 
 	openActionWindow(action) {
-
 		const actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
 
 		const actionTypeInfo = this.getActionTypeInfo();
@@ -645,7 +609,6 @@ export default class HWindowObject extends HWindow {
 				this.htmlActionWindows.push(w);
 			}
 		}
-
 	}
 
 	deleteActionWindow(id) {
@@ -663,5 +626,4 @@ export default class HWindowObject extends HWindow {
 		})
 		this.htmlActionWindows = [];
 	}
-
 }

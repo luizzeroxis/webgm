@@ -4,7 +4,6 @@ import {NonFatalErrorException} from '../common/Exceptions.js';
 import BuiltInFunctions from './BuiltInFunctions.js';
 
 export default class BuiltInGlobals {
-
 	// this = Game
 
 	// GML Language Overview / Scripts
@@ -284,7 +283,6 @@ export default class BuiltInGlobals {
 	// Files, registry, and executing programs / Executing programs
 
 	static secure_mode = {default: 0, readOnly: true};
-
 }
 
 // Static initialization

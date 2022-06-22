@@ -1,5 +1,4 @@
 export default class ActionsParser {
-
 	parse(actions) {
 		this.actions = actions;
 		this.actionNumber = 0;
@@ -102,7 +101,6 @@ export default class ActionsParser {
 						action: action, actionNumber: this.actionNumber-1};
 					return treeAction;
 				}
-
 		}
 
 		throw new Error("Unknown action.typeKind "+action.typeKind.toString());
@@ -137,5 +135,4 @@ export default class ActionsParser {
 		}
 		return false;
 	}
-
 }

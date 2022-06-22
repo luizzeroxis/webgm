@@ -1,5 +1,4 @@
 export default class BuiltInLocals {
-
 	// this = Instance
 
 	// Game play / Moving around
@@ -157,5 +156,4 @@ export default class BuiltInLocals {
 		this.vars.setBuiltIn('image_index', image_single);
 		this.vars.setBuiltIn('image_speed', 0);
 	}}
-
 }

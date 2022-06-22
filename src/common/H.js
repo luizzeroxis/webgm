@@ -4,7 +4,6 @@
 
 export class HElement {
 	constructor(...args) {
-
 		if (args.length == 1) {
 			const [html] = args;
 			if (html instanceof Element) {
@@ -32,7 +31,6 @@ export class HElement {
 
 		this.parent = null;
 		this.children = [];
-
 	}
 
 	onAdd() {}
@@ -368,7 +366,6 @@ export function uniqueID() {
 
 // Make a element be able to receive drops of files from anywhere.
 export function setOnFileDrop(element, onSelectFile, multiple=false) {
-
 	element.addEventListener('dragover', e => {
 		e.stopPropagation();
 		e.preventDefault();
@@ -389,5 +386,4 @@ export function setOnFileDrop(element, onSelectFile, multiple=false) {
 			}
 		}
 	})
-
 }

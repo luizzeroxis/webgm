@@ -9,7 +9,6 @@ import HWindowGlobalGameSettings from '../windows/HWindowGlobalGameSettings.js';
 // import ExtensionPackagesIcon from './img/extension-packages-icon.png';
 
 export default class HAreaResources extends HElement {
-
 	constructor(editor) {
 		super('div', {class: 'resources'})
 
@@ -21,7 +20,6 @@ export default class HAreaResources extends HElement {
 			parent( add( new HElement('ul') ) )
 
 				Project.getTypes().forEach(type => {
-
 					parent( add( new HElement('li') ) )
 
 						parent( add( new HElement('div', {class: 'item'}) ) )
@@ -34,7 +32,6 @@ export default class HAreaResources extends HElement {
 
 						this.resourceTypes[type.name] = add( new HElement('ul', {class: "resource"}) )
 						endparent()
-
 				})
 
 				parent( add( new HElement('li') ) );
@@ -69,7 +66,6 @@ export default class HAreaResources extends HElement {
 				endparent()
 
 			endparent()
-
 	}
 
 	onAdd() {
@@ -114,5 +110,4 @@ export default class HAreaResources extends HElement {
 			})
 		})
 	}
-
 }

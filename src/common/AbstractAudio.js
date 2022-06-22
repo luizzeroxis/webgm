@@ -1,7 +1,6 @@
 import {WebGMException} from './Exceptions.js';
 
 export default class AbstractAudio {
-
 	constructor(res, load=true) {
 		this.audio = new Audio();
 
@@ -37,5 +36,4 @@ export default class AbstractAudio {
 	toJSON() {
 		return undefined;
 	}
-
 }

@@ -1,9 +1,7 @@
 import {HElement} from './H.js';
 
 export default class VirtualFileSystem {
-
 	static openDialog(accept, multiple=false) {
-
 		return new Promise((resolve, reject) => {
 			const f = new HElement('input');
 			f.html.accept = accept;
@@ -19,11 +17,9 @@ export default class VirtualFileSystem {
 			}
 			f.html.click();
 		})
-
 	}
 
 	static readEntireFile(file) {
-
 		return new Promise((resolve, reject) => {
 			const reader = new FileReader();
 			reader.onload = () => {
@@ -31,7 +27,6 @@ export default class VirtualFileSystem {
 			};
 			reader.readAsText(file);
 		})
-
 	}
 
 	static save(blob, name) {
@@ -40,5 +35,4 @@ export default class VirtualFileSystem {
 		a.html.download = name;
 		a.html.click();
 	}
-
 }

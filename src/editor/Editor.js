@@ -46,7 +46,6 @@ import HWindowTimeline from './windows/HWindowTimeline.js';
 import './style.css';
 
 export default class Editor {
-
 	static resourceTypesInfo = [
 		{class: ProjectSprite,     windowClass: HWindowSprite,     resourceIcon: null                      },
 		{class: ProjectSound,      windowClass: HWindowSound,      resourceIcon: DefaultProjectSoundIcon   },
@@ -60,7 +59,6 @@ export default class Editor {
 	];
 
 	constructor() {
-
 		this.project = new Project();
 		this.game = null;
 		this.projectName = 'game';
@@ -100,7 +98,6 @@ export default class Editor {
 	// Resource management
 
 	createResource(type) {
-
 		const resource = new type();
 		resource.id = this.project.counter[type.getClassName()];
 		resource.name = type.getName() + this.project.counter[type.getClassName()];
@@ -111,18 +108,15 @@ export default class Editor {
 		this.dispatcher.speak('createResource', resource);
 
 		return resource;
-
 	}
 
 	deleteResource(resource) {
-
 		if (confirm('You are about to delete '+resource.name+'. This will be permanent. Continue?')) {
 			const index = this.project.resources[resource.constructor.getClassName()].findIndex(x => x == resource);
 			this.project.resources[resource.constructor.getClassName()].splice(index, 1);
 
 			this.dispatcher.speak('deleteResource', resource);
 		}
-
 	}
 
 	changeResourceName(resource, name) {
@@ -161,7 +155,6 @@ export default class Editor {
 
 	// Called from HAreaMenu
 	openProjectFromFile(file) {
-
 		let promise;
 
 		if (file.type == 'application/json') {
@@ -179,7 +172,6 @@ export default class Editor {
 				this.windowsArea.clear();
 
 				this.projectName = file.name.substring(0, file.name.lastIndexOf('.'));
-
 			} else {
 				alert('Error Loading: File seems to be corrupt.');
 			}
@@ -194,17 +186,14 @@ export default class Editor {
 
 	// Called from HAreaMenu
 	saveProject() {
-
 		ProjectSerializer.serializeZIP(this.project)
 		.then(blob => {
 			VirtualFileSystem.save(blob, this.projectName+".zip");
 		})
-
 	}
 
 	// Called from HAreaMenu
 	runGame() {
-
 		this.stopGame();
 
 		if (this.project.resources.ProjectRoom.length <= 0) {
@@ -228,7 +217,6 @@ export default class Editor {
 
 		const gameListeners = this.game.dispatcher.listen({
 			close: e => {
-
 				if (e instanceof WebGMException) {
 					alert("An error has ocurred when trying to run the game:\n" + e.message);
 				}
@@ -255,7 +243,6 @@ export default class Editor {
 		})
 
 		this.game.start();
-
 	}
 
 	// Called from HAreaMenu and runGame
@@ -282,5 +269,4 @@ export default class Editor {
 		const actionType = library.items.find(x => x.id == actionTypeId);
 		return actionType;
 	}
-
 }

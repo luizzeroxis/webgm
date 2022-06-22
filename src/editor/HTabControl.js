@@ -1,7 +1,6 @@
 import {parent, endparent, add, remove, HElement, HRadioInput, uniqueID} from '../common/H.js'
 
 export default class HTabControl extends HElement {
-
 	constructor() {
 		parent( super('div') )
 			this.tabButtonsDiv = add( new HElement('div', {class: 'tab-buttons'}) )
@@ -12,7 +11,6 @@ export default class HTabControl extends HElement {
 	}
 
 	addTab(name, isSelected) {
-
 		if (isSelected == null) {
 			isSelected = (this.currentTabContent == null);
 		}
@@ -33,11 +31,9 @@ export default class HTabControl extends HElement {
 			endparent()
 
 		return tabContent;
-
 	}
 
 	showTabContent(tabContent) {
-
 		if (this.currentTabContent) {
 			remove(this.currentTabContent);
 		}
@@ -45,7 +41,5 @@ export default class HTabControl extends HElement {
 		parent(this)
 			this.currentTabContent = add( tabContent );
 			endparent()
-
 	}
-
 }

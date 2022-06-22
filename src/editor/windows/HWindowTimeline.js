@@ -2,7 +2,6 @@ import {parent, endparent, add, HElement, HTextInput} from '../../common/H.js'
 import HWindow from '../HWindow.js';
 
 export default class HWindowTimeline extends HWindow {
-
 	constructor(editor, id, timeline) {
 		super(editor, id);
 

@@ -2,7 +2,6 @@ import {parent, endparent, add, remove, HElement} from '../../common/H.js'
 import Editor from '../Editor.js';
 
 export default class HAreaWindows extends HElement {
-
 	constructor(editor) {
 		super('div', {class: 'windows'})
 
@@ -97,5 +96,4 @@ export default class HAreaWindows extends HElement {
 			w.html.style.order = i;
 		});
 	}
-
 }

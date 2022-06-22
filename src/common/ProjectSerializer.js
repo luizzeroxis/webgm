@@ -30,16 +30,13 @@ import {
 import {base64ToBlob} from './tools.js'
 
 export default class ProjectSerializer {
-
 	static serializeZIP(project) {
-
 		const zip = new JSZip();
 		zip.file("version", "2");
 
 		ProjectSerializer.initClasses();
 
 		const json = JSON.stringify(project, (key, value) => {
-
 			if (value != null) {
 				const name = Object.keys(ProjectSerializer.classes).find(x => ProjectSerializer.classes[x] == value.constructor);
 				if (name) {
@@ -73,11 +70,9 @@ export default class ProjectSerializer {
 		})
 
 		return zip.generateAsync({type: 'blob'});
-
 	}
 
 	static unserializeZIP(blob) {
-
 		const zip = new JSZip();
 		let version;
 
@@ -102,12 +97,10 @@ export default class ProjectSerializer {
 			return file.async("string");
 		})
 		.then(json => {
-
 			if (version == 1) {
 				return ProjectSerializer.unserializeV1(json);
 			}
 			if (version == 2) {
-
 				let project;
 				const promises = [];
 
@@ -136,7 +129,6 @@ export default class ProjectSerializer {
 
 				project.resources.ProjectSprite.forEach(sprite => {
 					sprite.images.forEach((image, index) => {
-
 						const file = zip.file("sprites/"+sprite.id+"/"+index);
 						if (file == null) return;
 
@@ -144,12 +136,10 @@ export default class ProjectSerializer {
 						.then(blob => {
 							sprite.images[index] = new AbstractImage(blob);
 						}));
-
 					})
 				})
 
 				project.resources.ProjectSound.forEach(sound => {
-
 					const file = zip.file("sounds/"+sound.id);
 					if (file == null) return;
 
@@ -157,11 +147,9 @@ export default class ProjectSerializer {
 						.then(blob => {
 							sound.sound = new AbstractAudio(blob);
 						}));
-
 				})
 
 				project.resources.ProjectBackground.forEach(background => {
-
 					const file = zip.file("backgrounds/"+background.id);
 					if (file == null) return;
 
@@ -169,7 +157,6 @@ export default class ProjectSerializer {
 						.then(blob => {
 							background.image = new AbstractImage(blob);
 						}));
-
 				})
 
 				return Promise.all(promises).then(() => {
@@ -179,11 +166,9 @@ export default class ProjectSerializer {
 
 			return null;
 		})
-
 	}
 
 	static initClasses() {
-
 		if (ProjectSerializer.classes != undefined) return;
 
 		ProjectSerializer.classes = {
@@ -210,7 +195,6 @@ export default class ProjectSerializer {
 			"ProjectGlobalGameSettings": ProjectGlobalGameSettings,
 			"ProjectExtensionPackages": ProjectExtensionPackages,
 		}
-
 	}
 
 	static unserializeV1(json) {
@@ -232,7 +216,6 @@ export default class ProjectSerializer {
 			}
 
 			jsonObject.resources[type.getClassName()] = jsonObject.resources[type.getClassName()].map(resource => {
-
 				delete resource.classname;
 
 				//convert sprites from base64 to blobs
@@ -251,7 +234,6 @@ export default class ProjectSerializer {
 						})
 						delete event.classname;
 						return Object.assign(new ProjectEvent(), event);
-
 					})
 				}
 
@@ -263,7 +245,6 @@ export default class ProjectSerializer {
 				}
 
 				return Object.assign(new type(), resource);
-
 			})
 		});
 
@@ -271,5 +252,4 @@ export default class ProjectSerializer {
 
 		return Promise.resolve(project);
 	}
-
 }

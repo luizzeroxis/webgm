@@ -2,7 +2,6 @@ import {parent, endparent, add, HElement, HTextInput, HNumberInput, HCheckBoxInp
 import HWindow from '../HWindow.js';
 
 export default class HWindowFont extends HWindow {
-
 	constructor(editor, id, font) {
 		super(editor, id);
 

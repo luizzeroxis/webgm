@@ -1,7 +1,6 @@
 import {WebGMException} from './Exceptions.js';
 
 export default class AbstractImage {
-
 	constructor(res, load=true) {
 		this.image = new Image();
 
@@ -37,5 +36,4 @@ export default class AbstractImage {
 	toJSON() {
 		return undefined;
 	}
-
 }

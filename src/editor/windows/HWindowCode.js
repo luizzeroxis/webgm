@@ -5,7 +5,6 @@ import HResourceSelect from '../HResourceSelect.js';
 import HWindow from '../HWindow.js';
 
 export default class HWindowCode extends HWindow {
-
 	constructor(editor, id, action, object) {
 		super(editor, id);
 
@@ -57,5 +56,4 @@ export default class HWindowCode extends HWindow {
 		// Update action in event in object
 		this.object.updateSelectActions();
 	}
-
 }

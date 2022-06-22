@@ -144,7 +144,6 @@ export class Project {
 		static getScreenName() { return 'Background'; }
 		static getScreenGroupName() { return 'Backgrounds'; }
 		static getClassName() { return 'ProjectBackground'; }
-
 	}
 
 	export class ProjectPath {

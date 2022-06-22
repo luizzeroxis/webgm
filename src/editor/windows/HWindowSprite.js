@@ -4,7 +4,6 @@ import VirtualFileSystem from '../../common/VirtualFileSystem.js';
 import HWindow from '../HWindow.js';
 
 export default class HWindowSprite extends HWindow {
-
 	constructor(editor, id, sprite) {
 		super(editor, id);
 
@@ -24,12 +23,10 @@ export default class HWindowSprite extends HWindow {
 					const inputName = add( new HTextInput('Name:', paramName) )
 
 					this.buttonLoadSprite = add( new HButton('Load Sprite', () => {
-
 						VirtualFileSystem.openDialog('image/*', true)
 						.then(files => {
 							this.loadSpriteFromFiles(files);
 						});
-
 					}) )
 
 					parent( add( new HElement('div', {}, 'Width: ')) )
@@ -113,7 +110,6 @@ export default class HWindowSprite extends HWindow {
 
 		// Open file if dropped in the window body
 		setOnFileDrop(this.html, files => this.loadSpriteFromFiles(files), true);
-
 	}
 
 	loadSpriteFromFiles(files) {
@@ -133,24 +129,20 @@ export default class HWindowSprite extends HWindow {
 		.catch(e => {
 			// this.updateImageInfo();
 			alert("Error when opening image");
-
 		})
 		.finally(() => {
 			this.buttonLoadSprite.setDisabled(false);
 		})
-
 	}
 
 	updateImageInfo() {
 		this.showSubimage = 0;
 
 		if (this.paramImages.length > 0) {
-
 			this.paramImages[0].promise.then(() => {
 				this.divWidth.textContent = this.paramImages[0].image.width;
 				this.divHeight.textContent = this.paramImages[0].image.height;
 			})
-
 		} else {
 			this.imgSprite.setSrc(null);
 			this.divWidth.textContent = '32';
@@ -160,11 +152,9 @@ export default class HWindowSprite extends HWindow {
 		this.divSubimages.textContent = this.paramImages.length.toString();
 
 		this.updateShow();
-
 	}
 
 	updateShow() {
-
 		if (this.paramImages.length > 0) {
 			this.imgSprite.setSrc(this.paramImages[this.showSubimage].image.src);
 		}
@@ -173,5 +163,4 @@ export default class HWindowSprite extends HWindow {
 		this.buttonShowSubimageLeft.setDisabled(this.showSubimage == 0);
 		this.buttonShowSubimageRight.setDisabled(this.showSubimage >= this.paramImages.length - 1);
 	}
-
 }

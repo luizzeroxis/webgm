@@ -4,7 +4,6 @@ import VirtualFileSystem from '../../common/VirtualFileSystem.js'
 import HWindow from '../HWindow.js';
 
 export default class HWindowBackground extends HWindow {
-
 	constructor(editor, id, background) {
 		super(editor, id);
 
@@ -21,12 +20,10 @@ export default class HWindowBackground extends HWindow {
 					const inputName = add( new HTextInput('Name:', background.name) );
 
 					this.buttonLoadBackground = add( new HButton('Load Background', () => {
-
 						VirtualFileSystem.openDialog('image/*')
 						.then(file => {
 							this.loadBackgroundFromFile(file);
 						});
-
 					}) )
 
 					parent( add( new HElement('div', {}, 'Width: ')) )
@@ -73,7 +70,6 @@ export default class HWindowBackground extends HWindow {
 		.catch(e => {
 			// this.updateImageInfo();
 			alert("Error when opening image");
-
 		})
 		.finally(() => {
 			this.buttonLoadBackground.setDisabled(false);
@@ -82,18 +78,15 @@ export default class HWindowBackground extends HWindow {
 
 	updateImageInfo() {
 		if (this.paramImage != null) {
-
 			this.imgBackground.setSrc(this.paramImage.image.src);
 			this.paramImage.promise.then(() => {
 				this.divWidth.html.textContent = this.paramImage.image.width;
 				this.divHeight.html.textContent = this.paramImage.image.height;
 			})
-
 		} else {
 			this.imgBackground.setSrc(null);
 			this.divWidth.html.textContent = '0';
 			this.divHeight.html.textContent = '0';
 		}
-
 	}
 }

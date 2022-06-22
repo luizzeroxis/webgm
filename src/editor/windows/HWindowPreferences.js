@@ -2,7 +2,6 @@ import {parent, endparent, add, HTextInput, HCheckBoxInput, HSelectWithOptions} 
 import HWindow from '../HWindow.js';
 
 export default class HWindowPreferences extends HWindow {
-
 	constructor(editor, id) {
 		super(editor, id);
 

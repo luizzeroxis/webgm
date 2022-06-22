@@ -1,7 +1,6 @@
 import {parent, endparent, add, HElement, HButton} from '../common/H.js'
 
 export default class HWindow extends HElement {
-
 	constructor(editor, id) {
 		super('div', {class: 'window'})
 
@@ -41,5 +40,4 @@ export default class HWindow extends HElement {
 	close() {
 		this.editor.windowsArea.delete(this);
 	}
-
 }

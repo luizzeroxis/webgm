@@ -1,5 +1,4 @@
 export default class Events {
-
 	static listEventTypes = [
 		{id:  0, value: 'create',     name: 'Create',      getFullName: () => 'Create'},
 		{id:  1, value: 'destroy',    name: 'Destroy',     getFullName: () => 'Destroy'},

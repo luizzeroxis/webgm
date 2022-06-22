@@ -68,5 +68,4 @@ export default class HResourceSelect extends HSelect {
 		if (Number.isNaN(value)) return -1;
 		return value;
 	}
-
 }

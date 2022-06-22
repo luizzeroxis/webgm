@@ -12,7 +12,6 @@ import GML from './GML.js';
 import Instance from './Instance.js';
 
 export class Game {
-
 	constructor (project, canvas, input) {
 		this.project = new Project(project);
 		this.canvas = canvas;
@@ -81,12 +80,10 @@ export class Game {
 
 		this.audioContext = null;
 		this.sounds = new Map();
-
 	}
 
 	// Starts the game.
 	async start() {
-
 		try {
 			this.startCanvas();
 			this.startInput();
@@ -100,12 +97,10 @@ export class Game {
 		} catch (e) {
 			await this.catch(e);
 		}
-
 	}
 
 	// Ends the game properly, calling events and such.
 	async end() {
-
 		// If one instance calls a step stop exception, then even the other event type doesn't run
 		try {
 			for (const instance of this.instances) {
@@ -253,7 +248,6 @@ export class Game {
 		});
 
 		this.lastId = this.project.lastId;
-
 	}
 
 	startAudio() {
@@ -370,7 +364,6 @@ export class Game {
 	loadGMLScripts() {
 		this.project.resources.ProjectScript.every(script => {
 			return this.compileGMLAndCache(script.code, script, matchResult => {
-
 				throw new FatalErrorException({
 					type: 'compilation',
 					location: 'script',
@@ -381,7 +374,6 @@ export class Game {
 						+ 'COMPILATION ERROR in Script: ' + script.name + '\n\n'
 						+ matchResult.message + '\n',
 				});
-
 			});
 		})
 	}
@@ -394,11 +386,8 @@ export class Game {
 		this.project.resources.ProjectObject.every(object => {
 			return object.events.every(event => {
 				return event.actions.every((action, actionNumber) => {
-
 					if (action.typeKind == 'code') {
-
 						return this.compileGMLAndCache(action.args[0].value, action, matchResult => {
-
 							throw this.makeFatalError({
 									type: 'compilation',
 									matchResult: matchResult,
@@ -406,13 +395,9 @@ export class Game {
 								'COMPILATION ERROR in code action:\n' + matchResult.message + '\n',
 								object, event, actionNumber,
 							);
-
 						});
-
 					} else if (action.typeKind == 'normal' && action.typeExecution == 'code') {
-
 						return this.compileGMLAndCache(action.args[0].value, action, matchResult => {
-
 							throw this.makeFatalError({
 									type: 'compilation',
 									matchResult: matchResult,
@@ -420,18 +405,14 @@ export class Game {
 								'COMPILATION ERROR in code action (in action type in a library):\n' + matchResult.message + '\n',
 								object, event, actionNumber,
 							);
-
 						});
-
 					} else if (action.typeKind == 'variable') {
-
 						const name = action.args[0].value;
 						const value = action.args[1].value;
 						const assignSymbol = action.relative ? " += " : " = ";
 						const code = name + assignSymbol + value;
 
 						return this.compileGMLAndCache(code, action, matchResult => {
-
 							throw this.makeFatalError({
 									type: 'compilation',
 									matchResult: matchResult,
@@ -439,9 +420,7 @@ export class Game {
 								'COMPILATION ERROR in code action (in variable set):\n' + matchResult.message + '\n',
 								object, event, actionNumber,
 							);
-
 						})
-
 					}
 					return true;
 				})
@@ -452,10 +431,8 @@ export class Game {
 	// Compile all GML inside rooms.
 	loadGMLRooms() {
 		this.project.resources.ProjectRoom.every(room => {
-
 			if (!room.instances.every(instance => {
 				return this.compileGMLAndCache(instance.creationCode, instance, matchResult => {
-
 					throw new FatalErrorException({
 						type: 'compilation',
 						location: 'instanceCreationCode',
@@ -467,12 +444,10 @@ export class Game {
 							+ 'COMPILATION ERROR in creation code for instance ' + instance.id + ' in room ' + room.name + '\n\n'
 							+ matchResult.message + '\n',
 					});
-
 				});
 			})) return false;
 
 			return this.compileGMLAndCache(room.creationCode, room, matchResult => {
-
 				throw new FatalErrorException({
 					type: 'compilation',
 					location: 'roomCreationCode',
@@ -483,7 +458,6 @@ export class Game {
 						+ 'COMPILATION ERROR in creation code of room ' + room.name + '\n\n'
 						+ matchResult.message + '\n',
 				});
-
 			});
 		})
 	}
@@ -542,11 +516,9 @@ export class Game {
 			// console.log("WaitTime", timeoutWaitTime);
 			// console.log("TotalStepTime", timeoutTotalStepTime);
 			// console.log(1/timeoutTotalStepTime, "fps");
-
 		} catch (e) {
 			await this.catch(e);
 		}
-
 	}
 
 	// Start running game steps.
@@ -580,7 +552,6 @@ export class Game {
 
 	// Run a step and set timeout for next step. Don't call this directly, use mainLoopForTimeout.
 	async mainLoop() {
-
 		if (this.stepStopAction != null) {
 			throw new StepStopException(this.stepStopAction);
 		}
@@ -621,7 +592,6 @@ export class Game {
 				if (instance.vars.getBuiltInArray('alarm', [subtype]) == 0) {
 					await this.doEvent(event, instance);
 				}
-
 			}
 		}
 
@@ -678,7 +648,6 @@ export class Game {
 						// check if mouse is hovering over instance
 						execute = this.collisionInstanceOnPoint(instance, {x: this.mouseX, y: this.mouseY});
 					}
-
 				} else
 				if (eventInfo.kind == 'enter-release') {
 					// TODO not implemented
@@ -693,7 +662,6 @@ export class Game {
 				if (execute) {
 					await this.doEvent(event, instance);
 				}
-
 			}
 		}
 
@@ -733,7 +701,6 @@ export class Game {
 						vspeedNew = 0;
 					}
 				}
-
 			}
 
 			if (instance.vars.getBuiltIn('gravity') != 0) {
@@ -744,7 +711,6 @@ export class Game {
 			instance.setHspeedAndVspeed(hspeedNew, vspeedNew);
 
 			// TODO paths?
-
 		}
 
 		// Collisions
@@ -828,7 +794,6 @@ export class Game {
 
 		// Delete instances
 		this.instances = this.instances.filter(instance => instance.exists);
-
 	}
 
 	// Draw all the views of the current room.
@@ -874,7 +839,6 @@ export class Game {
 					}
 				}
 			}
-
 		}
 
 		// Draw foreground backgrounds
@@ -891,7 +855,6 @@ export class Game {
 			this.drawSprite(this.cursorSprite, this.cursorImageIndex, this.globalVars.getBuiltIn('mouse_x'), this.globalVars.getBuiltIn('mouse_y'));
 			this.cursorImageIndex = ((++this.cursorImageIndex) % this.cursorSprite.images.length);
 		}
-
 	}
 
 	drawRoomBackground(roomBackground) {
@@ -917,7 +880,6 @@ export class Game {
 
 		for (let x = xStart; x < this.room.width; x += background.image.image.width) {
 			for (let y = yStart; y < this.room.height; y += background.image.image.height) {
-
 				this.ctx.drawImage(image.image, x, y);
 
 				if (!roomBackground.tileVertically) {
@@ -953,7 +915,6 @@ export class Game {
 				if (this.stepStopAction != null) {
 					throw new StepStopException(this.stepStopAction);
 				}
-
 			} catch (e) {
 				if (e instanceof ExitException) {
 					break;
@@ -968,12 +929,10 @@ export class Game {
 		this.currentEvent = previousEvent;
 		this.currentEventInstance = previousInstance;
 		this.currentEventOther = previousOther;
-
 	}
 
 	// Execute a node of the parsed actions tree.
 	async doTreeAction(treeAction) {
-
 		if (treeAction == null) return null;
 
 		this.currentEventActionNumber = treeAction.actionNumber;
@@ -1013,7 +972,6 @@ export class Game {
 						if (typeof currentResult !== "number" || currentResult < 0.5) {
 							result = false;
 						}
-
 					}
 
 					return result;
@@ -1096,7 +1054,6 @@ export class Game {
 
 	// Loads a room. Only use this inside the stepStopAction function, or at the beginning of the game.
 	async loadRoom(room) {
-
 		const isFirstRoom = (this.room == null);
 
 		if (!isFirstRoom) {
@@ -1180,7 +1137,6 @@ export class Game {
 		}
 
 		await this.drawViews();
-
 	}
 
 	// Create an instance in the room.
@@ -1206,7 +1162,6 @@ export class Game {
 
 	// Check if two instances are colliding.
 	collisionInstanceOnInstance(instanceA, instanceB, x, y) {
-
 		// TODO masks
 		// TODO solid
 
@@ -1240,7 +1195,6 @@ export class Game {
 		}
 
 		return false;
-
 	}
 
 	// Check if an instance is colliding with any of otherInstances.
@@ -1494,7 +1448,6 @@ export class Game {
 			if (!instance.exists) continue;
 
 			instance.object.events.forEach(event => {
-
 				let subtypes = map.get(event.type);
 				if (subtypes == undefined) {
 					subtypes = new Map();
@@ -1508,7 +1461,6 @@ export class Game {
 				}
 
 				eventInstancePairs.push({event: event, instance: instance});
-
 			})
 		}
 
@@ -1578,7 +1530,6 @@ export class Game {
 	// extraText will be added after the main information.
 	// object, event and actionNumber can be null to use the current values.
 	makeErrorOptions(isFatal, options, extraText, object=null, event=null, actionNumber=null) {
-
 		const _object = object==null ? this.currentEventInstance.object : object;
 		const _event = event==null ? this.currentEvent : event;
 		const _actionNumber = actionNumber==null ? this.currentEventActionNumber : actionNumber;
@@ -1605,5 +1556,4 @@ export class Game {
 		console.log(exception.text);
 		alert(exception.text);
 	}
-
 }

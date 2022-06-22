@@ -1,8 +1,8 @@
-import {parent, endparent, add, remove, HSelect, HOption} from "../common/H.js"
+import {parent, endparent, add, remove, HSelect, HOption} from "../common/H.js";
 
 export default class HResourceSelect extends HSelect {
 	constructor(editor, label, resourceType, noNone=false) {
-		super(label)
+		super(label);
 
 		this.editor = editor;
 		this.resourceType = resourceType;
@@ -19,13 +19,13 @@ export default class HResourceSelect extends HSelect {
 		this.listeners = this.editor.dispatcher.listen({
 			createResource: i => {
 				if (i.constructor != this.resourceType) return;
-				parent(this.select)
-					this.selectOptions[i.id] = add( new HOption(i.name, i.id) )
-					endparent()
+				parent(this.select);
+					this.selectOptions[i.id] = add( new HOption(i.name, i.id) );
+					endparent();
 			},
 			deleteResource: i => {
 				if (i.constructor != this.resourceType) return;
-				remove(this.selectOptions[i.id])
+				remove(this.selectOptions[i.id]);
 				delete this.selectOptions[i.id];
 			},
 			changeResourceName: i => {
@@ -33,7 +33,7 @@ export default class HResourceSelect extends HSelect {
 				this.selectOptions[i.id].html.textContent = i.name;
 			},
 			// TODO sprite changes?
-		})
+		});
 	}
 
 	onRemove() {
@@ -45,17 +45,17 @@ export default class HResourceSelect extends HSelect {
 
 		this.removeOptions();
 
-		parent(this.select)
+		parent(this.select);
 
 			if (!this.noNone) {
-				add( new HOption("<none>", -1) )
+				add( new HOption("<none>", -1) );
 			}
 
 			this.editor.project.resources[this.resourceType.getClassName()].forEach(resource => {
-				this.selectOptions[resource.id] = add( new HOption(resource.name, resource.id) )
-			})
+				this.selectOptions[resource.id] = add( new HOption(resource.name, resource.id) );
+			});
 
-			endparent()
+			endparent();
 
 		this.select.html.value = previousValue;
 		if (this.select.html.selectedIndex == -1) {

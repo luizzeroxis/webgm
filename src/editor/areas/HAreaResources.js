@@ -1,4 +1,4 @@
-import {parent, endparent, add, remove, HElement, HButton, HImage} from "../../common/H.js"
+import {parent, endparent, add, remove, HElement, HButton, HImage} from "../../common/H.js";
 import {Project} from "../../common/Project.js";
 import HResourceListItem from "../HResourceListItem.js";
 import FolderIcon from "../img/folder-icon.png";
@@ -10,48 +10,48 @@ import HWindowGlobalGameSettings from "../windows/HWindowGlobalGameSettings.js";
 
 export default class HAreaResources extends HElement {
 	constructor(editor) {
-		super("div", {class: "resources"})
+		super("div", {class: "resources"});
 
 		this.editor = editor;
 		this.resourceTypes = {};
 		this.resources = [];
 
-		parent(this)
-			parent( add( new HElement("ul") ) )
+		parent(this);
+			parent( add( new HElement("ul") ) );
 
 				Project.getTypes().forEach(type => {
-					parent( add( new HElement("li") ) )
+					parent( add( new HElement("li") ) );
 
-						parent( add( new HElement("div", {class: "item"}) ) )
+						parent( add( new HElement("div", {class: "item"}) ) );
 							add( new HImage(FolderIcon, "icon") );
-							add( new HElement("div", {class: "name"}, type.getScreenGroupName()) )
+							add( new HElement("div", {class: "name"}, type.getScreenGroupName()) );
 							add( new HButton("Create", () => {
 								this.editor.createResource(type);
-							}))
-							endparent()
+							}));
+							endparent();
 
-						this.resourceTypes[type.name] = add( new HElement("ul", {class: "resource"}) )
-						endparent()
-				})
+						this.resourceTypes[type.name] = add( new HElement("ul", {class: "resource"}) );
+						endparent();
+				});
 
 				parent( add( new HElement("li") ) );
 
-					parent( add( new HElement("div", {class: "item"}) ) )
+					parent( add( new HElement("div", {class: "item"}) ) );
 						add( new HImage(GameInformationIcon, "icon") );
-						add( new HElement("div", {class: "name"}, "Game Information") )
+						add( new HElement("div", {class: "name"}, "Game Information") );
 						add( new HButton("Edit", () => this.editor.windowsArea.open(HWindowGameInformation,
-							"game-information", this.editor.project.gameInformation)) )
+							"game-information", this.editor.project.gameInformation)) );
 						endparent();
 
 					endparent();
 
 				parent( add( new HElement("li") ) );
-					parent( add( new HElement("div", {class: "item"}) ) )
+					parent( add( new HElement("div", {class: "item"}) ) );
 						add( new HImage(GameSettingsIcon, "icon") );
-						add( new HElement("div", {class: "name"}, "Global Game Settings") )
+						add( new HElement("div", {class: "name"}, "Global Game Settings") );
 						add( new HButton("Edit", () => this.editor.windowsArea.open(HWindowGlobalGameSettings,
-							"global-game-settings", this.editor.project.globalGameSettings )) )
-						endparent()
+							"global-game-settings", this.editor.project.globalGameSettings )) );
+						endparent();
 
 					endparent();
 
@@ -63,9 +63,9 @@ export default class HAreaResources extends HElement {
 				// 			'extension-packages', this.editor.project.extensionPackages)) )
 				// 		endparent();
 
-				endparent()
+				endparent();
 
-			endparent()
+			endparent();
 	}
 
 	onAdd() {
@@ -86,7 +86,7 @@ export default class HAreaResources extends HElement {
 	// Add resource to resources tree in the proper type.
 	add(resource) {
 		parent(this.resourceTypes[resource.constructor.name]);
-			const r = add( new HResourceListItem(resource, this.editor) )
+			const r = add( new HResourceListItem(resource, this.editor) );
 			this.resources.push(r);
 			endparent();
 	}
@@ -95,19 +95,19 @@ export default class HAreaResources extends HElement {
 	delete(resource) {
 		const index = this.resources.findIndex(x => x.id == resource);
 		if (index>=0) {
-			remove(this.resources[index])
+			remove(this.resources[index]);
 			this.resources.splice(index, 1);
 		}
 	}
 
 	refresh() {
 		for (const resource of this.resources) {
-			remove(resource)
+			remove(resource);
 		}
 		Project.getTypes().forEach(type => {
 			this.editor.project.resources[type.getClassName()].forEach(resource => {
 				this.add(resource);
-			})
-		})
+			});
+		});
 	}
 }

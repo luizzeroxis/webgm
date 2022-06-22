@@ -1,9 +1,9 @@
-import {parent, endparent, add, remove, HElement} from "../../common/H.js"
+import {parent, endparent, add, remove, HElement} from "../../common/H.js";
 import Editor from "../Editor.js";
 
 export default class HAreaWindows extends HElement {
 	constructor(editor) {
-		super("div", {class: "windows"})
+		super("div", {class: "windows"});
 
 		this.editor = editor;
 		this.windows = [];
@@ -30,9 +30,9 @@ export default class HAreaWindows extends HElement {
 		if (w) {
 			this.focus(id);
 		} else {
-			parent(this)
-				w = add( new windowClass(this.editor, id, ...clientArgs) )
-				endparent()
+			parent(this);
+				w = add( new windowClass(this.editor, id, ...clientArgs) );
+				endparent();
 
 			this.windows.unshift(w);
 			this.organize();
@@ -54,7 +54,7 @@ export default class HAreaWindows extends HElement {
 	delete(w) {
 		const index = this.windows.findIndex(x => x == w);
 		if (index>=0) {
-			remove(this.windows[index])
+			remove(this.windows[index]);
 			this.windows.splice(index, 1);
 			return true;
 		}
@@ -65,7 +65,7 @@ export default class HAreaWindows extends HElement {
 	deleteId(id) {
 		const index = this.windows.findIndex(x => x.id == id);
 		if (index>=0) {
-			remove(this.windows[index])
+			remove(this.windows[index]);
 			this.windows.splice(index, 1);
 			return true;
 		}

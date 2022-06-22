@@ -1,5 +1,5 @@
 import Events from "../../common/Events.js";
-import {parent, endparent, add, removeChildren, HElement, HButton, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HOption, HSelectWithOptions, HImage} from "../../common/H.js"
+import {parent, endparent, add, removeChildren, HElement, HButton, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HOption, HSelectWithOptions, HImage} from "../../common/H.js";
 import {
 	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline,
 	ProjectEvent, ProjectAction, ProjectActionArg,
@@ -35,47 +35,47 @@ export default class HWindowObject extends HWindow {
 		// Create paramEvents as copy
 		this.copyProperties();
 
-		parent(this.client)
-			parent( add( new HElement("div", {class: "grid-resource resource-object"}) ) )
+		parent(this.client);
+			parent( add( new HElement("div", {class: "grid-resource resource-object"}) ) );
 
-				parent( add( new HElement("div") ) ) // Properties area
+				parent( add( new HElement("div") ) ); // Properties area
 
-					const inputName = add( new HTextInput("Name:", object.name) )
+					const inputName = add( new HTextInput("Name:", object.name) );
 
-					this.selectSprite = add( new HResourceSelect(this.editor, "Sprite:", ProjectSprite) )
+					this.selectSprite = add( new HResourceSelect(this.editor, "Sprite:", ProjectSprite) );
 					this.selectSprite.setValue(object.sprite_index);
 
-					const inputVisible = add( new HCheckBoxInput("Visible", object.visible) )
-					const inputSolid = add( new HCheckBoxInput("Solid", object.solid) )
-					const inputDepth = add( new HNumberInput("Depth:", object.depth, 1) )
-					const inputPersistent = add( new HCheckBoxInput("Persistent", object.persistent) )
+					const inputVisible = add( new HCheckBoxInput("Visible", object.visible) );
+					const inputSolid = add( new HCheckBoxInput("Solid", object.solid) );
+					const inputDepth = add( new HNumberInput("Depth:", object.depth, 1) );
+					const inputPersistent = add( new HCheckBoxInput("Persistent", object.persistent) );
 
-					endparent()
+					endparent();
 
-				parent( add( new HElement("div") ) ) // Events area
+				parent( add( new HElement("div") ) ); // Events area
 
 					// Event select
 
-					this.selectEvents = add( new HSelect("Events:", "events") )
+					this.selectEvents = add( new HSelect("Events:", "events") );
 					this.selectEvents.select.html.size = 2;
 
 					this.selectEvents.setOnChange(() => {
 						this.updateSelectActions();
 						this.updateActionsMenu();
-					})
+					});
 
 					// Event type select
 
-					this.selectEventType = add( new HSelectWithOptions("Event type:", Events.listEventTypes) )
+					this.selectEventType = add( new HSelectWithOptions("Event type:", Events.listEventTypes) );
 
 					this.selectEventType.setOnChange(() => {
 						this.updateDivEventSubtype();
-					})
+					});
 
 					// Event subtype div
 
 					this.selectCollisionObject = null;
-					this.divEventSubtype = add( new HElement("div") )
+					this.divEventSubtype = add( new HElement("div") );
 
 					// Add event button
 					this.buttonEventAdd = add( new HButton("Add Event", () => {
@@ -102,7 +102,7 @@ export default class HWindowObject extends HWindow {
 						this.updateEventsMenu();
 						this.updateSelectActions();
 						this.updateActionsMenu();
-					}) )
+					}) );
 
 					// Delete event button
 					this.buttonEventDelete = add( new HButton("Delete", () => {
@@ -116,7 +116,7 @@ export default class HWindowObject extends HWindow {
 						// Close action windows related to event
 						this.paramEvents[index].actions.forEach(action => {
 							this.deleteActionWindow(action);
-						})
+						});
 
 						this.paramEvents.splice(index, 1);
 
@@ -124,7 +124,7 @@ export default class HWindowObject extends HWindow {
 						this.updateEventsMenu();
 						this.updateSelectActions();
 						this.updateActionsMenu();
-					}) )
+					}) );
 
 					// Change event button
 
@@ -153,20 +153,20 @@ export default class HWindowObject extends HWindow {
 						// this.updateEventsMenu();
 						// this.updateSelectActions();
 						// this.updateActionsMenu();
-					}) )
+					}) );
 
 					endparent();
 
-				parent( add( new HElement("div") ) ) // Actions area
+				parent( add( new HElement("div") ) ); // Actions area
 
 					// // Actions
 
-					this.selectActions = add( new HSelect("Actions:", "actions") )
+					this.selectActions = add( new HSelect("Actions:", "actions") );
 					this.selectActions.select.html.size = 2;
 
 					this.selectActions.setOnChange(() => {
 						this.updateActionsMenu();
-					})
+					});
 
 					this.buttonActionEdit = add( new HButton("Edit action", () => {
 						const event = this.getSelectedEvent();
@@ -179,7 +179,7 @@ export default class HWindowObject extends HWindow {
 						if (!action) return;
 
 						this.openActionWindow(action);
-					}) )
+					}) );
 
 					this.buttonActionDelete = add( new HButton("Delete action", () => {
 						const event = this.getSelectedEvent();
@@ -197,7 +197,7 @@ export default class HWindowObject extends HWindow {
 
 						this.updateSelectActions();
 						this.updateActionsMenu();
-					}) )
+					}) );
 
 					this.buttonActionUp = add( new HButton("▲", () => {
 						const event = this.getSelectedEvent();
@@ -211,7 +211,7 @@ export default class HWindowObject extends HWindow {
 						this.updateSelectActions();
 						this.selectActions.setSelectedIndex(actionIndex-1);
 						this.updateActionsMenu();
-					}) )
+					}) );
 
 					this.buttonActionDown = add( new HButton("▼", () => {
 						const event = this.getSelectedEvent();
@@ -225,20 +225,20 @@ export default class HWindowObject extends HWindow {
 						this.updateSelectActions();
 						this.selectActions.setSelectedIndex(actionIndex+1);
 						this.updateActionsMenu();
-					}) )
+					}) );
 
 					endparent();
 
-				parent( add( new HElement("div") ) ) // Libraries area
+				parent( add( new HElement("div") ) ); // Libraries area
 
-					this.librariesTabControl = add( new HTabControl() )
+					this.librariesTabControl = add( new HTabControl() );
 
 					this.editor.libraries.forEach(library => {
-						parent( this.librariesTabControl.addTab(library.name, (library.name == this.editor.preferences.get("defaultActionLibraryTab"))) )
+						parent( this.librariesTabControl.addTab(library.name, (library.name == this.editor.preferences.get("defaultActionLibraryTab"))) );
 
 							let nextClass = null;
 
-							parent( add( new HElement("div", {class: "grid-action-types"}) ) )
+							parent( add( new HElement("div", {class: "grid-action-types"}) ) );
 
 								library.items.forEach(actionType => {
 									if (actionType.kind == "label") {
@@ -292,9 +292,9 @@ export default class HWindowObject extends HWindow {
 											event.actions.push(action);
 
 											this.updateSelectActions();
-											this.selectActions.setSelectedIndex(event.actions.length-1)
+											this.selectActions.setSelectedIndex(event.actions.length-1);
 											this.updateActionsMenu();
-										}, "action-type") )
+										}, "action-type") );
 
 										if (nextClass) {
 											actionTypeButton.html.classList.add(nextClass);
@@ -304,19 +304,19 @@ export default class HWindowObject extends HWindow {
 										actionTypeButton.html.title = actionType.description;
 
 										if (actionType.image) {
-											parent(actionTypeButton)
-												add( new HImage(actionType.image) )
-												endparent()
+											parent(actionTypeButton);
+												add( new HImage(actionType.image) );
+												endparent();
 										} else {
 											actionTypeButton.html.textContent = actionType.description;
 										}
 									}
-								})
+								});
 
-								endparent()
+								endparent();
 
-							endparent()
-					})
+							endparent();
+					});
 
 					endparent();
 
@@ -345,7 +345,7 @@ export default class HWindowObject extends HWindow {
 					object.persistent = inputPersistent.getChecked();
 					this.htmlActionWindows.forEach(w => {
 						w.apply();
-					})
+					});
 
 					object.events = this.paramEvents;
 
@@ -365,7 +365,7 @@ export default class HWindowObject extends HWindow {
 				this.updateSelectEvents();
 				this.updateSelectActions();
 			},
-		})
+		});
 	}
 
 	onRemove() {
@@ -390,7 +390,7 @@ export default class HWindowObject extends HWindow {
 
 			const compareSubtypeId = aSubtypeId - bSubtypeId;
 			return compareSubtypeId;
-		})
+		});
 	}
 
 	updateSelectEvents() {
@@ -399,8 +399,8 @@ export default class HWindowObject extends HWindow {
 
 		parent( this.selectEvents.select );
 			this.paramEvents.forEach(event => {
-				add( new HOption(Events.getEventName(event, this.editor.project), event.getNameId()) )
-			})
+				add( new HOption(Events.getEventName(event, this.editor.project), event.getNameId()) );
+			});
 			endparent();
 
 		this.selectEvents.setSelectedIndex(Math.min(index, this.paramEvents.length-1));
@@ -417,7 +417,7 @@ export default class HWindowObject extends HWindow {
 	}
 
 	updateDivEventSubtype() {
-		removeChildren(this.divEventSubtype)
+		removeChildren(this.divEventSubtype);
 
 		const eventType = this.selectEventType.getValue();
 
@@ -426,36 +426,36 @@ export default class HWindowObject extends HWindow {
 			this.subtypeValueFunction = null;
 
 			if (eventType == "step") {
-				const subtypeElement = add( new HSelectWithOptions("Step:", Events.listStepSubtypes))
+				const subtypeElement = add( new HSelectWithOptions("Step:", Events.listStepSubtypes));
 				this.subtypeValueFunction = () => subtypeElement.getValue();
 			} else
 
 			if (eventType == "alarm") {
-				const subtypeElement = add( new HNumberInput("Alarm:", 0, 1, 0, 11) )
+				const subtypeElement = add( new HNumberInput("Alarm:", 0, 1, 0, 11) );
 				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
 			} else
 
 			if (eventType == "keyboard" || eventType == "keypress" || eventType == "keyrelease") {
-				const subtypeElement = add( new HNumberInput("Key:", 0, 1, 0) )
+				const subtypeElement = add( new HNumberInput("Key:", 0, 1, 0) );
 				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
 			} else
 
 			if (eventType == "mouse") {
-				const subtypeElement = add( new HSelectWithOptions("Mouse:", Events.listMouseSubtypes))
+				const subtypeElement = add( new HSelectWithOptions("Mouse:", Events.listMouseSubtypes));
 				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
 			} else
 
 			if (eventType == "collision") {
-				this.selectCollisionObject = add( new HResourceSelect(this.editor, "Object:", ProjectObject, true) )
+				this.selectCollisionObject = add( new HResourceSelect(this.editor, "Object:", ProjectObject, true) );
 				this.subtypeValueFunction = () => (parseInt(this.selectCollisionObject.getValue()));
 			} else
 
 			if (eventType == "other") {
-				const subtypeElement = add( new HSelectWithOptions("Other:", Events.listOtherSubtypes))
+				const subtypeElement = add( new HSelectWithOptions("Other:", Events.listOtherSubtypes));
 				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
 			}
 
-			endparent()
+			endparent();
 	}
 
 	updateSelectActions() {
@@ -475,10 +475,10 @@ export default class HWindowObject extends HWindow {
 						(this.editor.preferences.get("hintTextInAction") ? hintText.text : listText.text), // text
 						null, // value
 						(listText.bold ? "bold " : "") + (listText.italic ? "italic " : ""), // class
-					) )
+					) );
 					option.html.title = hintText.text;
-				})
-				endparent()
+				});
+				endparent();
 
 			this.selectActions.setSelectedIndex(Math.min(index, event.actions.length-1));
 		}
@@ -571,9 +571,9 @@ export default class HWindowObject extends HWindow {
 					}
 				}
 				case "r":
-					return previous + (action.relative ? "relative " : "")
+					return previous + (action.relative ? "relative " : "");
 				case "n":
-					return previous + (action.not ? "not " : "")
+					return previous + (action.not ? "not " : "");
 				case "w": {
 					if (action.appliesTo == -1) return "";
 					if (action.appliesTo == -2) return "for the other object: ";
@@ -589,7 +589,7 @@ export default class HWindowObject extends HWindow {
 					break;
 			}
 			return previous;
-		}, "")
+		}, "");
 
 		return result;
 	}
@@ -623,7 +623,7 @@ export default class HWindowObject extends HWindow {
 		super.close();
 		this.htmlActionWindows.forEach(w => {
 			w.close();
-		})
+		});
 		this.htmlActionWindows = [];
 	}
 }

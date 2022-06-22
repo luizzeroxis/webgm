@@ -1,6 +1,6 @@
-import {parent, endparent, add, HElement, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, uniqueID} from "../../common/H.js"
+import {parent, endparent, add, HElement, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, uniqueID} from "../../common/H.js";
 import {ProjectObject} from "../../common/Project.js";
-import {parseArrowString, stringifyArrowValues, decimalColorToHexColor, hexColorToDecimalColor} from "../../common/tools.js"
+import {parseArrowString, stringifyArrowValues, decimalColorToHexColor, hexColorToDecimalColor} from "../../common/tools.js";
 import HResourceSelect from "../HResourceSelect.js";
 import HWindow from "../HWindow.js";
 
@@ -18,7 +18,7 @@ export default class HWindowAction extends HWindow {
 		const actionTypeInfo = this.object.getActionTypeInfo();
 		const actionTypeInfoItem = actionTypeInfo.find(x => x.kind == this.actionType.kind && x.interfaceKind == this.actionType.interfaceKind);
 
-		parent(this.client)
+		parent(this.client);
 
 			this.actionTypeHasApplyTo = this.actionType.hasApplyTo;
 			if (this.actionType.hasApplyTo == undefined) {
@@ -26,9 +26,9 @@ export default class HWindowAction extends HWindow {
 			}
 
 			if (this.actionTypeHasApplyTo) {
-				parent( add( new HElement("fieldset") ) )
+				parent( add( new HElement("fieldset") ) );
 
-					add( new HElement("legend", {}, "Applies to") )
+					add( new HElement("legend", {}, "Applies to") );
 
 					const appliesToGroup = "_radio_"+uniqueID();
 
@@ -36,12 +36,12 @@ export default class HWindowAction extends HWindow {
 					this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, "Other", (action.appliesTo == -2)) );
 					this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, "Object:", (action.appliesTo >= 0)) );
 
-					this.selectObject = add( new HResourceSelect(this.editor, null, ProjectObject) )
+					this.selectObject = add( new HResourceSelect(this.editor, null, ProjectObject) );
 
 					if (action.appliesTo >= 0)
 						this.selectObject.setValue(action.appliesTo);
 
-					endparent()
+					endparent();
 			}
 
 			this.actionTypeArgs = this.actionType.args;
@@ -87,7 +87,7 @@ export default class HWindowAction extends HWindow {
 						this.argsInterfaces[i] = this.makeResourceInterface(argType.name, argType.kind, action.args[i].value);
 						break;
 				}
-			})
+			});
 
 			this.actionTypeHasRelative = this.actionType.hasRelative;
 			if (this.actionTypeHasRelative == undefined) {
@@ -109,7 +109,7 @@ export default class HWindowAction extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.apply()
+					this.apply();
 				},
 				() => {
 					this.object.deleteActionWindow(this.id);
@@ -124,7 +124,7 @@ export default class HWindowAction extends HWindow {
 		const input = add( new HTextInput(name, value) );
 		return {
 			getValue: () => input.getValue(),
-		}
+		};
 	}
 
 	makeDirectionInterface(name, value) {
@@ -133,7 +133,7 @@ export default class HWindowAction extends HWindow {
 
 		const inputs = [];
 
-		add( new HElement("span", {}, name) )
+		add( new HElement("span", {}, name) );
 
 		parent( add( new HElement("div", {class: "arrow-interface"}) ) );
 
@@ -147,7 +147,7 @@ export default class HWindowAction extends HWindow {
 
 		return {
 			getValue: () => stringifyArrowValues(inputs.map(x => x.getChecked())),
-		}
+		};
 	}
 
 	makeMenuInterface(name, optionNames, value) {
@@ -158,25 +158,25 @@ export default class HWindowAction extends HWindow {
 
 		return {
 			getValue: () => parseInt(select.getValue()),
-		}
+		};
 	}
 
 	makeColorInterface(name, value) {
 		const input = add( new HColorInput(name, decimalColorToHexColor(value)) );
 		return {
 			getValue: () => hexColorToDecimalColor(input.getValue()),
-		}
+		};
 	}
 
 	makeResourceInterface(name, resourceTypeName, value) {
 		const resourceType = this.object.constructor.actionArgResourceTypes[resourceTypeName];
 
-		const select = add( new HResourceSelect(this.editor, name, resourceType) )
+		const select = add( new HResourceSelect(this.editor, name, resourceType) );
 		select.setValue(value);
 
 		return {
 			getValue: () => select.getValue(),
-		}
+		};
 	}
 
 	apply() {

@@ -1,6 +1,6 @@
-import AbstractImage from "../../common/AbstractImage.js"
-import {parent, endparent, add, HElement, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from "../../common/H.js"
-import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground} from "../../common/Project.js"
+import AbstractImage from "../../common/AbstractImage.js";
+import {parent, endparent, add, HElement, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from "../../common/H.js";
+import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground} from "../../common/Project.js";
 import HResourceSelect from "../HResourceSelect.js";
 import HTabControl from "../HTabControl.js";
 import HWindow from "../HWindow.js";
@@ -17,45 +17,45 @@ export default class HWindowRoom extends HWindow {
 		// Create paramInstances and paramBackgrounds as copies
 		this.copyProperties();
 
-		parent(this.client)
-			parent( add( new HElement("div", {class: "grid-resource resource-room"}) ) )
-				parent( add( new HElement("div") ) )
+		parent(this.client);
+			parent( add( new HElement("div", {class: "grid-resource resource-room"}) ) );
+				parent( add( new HElement("div") ) );
 
 					// left area
 
-					this.inputSnapX = add( new HNumberInput("Snap X:", 16, 1, 1) )
-					this.inputSnapY = add( new HNumberInput("Snap Y:", 16, 1, 1) )
-					this.inputShowGrid = add( new HCheckBoxInput("Show grid", true) )
+					this.inputSnapX = add( new HNumberInput("Snap X:", 16, 1, 1) );
+					this.inputSnapY = add( new HNumberInput("Snap Y:", 16, 1, 1) );
+					this.inputShowGrid = add( new HCheckBoxInput("Show grid", true) );
 
-					this.tabControl = add( new HTabControl() )
+					this.tabControl = add( new HTabControl() );
 
-					parent( this.tabControl.addTab("Instances") )
+					parent( this.tabControl.addTab("Instances") );
 
-						this.selectObject = add( new HResourceSelect(this.editor, "Object:", ProjectObject, true) )
+						this.selectObject = add( new HResourceSelect(this.editor, "Object:", ProjectObject, true) );
 
 						const toolGroup = "_radio_"+uniqueID();
-						this.radioAdd = add( new HRadioInput(toolGroup, "Add instance", true) )
-						this.radioMultiple = add( new HRadioInput(toolGroup, "Add multiple instances") )
-						this.radioMove = add( new HRadioInput(toolGroup, "Move instance") )
-						this.radioDelete = add( new HRadioInput(toolGroup, "Delete instance") )
+						this.radioAdd = add( new HRadioInput(toolGroup, "Add instance", true) );
+						this.radioMultiple = add( new HRadioInput(toolGroup, "Add multiple instances") );
+						this.radioMove = add( new HRadioInput(toolGroup, "Move instance") );
+						this.radioDelete = add( new HRadioInput(toolGroup, "Delete instance") );
 
-						this.inputSnapToGrid = add( new HCheckBoxInput("Snap to grid", true) )
-						this.inputDeleteUnderlying = add( new HCheckBoxInput("Delete underlying", false) )
+						this.inputSnapToGrid = add( new HCheckBoxInput("Snap to grid", true) );
+						this.inputDeleteUnderlying = add( new HCheckBoxInput("Delete underlying", false) );
 
-						endparent()
+						endparent();
 
-					parent( this.tabControl.addTab("Settings") )
+					parent( this.tabControl.addTab("Settings") );
 
-						this.inputName = add( new HTextInput("Name:", room.name) )
-						this.inputWidth = add( new HNumberInput("Width:", room.width, 1, 1) )
-						this.inputHeight = add( new HNumberInput("Height:", room.height, 1, 1) )
-						this.inputSpeed = add( new HNumberInput("Speed:", room.speed, 1, 1) )
+						this.inputName = add( new HTextInput("Name:", room.name) );
+						this.inputWidth = add( new HNumberInput("Width:", room.width, 1, 1) );
+						this.inputHeight = add( new HNumberInput("Height:", room.height, 1, 1) );
+						this.inputSpeed = add( new HNumberInput("Speed:", room.speed, 1, 1) );
 
-						endparent()
+						endparent();
 
-					parent( this.tabControl.addTab("Backgrounds") )
+					parent( this.tabControl.addTab("Backgrounds") );
 
-						this.inputBackgroundColor = add( new HColorInput("Background color:", room.backgroundColor) )
+						this.inputBackgroundColor = add( new HColorInput("Background color:", room.backgroundColor) );
 
 						const getBackground = (index) => {
 							const currentBackground = this.paramBackgrounds[index];
@@ -63,14 +63,14 @@ export default class HWindowRoom extends HWindow {
 								return new ProjectRoomBackground(); // default values used
 							}
 							return currentBackground;
-						}
+						};
 
 						const getOrCreateBackground = (index) => {
 							if (this.paramBackgrounds[index] == null) {
 								this.paramBackgrounds[index] = new ProjectRoomBackground(); // default values used
 							}
 							return this.paramBackgrounds[index];
-						}
+						};
 
 						const getOrCreateCurrentBackground = () => {
 							const currentBackgroundId = this.selectBackgrounds.getValue();
@@ -78,7 +78,7 @@ export default class HWindowRoom extends HWindow {
 								this.paramBackgrounds[currentBackgroundId] = new ProjectRoomBackground();
 							}
 							return this.paramBackgrounds[currentBackgroundId];
-						}
+						};
 
 						const updateBackgroundProperties = () => {
 							const currentBackgroundId = this.selectBackgrounds.getValue();
@@ -88,26 +88,26 @@ export default class HWindowRoom extends HWindow {
 							this.selectResourceBackground.setValue(currentBackground.backgroundIndex);
 							this.inputTileHorizontally.setChecked(currentBackground.tileHorizontally);
 							this.inputTileVertically.setChecked(currentBackground.tileVertically);
-						}
+						};
 
-						this.selectBackgrounds = add( new HSelect("Backgrounds:", "backgrounds") )
+						this.selectBackgrounds = add( new HSelect("Backgrounds:", "backgrounds") );
 						this.selectBackgroundsOptions = [];
 
-						parent(this.selectBackgrounds.select)
+						parent(this.selectBackgrounds.select);
 							for (let i=0; i<8; ++i) {
 								const background = getBackground(i);
 								const _class = (background.visibleAtStart ? "bold" : null);
-								this.selectBackgroundsOptions[i] = add( new HOption("Background "+i.toString(), i, _class) )
+								this.selectBackgroundsOptions[i] = add( new HOption("Background "+i.toString(), i, _class) );
 							}
-							endparent()
+							endparent();
 
 						this.selectBackgrounds.select.html.size = 8;
 
 						this.selectBackgrounds.setOnChange(() => {
 							updateBackgroundProperties();
-						})
+						});
 
-						this.inputBackgroundVisibleAtStart = add( new HCheckBoxInput("Visible when room starts") )
+						this.inputBackgroundVisibleAtStart = add( new HCheckBoxInput("Visible when room starts") );
 						this.inputBackgroundVisibleAtStart.setOnChange(() => {
 							const currentBackgroundId = this.selectBackgrounds.getValue();
 							const currentBackground = getOrCreateBackground(currentBackgroundId);
@@ -121,54 +121,54 @@ export default class HWindowRoom extends HWindow {
 							}
 
 							this.updateCanvasPreview();
-						})
+						});
 
-						this.selectResourceBackground = add( new HResourceSelect(this.editor, null, ProjectBackground) )
+						this.selectResourceBackground = add( new HResourceSelect(this.editor, null, ProjectBackground) );
 						this.selectResourceBackground.setOnChange(() => {
 							getOrCreateCurrentBackground().backgroundIndex = this.selectResourceBackground.getValue();
 							this.updateCanvasPreview();
-						})
+						});
 
-						this.inputTileHorizontally = add( new HCheckBoxInput("Tile Hor.") )
+						this.inputTileHorizontally = add( new HCheckBoxInput("Tile Hor.") );
 						this.inputTileHorizontally.setOnChange(() => {
 							getOrCreateCurrentBackground().tileHorizontally = this.inputTileHorizontally.getChecked();
 							this.updateCanvasPreview();
-						})
+						});
 
-						this.inputTileVertically = add( new HCheckBoxInput("Tile Vert.") )
+						this.inputTileVertically = add( new HCheckBoxInput("Tile Vert.") );
 						this.inputTileVertically.setOnChange(() => {
 							getOrCreateCurrentBackground().tileVertically = this.inputTileVertically.getChecked();
 							this.updateCanvasPreview();
-						})
+						});
 
 						updateBackgroundProperties();
 
-						endparent()
+						endparent();
 
-					parent( add( new HElement("div", {}, "X: ") ) )
+					parent( add( new HElement("div", {}, "X: ") ) );
 						this.spanX = add( new HElement("span", {}, "0") );
-						endparent()
-					parent( add( new HElement("div", {}, "Y: ") ) )
+						endparent();
+					parent( add( new HElement("div", {}, "Y: ") ) );
 						this.spanY = add( new HElement("span", {}, "0") );
-						endparent()
-					parent( add( new HElement("div", {}, "Object: ") ) )
+						endparent();
+					parent( add( new HElement("div", {}, "Object: ") ) );
 						this.spanObject = add( new HElement("span") );
-						endparent()
-					parent( add( new HElement("div", {}, "ID: ") ) )
+						endparent();
+					parent( add( new HElement("div", {}, "ID: ") ) );
 						this.spanId = add( new HElement("span") );
-						endparent()
+						endparent();
 
 					// updates
-					this.inputSnapX.setOnChange(() => this.updateCanvasPreview())
-					this.inputSnapY.setOnChange(() => this.updateCanvasPreview())
-					this.inputShowGrid.setOnChange(() => this.updateCanvasPreview())
+					this.inputSnapX.setOnChange(() => this.updateCanvasPreview());
+					this.inputSnapY.setOnChange(() => this.updateCanvasPreview());
+					this.inputShowGrid.setOnChange(() => this.updateCanvasPreview());
 
-					this.inputWidth.setOnChange(() => this.updateCanvasPreview())
-					this.inputHeight.setOnChange(() => this.updateCanvasPreview())
-					this.inputBackgroundColor.setOnChange(() => this.updateCanvasPreview())
+					this.inputWidth.setOnChange(() => this.updateCanvasPreview());
+					this.inputHeight.setOnChange(() => this.updateCanvasPreview());
+					this.inputBackgroundColor.setOnChange(() => this.updateCanvasPreview());
 
-					endparent()
-				parent( add( new HElement("div", {class: "preview"}) ) )
+					endparent();
+				parent( add( new HElement("div", {class: "preview"}) ) );
 
 					// actual room area
 
@@ -209,7 +209,7 @@ export default class HWindowRoom extends HWindow {
 						}
 
 						this.updateCanvasPreview();
-					}
+					};
 
 					this.canvasPreview.html.onmousemove = (e) => {
 						const pos = this.getMousePosition(e);
@@ -259,7 +259,7 @@ export default class HWindowRoom extends HWindow {
 								}
 							}
 						}
-					}
+					};
 
 					// is this... right?
 					document.onmouseup = (e) => {
@@ -274,7 +274,7 @@ export default class HWindowRoom extends HWindow {
 						this.movingInstance = null;
 
 						this.updateCanvasPreview();
-					}
+					};
 
 					endparent();
 				endparent();
@@ -309,7 +309,7 @@ export default class HWindowRoom extends HWindow {
 					this.copyProperties();
 				},
 				() => {
-					this.close()
+					this.close();
 				},
 			);
 			endparent();
@@ -326,7 +326,7 @@ export default class HWindowRoom extends HWindow {
 			changeBackgroundImage: i => {
 				this.updateCanvasPreview();
 			},
-		})
+		});
 	}
 
 	onRemove() {
@@ -338,7 +338,7 @@ export default class HWindowRoom extends HWindow {
 		this.paramBackgrounds = this.room.backgrounds.map(background => {
 			if (background == null) return null;
 			return new ProjectRoomBackground(background);
-		})
+		});
 		this.paramInstances = this.room.instances.map(instance => {
 			return new ProjectInstance(instance);
 		});
@@ -465,7 +465,7 @@ export default class HWindowRoom extends HWindow {
 			}
 			image.promise.then(() => {
 				this.ctx.drawImage(image.image, roomInstance.x - ox, roomInstance.y - oy);
-			})
+			});
 		}
 
 		// foregrounds
@@ -534,13 +534,13 @@ export default class HWindowRoom extends HWindow {
 					break;
 				}
 			}
-		})
+		});
 		return true;
 	}
 
 	drawLine(x1, y1, x2, y2) {
 		this.ctx.save();
-		this.ctx.translate(0.5, 0.5)
+		this.ctx.translate(0.5, 0.5);
 
 		this.ctx.beginPath();
 		this.ctx.moveTo(x1, y1);

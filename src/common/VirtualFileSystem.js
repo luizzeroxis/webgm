@@ -14,9 +14,9 @@ export default class VirtualFileSystem {
 					resolve(f.html.files);
 				else
 					resolve(f.html.files[0]);
-			}
+			};
 			f.html.click();
-		})
+		});
 	}
 
 	static readEntireFile(file) {
@@ -26,7 +26,7 @@ export default class VirtualFileSystem {
 				resolve(reader.result);
 			};
 			reader.readAsText(file);
-		})
+		});
 	}
 
 	static save(blob, name) {

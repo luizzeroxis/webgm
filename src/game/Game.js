@@ -1,4 +1,4 @@
-import Dispatcher from "../common/Dispatcher.js"
+import Dispatcher from "../common/Dispatcher.js";
 import Events from "../common/Events.js";
 import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from "../common/Exceptions.js";
 import {Project} from "../common/Project.js";
@@ -156,12 +156,12 @@ export class Game {
 		this.canvas.classList.remove("no-cursor");
 
 		// input
-		this.input.removeEventListener("keydown", this.keyDownHandler)
-		this.input.removeEventListener("keyup", this.keyUpHandler)
-		this.input.removeEventListener("mousedown", this.mouseDownHandler)
-		this.input.removeEventListener("mouseup", this.mouseUpHandler)
-		this.input.removeEventListener("mousemove", this.mouseMoveHandler)
-		this.input.removeEventListener("wheel", this.wheelHandler)
+		this.input.removeEventListener("keydown", this.keyDownHandler);
+		this.input.removeEventListener("keyup", this.keyUpHandler);
+		this.input.removeEventListener("mousedown", this.mouseDownHandler);
+		this.input.removeEventListener("mouseup", this.mouseUpHandler);
+		this.input.removeEventListener("mousemove", this.mouseMoveHandler);
+		this.input.removeEventListener("wheel", this.wheelHandler);
 
 		// audio
 		this.stopAllSounds();
@@ -186,14 +186,14 @@ export class Game {
 			e.preventDefault();
 			this.key[e.which] = true;
 			this.keyPressed[e.which] = true;
-		}
+		};
 		this.input.addEventListener("keydown", this.keyDownHandler);
 
 		this.keyUpHandler = (e) => {
 			e.preventDefault();
 			this.key[e.which] = false;
 			this.keyReleased[e.which] = true;
-		}
+		};
 		this.input.addEventListener("keyup", this.keyUpHandler);
 
 		// Mouse
@@ -208,14 +208,14 @@ export class Game {
 			e.preventDefault();
 			this.mouse[toEngineButton(e.button)] = true;
 			this.mousePressed[toEngineButton(e.button)] = true;
-		}
+		};
 		this.input.addEventListener("mousedown", this.mouseDownHandler);
 
 		this.mouseUpHandler = (e) => {
 			e.preventDefault();
 			this.mouse[toEngineButton(e.button)] = false;
 			this.mouseReleased[toEngineButton(e.button)] = true;
-		}
+		};
 		this.input.addEventListener("mouseup", this.mouseUpHandler);
 
 		this.mouseMoveHandler = (e) => {
@@ -225,26 +225,26 @@ export class Game {
 
 			this.globalVars.setBuiltIn("mouse_x", this.mouseX);
 			this.globalVars.setBuiltIn("mouse_y", this.mouseY);
-		}
+		};
 		this.input.addEventListener("mousemove", this.mouseMoveHandler);
 
 		this.wheelHandler = (e) => {
 			e.preventDefault();
 			this.mouseWheel += e.deltaY;
-		}
+		};
 		this.input.addEventListener("wheel", this.wheelHandler);
 	}
 
 	// Called by start, inits general engine stuff.
 	startEngine() {
-		this.globalVars = new VariableHolder(this, BuiltInGlobals)
+		this.globalVars = new VariableHolder(this, BuiltInGlobals);
 		this.constants = BuiltInConstants.getList();
 
 		// TODO Add user defined constants
 
 		// Add resource names as constants
 		Project.getTypes().forEach(type => {
-			this.project.resources[type.getClassName()].forEach(x => { this.constants[x.name] = x.id });
+			this.project.resources[type.getClassName()].forEach(x => { this.constants[x.name] = x.id; });
 		});
 
 		this.lastId = this.project.lastId;
@@ -288,8 +288,8 @@ export class Game {
 					.catch(e => {
 						throw new EngineException("Could not load image " + imageNumber.toString() + " in sprite " + sprite.name);
 					}));
-			})
-		})
+			});
+		});
 		return Promise.all(promises);
 	}
 
@@ -304,8 +304,8 @@ export class Game {
 					throw new EngineException("Could not load audio in sound " + sound.name);
 				}));
 
-			this.sounds.set(sound, {volume: sound.volume, audioNodes: []})
-		})
+			this.sounds.set(sound, {volume: sound.volume, audioNodes: []});
+		});
 		return Promise.all(promises);
 	}
 
@@ -319,7 +319,7 @@ export class Game {
 				.catch(e => {
 					throw new EngineException("Could not load image in background " + background.name);
 				}));
-		})
+		});
 		return Promise.all(promises);
 	}
 
@@ -327,7 +327,7 @@ export class Game {
 	loadFonts() {
 		this.project.resources.ProjectFont.forEach(font => {
 			this.cssFontsCache[font.id] = makeCSSFont(font.font, font.size, font.bold, font.italic);
-		})
+		});
 	}
 
 	// Parse all action lists in events and timeline moments into action trees.
@@ -346,8 +346,8 @@ export class Game {
 				const parsedActions = new ActionsParser().parse(event.actions);
 				this.actionsCache.set(event, parsedActions);
 				return true;
-			})
-		})
+			});
+		});
 	}
 
 	// Compile all GML code, parsing it and checking for errors.
@@ -375,7 +375,7 @@ export class Game {
 						+ matchResult.message + "\n",
 				});
 			});
-		})
+		});
 	}
 
 	// Compile all GML inside time lines.
@@ -420,12 +420,12 @@ export class Game {
 								"COMPILATION ERROR in code action (in variable set):\n" + matchResult.message + "\n",
 								object, event, actionNumber,
 							);
-						})
+						});
 					}
 					return true;
-				})
-			})
-		})
+				});
+			});
+		});
 	}
 
 	// Compile all GML inside rooms.
@@ -459,7 +459,7 @@ export class Game {
 						+ matchResult.message + "\n",
 				});
 			});
-		})
+		});
 	}
 
 	// Compiles a GML code string and stores the result in a cache. mapKey is used when accessing gmlCache.
@@ -1072,7 +1072,7 @@ export class Game {
 				}
 			}
 
-			this.instances = this.instances.filter(instance => instance.exists && instance.vars.getBuiltIn("persistent"))
+			this.instances = this.instances.filter(instance => instance.exists && instance.vars.getBuiltIn("persistent"));
 		}
 
 		this.room = {
@@ -1252,7 +1252,7 @@ export class Game {
 			&& bX1 <= aX1 + aImage.image.width
 			&& aY1 <= bY1 + bImage.image.height
 			&& bY1 <= aY1 + aImage.image.height
-		)
+		);
 
 		if (!rectCol) return false;
 
@@ -1294,14 +1294,14 @@ export class Game {
 		aX = (aX == null) ? a.vars.getBuiltIn("x") : aX;
 		aY = (aY == null) ? a.vars.getBuiltIn("y") : aY;
 		const aX1 = aX - a.sprite.originx;
-		const aY1 = aY - a.sprite.originy
-		const aImage = a.sprite.images[a.getImageIndex()]
+		const aY1 = aY - a.sprite.originy;
+		const aImage = a.sprite.images[a.getImageIndex()];
 
 		bX = (bX == null) ? b.vars.getBuiltIn("x") : bX;
 		bY = (bY == null) ? b.vars.getBuiltIn("y") : bY;
-		const bX1 = bX - b.sprite.originx
-		const bY1 = bY - b.sprite.originy
-		const bImage = b.sprite.images[b.getImageIndex()]
+		const bX1 = bX - b.sprite.originx;
+		const bY1 = bY - b.sprite.originy;
+		const bImage = b.sprite.images[b.getImageIndex()];
 
 		return (
 			aX1 <= bX1 + bImage.image.width
@@ -1461,7 +1461,7 @@ export class Game {
 				}
 
 				eventInstancePairs.push({event: event, instance: instance});
-			})
+			});
 		}
 
 		return map;

@@ -28,7 +28,7 @@ export function decimalColorToRGBValues(color) {
 		r: color % 256,
 		g: Math.floor(color % (256*256) / 256),
 		b: Math.floor(color % (256*256*256) / (256*256)),
-	}
+	};
 }
 
 // rgb -> decimal
@@ -50,12 +50,12 @@ export function hexColorToDecimalColor(hex) {
 	const r = parseInt(hex.substr(1+2*0, 2), 16);
 	const g = parseInt(hex.substr(1+2*1, 2), 16);
 	const b = parseInt(hex.substr(1+2*2, 2), 16);
-	return rgbValuesToDecimalColor({r, g, b})
+	return rgbValuesToDecimalColor({r, g, b});
 }
 
 // decimal -> hsv
 export function decimalColorToHSVValues(color) {
-	return rgbValuesToHSVValues(decimalColorToRGBValues(color))
+	return rgbValuesToHSVValues(decimalColorToRGBValues(color));
 }
 
 // rgb -> hsv
@@ -94,7 +94,7 @@ export function decimalColorToRGB(color) {
 
 export function decimalColorAndAlphaToRGBA(color, alpha) {
 	const c = decimalColorToRGBValues(color);
-	return "rgba("+c.r+","+c.g+","+c.b+","+alpha+")"
+	return "rgba("+c.r+","+c.g+","+c.b+","+alpha+")";
 }
 
 export function makeCSSFont(family, size, bold, italic) {
@@ -169,7 +169,7 @@ export function forceChar(value) {
 
 export function toInteger(value) {
 	if (Math.abs(value % 1) == 0.5) {
-		const integer = Math.trunc(value)
+		const integer = Math.trunc(value);
 		if (integer % 2 == 0) {
 			return integer;
 		} else {

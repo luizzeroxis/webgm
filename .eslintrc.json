@@ -127,6 +127,8 @@
         "no-whitespace-before-property": "warn",
         "operator-linebreak": ["warn", "before"],
         "padded-blocks": ["warn", "never"],
-        "quotes": "warn"
+        "quotes": "warn",
+        "rest-spread-spacing": "warn",
+        "semi": "warn"
     }
 }

@@ -1,8 +1,8 @@
 //The editor class
 
-import Dispatcher from "../common/Dispatcher.js"
+import Dispatcher from "../common/Dispatcher.js";
 import {WebGMException, UnserializeException} from "../common/Exceptions.js";
-import {parent, endparent, add, HElement, setOnFileDrop} from "../common/H.js"
+import {parent, endparent, add, HElement, setOnFileDrop} from "../common/H.js";
 import {
 	Project,
 	ProjectAction,
@@ -23,7 +23,7 @@ import {Game} from "../game/Game.js";
 import HAreaMenu from "./areas/HAreaMenu.js";
 import HAreaResources from "./areas/HAreaResources.js";
 import HAreaWindows from "./areas/HAreaWindows.js";
-import BuiltInLibraries from "./BuiltInLibraries.js"
+import BuiltInLibraries from "./BuiltInLibraries.js";
 import DefaultProjectFontIcon from "./img/default-ProjectFont-icon.png";
 import DefaultProjectPathIcon from "./img/default-ProjectPath-icon.png";
 import DefaultProjectRoomIcon from "./img/default-ProjectRoom-icon.png";
@@ -74,25 +74,25 @@ export default class Editor {
 		this.libraries = BuiltInLibraries.getList();
 
 		// Areas
-		this.div = parent( new HElement("div", {class: "editor"}) )
+		this.div = parent( new HElement("div", {class: "editor"}) );
 
-			add( new HElement("div", {}, "Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!") )
+			add( new HElement("div", {}, "Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!") );
 
-			parent( add( new HElement("div", {class: "grid"}) ) )
+			parent( add( new HElement("div", {class: "grid"}) ) );
 
-				this.menuArea = add( new HAreaMenu(this) )
-				this.resourcesArea = add( new HAreaResources(this) )
-				this.windowsArea = add( new HAreaWindows(this) )
+				this.menuArea = add( new HAreaMenu(this) );
+				this.resourcesArea = add( new HAreaResources(this) );
+				this.windowsArea = add( new HAreaWindows(this) );
 
-				endparent()
+				endparent();
 
-			endparent()
+			endparent();
 
 		// Open file if dropped in the editor body
 		setOnFileDrop(this.div.html, file => this.openProjectFromFile(file));
 
 		// Actually add to the DOM
-		add(this.div)
+		add(this.div);
 	}
 
 	// Resource management
@@ -159,7 +159,7 @@ export default class Editor {
 
 		if (file.type == "application/json") {
 			promise = VirtualFileSystem.readEntireFile(file)
-			.then(json => ProjectSerializer.unserializeV1(json))
+			.then(json => ProjectSerializer.unserializeV1(json));
 		} else {
 			promise = ProjectSerializer.unserializeZIP(file);
 		}
@@ -181,7 +181,7 @@ export default class Editor {
 			} else {
 				throw e;
 			}
-		})
+		});
 	}
 
 	// Called from HAreaMenu
@@ -189,7 +189,7 @@ export default class Editor {
 		ProjectSerializer.serializeZIP(this.project)
 		.then(blob => {
 			VirtualFileSystem.save(blob, this.projectName+".zip");
-		})
+		});
 	}
 
 	// Called from HAreaMenu
@@ -240,7 +240,7 @@ export default class Editor {
 					throw e;
 				}
 			},
-		})
+		});
 
 		this.game.start();
 	}

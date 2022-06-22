@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, HButton, HImage} from "../common/H.js"
+import {parent, endparent, add, HElement, HButton, HImage} from "../common/H.js";
 import {ProjectSprite, ProjectSound, ProjectBackground, ProjectObject} from "../common/Project.js";
 
 import Editor from "./Editor.js";
@@ -6,15 +6,15 @@ import DefaultProjectSoundIcon from "./img/default-ProjectSound-icon.png";
 
 export default class HResourceListItem extends HElement {
 	constructor(resource, editor) {
-		super("li")
+		super("li");
 
 		this.id = resource;
 		this.resource = resource;
 		this.editor = editor;
 
-		parent(this)
+		parent(this);
 
-			parent( add( new HElement("div", {class: "item"}) ) )
+			parent( add( new HElement("div", {class: "item"}) ) );
 
 				this.htmlIcon = add( new HImage(null, "icon") );
 				this.htmlIcon.html.width = 16;
@@ -22,14 +22,14 @@ export default class HResourceListItem extends HElement {
 
 				this.updateIcon();
 
-				this.htmlName = add( new HElement("div", {class: "name"}) )
+				this.htmlName = add( new HElement("div", {class: "name"}) );
 				this.htmlName.html.textContent = this.resource.name;
 
-				this.htmlEditButton = add( new HButton("Edit", () => this.properties()) )
-				this.htmlDeleteButton = add( new HButton("Delete", () => this.delete()) )
+				this.htmlEditButton = add( new HButton("Edit", () => this.properties()) );
+				this.htmlDeleteButton = add( new HButton("Delete", () => this.delete()) );
 
-				endparent()
-			endparent()
+				endparent();
+			endparent();
 	}
 
 	onAdd() {
@@ -38,7 +38,7 @@ export default class HResourceListItem extends HElement {
 				if (i !== this.resource) return;
 				this.htmlName.html.textContent = i.name;
 			},
-		})
+		});
 
 		if (this.resource.constructor == ProjectSprite || this.resource.constructor == ProjectObject) {
 			this.listeners = {...this.listeners, ...this.editor.dispatcher.listen({
@@ -50,7 +50,7 @@ export default class HResourceListItem extends HElement {
 					}
 					this.updateIcon();
 				},
-			})}
+			})};
 		}
 
 		if (this.resource.constructor == ProjectBackground) {
@@ -59,7 +59,7 @@ export default class HResourceListItem extends HElement {
 					if (i != this.resource) return;
 					this.updateIcon();
 				},
-			})}
+			})};
 		}
 
 		if (this.resource.constructor == ProjectObject) {
@@ -72,7 +72,7 @@ export default class HResourceListItem extends HElement {
 					if (i.id != this.resource.sprite_index) return;
 					this.updateIcon();
 				},
-			})}
+			})};
 		}
 	}
 

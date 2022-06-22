@@ -482,7 +482,7 @@ export default class GML {
 				const value = this.varGet(varInfo, _variableNode);
 				return value;
 			},
-		}
+		};
 	}
 
 	compile(code, startRule) {

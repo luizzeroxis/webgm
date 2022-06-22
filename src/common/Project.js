@@ -8,7 +8,7 @@ export class Project {
 				const typeName = type.getClassName();
 				this.resources[typeName] = [];
 				this.counter[typeName] = 0;
-			})
+			});
 
 			this.gameInformation = new ProjectGameInformation();
 			this.globalGameSettings = new ProjectGlobalGameSettings();
@@ -25,7 +25,7 @@ export class Project {
 				const typeName = type.getClassName();
 				this.resources[typeName] = object.resources[typeName].map(resource => new type(resource));
 				this.counter[typeName] = object.counter[typeName];
-			})
+			});
 
 			this.gameInformation = new ProjectGameInformation(object.gameInformation);
 			this.globalGameSettings = new ProjectGlobalGameSettings(object.globalGameSettings);
@@ -271,7 +271,7 @@ export class Project {
 				this.visible = true;
 				this.solid = false;
 				this.depth = 0;
-				this.persistent = false
+				this.persistent = false;
 				this.parent_index = -1;
 				this.mask_index = -1;
 				this.events = [];

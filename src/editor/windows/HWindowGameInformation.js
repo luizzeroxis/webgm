@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement} from "../../common/H.js"
+import {parent, endparent, add, HElement} from "../../common/H.js";
 import HWindow from "../HWindow.js";
 
 export default class HWindowGameInformation extends HWindow {
@@ -9,9 +9,9 @@ export default class HWindowGameInformation extends HWindow {
 
 		this.title.html.textContent = "Game Information";
 
-		parent(this.client)
+		parent(this.client);
 
-			this.textareaText = add( new HElement("textarea", {class: "code"}, gameInformation.text) )
+			this.textareaText = add( new HElement("textarea", {class: "code"}, gameInformation.text) );
 
 			this.makeApplyOkButtons(
 				() => {

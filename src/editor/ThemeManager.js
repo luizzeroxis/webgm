@@ -12,7 +12,7 @@ export default class ThemeManager {
 			"change": () => {
 				this.applyTheme();
 			},
-		})
+		});
 	}
 
 	updateAutoTheme(mediaQueryList) {

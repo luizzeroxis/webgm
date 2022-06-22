@@ -118,7 +118,7 @@ export default class Events {
 		{id: 23, value: 23, name: "User 13"},
 		{id: 24, value: 24, name: "User 14"},
 		{id: 25, value: 25, name: "User 15"},
-	]
+	];
 
 	static getEventName(event, project) {
 		return Events.listEventTypes.find(x => x.value == event.type).getFullName(event.subtype, project);

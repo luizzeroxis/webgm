@@ -1,5 +1,5 @@
 import {EngineException} from "../common/Exceptions.js";
-import {decimalColorToHSVValues, decimalColorAndAlphaToRGBA, decimalColorToRGB, rgbValuesToDecimalColor, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger, parseNewLineHash} from "../common/tools.js"
+import {decimalColorToHSVValues, decimalColorAndAlphaToRGBA, decimalColorToRGB, rgbValuesToDecimalColor, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger, parseNewLineHash} from "../common/tools.js";
 
 export default class BuiltInFunctions {
 	// this = GML
@@ -559,7 +559,7 @@ export default class BuiltInFunctions {
 	}
 
 	static place_snapped ([hsnap, vsnap]) {
-		return (this.currentInstance.vars.getBuiltIn("x") % hsnap == 0) && (this.currentInstance.vars.getBuiltIn("y") % vsnap == 0)
+		return (this.currentInstance.vars.getBuiltIn("x") % hsnap == 0) && (this.currentInstance.vars.getBuiltIn("y") % vsnap == 0);
 	}
 
 	static move_random ([hsnap, vsnap]) {
@@ -934,7 +934,7 @@ export default class BuiltInFunctions {
 	static async sleep ([numb]) {
 		await new Promise((resolve, reject) => {
 			setTimeout(() => resolve(), numb);
-		})
+		});
 		return 0;
 	}
 
@@ -951,7 +951,7 @@ export default class BuiltInFunctions {
 		this.game.stepStopAction = async () => {
 			await this.game.loadRoom(room);
 			this.game.startMainLoop();
-		}
+		};
 		return 0;
 	}
 
@@ -1319,7 +1319,7 @@ export default class BuiltInFunctions {
 
 	static draw_sprite ([spriteIndex, subimg, x, y]) {
 		if (spriteIndex >= 0) {
-			const sprite = this.game.project.resources.ProjectSprite.find(x => x.id == spriteIndex)
+			const sprite = this.game.project.resources.ProjectSprite.find(x => x.id == spriteIndex);
 			if (sprite) {
 				this.game.drawSprite(sprite, subimg % sprite.images.length, x, y);
 			} else {
@@ -1446,7 +1446,7 @@ export default class BuiltInFunctions {
 		this.game.ctx.strokeStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
 
 		this.game.ctx.save();
-		this.game.ctx.translate(0.5, 0.5)
+		this.game.ctx.translate(0.5, 0.5);
 
 		this.game.ctx.beginPath();
 		this.game.ctx.moveTo(x1, y1);
@@ -1470,7 +1470,7 @@ export default class BuiltInFunctions {
 
 		if (outline >= 1) {
 			this.game.ctx.save();
-			this.game.ctx.translate(0.5, 0.5)
+			this.game.ctx.translate(0.5, 0.5);
 			this.game.ctx.strokeRect(x1, y1, x2-x1, y2-y1);
 			this.game.ctx.restore();
 		} else {
@@ -5849,7 +5849,7 @@ export default class BuiltInFunctions {
 		let spriteH = 0;
 
 		if (this.currentInstance.sprite) {
-			const image = this.currentInstance.sprite.images[this.currentInstance.getImageIndex()]
+			const image = this.currentInstance.sprite.images[this.currentInstance.getImageIndex()];
 			if (image) {
 				spriteW = image.image.width;
 				spriteH = image.image.height;
@@ -6514,7 +6514,7 @@ export default class BuiltInFunctions {
 		x = (!relative ? x : this.currentInstance.vars.getBuiltIn("x") + x);
 		y = (!relative ? y : this.currentInstance.vars.getBuiltIn("y") + y);
 		subimage = (subimage != -1) ? subimage : this.currentInstance.vars.getBuiltIn("image_index");
-		BuiltInFunctions.draw_sprite.call(this, [sprite, subimage, x, y])
+		BuiltInFunctions.draw_sprite.call(this, [sprite, subimage, x, y]);
 		return 0;
 	}
 

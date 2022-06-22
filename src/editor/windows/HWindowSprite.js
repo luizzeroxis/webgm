@@ -1,5 +1,5 @@
 import AbstractImage from "../../common/AbstractImage.js";
-import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HImage, HCheckBoxInput, setOnFileDrop} from "../../common/H.js"
+import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HImage, HCheckBoxInput, setOnFileDrop} from "../../common/H.js";
 import VirtualFileSystem from "../../common/VirtualFileSystem.js";
 import HWindow from "../HWindow.js";
 
@@ -11,58 +11,58 @@ export default class HWindowSprite extends HWindow {
 
 		this.title.html.textContent = "Edit Sprite "+sprite.name;
 
-		parent(this.client)
-			parent( add( new HElement("div", {class: "grid-resource resource-sprite"}) ) )
-				parent( add( new HElement("div") ) )
+		parent(this.client);
+			parent( add( new HElement("div", {class: "grid-resource resource-sprite"}) ) );
+				parent( add( new HElement("div") ) );
 
 					const paramName = sprite.name;
 					this.paramImages = sprite.images;
 					const paramOriginX = sprite.originx;
 					const paramOriginY = sprite.originy;
 
-					const inputName = add( new HTextInput("Name:", paramName) )
+					const inputName = add( new HTextInput("Name:", paramName) );
 
 					this.buttonLoadSprite = add( new HButton("Load Sprite", () => {
 						VirtualFileSystem.openDialog("image/*", true)
 						.then(files => {
 							this.loadSpriteFromFiles(files);
 						});
-					}) )
+					}) );
 
-					parent( add( new HElement("div", {}, "Width: ")) )
-						this.divWidth = add( new HElement("span") )
-						endparent()
+					parent( add( new HElement("div", {}, "Width: ")) );
+						this.divWidth = add( new HElement("span") );
+						endparent();
 
-					parent( add( new HElement("div", {}, "Height: ")) )
-						this.divHeight = add( new HElement("span") )
-						endparent()
+					parent( add( new HElement("div", {}, "Height: ")) );
+						this.divHeight = add( new HElement("span") );
+						endparent();
 
-					parent( add( new HElement("div", {}, "Number of subimages: ")) )
-						this.divSubimages = add( new HElement("span") )
-						endparent()
+					parent( add( new HElement("div", {}, "Number of subimages: ")) );
+						this.divSubimages = add( new HElement("span") );
+						endparent();
 
 					this.showSubimage = 0;
 
-					parent( add( new HElement("div", {}, "Show: ")) )
+					parent( add( new HElement("div", {}, "Show: ")) );
 
 						this.buttonShowSubimageLeft = add( new HButton("◀", () => {
 							this.showSubimage -= 1;
 							this.updateShow();
-						}) )
-						this.divShowSubimage = add( new HElement("span") )
+						}) );
+						this.divShowSubimage = add( new HElement("span") );
 						this.buttonShowSubimageRight = add( new HButton("▶", () => {
 							this.showSubimage += 1;
 							this.updateShow();
-						}) )
+						}) );
 
-						endparent()
+						endparent();
 
-					parent( add( new HElement("fieldset") ) )
+					parent( add( new HElement("fieldset") ) );
 
-						add( new HElement("legend", {}, "Origin") )
+						add( new HElement("legend", {}, "Origin") );
 
-						const inputOriginX = add( new HNumberInput("X:", paramOriginX, 1, 0) )
-						const inputOriginY = add( new HNumberInput("Y:", paramOriginY, 1, 0) )
+						const inputOriginX = add( new HNumberInput("X:", paramOriginX, 1, 0) );
+						const inputOriginY = add( new HNumberInput("Y:", paramOriginY, 1, 0) );
 
 						add( new HButton("Center", () => {
 							let w=16, h=16;
@@ -72,28 +72,28 @@ export default class HWindowSprite extends HWindow {
 							}
 							inputOriginX.setValue(w);
 							inputOriginY.setValue(h);
-						}) )
+						}) );
 
-						endparent()
+						endparent();
 
-					endparent()
+					endparent();
 
-				parent( add( new HElement("div", {class: "mask"}) ) )
-					parent( add( new HElement("fieldset") ) )
-						add( new HElement("legend", {}, "Collision Checking") )
+				parent( add( new HElement("div", {class: "mask"}) ) );
+					parent( add( new HElement("fieldset") ) );
+						add( new HElement("legend", {}, "Collision Checking") );
 
-						const inputPreciseCollisionChecking = add( new HCheckBoxInput("Precise collision checking", (sprite.shape == "precise")) )
+						const inputPreciseCollisionChecking = add( new HCheckBoxInput("Precise collision checking", (sprite.shape == "precise")) );
 
-						endparent()
-					endparent()
+						endparent();
+					endparent();
 
-				parent( add( new HElement("div", {class: "preview"}) ) )
-					this.imgSprite = add( new HImage() )
-					endparent()
+				parent( add( new HElement("div", {class: "preview"}) ) );
+					this.imgSprite = add( new HImage() );
+					endparent();
 
 				this.updateImageInfo();
 
-				endparent()
+				endparent();
 
 			this.makeApplyOkButtons(
 				() => {
@@ -132,7 +132,7 @@ export default class HWindowSprite extends HWindow {
 		})
 		.finally(() => {
 			this.buttonLoadSprite.setDisabled(false);
-		})
+		});
 	}
 
 	updateImageInfo() {
@@ -142,7 +142,7 @@ export default class HWindowSprite extends HWindow {
 			this.paramImages[0].promise.then(() => {
 				this.divWidth.textContent = this.paramImages[0].image.width;
 				this.divHeight.textContent = this.paramImages[0].image.height;
-			})
+			});
 		} else {
 			this.imgSprite.setSrc(null);
 			this.divWidth.textContent = "32";

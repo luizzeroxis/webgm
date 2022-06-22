@@ -4,9 +4,9 @@ export class WebGMException extends Error {
 			super(messageOrObject);
 		} else {
 			if (messageOrObject.text) {
-				super(messageOrObject.text)
+				super(messageOrObject.text);
 			} else {
-				super(JSON.stringify(messageOrObject))
+				super(JSON.stringify(messageOrObject));
 			}
 			Object.assign(this, messageOrObject);
 		}

@@ -1,4 +1,4 @@
-import {parent, endparent} from "../../common/H.js"
+import {parent, endparent} from "../../common/H.js";
 import HWindow from "../HWindow.js";
 
 export default class HWindowExtensionPackages extends HWindow {
@@ -7,7 +7,7 @@ export default class HWindowExtensionPackages extends HWindow {
 
 		this.title.html.textContent = "Extension Packages";
 
-		parent(this.client)
+		parent(this.client);
 
 			this.makeApplyOkButtons(
 				() => {

@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, HCanvas} from "../../common/H.js"
+import {parent, endparent, add, HElement, HCanvas} from "../../common/H.js";
 import HWindow from "../HWindow.js";
 
 export default class HWindowGame extends HWindow {
@@ -9,12 +9,12 @@ export default class HWindowGame extends HWindow {
 
 		this.title.html.textContent = "Game";
 
-		parent(this.client)
-			parent( add( new HElement("div", {class: "game"}) ) )
-				this.canvas = add( new HCanvas(640, 480) )
+		parent(this.client);
+			parent( add( new HElement("div", {class: "game"}) ) );
+				this.canvas = add( new HCanvas(640, 480) );
 				this.canvas.html.setAttribute("tabindex", 0);
-				endparent()
-			endparent()
+				endparent();
+			endparent();
 	}
 
 	close() {

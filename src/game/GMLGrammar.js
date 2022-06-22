@@ -233,6 +233,6 @@ GameMakerLanguage {
 
 }
 
-`
+`;
 	}
 }

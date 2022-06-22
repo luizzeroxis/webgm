@@ -1,7 +1,7 @@
 import JSZip from "jszip";
 
-import AbstractAudio from "./AbstractAudio.js"
-import AbstractImage from "./AbstractImage.js"
+import AbstractAudio from "./AbstractAudio.js";
+import AbstractImage from "./AbstractImage.js";
 import {UnserializeException} from "./Exceptions.js";
 import {
 	Project,
@@ -27,7 +27,7 @@ import {
 	ProjectGlobalGameSettings,
 	ProjectExtensionPackages,
 } from "./Project.js";
-import {base64ToBlob} from "./tools.js"
+import {base64ToBlob} from "./tools.js";
 
 export default class ProjectSerializer {
 	static serializeZIP(project) {
@@ -54,20 +54,20 @@ export default class ProjectSerializer {
 				if (image) {
 					zip.file("sprites/"+sprite.id+"/"+index, image.blob);
 				}
-			})
-		})
+			});
+		});
 
 		project.resources.ProjectSound.forEach(sound => {
 			if (sound.sound) {
 				zip.file("sounds/"+sound.id, sound.sound.blob);
 			}
-		})
+		});
 
 		project.resources.ProjectBackground.forEach(background => {
 			if (background.image) {
 				zip.file("backgrounds/"+background.id, background.image.blob);
 			}
-		})
+		});
 
 		return zip.generateAsync({type: "blob"});
 	}
@@ -125,7 +125,7 @@ export default class ProjectSerializer {
 						project.resources[x.getClassName()] = [];
 					if (project.counter[x.getClassName()] == undefined)
 						project.counter[x.getClassName()] = 0;
-				})
+				});
 
 				project.resources.ProjectSprite.forEach(sprite => {
 					sprite.images.forEach((image, index) => {
@@ -136,8 +136,8 @@ export default class ProjectSerializer {
 						.then(blob => {
 							sprite.images[index] = new AbstractImage(blob);
 						}));
-					})
-				})
+					});
+				});
 
 				project.resources.ProjectSound.forEach(sound => {
 					const file = zip.file("sounds/"+sound.id);
@@ -147,7 +147,7 @@ export default class ProjectSerializer {
 						.then(blob => {
 							sound.sound = new AbstractAudio(blob);
 						}));
-				})
+				});
 
 				project.resources.ProjectBackground.forEach(background => {
 					const file = zip.file("backgrounds/"+background.id);
@@ -157,7 +157,7 @@ export default class ProjectSerializer {
 						.then(blob => {
 							background.image = new AbstractImage(blob);
 						}));
-				})
+				});
 
 				return Promise.all(promises).then(() => {
 					return project;
@@ -165,7 +165,7 @@ export default class ProjectSerializer {
 			}
 
 			return null;
-		})
+		});
 	}
 
 	static initClasses() {
@@ -194,7 +194,7 @@ export default class ProjectSerializer {
 			"ProjectGameInformation": ProjectGameInformation,
 			"ProjectGlobalGameSettings": ProjectGlobalGameSettings,
 			"ProjectExtensionPackages": ProjectExtensionPackages,
-		}
+		};
 	}
 
 	static unserializeV1(json) {
@@ -222,7 +222,7 @@ export default class ProjectSerializer {
 				if (type == ProjectSprite) {
 					resource.images = resource.images.map(image => {
 						return new AbstractImage( base64ToBlob(image, "image/png") );
-					})
+					});
 				}
 
 				if (type == ProjectObject) {
@@ -231,21 +231,21 @@ export default class ProjectSerializer {
 							//convert action ids to action type objects???
 							delete action.classname;
 							return Object.assign(new ProjectAction(), action);
-						})
+						});
 						delete event.classname;
 						return Object.assign(new ProjectEvent(), event);
-					})
+					});
 				}
 
 				if (type == ProjectRoom) {
 					resource.instances = resource.instances.map(instance => {
 						delete instance.classname;
 						return Object.assign(new ProjectInstance(), instance);
-					})
+					});
 				}
 
 				return Object.assign(new type(), resource);
-			})
+			});
 		});
 
 		const project = Object.assign(new Project(), jsonObject);

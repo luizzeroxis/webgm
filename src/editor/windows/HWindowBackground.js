@@ -1,6 +1,6 @@
-import AbstractImage from "../../common/AbstractImage.js"
-import {parent, endparent, add, HElement, HButton, HTextInput, HImage, setOnFileDrop} from "../../common/H.js"
-import VirtualFileSystem from "../../common/VirtualFileSystem.js"
+import AbstractImage from "../../common/AbstractImage.js";
+import {parent, endparent, add, HElement, HButton, HTextInput, HImage, setOnFileDrop} from "../../common/H.js";
+import VirtualFileSystem from "../../common/VirtualFileSystem.js";
 import HWindow from "../HWindow.js";
 
 export default class HWindowBackground extends HWindow {
@@ -11,9 +11,9 @@ export default class HWindowBackground extends HWindow {
 
 		this.title.html.textContent = "Edit Background "+background.name;
 
-		parent(this.client)
-			parent( add( new HElement("div", {class: "grid-resource resource-background"}) ) )
-				parent( add( new HElement("div") ) )
+		parent(this.client);
+			parent( add( new HElement("div", {class: "grid-resource resource-background"}) ) );
+				parent( add( new HElement("div") ) );
 
 					this.paramImage = background.image;
 
@@ -24,25 +24,25 @@ export default class HWindowBackground extends HWindow {
 						.then(file => {
 							this.loadBackgroundFromFile(file);
 						});
-					}) )
+					}) );
 
-					parent( add( new HElement("div", {}, "Width: ")) )
-						this.divWidth = add( new HElement("span", {}, "0") )
-						endparent()
+					parent( add( new HElement("div", {}, "Width: ")) );
+						this.divWidth = add( new HElement("span", {}, "0") );
+						endparent();
 
-					parent( add( new HElement("div", {}, "Height: ")) )
-						this.divHeight = add( new HElement("span", {}, "0") )
-						endparent()
+					parent( add( new HElement("div", {}, "Height: ")) );
+						this.divHeight = add( new HElement("span", {}, "0") );
+						endparent();
 
-					endparent()
+					endparent();
 
-				parent( add( new HElement("div", {class: "preview"}) ) )
-					this.imgBackground = add( new HImage() )
-					endparent()
+				parent( add( new HElement("div", {class: "preview"}) ) );
+					this.imgBackground = add( new HImage() );
+					endparent();
 
 				this.updateImageInfo();
 
-				endparent()
+				endparent();
 
 			this.makeApplyOkButtons(
 				() => {
@@ -73,7 +73,7 @@ export default class HWindowBackground extends HWindow {
 		})
 		.finally(() => {
 			this.buttonLoadBackground.setDisabled(false);
-		})
+		});
 	}
 
 	updateImageInfo() {
@@ -82,7 +82,7 @@ export default class HWindowBackground extends HWindow {
 			this.paramImage.promise.then(() => {
 				this.divWidth.html.textContent = this.paramImage.image.width;
 				this.divHeight.html.textContent = this.paramImage.image.height;
-			})
+			});
 		} else {
 			this.imgBackground.setSrc(null);
 			this.divWidth.html.textContent = "0";

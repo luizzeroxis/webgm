@@ -1,20 +1,20 @@
-import {parent, endparent, add, HElement, HButton} from "../common/H.js"
+import {parent, endparent, add, HElement, HButton} from "../common/H.js";
 
 export default class HWindow extends HElement {
 	constructor(editor, id) {
-		super("div", {class: "window"})
+		super("div", {class: "window"});
 
 		this.editor = editor;
 		this.id = id;
 
-		parent(this)
+		parent(this);
 
-			parent( add( new HElement("div", {class: "titlebar"}) ) )
-				this.title = add( new HElement("div", {class: "title"}) )
+			parent( add( new HElement("div", {class: "titlebar"}) ) );
+				this.title = add( new HElement("div", {class: "title"}) );
 				this.closeButton = add( new HButton("Close", () => this.close(), "close") );
-				endparent()
+				endparent();
 
-			this.client = add( new HElement("div", {class: "client"}) )
+			this.client = add( new HElement("div", {class: "client"}) );
 
 			endparent();
 
@@ -23,7 +23,7 @@ export default class HWindow extends HElement {
 	}
 
 	makeApplyOkButtons(applyOkFunc, okFunc) {
-		parent( add( new HElement("div") ) )
+		parent( add( new HElement("div") ) );
 
 			this.applyButton = add( new HButton("Apply", () => {
 				applyOkFunc();
@@ -34,7 +34,7 @@ export default class HWindow extends HElement {
 					okFunc();
 			}) );
 
-			endparent()
+			endparent();
 	}
 
 	close() {

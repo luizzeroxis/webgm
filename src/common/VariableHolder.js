@@ -151,7 +151,7 @@ export default class VariableHolder {
 			varInfo = {
 				reference: this.customList[name],
 				list: this.customList,
-			}
+			};
 		}
 
 		if (varInfo.list == this.builtInList) {
@@ -163,7 +163,7 @@ export default class VariableHolder {
 			}
 
 			if (builtIn.direct) {
-				dimensions = (builtIn.dimensions == undefined ? 0 : builtIn.dimensions)
+				dimensions = (builtIn.dimensions == undefined ? 0 : builtIn.dimensions);
 			}
 
 			if (builtIn.type != null) {
@@ -315,12 +315,12 @@ export default class VariableHolder {
 			return {
 				reference: this.builtInList[name],
 				list: this.builtInList,
-			}
+			};
 		} else if (this.customList[name] != undefined) {
 			return {
 				reference: this.customList[name],
 				list: this.customList,
-			}
+			};
 		} else {
 			return null;
 		}
@@ -370,7 +370,7 @@ export default class VariableHolder {
 	saveList(list) {
 		const result = {};
 		for (const name of Object.keys(list)) {
-			result[name] = {}
+			result[name] = {};
 			result[name].dimensions = list[name].dimensions;
 			result[name].value = this.saveValue(list[name].value);
 		}

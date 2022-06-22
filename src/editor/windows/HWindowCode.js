@@ -1,4 +1,4 @@
-import {parent, endparent, add, HRadioInput, uniqueID} from "../../common/H.js"
+import {parent, endparent, add, HRadioInput, uniqueID} from "../../common/H.js";
 import {ProjectObject} from "../../common/Project.js";
 import HCodeEditor from "../HCodeEditor.js";
 import HResourceSelect from "../HResourceSelect.js";
@@ -15,7 +15,7 @@ export default class HWindowCode extends HWindow {
 
 		this.title.html.textContent = this.actionType.description;
 
-		parent(this.client)
+		parent(this.client);
 
 			const appliesToGroup = "_radio_"+uniqueID();
 
@@ -23,15 +23,15 @@ export default class HWindowCode extends HWindow {
 			this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, "Other", (action.appliesTo == -2)) );
 			this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, "Object:", (action.appliesTo >= 0)) );
 
-			this.selectObject = add( new HResourceSelect(this.editor, null, ProjectObject) )
+			this.selectObject = add( new HResourceSelect(this.editor, null, ProjectObject) );
 			if (action.appliesTo >= 0)
 				this.selectObject.setValue(action.appliesTo);
 
-			this.codeEditor = add( new HCodeEditor(action.args[0].value) )
+			this.codeEditor = add( new HCodeEditor(action.args[0].value) );
 
 			this.makeApplyOkButtons(
 				() => {
-					this.apply()
+					this.apply();
 				},
 				() => {
 					this.object.deleteActionWindow(this.id);

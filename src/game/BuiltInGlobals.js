@@ -17,7 +17,7 @@ export default class BuiltInGlobals {
 		directSet(value, index) {
 			this.argument[index] = value;
 		},
-	}
+	};
 
 	// Not yet supported by terser/webpack, this is defined at the end of the file
 	/*
@@ -38,7 +38,7 @@ export default class BuiltInGlobals {
 
 	static argument_relative = {readOnly: true, direct: true,
 		directGet() { return this.argumentRelative; },
-	}
+	};
 
 	// Game play / Instances
 
@@ -47,8 +47,8 @@ export default class BuiltInGlobals {
 	};
 
 	static instance_id = {readOnly: true, direct: true, dimensions: 1,
-		directLength() { return this.instances.length },
-		directGet(index) { return this.instances[index].id },
+		directLength() { return this.instances.length; },
+		directGet(index) { return this.instances[index].id; },
 	};
 
 	// Game play / Timing
@@ -251,7 +251,7 @@ export default class BuiltInGlobals {
 	static background_hspeed = {type: "real", dimensions: 1, default: () => new Array(8).fill(0)};
 	static background_vspeed = {type: "real", dimensions: 1, default: () => new Array(8).fill(0)};
 	static background_blend = {type: "integer", dimensions: 1, default: () => new Array(8).fill(16777215)};
-	static background_alpha = {type: "real", dimensions: 1, default: () => new Array(8).fill(1)}
+	static background_alpha = {type: "real", dimensions: 1, default: () => new Array(8).fill(1)};
 
 	// Game Graphics / Views
 

@@ -186,12 +186,12 @@ export default class HWindowRoom extends HWindow {
 						this.currentPos = snappedPos;
 
 						if (this.radioAdd.getChecked()) {
-							this.movingInstance = this.addInstance(e);
+							this.movingInstance = this.addInstance();
 						} else
 
 						if (this.radioMultiple.getChecked()) {
-							this.movingInstance = this.addInstance(e);
-							this.deleteUnderlying(e);
+							this.movingInstance = this.addInstance();
+							this.deleteUnderlying();
 						} else
 
 						if (this.radioMove.getChecked()) {
@@ -227,8 +227,8 @@ export default class HWindowRoom extends HWindow {
 								const hover = this.getInstanceAtPosition(pos);
 								if (hover != this.movingInstance) {
 									this.currentPos = snappedPos;
-									this.movingInstance = this.addInstance(e);
-									this.deleteUnderlying(e);
+									this.movingInstance = this.addInstance();
+									this.deleteUnderlying();
 								}
 							} else
 
@@ -261,13 +261,13 @@ export default class HWindowRoom extends HWindow {
 						}
 					};
 
-					// is this... right?
-					document.onmouseup = (e) => {
+					// TODO: move this to onAdd, and remove on onRemove
+					document.onmouseup = () => {
 						this.mouseIsDown = false;
 
 						if (this.movingInstance) {
 							if (this.radioAdd.getChecked()) {
-								this.deleteUnderlying(e);
+								this.deleteUnderlying();
 							}
 						}
 
@@ -317,13 +317,13 @@ export default class HWindowRoom extends HWindow {
 
 	onAdd() {
 		this.listeners = this.editor.dispatcher.listen({
-			changeObjectSprite: i => {
+			changeObjectSprite: () => {
 				this.updateCanvasPreview();
 			},
-			changeSpriteOrigin: i => {
+			changeSpriteOrigin: () => {
 				this.updateCanvasPreview();
 			},
-			changeBackgroundImage: i => {
+			changeBackgroundImage: () => {
 				this.updateCanvasPreview();
 			},
 		});
@@ -365,7 +365,7 @@ export default class HWindowRoom extends HWindow {
 		return {x: x, y: y};
 	}
 
-	addInstance(e) {
+	addInstance() {
 		if (this.selectObject.getValue() == -1) return null;
 
 		const i = new ProjectInstance();
@@ -377,7 +377,7 @@ export default class HWindowRoom extends HWindow {
 		return i;
 	}
 
-	deleteUnderlying(e) {
+	deleteUnderlying() {
 		if (this.inputDeleteUnderlying.getChecked()) {
 			for (let i = this.paramInstances.length - 1; i >= 0; i--) {
 				const instance = this.paramInstances[i];

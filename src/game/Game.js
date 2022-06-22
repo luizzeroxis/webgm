@@ -285,7 +285,7 @@ export class Game {
 			sprite.images.forEach((image, imageNumber) => {
 				image.load();
 				promises.push(image.promise
-					.catch(e => {
+					.catch(() => {
 						throw new EngineException("Could not load image " + imageNumber.toString() + " in sprite " + sprite.name);
 					}));
 			});
@@ -300,7 +300,7 @@ export class Game {
 			if (!sound.sound) return;
 			sound.sound.load();
 			promises.push(sound.sound.promise
-				.catch(e => {
+				.catch(() => {
 					throw new EngineException("Could not load audio in sound " + sound.name);
 				}));
 
@@ -316,7 +316,7 @@ export class Game {
 			if (!background.image) return;
 			background.image.load();
 			promises.push(background.image.promise
-				.catch(e => {
+				.catch(() => {
 					throw new EngineException("Could not load image in background " + background.name);
 				}));
 		});
@@ -1388,10 +1388,10 @@ export class Game {
 	// Get state of a key. dict should be key, keyPressed or keyReleased.
 	getKey(key, dict) {
 		if (key == 0) { // vk_nokey
-			return Object.entries(dict).every(([key, value]) => !value);
+			return Object.values(dict).every(value => !value);
 		}
 		if (key == 1) { // vk_anykey
-			return Object.entries(dict).some(([key, value]) => value);
+			return Object.values(dict).some(value => value);
 		}
 		return dict[key];
 	}
@@ -1399,10 +1399,10 @@ export class Game {
 	// Get state of a mouse button. dict should be mouse, mousePressed or mouseReleased.
 	getMouse(numb, dict) {
 		if (numb == -1) { // mb_any
-			return Object.entries(dict).some(([key, value]) => value);
+			return Object.values(dict).some(value => value);
 		}
 		if (numb == 0) { // mb_none
-			return Object.entries(dict).every(([key, value]) => !value);
+			return Object.values(dict).every(value => !value);
 		}
 		return dict[numb];
 	}

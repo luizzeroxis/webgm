@@ -153,7 +153,7 @@ export default class BuiltInGlobals {
 
 	static score = {type: "integer", default: 0};
 
-	static lives = {type: "integer", default: -1, async set(value, previous, indexes) {
+	static lives = {type: "integer", default: -1, async set(value, previous) {
 		if (value <= 0 && previous > 0) {
 			const OTHER_NO_MORE_LIVES = 6;
 			for (const instance of this.instances) {
@@ -163,7 +163,7 @@ export default class BuiltInGlobals {
 		}
 	}};
 
-	static health = {type: "real", default: 100, async set(value, previous, indexes) {
+	static health = {type: "real", default: 100, async set(value, previous) {
 		if (value <= 0 && previous > 0) {
 			const OTHER_NO_MORE_HEALTH = 9;
 			for (const instance of this.instances) {

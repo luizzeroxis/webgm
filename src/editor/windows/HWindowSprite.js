@@ -126,7 +126,7 @@ export default class HWindowSprite extends HWindow {
 			this.paramImages = images;
 			this.updateImageInfo();
 		})
-		.catch(e => {
+		.catch(() => {
 			// this.updateImageInfo();
 			alert("Error when opening image");
 		})

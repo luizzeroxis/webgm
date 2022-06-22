@@ -2,7 +2,7 @@ import {HElement} from "./H.js";
 
 export default class VirtualFileSystem {
 	static openDialog(accept, multiple=false) {
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			const f = new HElement("input");
 			f.html.accept = accept;
 			f.html.type = "file";
@@ -20,7 +20,7 @@ export default class VirtualFileSystem {
 	}
 
 	static readEntireFile(file) {
-		return new Promise((resolve, reject) => {
+		return new Promise((resolve) => {
 			const reader = new FileReader();
 			reader.onload = () => {
 				resolve(reader.result);

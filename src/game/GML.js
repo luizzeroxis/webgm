@@ -102,8 +102,8 @@ export default class GML {
 			Modulo: {_a: 0, _b: 3,
 				_aNode: c => c[0], _bNode: c => c[3]},
 			// Parentheses: 1,
-			Number: function(_integer, _dot, _decimals) { return Number(this.sourceString); },
-			String: function(_0, _string, _1) { return _string.sourceString; },
+			Number: function(/*_integer, _dot, _decimals*/) { return Number(this.sourceString); },
+			String: function(_0, _string/*, _1*/) { return _string.sourceString; },
 			VariableGet: {_variable: 0,
 				_variableNode: c => c[0]},
 		};
@@ -366,23 +366,23 @@ export default class GML {
 			},
 			And: async ({_a, _aNode, _b, _bNode}) => {
 				const a = this.toBool(this.checkIsNumber(await this.interpretASTNode(_a),
-					"Wrong type of arguments for &&.", _a));
+					"Wrong type of arguments for &&.", _aNode));
 				const b = this.toBool(this.checkIsNumber(await this.interpretASTNode(_b),
-					"Wrong type of arguments for &&.", _b));
+					"Wrong type of arguments for &&.", _bNode));
 				return (a && b) ? 1 : 0;
 			},
 			Or: async ({_a, _aNode, _b, _bNode}) => {
 				const a = this.toBool(this.checkIsNumber(await this.interpretASTNode(_a),
-					"Wrong type of arguments for ||.", _a));
+					"Wrong type of arguments for ||.", _aNode));
 				const b = this.toBool(this.checkIsNumber(await this.interpretASTNode(_b),
-					"Wrong type of arguments for ||.", _b));
+					"Wrong type of arguments for ||.", _bNode));
 				return (a || b) ? 1 : 0;
 			},
 			Xor: async ({_a, _aNode, _b, _bNode}) => {
 				const a = this.toBool(this.checkIsNumber(await this.interpretASTNode(_a),
-					"Wrong type of arguments for ^^.", _a));
+					"Wrong type of arguments for ^^.", _aNode));
 				const b = this.toBool(this.checkIsNumber(await this.interpretASTNode(_b),
-					"Wrong type of arguments for ^^.", _b));
+					"Wrong type of arguments for ^^.", _bNode));
 				return (a != b) ? 1 : 0;
 			},
 			Less: async ({_a, _1Node, _b}) => {

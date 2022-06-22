@@ -21,10 +21,10 @@ export default class AbstractAudio {
 	load() {
 		if (this.promise == null) {
 			this.promise = new Promise((resolve, reject) => {
-				this.audio.oncanplaythrough = (e) => { // onload simply isn't a thing. That's great.
+				this.audio.oncanplaythrough = () => { // onload simply isn't a thing. That's great.
 					resolve();
 				};
-				this.audio.onerror = (e) => {
+				this.audio.onerror = () => {
 					reject(new WebGMException("Could not load audio"));
 				};
 			});

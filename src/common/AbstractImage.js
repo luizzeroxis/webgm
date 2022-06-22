@@ -21,10 +21,10 @@ export default class AbstractImage {
 	load() {
 		if (this.promise == null) {
 			this.promise = new Promise((resolve, reject) => {
-				this.image.onload = (e) => {
+				this.image.onload = () => {
 					resolve();
 				};
-				this.image.onerror = (e) => {
+				this.image.onerror = () => {
 					reject(new WebGMException("Could not load image"));
 				};
 			});

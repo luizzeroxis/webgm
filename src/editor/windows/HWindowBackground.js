@@ -67,7 +67,7 @@ export default class HWindowBackground extends HWindow {
 			this.paramImage = image;
 			this.updateImageInfo();
 		})
-		.catch(e => {
+		.catch(() => {
 			// this.updateImageInfo();
 			alert("Error when opening image");
 		})

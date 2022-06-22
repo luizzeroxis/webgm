@@ -26,7 +26,7 @@ export default class BuiltInFunctions {
 		return Math.floor(Math.random() * (Math.floor(x1) - Math.floor(x2) + 1)) + Math.floor(x2);
 	}
 
-	static random_set_seed([a_]) {
+	static random_set_seed([_]) {
 		throw new EngineException("Function random_set_seed is not implemented");
 		// return 0;
 	}
@@ -619,12 +619,14 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 
-	static move_bounce_solid([adv]) {
-		return 0;
+	static move_bounce_solid([_]) {
+		throw new EngineException("Function move_bounce_solid is not implemented");
+		// return 0;
 	}
 
-	static move_bounce_all([adv]) {
-		return 0;
+	static move_bounce_all([_]) {
+		throw new EngineException("Function move_bounce_all is not implemented");
+		// return 0;
 	}
 
 	static move_contact_solid([_]) {
@@ -932,7 +934,7 @@ export default class BuiltInFunctions {
 	// ## Timing
 
 	static async sleep([numb]) {
-		await new Promise((resolve, reject) => {
+		await new Promise((resolve) => {
 			setTimeout(() => resolve(), numb);
 		});
 		return 0;
@@ -1858,10 +1860,9 @@ export default class BuiltInFunctions {
 		// return 0;
 	}
 
-	static draw_set_blend_mode([mode]) {
-		// i dont know how blend modes work lol
-		//this.game.drawBlendModeSrc
-		return 0;
+	static draw_set_blend_mode([]) {
+		throw new EngineException("Function draw_set_blend_mode is not implemented");
+		// return 0;
 	}
 
 	static draw_set_blend_mode_ext([src, dest]) {
@@ -6009,25 +6010,25 @@ export default class BuiltInFunctions {
 
 	/// ### Rooms
 
-	static action_previous_room([transition]) {
+	static action_previous_room([transition]) { // eslint-disable-line no-unused-vars
 		// TODO transition
 		BuiltInFunctions.room_goto_previous.call(this, []);
 		return 0;
 	}
 
-	static action_next_room([transition]) {
+	static action_next_room([transition]) { // eslint-disable-line no-unused-vars
 		// TODO transition
 		BuiltInFunctions.room_goto_next.call(this, []);
 		return 0;
 	}
 
-	static action_current_room([transition]) {
+	static action_current_room([transition]) { // eslint-disable-line no-unused-vars
 		// TODO transition
 		BuiltInFunctions.room_restart.call(this, []);
 		return 0;
 	}
 
-	static action_another_room([newRoom, transition]) {
+	static action_another_room([newRoom, transition]) { // eslint-disable-line no-unused-vars
 		// TODO transition
 		BuiltInFunctions.room_goto.call(this, [newRoom]);
 		return 0;

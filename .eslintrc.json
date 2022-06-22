@@ -26,10 +26,11 @@
         "no-empty-pattern": "off",
         "no-promise-executor-return": "warn",
         "no-self-compare": "warn",
+        "no-undef": ["warn", {"typeof": true}],
         "no-unmodified-loop-condition": "warn",
         "no-unreachable-loop": "warn",
         "no-unused-private-class-members": "warn",
-        "no-unused-vars": ["warn", { "args": "none" }],
+        "no-unused-vars": ["warn", { "argsIgnorePattern": "^_$" }],
         "require-atomic-updates": "warn",
 
         "accessor-pairs": "warn",
@@ -51,6 +52,7 @@
         "no-eval": "warn",
         "no-extend-native": "warn",
         "no-extra-bind": "warn",
+        "no-extra-boolean-cast": ["warn", {"enforceForLogicalOperands": true}],
         "no-extra-label": "warn",
         "no-floating-decimal": "warn",
         "no-implicit-coercion": "warn",
@@ -133,6 +135,13 @@
         "semi-spacing": "warn",
         "semi-style": "warn",
         "space-before-blocks": "warn",
-        "space-before-function-paren": ["warn", {"anonymous": "never", "named": "never", "asyncArrow": "always"}]
+        "space-before-function-paren": ["warn", {"anonymous": "never", "named": "never", "asyncArrow": "always"}],
+        "space-unary-ops": "warn",
+        "switch-colon-spacing": "warn",
+        "template-curly-spacing": "warn",
+        "template-tag-spacing": "warn",
+        "unicode-bom": "warn",
+        "wrap-iife": "warn",
+        "yield-star-spacing": "warn"
     }
 }

@@ -361,7 +361,7 @@ export default class HWindowObject extends HWindow {
 
 	onAdd() {
 		this.listeners = this.editor.dispatcher.listen({
-			changeResourceName: i => {
+			changeResourceName: () => {
 				this.updateSelectEvents();
 				this.updateSelectActions();
 			},
@@ -466,7 +466,7 @@ export default class HWindowObject extends HWindow {
 
 		if (event) {
 			parent(this.selectActions.select);
-				event.actions.forEach((action, i) => {
+				for (const action of event.actions) {
 					const actionType = this.editor.getActionType(action);
 					const listText = this.getActionListText(action, actionType);
 					const hintText = this.getActionHintText(action, actionType);
@@ -477,7 +477,7 @@ export default class HWindowObject extends HWindow {
 						(listText.bold ? "bold " : "") + (listText.italic ? "italic " : ""), // class
 					) );
 					option.html.title = hintText.text;
-				});
+				}
 				endparent();
 
 			this.selectActions.setSelectedIndex(Math.min(index, event.actions.length-1));

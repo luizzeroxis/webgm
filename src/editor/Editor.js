@@ -246,7 +246,7 @@ export default class Editor {
 	}
 
 	// Called from HAreaMenu and runGame
-	stopGame () {
+	stopGame() {
 		if (this.game) {
 			this.game.stepStopAction = async () => await this.game.end();
 		}

@@ -129,6 +129,10 @@
         "padded-blocks": ["warn", "never"],
         "quotes": "warn",
         "rest-spread-spacing": "warn",
-        "semi": "warn"
+        "semi": "warn",
+        "semi-spacing": "warn",
+        "semi-style": "warn",
+        "space-before-blocks": "warn",
+        "space-before-function-paren": ["warn", {"anonymous": "never", "named": "never", "asyncArrow": "always"}]
     }
 }

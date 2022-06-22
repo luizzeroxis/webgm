@@ -3,7 +3,7 @@ import VariableHolder from "../common/VariableHolder.js";
 import BuiltInLocals from "./BuiltInLocals.js";
 
 export default class Instance {
-	constructor (id, x, y, object_index, game) {
+	constructor(id, x, y, object_index, game) {
 		this.id = id;
 		this.object_index = object_index;
 		this.game = game;

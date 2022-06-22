@@ -1,7 +1,7 @@
 //Bunch of random functions that make my life easier
 
 //= Base 64 =
-export function base64ToBlob (base64Data, contentType) {
+export function base64ToBlob(base64Data, contentType) {
 	contentType = contentType || "";
 	const sliceSize = 1024;
 	const byteCharacters = atob(base64Data);

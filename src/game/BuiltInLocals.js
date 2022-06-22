@@ -10,25 +10,25 @@ export default class BuiltInLocals {
 	static xstart = {type: "real", default: 0};
 	static ystart = {type: "real", default: 0};
 
-	static hspeed = {type: "real", default: 0, set (hspeed) {
+	static hspeed = {type: "real", default: 0, set(hspeed) {
 		const vspeed = this.vars.getBuiltIn("vspeed");
 		this.vars.setBuiltIn("speed", Math.hypot(hspeed, vspeed));
 		this.vars.setBuiltIn("direction", Math.atan2(-vspeed, hspeed) * (180 / Math.PI));
 	}};
 
-	static vspeed = {type: "real", default: 0, set (vspeed) {
+	static vspeed = {type: "real", default: 0, set(vspeed) {
 		const hspeed = this.vars.getBuiltIn("hspeed");
 		this.vars.setBuiltIn("speed", Math.hypot(hspeed, vspeed));
 		this.vars.setBuiltIn("direction", Math.atan2(-vspeed, hspeed) * (180 / Math.PI));
 	}};
 
-	static direction = {type: "real", default: 0, set (direction) {
+	static direction = {type: "real", default: 0, set(direction) {
 		const dir = direction * (Math.PI / 180);
 		this.vars.setBuiltIn("hspeed", Math.cos(dir) * this.vars.getBuiltIn("speed"));
 		this.vars.setBuiltIn("vspeed", -Math.sin(dir) * this.vars.getBuiltIn("speed"));
 	}};
 
-	static speed = {type: "real", default: 0, set (speed) {
+	static speed = {type: "real", default: 0, set(speed) {
 		const dir = this.vars.getBuiltIn("direction") * (Math.PI / 180);
 		this.vars.setBuiltIn("hspeed", Math.cos(dir) * speed);
 		this.vars.setBuiltIn("vspeed", -Math.sin(dir) * speed);
@@ -76,7 +76,7 @@ export default class BuiltInLocals {
 
 	static visible = {type: "bool", default: 1};
 
-	static sprite_index = {type: "integer", default: -1, set (sprite_index) {
+	static sprite_index = {type: "integer", default: -1, set(sprite_index) {
 		// Update sprite cache
 		this.sprite = this.game.getResourceById("ProjectSprite", sprite_index);
 		this.vars.setBuiltIn("image_index", 0);

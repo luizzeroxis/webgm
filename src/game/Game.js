@@ -12,7 +12,7 @@ import GML from "./GML.js";
 import Instance from "./Instance.js";
 
 export class Game {
-	constructor (project, canvas, input) {
+	constructor(project, canvas, input) {
 		this.project = new Project(project);
 		this.canvas = canvas;
 		this.input = input;

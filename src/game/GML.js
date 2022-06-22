@@ -163,7 +163,7 @@ export default class GML {
 					}
 				}
 			},
-			DoUntil: async({_code, _conditionExpression, _conditionExpressionNode}) => {
+			DoUntil: async ({_code, _conditionExpression, _conditionExpressionNode}) => {
 				while (true) {
 					try {
 						await this.interpretASTNode(_code);
@@ -452,17 +452,17 @@ export default class GML {
 				this.checkIsSameType(a, b, "Wrong type of arguments to +.", _1Node);
 				return a + b;
 			},
-			Subtract: async({_a, _aNode, _b, _bNode}) => {
+			Subtract: async ({_a, _aNode, _b, _bNode}) => {
 				const a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments to -.", _aNode);
 				const b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments to -.", _bNode);
 				return a - b;
 			},
-			Multiply: async({_a, _aNode, _b, _bNode}) => {
+			Multiply: async ({_a, _aNode, _b, _bNode}) => {
 				const a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments to *.", _aNode);
 				const b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments to *.", _bNode);
 				return a * b;
 			},
-			Divide: async({_a, _aNode, _b, _bNode}) => {
+			Divide: async ({_a, _aNode, _b, _bNode}) => {
 				const a = this.checkIsNumber(await this.interpretASTNode(_a), "Wrong type of arguments to /.", _aNode);
 				const b = this.checkIsNumber(await this.interpretASTNode(_b), "Wrong type of arguments to /.", _bNode);
 				return a / b;

@@ -1,13 +1,16 @@
+/* eslint-env node, commonjs */
+
 const path = require('path');
+
+const ESLintPlugin = require('eslint-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const ESLintPlugin = require('eslint-webpack-plugin');
 
 module.exports = {
 	entry: './src/index.js',
 	output: {
 		path: path.resolve(__dirname, 'dist'),
-		filename: '[name].bundle.js'
+		filename: '[name].bundle.js',
 	},
 	module: {
 		rules: [
@@ -16,8 +19,8 @@ module.exports = {
 				use: [
 					// 'style-loader',
 					// MiniCssExtractPlugin.loader,
-					'css-loader'
-				]
+					'css-loader',
+				],
 			},
 			{
 				test: /\.png$/,
@@ -25,16 +28,16 @@ module.exports = {
 					{
 						loader: 'url-loader',
 						options: {
-							mimetype: 'image/png'
-						}
-					}
-				]
-			}
-		]
+							mimetype: 'image/png',
+						},
+					},
+				],
+			},
+		],
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
-			title: 'webgm'
+			title: 'webgm',
 		}),
 		new MiniCssExtractPlugin(),
 		new ESLintPlugin({
@@ -48,9 +51,9 @@ module.exports = {
 				vendor: {
 					test: /[\\/]node_modules[\\/]/,
 					name: 'vendors',
-					chunks: 'all'
-				}
-			}
-		}
+					chunks: 'all',
+				},
+			},
+		},
 	},
 };

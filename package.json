@@ -7,7 +7,7 @@
 		"start": "webpack serve --open --config webpack.dev.js",
 		"build": "webpack --config webpack.prod.js",
 		"deploy": "git stash --include-untracked && webpack --config webpack.prod.js && gh-pages -d dist && git stash pop",
-		"lint": "eslint src"
+		"lint": "eslint --ignore-path .gitignore ."
 	},
 	"keywords": [],
 	"author": "",

@@ -1,19 +1,19 @@
 {
     "env": {
         "browser": true,
-        "es2021": true
+        "es2022": true
     },
+    "plugins": [
+       "import"
+    ],
     "extends": [
         "eslint:recommended",
         "plugin:import/recommended"
     ],
     "parserOptions": {
-        "ecmaVersion": 13,
+        "ecmaVersion": 2022,
         "sourceType": "module"
     },
-    "plugins": [
-       "import"
-    ],
     "rules": {
         "import/order": ["warn", {"newlines-between": "always", "alphabetize": {"order": "asc", "caseInsensitive": true}}],
 

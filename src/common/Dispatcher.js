@@ -1,5 +1,5 @@
 export default class Dispatcher {
-	
+
 	constructor() {
 		this.listeners = {};
 	}

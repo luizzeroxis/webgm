@@ -22,7 +22,7 @@ export default class HResourceListItem extends HElement {
 				this.htmlIcon.html.height = 16;
 
 				this.updateIcon();
-				
+
 				this.htmlName = add( new HElement('div', {class: 'name'}) )
 				this.htmlName.html.textContent = this.resource.name;
 

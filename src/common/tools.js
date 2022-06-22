@@ -19,7 +19,7 @@ export function base64ToBlob (base64Data, contentType) {
 		}
 		byteArrays[sliceIndex] = new Uint8Array(bytes);
 	}
-	return new Blob(byteArrays, { type: contentType });
+	return new Blob(byteArrays, {type: contentType});
 }
 
 // decimal -> rgb
@@ -61,7 +61,7 @@ export function decimalColorToHSVValues(color) {
 // rgb -> hsv
 export function rgbValuesToHSVValues(rgb) {
 	const {r, g, b} = rgb;
-	
+
 	const max = Math.max(r, g, b);
 	const min = Math.min(r, g, b);
 
@@ -82,7 +82,7 @@ export function rgbValuesToHSVValues(rgb) {
 		h = Math.floor(h);
 	}
 
-	return { h, s, v };
+	return {h, s, v};
 }
 
 // rgb string stuff

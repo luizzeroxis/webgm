@@ -83,6 +83,7 @@ export class Project {
 				this.shape = object.shape;
 			}
 		}
+
 		static getName() { return 'sprite'; }
 		static getScreenName() { return 'Sprite'; }
 		static getScreenGroupName() { return 'Sprites'; }
@@ -103,6 +104,7 @@ export class Project {
 				this.volume = object.volume;
 			}
 		}
+
 		static getName() { return 'sound'; }
 		static getScreenName() { return 'Sound'; }
 		static getScreenGroupName() { return 'Sounds'; }
@@ -137,6 +139,7 @@ export class Project {
 				this.verticalSep = object.verticalSep;
 			}
 		}
+
 		static getName() { return 'background'; }
 		static getScreenName() { return 'Background'; }
 		static getScreenGroupName() { return 'Backgrounds'; }
@@ -164,6 +167,7 @@ export class Project {
 				this.precision = object.precision;
 			}
 		}
+
 		static getName() { return 'path'; }
 		static getScreenName() { return 'Path'; }
 		static getScreenGroupName() { return 'Paths'; }
@@ -196,6 +200,7 @@ export class Project {
 				this.code = object.code;
 			}
 		}
+
 		static getName() { return 'script'; }
 		static getScreenName() { return 'Script'; }
 		static getScreenGroupName() { return 'Scripts'; }
@@ -220,6 +225,7 @@ export class Project {
 				this.italic = object.italic;
 			}
 		}
+
 		static getName() { return 'font'; }
 		static getScreenName() { return 'Font'; }
 		static getScreenGroupName() { return 'Fonts'; }
@@ -238,6 +244,7 @@ export class Project {
 				this.moments = object.moments.map(moment => new ProjectTimelineMoment(moment));
 			}
 		}
+
 		static getName() { return 'timeline'; }
 		static getScreenName() { return 'Time Line'; }
 		static getScreenGroupName() { return 'Time Lines'; }
@@ -282,6 +289,7 @@ export class Project {
 				this.events = object.events.map(event => new ProjectEvent(event));
 			}
 		}
+
 		static getName() { return 'object'; }
 		static getScreenName() { return 'Object'; }
 		static getScreenGroupName() { return 'Objects'; }
@@ -300,9 +308,11 @@ export class Project {
 					this.actions = object.actions.map(action => new ProjectAction(action));
 				}
 			}
+
 			getNameId() {
 				return JSON.stringify({type: this.type, subtype: this.subtype});
 			}
+
 			getName() {
 				return this.type + ' ' + this.subtype;
 			}
@@ -313,15 +323,15 @@ export class Project {
 			if (!object) {
 				this.typeLibrary = null;
 				this.typeId = null;
-				this.typeKind = null;  // normal, begin group, end group, else, exit, repeat, variable, code
+				this.typeKind = null; // normal, begin group, end group, else, exit, repeat, variable, code
 				this.typeExecution = null; // nothing, function, code
 				this.typeExecutionFunction = null;
 				this.typeExecutionCode = null;
 				this.typeIsQuestion = null;
 
-				this.args = [];  // ProjectActionArg
+				this.args = []; // ProjectActionArg
 
-				this.appliesTo = -1;  // -1 = self, -2 = other, 0>= = object index
+				this.appliesTo = -1; // -1 = self, -2 = other, 0>= = object index
 				this.relative = false;
 				this.not = false;
 			} else {
@@ -345,7 +355,7 @@ export class Project {
 		export class ProjectActionArg {
 			constructor(object) {
 				if (!object) {
-					this.kind = null;  // expression, string, both, boolean, menu, color, sprite, sound, background, path, script, object, room, font, timeline
+					this.kind = null; // expression, string, both, boolean, menu, color, sprite, sound, background, path, script, object, room, font, timeline
 					this.value = null;
 				} else {
 					this.kind = object.kind;
@@ -400,6 +410,7 @@ export class Project {
 				this.views = object.views.map(view => new ProjectRoomView(view));
 			}
 		}
+
 		static getName() { return 'room'; }
 		static getScreenName() { return 'Room'; }
 		static getScreenGroupName() { return 'Rooms'; }

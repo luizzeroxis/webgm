@@ -9,7 +9,7 @@ export default class HWindowSprite extends HWindow {
 		super(editor, id);
 
 		this.sprite = sprite;
-		
+
 		this.title.html.textContent = 'Edit Sprite '+sprite.name;
 
 		parent(this.client)
@@ -66,7 +66,7 @@ export default class HWindowSprite extends HWindow {
 
 						const inputOriginX = add( new HNumberInput('X:', paramOriginX, 1, 0) )
 						const inputOriginY = add( new HNumberInput('Y:', paramOriginY, 1, 0) )
-						
+
 						add( new HButton('Center', () => {
 							let w=16, h=16;
 							if (this.paramImages.length > 0) {
@@ -125,14 +125,17 @@ export default class HWindowSprite extends HWindow {
 			images.push(new AbstractImage(file));
 		}
 
-		Promise.all(images.map(x => x.promise)).then(() => {
+		Promise.all(images.map(x => x.promise))
+		.then(() => {
 			this.paramImages = images;
 			this.updateImageInfo();
-		}).catch(e => {
+		})
+		.catch(e => {
 			// this.updateImageInfo();
 			alert("Error when opening image");
 
-		}).finally(() => {
+		})
+		.finally(() => {
 			this.buttonLoadSprite.setDisabled(false);
 		})
 

@@ -3,7 +3,7 @@ import HCodeEditor from '../HCodeEditor.js';
 import HWindow from '../HWindow.js';
 
 export default class HWindowScript extends HWindow {
-	
+
 	constructor(editor, id, script) {
 		super(editor, id);
 

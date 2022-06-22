@@ -15,7 +15,7 @@ export default class HWindowTimeline extends HWindow {
 				parent( add( new HElement('div') ) )
 
 					const inputName = add( new HTextInput('Name:', timeline.name) )
-					
+
 					endparent()
 				endparent()
 

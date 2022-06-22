@@ -35,10 +35,10 @@ export default class HWindowRoom extends HWindow {
 						this.selectObject = add( new HResourceSelect(this.editor, 'Object:', ProjectObject, true) )
 
 						const toolGroup = '_radio_'+uniqueID();
-						this.radioAdd =      add( new HRadioInput(toolGroup, 'Add instance', true) )
+						this.radioAdd = add( new HRadioInput(toolGroup, 'Add instance', true) )
 						this.radioMultiple = add( new HRadioInput(toolGroup, 'Add multiple instances') )
-						this.radioMove =     add( new HRadioInput(toolGroup, 'Move instance') )
-						this.radioDelete =   add( new HRadioInput(toolGroup, 'Delete instance') )
+						this.radioMove = add( new HRadioInput(toolGroup, 'Move instance') )
+						this.radioDelete = add( new HRadioInput(toolGroup, 'Delete instance') )
 
 						this.inputSnapToGrid = add( new HCheckBoxInput('Snap to grid', true) )
 						this.inputDeleteUnderlying = add( new HCheckBoxInput('Delete underlying', false) )
@@ -53,7 +53,7 @@ export default class HWindowRoom extends HWindow {
 						this.inputSpeed = add( new HNumberInput('Speed:', room.speed, 1, 1) )
 
 						endparent()
-					
+
 					parent( this.tabControl.addTab('Backgrounds') )
 
 						this.inputBackgroundColor = add( new HColorInput('Background color:', room.backgroundColor) )
@@ -247,7 +247,7 @@ export default class HWindowRoom extends HWindow {
 							}
 
 							this.updateCanvasPreview();
-							
+
 						}
 
 						this.spanX.html.textContent = snappedPos.x;
@@ -382,7 +382,7 @@ export default class HWindowRoom extends HWindow {
 		i.x = this.currentPos.x;
 		i.y = this.currentPos.y;
 		i.object_index = this.selectObject.getValue();
-		
+
 		this.paramInstances.push(i);
 		return i;
 	}
@@ -488,7 +488,7 @@ export default class HWindowRoom extends HWindow {
 
 		// grid
 		if (this.inputShowGrid.getChecked()) {
-			
+
 			this.ctx.globalCompositeOperation = 'difference';
 			this.ctx.fillStyle = 'white';
 			this.ctx.strokeStyle = 'white';
@@ -564,7 +564,7 @@ export default class HWindowRoom extends HWindow {
 		this.ctx.stroke();
 
 		this.ctx.restore();
-		
+
 	}
 
 }

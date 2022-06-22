@@ -129,19 +129,23 @@ export default class Editor {
 		resource.name = name;
 		this.dispatcher.speak('changeResourceName', resource);
 	}
+
 	changeSpriteImages(sprite, images) {
 		sprite.images = images;
 		this.dispatcher.speak('changeSpriteImages', sprite);
 	}
+
 	changeSpriteOrigin(sprite, originx, originy) {
 		sprite.originx = originx;
 		sprite.originy = originy;
 		this.dispatcher.speak('changeSpriteOrigin', sprite);
 	}
+
 	changeBackgroundImage(background, image) {
 		background.image = image;
 		this.dispatcher.speak('changeBackgroundImage', background);
 	}
+
 	changeObjectSprite(object, sprite) {
 		object.sprite_index = sprite;
 		this.dispatcher.speak('changeObjectSprite', object);
@@ -195,7 +199,7 @@ export default class Editor {
 		.then(blob => {
 			VirtualFileSystem.save(blob, this.projectName+".zip");
 		})
-		
+
 	}
 
 	// Called from HAreaMenu

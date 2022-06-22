@@ -34,6 +34,7 @@ export class HElement {
 		this.children = [];
 
 	}
+
 	onAdd() {}
 	onRemove() {}
 }
@@ -153,6 +154,7 @@ export class HButton extends HElement {
 		super('button', {class: classToAttr(_class)}, text)
 		this.html.addEventListener('click', onClick);
 	}
+
 	setDisabled(disabled) {
 		this.html.disabled = disabled;
 	}
@@ -162,6 +164,7 @@ export class HCanvas extends HElement {
 	constructor(width, height, _class) {
 		super('canvas', {class: classToAttr(_class), width: width, height: height});
 	}
+
 	clear() {
 		// Haxs for cleaning canvas
 		const h = this.html.height;
@@ -178,12 +181,15 @@ export class HLabelAndInput extends HElement {
 			this.input = add( new HElement('input', {id: id, type: type, value: value}) )
 			endparent()
 	}
+
 	getValue() {
 		return this.input.html.value;
 	}
+
 	setValue(value) {
 		this.input.html.value = value;
 	}
+
 	setOnChange(onChange) {
 		this.input.html.addEventListener('change', onChange);
 	}
@@ -204,6 +210,7 @@ export class HMultilineTextInput extends HElement {
 			this.textarea.html.value = value;
 			endparent()
 	}
+
 	getValue() {
 		return this.textarea.html.value;
 	}
@@ -237,18 +244,22 @@ export class HCheckBoxInput extends HElement {
 	constructor(label, checked, _class) {
 		parent( super('div', {class: classToAttr(_class)}) )
 			const id = '_id_' + uniqueID();
-			this.input = add( new HElement('input', {id: id, type: 'checkbox',
+			this.input = add( new HElement('input', {
+				id: id, type: 'checkbox',
 				...(checked ? {checked: 'checked'} : null),
 			}) )
 			this.label = add( new HElement('label', {for: id}, label) )
 			endparent()
 	}
+
 	getChecked() {
 		return this.input.html.checked;
 	}
+
 	setChecked(checked) {
 		this.input.html.checked = checked;
 	}
+
 	setOnChange(onChange) {
 		this.input.html.addEventListener('change', onChange);
 	}
@@ -258,15 +269,18 @@ export class HRadioInput extends HElement {
 	constructor(group, label, checked, _class) {
 		parent( super('div', {class: classToAttr(_class)}) )
 			const id = '_id_' + uniqueID();
-			this.input = add( new HElement('input', {id: id, type: 'radio', name: group,
+			this.input = add( new HElement('input', {
+				id: id, type: 'radio', name: group,
 				...(checked ? {checked: 'checked'} : null),
 			}) )
 			this.label = add( new HElement('label', {for: id}, label) )
 			endparent()
 	}
+
 	getChecked() {
 		return this.input.html.checked;
 	}
+
 	setOnClick(onClick) {
 		this.input.html.addEventListener('click', onClick);
 	}
@@ -280,21 +294,27 @@ export class HSelect extends HElement {
 			this.select = add( new HElement('select', {id: id}) )
 			endparent()
 	}
+
 	getValue() {
 		return this.select.html.value;
 	}
+
 	setValue(value) {
 		this.select.html.value = value;
 	}
+
 	getSelectedIndex() {
 		return this.select.html.selectedIndex;
 	}
+
 	setSelectedIndex(index) {
 		this.select.html.selectedIndex = index;
 	}
+
 	setOnChange(onChange) {
 		this.select.html.addEventListener('change', onChange);
 	}
+
 	removeOptions() {
 		removeChildren(this.select);
 	}
@@ -326,6 +346,7 @@ export class HImage extends HElement {
 	constructor(src, _class) {
 		super('img', {class: classToAttr(_class), ...(src ? {src: src} : null)})
 	}
+
 	setSrc(src) {
 		if (src != null) {
 			this.html.src = src;

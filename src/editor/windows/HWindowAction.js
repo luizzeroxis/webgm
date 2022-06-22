@@ -121,7 +121,7 @@ export default class HWindowAction extends HWindow {
 					this.close();
 				},
 			);
-			
+
 			endparent();
 	}
 
@@ -193,10 +193,10 @@ export default class HWindowAction extends HWindow {
 
 		if (this.actionTypeHasApplyTo) {
 			this.action.appliesTo = (
-				this.radioAppliesToSelf.getChecked() ? -1 :
-				this.radioAppliesToOther.getChecked() ? -2 :
-				this.radioAppliesToObject.getChecked() ? this.selectObject.getValue() :
-				null
+				this.radioAppliesToSelf.getChecked() ? -1
+				: this.radioAppliesToOther.getChecked() ? -2
+				: this.radioAppliesToObject.getChecked() ? this.selectObject.getValue()
+				: null
 			);
 		}
 

@@ -77,31 +77,38 @@ export default class BuiltInGlobals {
 	static current_time = {readOnly: true, direct: true, directGet() {
 		return Math.floor(performance.now());
 	}};
+
 	static current_year = {readOnly: true, direct: true, directGet() {
 		return (new Date()).getFullYear();
 	}};
+
 	static current_month = {readOnly: true, direct: true, directGet() {
 		return (new Date()).getMonth() + 1;
 	}};
+
 	static current_day = {readOnly: true, direct: true, directGet() {
 		return (new Date()).getDate();
 	}};
+
 	static current_weekday = {readOnly: true, direct: true, directGet() {
 		return (new Date()).getDay() + 1;
 	}};
+
 	static current_hour = {readOnly: true, direct: true, directGet() {
 		return (new Date()).getHours();
 	}};
+
 	static current_minute = {readOnly: true, direct: true, directGet() {
 		return (new Date()).getMinutes();
 	}};
+
 	static current_second = {readOnly: true, direct: true, directGet() {
 		return (new Date()).getSeconds();
 	}};
 
 	// Game play / Rooms
-	
-	static room = {direct: true, type: 'integer', 
+
+	static room = {direct: true, type: 'integer',
 		directGet() { return this.room.resource.id; },
 		directSet(value) {
 			// TODO check if room value is changed immediately or only after room change
@@ -112,20 +119,24 @@ export default class BuiltInGlobals {
 	static room_first = {readOnly: true, direct: true, directGet() {
 		return this.project.resources.ProjectRoom[0].id;
 	}};
+
 	static room_last = {readOnly: true, direct: true, directGet() {
 		return this.project.resources.ProjectRoom[this.project.resources.ProjectRoom.length - 1].id;
 	}};
+
 	static room_width = {readOnly: true, direct: true, directGet() {
 		return this.room.width;
 	}};
+
 	static room_height = {readOnly: true, direct: true, directGet() {
 		return this.room.height;
 	}};
-	
+
 	static room_caption = {direct: true, type: 'string',
 		directGet() { return this.room.caption; },
 		directSet(value) { this.room.caption = value; },
 	};
+
 	static room_persistent = {direct: true, type: 'bool',
 		directGet() { return this.room.persistent; },
 		directSet(value) { this.room.persistent = value; },
@@ -175,12 +186,15 @@ export default class BuiltInGlobals {
 	static event_type = {readOnly: true, direct: true, directGet() {
 		return this.currentEvent ? Events.listEventTypes.find(x => x.value == this.currentEvent.type).id : 0;
 	}};
+
 	static event_number = {readOnly: true, direct: true, directGet() {
 		return this.currentEvent ? this.currentEvent.subtype : 0;
 	}};
+
 	static event_object = {readOnly: true, direct: true, directGet() {
 		return this.currentEventInstance ? this.currentEventInstance.object_index : 0;
 	}};
+
 	static event_action = {readOnly: true, direct: true, directGet() {
 		return this.currentEventActionNumber ? this.currentEventActionNumber : 0;
 	}};
@@ -218,11 +232,12 @@ export default class BuiltInGlobals {
 		directGet() { return this.room.backgroundColor; },
 		directSet(value) { this.room.backgroundColor = value; },
 	};
+
 	static background_showcolor = {direct: true, type: 'bool',
 		directGet() { return this.room.backgroundShowColor; },
 		directSet(value) { this.room.backgroundShowColor = value; },
 	};
-	
+
 	static background_visible = {type: 'bool', dimensions: 1, default: () => new Array(8).fill(0)};
 	static background_foreground = {type: 'bool', dimensions: 1, default: () => new Array(8).fill(0)};
 	static background_index = {type: 'integer', dimensions: 1, default: () => new Array(8).fill(-1)};
@@ -269,7 +284,7 @@ export default class BuiltInGlobals {
 	// Files, registry, and executing programs / Executing programs
 
 	static secure_mode = {default: 0, readOnly: true};
-	
+
 }
 
 // Static initialization

@@ -15,8 +15,9 @@
        "import"
     ],
     "rules": {
-        "array-callback-return": "warn",
         "import/order": ["warn", {"newlines-between": "always", "alphabetize": {"order": "asc", "caseInsensitive": true}}],
+
+        "array-callback-return": "warn",
         "no-constant-binary-expression": "warn",
         "no-constant-condition": ["warn", {"checkLoops": false}],
         "no-constructor-return": "warn",
@@ -109,6 +110,20 @@
         "computed-property-spacing": "warn",
         "dot-location": ["warn", "property"],
         "eol-last": ["warn", "never"],
-        "func-call-spacing": "warn"
+        "func-call-spacing": "warn",
+        "generator-star-spacing": "warn",
+        "implicit-arrow-linebreak": "warn",
+        "jsx-quotes": "warn",
+        "keyword-spacing": "warn",
+        "linebreak-style": ["warn", "windows"],
+        "lines-between-class-members": ["warn", "always", {"exceptAfterSingleLine": true}],
+        "new-parens": "warn",
+        "newline-per-chained-call": "warn",
+        "no-extra-parens": ["warn", "functions"],
+        "no-multi-spaces": ["warn", {"exceptions": {"ObjectExpression": true}}],
+        "no-multiple-empty-lines": "warn",
+        "no-trailing-spaces": "warn",
+        "no-whitespace-before-property": "warn",
+        "operator-linebreak": ["warn", "before"]
     }
 }

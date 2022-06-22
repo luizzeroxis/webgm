@@ -17,11 +17,11 @@ export default class Instance {
 		// Set by constructor
 		this.vars.setBuiltIn('x', x);
 		this.vars.setBuiltIn('y', y);
-		
+
 		// Caching of data
 		this.object = game.getResourceById('ProjectObject', this.object_index);
 		// this.sprite = game.getResourceById('ProjectSprite', this.object.sprite_index); // already called when setting sprite_index
-		
+
 		// Inherited from object
 		this.vars.setBuiltInCall('sprite_index', this.object.sprite_index);
 		this.vars.setBuiltIn('visible', this.object.visible ? 1 : 0);

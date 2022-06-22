@@ -117,7 +117,7 @@ export default class GML {
 			If: async ({_conditionExpression, _conditionExpressionNode, _code, _elseStatement}) => {
 				const condition = await this.interpretASTNode(_conditionExpression);
 				this.checkIsNumber(condition, 'Expression expected (condition "' + condition.toString() + '" is not a number)', _conditionExpressionNode);
-				
+
 				if (this.toBool(condition)) {
 					await this.interpretASTNode(_code);
 				} else {
@@ -228,7 +228,7 @@ export default class GML {
 				for (const instance of instances) {
 					this.currentInstance = instance;
 					this.currentOther = previousInstance;
-					
+
 					try {
 						await this.interpretASTNode(_code);
 					} catch (e) {
@@ -515,7 +515,7 @@ export default class GML {
 
 		this.currentInstance = instance;
 		this.currentOther = other;
-		
+
 		const savedVars = this.vars.saveAll();
 		this.vars.clearAll();
 
@@ -555,7 +555,7 @@ export default class GML {
 		return result;
 
 	}
-	
+
 	async builtInFunction(name, instance, other, args, relative=false) {
 
 		const func = BuiltInFunctions[name];

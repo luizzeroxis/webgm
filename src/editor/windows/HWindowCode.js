@@ -48,14 +48,14 @@ export default class HWindowCode extends HWindow {
 	apply() {
 		this.action.args[0].value = this.codeEditor.getValue();
 		this.action.appliesTo = (
-			this.radioAppliesToSelf.getChecked() ? -1 :
-			this.radioAppliesToOther.getChecked() ? -2 :
-			this.radioAppliesToObject.getChecked() ? this.selectObject.getValue() :
-			null
+			this.radioAppliesToSelf.getChecked() ? -1
+			: this.radioAppliesToOther.getChecked() ? -2
+			: this.radioAppliesToObject.getChecked() ? this.selectObject.getValue()
+			: null
 		);
 
 		// Update action in event in object
 		this.object.updateSelectActions();
 	}
-	
+
 }

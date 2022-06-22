@@ -58,7 +58,7 @@ export default class BuiltInLocals {
 	static id = {readOnly: true, direct: true, directGet() {
 		return this.id;
 	}}
-	
+
 	static mask_index = {type: 'integer', default: -1}
 	static solid = {type: 'bool', default: 0}
 	static persistent = {type: 'bool', default: 0}
@@ -106,7 +106,7 @@ export default class BuiltInLocals {
 		if (this.sprite == null) return 0;
 		return this.sprite.originy;
 	}}
-	
+
 	static image_number = {readOnly: true, direct: true, directGet() {
 		if (this.sprite == null) return 0;
 		return this.sprite.images.length;
@@ -152,7 +152,7 @@ export default class BuiltInLocals {
 	}}
 
 	// Unknown
-	
+
 	static image_single = {type: 'real', default: -1, set(image_single) {
 		this.vars.setBuiltIn('image_index', image_single);
 		this.vars.setBuiltIn('image_speed', 0);

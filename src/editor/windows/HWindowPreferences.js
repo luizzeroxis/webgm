@@ -7,7 +7,7 @@ export default class HWindowPreferences extends HWindow {
 		super(editor, id);
 
 		this.title.html.textContent = 'Preferences';
-		
+
 		parent(this.client)
 
 			const selectTheme = add( new HSelectWithOptions('Theme:', [

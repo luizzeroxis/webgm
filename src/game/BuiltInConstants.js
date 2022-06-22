@@ -1,7 +1,7 @@
 export default class BuiltInConstants {
 	static getList() {
 		return {
-			
+
 			// Basic
 			true: 1,
 			false: 0,

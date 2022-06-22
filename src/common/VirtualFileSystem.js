@@ -19,7 +19,7 @@ export default class VirtualFileSystem {
 			}
 			f.html.click();
 		})
-		
+
 	}
 
 	static readEntireFile(file) {
@@ -31,7 +31,7 @@ export default class VirtualFileSystem {
 			};
 			reader.readAsText(file);
 		})
-		
+
 	}
 
 	static save(blob, name) {

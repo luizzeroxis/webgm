@@ -16,6 +16,7 @@ export default class HWindowGame extends HWindow {
 				endparent()
 			endparent()
 	}
+
 	close() {
 		this.userClosed = true;
 		if (this.editor.game) {

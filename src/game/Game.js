@@ -38,7 +38,7 @@ export class Game {
 
 		this.globalVars = null;
 		this.constants = null;
-		
+
 		this.arguments = [];
 		this.argumentRelative = false;
 
@@ -95,12 +95,12 @@ export class Game {
 
 			await this.loadProject();
 			await this.loadFirstRoom();
-			
+
 			this.startMainLoop();
 		} catch (e) {
 			await this.catch(e);
 		}
-		
+
 	}
 
 	// Ends the game properly, calling events and such.
@@ -396,7 +396,7 @@ export class Game {
 				return event.actions.every((action, actionNumber) => {
 
 					if (action.typeKind == 'code') {
-						
+
 						return this.compileGMLAndCache(action.args[0].value, action, matchResult => {
 
 							throw this.makeFatalError({
@@ -525,7 +525,7 @@ export class Game {
 
 			// Run main loop again, after a frame of time has passed.
 			// This means the game will slow down if a loop takes too much time.
-			
+
 			const timeoutStepMinTime = 1000 / this.room.speed;
 
 			const timeoutStepEnd = performance.now();
@@ -586,14 +586,14 @@ export class Game {
 		}
 
 		/*
-			Begin step events 
-			Alarm events 
-			Keyboard, Key press, and Key release events 
-			Mouse events 
-			Normal step events 
-			(now all instances are set to their new positions) 
-			Collision events 
-			End step events 
+			Begin step events
+			Alarm events
+			Keyboard, Key press, and Key release events
+			Mouse events
+			Normal step events
+			(now all instances are set to their new positions)
+			Collision events
+			End step events
 			Draw events
 		*/
 
@@ -830,7 +830,7 @@ export class Game {
 		this.instances = this.instances.filter(instance => instance.exists);
 
 	}
-	
+
 	// Draw all the views of the current room.
 	async drawViews() {
 		// Currently there are no views. But the following should happen for every view.
@@ -866,7 +866,7 @@ export class Game {
 				const drawEvent = this.getEventOfInstance(instance, 'draw');
 
 				if (drawEvent) {
-					await this.doEvent(drawEvent, instance); 
+					await this.doEvent(drawEvent, instance);
 				} else {
 					// No draw event, draw sprite if it has one.
 					if (instance.sprite) {
@@ -1086,7 +1086,7 @@ export class Game {
 					'COMPILATION ERROR in argument '+ argNumber.toString() +'\n' + result.matchResult.message + '\n',
 				);
 			}
-			
+
 			return await this.gml.execute(result.ast, this.currentEventInstance, this.currentEventOther || this.currentEventInstance);
 		}
 		return arg.value;
@@ -1128,7 +1128,7 @@ export class Game {
 			backgroundShowColor: room.drawBackgroundColor,
 			backgroundColor: room.backgroundColor,
 			viewsEnabled: room.enableViews,
-			
+
 			backgrounds: room.backgrounds.map(background => ({
 				visible: background.visibleAtStart,
 				isForeground: background.isForeground,
@@ -1186,7 +1186,7 @@ export class Game {
 	// Create an instance in the room.
 	async instanceCreate(id, x, y, object) {
 		const instance = this.instanceCreateNoEvents(id, x, y, object);
-		
+
 		await this.doEvent(this.getEventOfInstance(instance, 'create'), instance);
 
 		return instance.id;
@@ -1294,10 +1294,10 @@ export class Game {
 		const bY2 = bY1 + bImage.image.height;
 
 		const rectCol = (
-			aX1 <= bX1 + bImage.image.width &&
-			bX1 <= aX1 + aImage.image.width &&
-			aY1 <= bY1 + bImage.image.height &&
-			bY1 <= aY1 + aImage.image.height
+			aX1 <= bX1 + bImage.image.width
+			&& bX1 <= aX1 + aImage.image.width
+			&& aY1 <= bY1 + bImage.image.height
+			&& bY1 <= aY1 + aImage.image.height
 		)
 
 		if (!rectCol) return false;
@@ -1350,10 +1350,10 @@ export class Game {
 		const bImage = b.sprite.images[b.getImageIndex()]
 
 		return (
-			aX1 <= bX1 + bImage.image.width &&
-			bX1 <= aX1 + aImage.image.width &&
-			aY1 <= bY1 + bImage.image.height &&
-			bY1 <= aY1 + aImage.image.height
+			aX1 <= bX1 + bImage.image.width
+			&& bX1 <= aX1 + aImage.image.width
+			&& aY1 <= bY1 + bImage.image.height
+			&& bY1 <= aY1 + aImage.image.height
 		);
 	}
 
@@ -1364,10 +1364,10 @@ export class Game {
 		const instanceImage = instance.sprite.images[instance.getImageIndex()];
 
 		return (
-			point.x >= instanceX &&
-			point.x < instanceX + instanceImage.image.width &&
-			point.y >= instanceY &&
-			point.y < instanceY + instanceImage.image.height
+			point.x >= instanceX
+			&& point.x < instanceX + instanceImage.image.width
+			&& point.y >= instanceY
+			&& point.y < instanceY + instanceImage.image.height
 		);
 	}
 

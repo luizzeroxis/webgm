@@ -15,7 +15,7 @@ export default class HWindowPath extends HWindow {
 				parent( add( new HElement('div') ) )
 
 					const inputName = add( new HTextInput('Name:', path.name) )
-					
+
 					endparent()
 				endparent()
 

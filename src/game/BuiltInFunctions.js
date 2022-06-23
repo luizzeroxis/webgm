@@ -1,5 +1,5 @@
 import {EngineException} from "../common/Exceptions.js";
-import {decimalColorToHSVValues, decimalColorAndAlphaToRGBA, decimalColorToRGB, rgbValuesToDecimalColor, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger, parseNewLineHash} from "../common/tools.js";
+import {decimalToHSV, decimalToHex, decimalToHexAlpha, rgbToDecimal, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger, parseNewLineHash} from "../common/tools.js";
 
 export default class BuiltInFunctions {
 	// this = GML
@@ -1428,7 +1428,7 @@ export default class BuiltInFunctions {
 	// ## Drawing shapes
 
 	static draw_clear([col]) {
-		this.game.ctx.fillStyle = decimalColorToRGB(col);
+		this.game.ctx.fillStyle = decimalToHex(col);
 		this.game.ctx.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
 		return 0;
 	}
@@ -1439,13 +1439,13 @@ export default class BuiltInFunctions {
 	}
 
 	static draw_point([x, y]) {
-		this.game.ctx.fillStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
+		this.game.ctx.fillStyle = decimalToHexAlpha(this.game.drawColor, this.game.drawAlpha);
 		this.game.ctx.fillRect(x, y, 1, 1);
 		return 0;
 	}
 
 	static draw_line([x1, y1, x2, y2]) {
-		this.game.ctx.strokeStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
+		this.game.ctx.strokeStyle = decimalToHexAlpha(this.game.drawColor, this.game.drawAlpha);
 
 		this.game.ctx.save();
 		this.game.ctx.translate(0.5, 0.5);
@@ -1467,8 +1467,8 @@ export default class BuiltInFunctions {
 	}
 
 	static draw_rectangle([x1, y1, x2, y2, outline]) {
-		this.game.ctx.fillStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
-		this.game.ctx.strokeStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
+		this.game.ctx.fillStyle = decimalToHexAlpha(this.game.drawColor, this.game.drawAlpha);
+		this.game.ctx.strokeStyle = decimalToHexAlpha(this.game.drawColor, this.game.drawAlpha);
 
 		if (outline >= 1) {
 			this.game.ctx.save();
@@ -1493,7 +1493,7 @@ export default class BuiltInFunctions {
 	}
 
 	static draw_circle([x, y, r, outline]) {
-		const style = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
+		const style = decimalToHexAlpha(this.game.drawColor, this.game.drawAlpha);
 		this.game.ctx.fillStyle = style;
 		this.game.ctx.strokeStyle = style;
 
@@ -1510,7 +1510,7 @@ export default class BuiltInFunctions {
 	}
 
 	static draw_ellipse([x1, y1, x2, y2, outline]) {
-		const style = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
+		const style = decimalToHexAlpha(this.game.drawColor, this.game.drawAlpha);
 		const x = (x2 - x1) / 2 + x1;
 		const y = (y2 - y1) / 2 + y1;
 
@@ -1594,15 +1594,15 @@ export default class BuiltInFunctions {
 	}
 
 	static color_get_hue([col]) {
-		return decimalColorToHSVValues(col).h;
+		return decimalToHSV(col).h;
 	}
 
 	static color_get_saturation([col]) {
-		return decimalColorToHSVValues(col).s;
+		return decimalToHSV(col).s;
 	}
 
 	static color_get_value([col]) {
-		return decimalColorToHSVValues(col).v;
+		return decimalToHSV(col).v;
 	}
 
 	static merge_color([_]) {
@@ -1612,7 +1612,9 @@ export default class BuiltInFunctions {
 
 	static draw_getpixel([x, y]) {
 		const data = this.game.ctx.getImageData(x, y, 1, 1);
-		return rgbValuesToDecimalColor(data[0], data[1], data[2]);
+		return rgbToDecimal({
+			r: data[0], g: data[1], b: data[2],
+		});
 	}
 
 	static screen_save([_]) {
@@ -1648,7 +1650,7 @@ export default class BuiltInFunctions {
 		y = forceReal(y);
 		string = asString(string);
 
-		this.game.ctx.fillStyle = decimalColorAndAlphaToRGBA(this.game.drawColor, this.game.drawAlpha);
+		this.game.ctx.fillStyle = decimalToHexAlpha(this.game.drawColor, this.game.drawAlpha);
 
 		this.game.ctx.font = this.game.cssFontsCache[this.game.drawFont];
 
@@ -1738,7 +1740,7 @@ export default class BuiltInFunctions {
 	// ## Advanced drawing functions
 
 	static draw_point_color([x, y, col1]) {
-		this.game.ctx.fillStyle = decimalColorToRGB(col1);
+		this.game.ctx.fillStyle = decimalToHex(col1);
 		this.game.ctx.fillRect(x, y, 1, 1);
 		return 0;
 	}

@@ -1,5 +1,6 @@
 import Events from "../common/Events.js";
 import {NonFatalErrorException} from "../common/Exceptions.js";
+import {hexToDecimal, decimalToHex} from "../common/tools.js";
 
 import BuiltInFunctions from "./BuiltInFunctions.js";
 
@@ -137,7 +138,7 @@ export default class BuiltInGlobals {
 	};
 
 	static room_persistent = {direct: true, type: "bool",
-		directGet() { return this.room.persistent; },
+		directGet() { return this.room.persistent ? 1 : 0; },
 		directSet(value) { this.room.persistent = value; },
 	};
 
@@ -216,8 +217,14 @@ export default class BuiltInGlobals {
 
 	// User Interaction / The Mouse
 
-	static mouse_x = {default: 0, readOnly: true};
-	static mouse_y = {default: 0, readOnly: true};
+	static mouse_x = {readOnly: true, direct: true,
+		directGet() { return this.mouseX; },
+	};
+
+	static mouse_y = {readOnly: true, direct: true,
+		directGet() { return this.mouseY; },
+	};
+
 	static mouse_button = {type: "integer", default: 0}; // TODO I think this is an enum
 	static mouse_lastbutton = {type: "integer", default: 0};
 
@@ -231,30 +238,108 @@ export default class BuiltInGlobals {
 	// Game Graphics / Backgrounds
 
 	static background_color = {direct: true, type: "integer",
-		directGet() { return this.room.backgroundColor; },
-		directSet(value) { this.room.backgroundColor = value; },
+		directGet() { return hexToDecimal(this.room.backgroundColor); },
+		directSet(value) { this.room.backgroundColor = decimalToHex(value); },
 	};
 
 	static background_showcolor = {direct: true, type: "bool",
-		directGet() { return this.room.backgroundShowColor; },
+		directGet() { return this.room.backgroundShowColor ? 1 : 0; },
 		directSet(value) { this.room.backgroundShowColor = value; },
 	};
 
-	static background_visible = {type: "bool", dimensions: 1, default: () => new Array(8).fill(0)};
-	static background_foreground = {type: "bool", dimensions: 1, default: () => new Array(8).fill(0)};
-	static background_index = {type: "integer", dimensions: 1, default: () => new Array(8).fill(-1)};
-	static background_x = {type: "real", dimensions: 1, default: () => new Array(8).fill(0)};
-	static background_y = {type: "real", dimensions: 1, default: () => new Array(8).fill(0)};
-	static background_width = {dimensions: 1, default: () => new Array(8).fill(0), readOnly: true};
-	static background_height = {dimensions: 1, default: () => new Array(8).fill(0), readOnly: true};
-	static background_htiled = {type: "bool", dimensions: 1, default: () => new Array(8).fill(1)};
-	static background_vtiled = {type: "bool", dimensions: 1, default: () => new Array(8).fill(1)};
-	static background_xscale = {type: "real", dimensions: 1, default: () => new Array(8).fill(1)};
-	static background_yscale = {type: "real", dimensions: 1, default: () => new Array(8).fill(1)};
-	static background_hspeed = {type: "real", dimensions: 1, default: () => new Array(8).fill(0)};
-	static background_vspeed = {type: "real", dimensions: 1, default: () => new Array(8).fill(0)};
-	static background_blend = {type: "integer", dimensions: 1, default: () => new Array(8).fill(16777215)};
-	static background_alpha = {type: "real", dimensions: 1, default: () => new Array(8).fill(1)};
+	static background_visible = {direct: true, type: "bool", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.room.backgrounds[index].visible ? 1 : 0; },
+		directSet(value, index) { this.room.backgrounds[index].visible = value; },
+	};
+
+	static background_foreground = {direct: true, type: "bool", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.room.backgrounds[index].isForeground ? 1 : 0; },
+		directSet(value, index) { this.room.backgrounds[index].isForeground = value; },
+	};
+
+	static background_index = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.room.backgrounds[index].backgroundIndex; },
+		directSet(value, index) { this.room.backgrounds[index].backgroundIndex = value; },
+	};
+
+	static background_x = {direct: true, type: "real", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.room.backgrounds[index].x; },
+		directSet(value, index) { this.room.backgrounds[index].x = value; },
+	};
+
+	static background_y = {direct: true, type: "real", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.room.backgrounds[index].y; },
+		directSet(value, index) { this.room.backgrounds[index].y = value; },
+	};
+
+	static background_width = {readOnly: true, direct: true, dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) {
+			const background = this.game.getResourceById("ProjectBackground", this.room.backgrounds[index]);
+			return background?.image.image.width ?? 0;
+		},
+	};
+
+	static background_height = {readOnly: true, direct: true, dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) {
+			const background = this.game.getResourceById("ProjectBackground", this.room.backgrounds[index]);
+			return background?.image.image.height ?? 0;
+		},
+	};
+
+	static background_htiled = {direct: true, type: "bool", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.room.backgrounds[index].tileHorizontally ? 1 : 0; },
+		directSet(value, index) { this.room.backgrounds[index].tileHorizontally = value; },
+	};
+
+	static background_vtiled = {direct: true, type: "bool", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.room.backgrounds[index].tileVertically ? 1 : 0; },
+		directSet(value, index) { this.room.backgrounds[index].tileVertically = value; },
+	};
+
+	static background_xscale = {direct: true, type: "real", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.room.backgrounds[index].xScale; },
+		directSet(value, index) { this.room.backgrounds[index].xScale = value; },
+	};
+
+	static background_yscale = {direct: true, type: "real", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.room.backgrounds[index].yScale; },
+		directSet(value, index) { this.room.backgrounds[index].yScale = value; },
+	};
+
+	static background_hspeed = {direct: true, type: "real", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.room.backgrounds[index].horizontalSpeed; },
+		directSet(value, index) { this.room.backgrounds[index].horizontalSpeed = value; },
+	};
+
+	static background_vspeed = {direct: true, type: "real", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.room.backgrounds[index].verticalSpeed; },
+		directSet(value, index) { this.room.backgrounds[index].verticalSpeed = value; },
+	};
+
+	static background_blend = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.room.backgrounds[index].blend; },
+		directSet(value, index) { this.room.backgrounds[index].blend = value; },
+	};
+
+	static background_alpha = {direct: true, type: "real", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.room.backgrounds[index].alpha; },
+		directSet(value, index) { this.room.backgrounds[index].alpha = value; },
+	};
 
 	// Game Graphics / Views
 

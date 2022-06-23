@@ -222,9 +222,6 @@ export class Game {
 			const rect = this.input.getBoundingClientRect();
 			this.mouseX = Math.floor(Math.max(0, Math.min(e.clientX - rect.left, this.room.width || 0)));
 			this.mouseY = Math.floor(Math.max(0, Math.min(e.clientY - rect.top, this.room.height || 0)));
-
-			this.globalVars.setBuiltIn("mouse_x", this.mouseX);
-			this.globalVars.setBuiltIn("mouse_y", this.mouseY);
 		};
 		this.input.addEventListener("mousemove", this.mouseMoveHandler);
 
@@ -852,7 +849,7 @@ export class Game {
 		// Draw mouse cursor
 
 		if (this.cursorSprite) {
-			this.drawSprite(this.cursorSprite, this.cursorImageIndex, this.globalVars.getBuiltIn("mouse_x"), this.globalVars.getBuiltIn("mouse_y"));
+			this.drawSprite(this.cursorSprite, this.cursorImageIndex, this.mouseX, this.mouseY);
 			this.cursorImageIndex = ((++this.cursorImageIndex) % this.cursorSprite.images.length);
 		}
 	}
@@ -1094,9 +1091,14 @@ export class Game {
 				tileVertically: background.tileVertically,
 				x: background.x,
 				y: background.y,
-				stretch: background.stretch,
+				stretch: background.stretch, // TODO check if is the same as xscale and yscale
 				horizontalSpeed: background.horizontalSpeed,
 				verticalSpeed: background.verticalSpeed,
+
+				xScale: 1, // TODO
+				yScale: 1, // TODO
+				blend: 16777215, // TODO
+				alpha: 1, // TODO
 			})),
 
 			// tiles

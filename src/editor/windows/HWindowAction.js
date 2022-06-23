@@ -1,6 +1,6 @@
 import {parent, endparent, add, HElement, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, uniqueID} from "../../common/H.js";
 import {ProjectObject} from "../../common/Project.js";
-import {parseArrowString, stringifyArrowValues, decimalColorToHexColor, hexColorToDecimalColor} from "../../common/tools.js";
+import {parseArrowString, stringifyArrowValues, decimalToHex, hexToDecimal} from "../../common/tools.js";
 import HResourceSelect from "../HResourceSelect.js";
 import HWindow from "../HWindow.js";
 
@@ -162,9 +162,9 @@ export default class HWindowAction extends HWindow {
 	}
 
 	makeColorInterface(name, value) {
-		const input = add( new HColorInput(name, decimalColorToHexColor(value)) );
+		const input = add( new HColorInput(name, decimalToHex(value)) );
 		return {
-			getValue: () => hexColorToDecimalColor(input.getValue()),
+			getValue: () => hexToDecimal(input.getValue()),
 		};
 	}
 

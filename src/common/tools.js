@@ -23,7 +23,7 @@ export function base64ToBlob(base64Data, contentType) {
 }
 
 // decimal -> rgb
-export function decimalColorToRGBValues(color) {
+export function decimalToRGB(color) {
 	return {
 		r: color % 256,
 		g: Math.floor(color % (256*256) / 256),
@@ -32,13 +32,13 @@ export function decimalColorToRGBValues(color) {
 }
 
 // rgb -> decimal
-export function rgbValuesToDecimalColor(rgb) {
+export function rgbToDecimal(rgb) {
 	return rgb.r + rgb.g * 256 + rgb.b * 256*256;
 }
 
 // decimal -> hex
-export function decimalColorToHexColor(color) {
-	const {r, g, b} = decimalColorToRGBValues(color);
+export function decimalToHex(color) {
+	const {r, g, b} = decimalToRGB(color);
 	const hr = r.toString(16).padStart(2, "0");
 	const hg = g.toString(16).padStart(2, "0");
 	const hb = b.toString(16).padStart(2, "0");
@@ -46,20 +46,20 @@ export function decimalColorToHexColor(color) {
 }
 
 // hex -> decimal
-export function hexColorToDecimalColor(hex) {
+export function hexToDecimal(hex) {
 	const r = parseInt(hex.substr(1+2*0, 2), 16);
 	const g = parseInt(hex.substr(1+2*1, 2), 16);
 	const b = parseInt(hex.substr(1+2*2, 2), 16);
-	return rgbValuesToDecimalColor({r, g, b});
+	return rgbToDecimal({r, g, b});
 }
 
 // decimal -> hsv
-export function decimalColorToHSVValues(color) {
-	return rgbValuesToHSVValues(decimalColorToRGBValues(color));
+export function decimalToHSV(color) {
+	return rgbToHSV(decimalToRGB(color));
 }
 
 // rgb -> hsv
-export function rgbValuesToHSVValues(rgb) {
+export function rgbToHSV(rgb) {
 	const {r, g, b} = rgb;
 
 	const max = Math.max(r, g, b);
@@ -87,14 +87,8 @@ export function rgbValuesToHSVValues(rgb) {
 
 // rgb string stuff
 
-export function decimalColorToRGB(color) {
-	const c = decimalColorToRGBValues(color);
-	return "rgb("+c.r+","+c.g+","+c.b+")";
-}
-
-export function decimalColorAndAlphaToRGBA(color, alpha) {
-	const c = decimalColorToRGBValues(color);
-	return "rgba("+c.r+","+c.g+","+c.b+","+alpha+")";
+export function decimalToHexAlpha(color, alpha) {
+	return decimalToHex(color) + Math.round(alpha * 255).toString(16).padStart(2, "0");
 }
 
 export function makeCSSFont(family, size, bold, italic) {
@@ -155,7 +149,7 @@ export function forceInteger(value) {
 }
 
 export function forceBool(value) {
-	return (forceReal(value) > 0.5) ? 1 : 0;
+	return (forceReal(value) > 0.5);
 }
 
 export function forceUnit(value) {

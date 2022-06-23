@@ -1,19 +1,50 @@
 export default class Events {
 	static listEventTypes = [
-		{id:  0, value: "create",     name: "Create",      getFullName: () => "Create"},
-		{id:  1, value: "destroy",    name: "Destroy",     getFullName: () => "Destroy"},
-		{id:  3, value: "step",       name: "Step",        getFullName: (subtype) => Events.listStepSubtypes.find(x => x.value == subtype).name},
-		{id:  2, value: "alarm",      name: "Alarm",       getFullName: (subtype) => "Alarm "+subtype},
-		{id:  5, value: "keyboard",   name: "Keyboard",    getFullName: (subtype) => "Keyboard "+subtype},
-		{id:  6, value: "mouse",      name: "Mouse",       getFullName: (subtype) => Events.listMouseSubtypes.find(x => x.value == subtype).name},
-		{id:  4, value: "collision",  name: "Collision",   getFullName: (subtype, project) => {
-			const object = project.resources.ProjectObject.find(x => x.id == subtype);
-			return "Collision with " + (object ? object.name : "<undefined>");
-		}},
-		{id:  7, value: "other",      name: "Other",       getFullName: (subtype) => Events.listOtherSubtypes.find(x => x.value == subtype).name},
-		{id:  8, value: "draw",       name: "Draw",        getFullName: () => "Draw"},
-		{id:  9, value: "keypress",   name: "Key press",   getFullName: (subtype) => "Key press"+subtype},
-		{id: 10, value: "keyrelease", name: "Key release", getFullName: (subtype) => "Key release"+subtype},
+		{
+			id: 0, value: "create", name: "Create",
+			getFullName: () => "Create",
+		},
+		{
+			id: 1, value: "destroy", name: "Destroy",
+			getFullName: () => "Destroy",
+		},
+		{
+			id: 3, value: "step", name: "Step",
+			getFullName: subtype => Events.listStepSubtypes.find(x => x.value == subtype).name,
+		},
+		{
+			id: 2, value: "alarm", name: "Alarm",
+			getFullName: subtype => "Alarm "+subtype,
+		},
+		{
+			id: 5, value: "keyboard", name: "Keyboard",
+			getFullName: subtype => Events.listKeyboardSubtypes.find(x => x.value == subtype).name,
+		},
+		{
+			id: 6, value: "mouse", name: "Mouse",
+			getFullName: subtype => Events.listMouseSubtypes.find(x => x.value == subtype).name,
+		},
+		{
+			id: 4, value: "collision", name: "Collision",
+			getFullName: (subtype, project) => "Collision with "
+				+ (project.resources.ProjectObject.find(x => x.id == subtype)?.name ?? "<undefined>"),
+		},
+		{
+			id: 7, value: "other", name: "Other",
+			getFullName: subtype => Events.listOtherSubtypes.find(x => x.value == subtype).name,
+		},
+		{
+			id: 8, value: "draw", name: "Draw",
+			getFullName: () => "Draw",
+		},
+		{
+			id: 9, value: "keypress", name: "Key press",
+			getFullName: subtype => "press " + Events.listKeyboardSubtypes.find(x => x.value == subtype).name,
+		},
+		{
+			id: 10, value: "keyrelease", name: "Key release",
+			getFullName: subtype => "release " + Events.listKeyboardSubtypes.find(x => x.value == subtype).name,
+		},
 	];
 
 	static listStepSubtypes = [
@@ -22,8 +53,99 @@ export default class Events {
 		{id: 2, value: "end", name: "End step"},
 	];
 
-	static listMouseSubtypes = [
+	static listKeyboardSubtypes = [
+		{id: 37, value: 37, name: "<Left>"},
+		{id: 39, value: 39, name: "<Right>"},
+		{id: 38, value: 38, name: "<Up>"},
+		{id: 40, value: 40, name: "<Down>"},
 
+		{id: 17, value: 17, name: "<Ctrl>"},
+		{id: 18, value: 18, name: "<Alt>"},
+		{id: 16, value: 16, name: "<Shift>"},
+		{id: 32, value: 32, name: "<Space>"},
+		{id: 13, value: 13, name: "<Enter>"},
+
+		{id: 96, value: 96, name: "<Keypad 0>"},
+		{id: 97, value: 97, name: "<Keypad 1>"},
+		{id: 98, value: 98, name: "<Keypad 2>"},
+		{id: 99, value: 99, name: "<Keypad 3>"},
+		{id: 100, value: 100, name: "<Keypad 4>"},
+		{id: 101, value: 101, name: "<Keypad 5>"},
+		{id: 102, value: 102, name: "<Keypad 6>"},
+		{id: 103, value: 103, name: "<Keypad 7>"},
+		{id: 104, value: 104, name: "<Keypad 8>"},
+		{id: 105, value: 105, name: "<Keypad 9>"},
+		{id: 111, value: 111, name: "<Keypad />"},
+		{id: 106, value: 106, name: "<Keypad *>"},
+		{id: 109, value: 109, name: "<Keypad ->"},
+		{id: 107, value: 107, name: "<Keypad +>"},
+		{id: 110, value: 110, name: "<Keypad .>"},
+
+		{id: 48, value: 48, name: "0"},
+		{id: 49, value: 49, name: "1"},
+		{id: 50, value: 50, name: "2"},
+		{id: 51, value: 51, name: "3"},
+		{id: 52, value: 52, name: "4"},
+		{id: 53, value: 53, name: "5"},
+		{id: 54, value: 54, name: "6"},
+		{id: 55, value: 55, name: "7"},
+		{id: 56, value: 56, name: "8"},
+		{id: 57, value: 57, name: "9"},
+
+		{id: 65, value: 65, name: "A"},
+		{id: 66, value: 66, name: "B"},
+		{id: 67, value: 67, name: "C"},
+		{id: 68, value: 68, name: "D"},
+		{id: 69, value: 69, name: "E"},
+		{id: 70, value: 70, name: "F"},
+		{id: 71, value: 71, name: "G"},
+		{id: 72, value: 72, name: "H"},
+		{id: 73, value: 73, name: "I"},
+		{id: 74, value: 74, name: "J"},
+		{id: 75, value: 75, name: "K"},
+		{id: 76, value: 76, name: "L"},
+		{id: 77, value: 77, name: "M"},
+		{id: 78, value: 78, name: "N"},
+		{id: 79, value: 79, name: "O"},
+		{id: 80, value: 80, name: "P"},
+		{id: 81, value: 81, name: "Q"},
+		{id: 82, value: 82, name: "R"},
+		{id: 83, value: 83, name: "S"},
+		{id: 84, value: 84, name: "T"},
+		{id: 85, value: 85, name: "U"},
+		{id: 86, value: 86, name: "V"},
+		{id: 87, value: 87, name: "W"},
+		{id: 88, value: 88, name: "X"},
+		{id: 99, value: 99, name: "Y"},
+		{id: 90, value: 90, name: "Z"},
+
+		{id: 112, value: 112, name: "F1"},
+		{id: 113, value: 113, name: "F2"},
+		{id: 114, value: 114, name: "F3"},
+		{id: 115, value: 115, name: "F4"},
+		{id: 116, value: 116, name: "F5"},
+		{id: 117, value: 117, name: "F6"},
+		{id: 118, value: 118, name: "F7"},
+		{id: 119, value: 119, name: "F8"},
+		{id: 120, value: 120, name: "F9"},
+		{id: 121, value: 121, name: "F10"},
+		{id: 122, value: 122, name: "F11"},
+		{id: 123, value: 123, name: "F12"},
+
+		{id: 8, value: 8, name: "<Backspace>"},
+		{id: 27, value: 27, name: "<Escape>"},
+		{id: 36, value: 36, name: "<Home>"},
+		{id: 35, value: 35, name: "<End>"},
+		{id: 33, value: 33, name: "<Page up>"},
+		{id: 34, value: 34, name: "<Page down>"},
+		{id: 46, value: 46, name: "<Delete>"},
+		{id: 45, value: 45, name: "<Insert>"},
+
+		{id: 0, value: 0, name: "<No key>"},
+		{id: 1, value: 1, name: "<Any key>"},
+	];
+
+	static listMouseSubtypes = [
 		{id: 0, value: 0, kind: "button", button: 1, when: "mouse", name: "Left Button"},
 		{id: 1, value: 1, kind: "button", button: 2, when: "mouse", name: "Right Button"},
 		{id: 2, value: 2, kind: "button", button: 3, when: "mouse", name: "Middle Button"},

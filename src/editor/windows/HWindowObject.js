@@ -436,7 +436,7 @@ export default class HWindowObject extends HWindow {
 			} else
 
 			if (eventType == "keyboard" || eventType == "keypress" || eventType == "keyrelease") {
-				const subtypeElement = add( new HNumberInput("Key:", 0, 1, 0) );
+				const subtypeElement = add( new HSelectWithOptions("Key:", Events.listKeyboardSubtypes) );
 				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
 			} else
 

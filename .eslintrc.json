@@ -121,7 +121,6 @@
         "linebreak-style": ["warn", "windows"],
         "lines-between-class-members": ["warn", "always", {"exceptAfterSingleLine": true}],
         "new-parens": "warn",
-        "newline-per-chained-call": "warn",
         "no-extra-parens": ["warn", "functions"],
         "no-multi-spaces": ["warn", {"exceptions": {"ObjectExpression": true}}],
         "no-multiple-empty-lines": "warn",

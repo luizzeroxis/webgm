@@ -6295,13 +6295,12 @@ export default class BuiltInFunctions {
 	// ### Score
 
 	static action_set_score([newScore], relative) {
-		newScore = (!relative ? newScore : this.game.globalVars.getBuiltIn("score") + newScore);
-		this.game.globalVars.setBuiltIn("score", newScore);
+		this.game.score = (!relative ? newScore : this.game.score + newScore);
 		return 0;
 	}
 
 	static action_if_score([value, operation]) {
-		const score = this.game.globalVars.getBuiltIn("score");
+		const score = this.game.score;
 		switch (operation) {
 			case 0: // equal to
 				return (score === value) ? 1 : 0;
@@ -6331,13 +6330,12 @@ export default class BuiltInFunctions {
 	// ### Lives
 
 	static action_set_life([newLives], relative) {
-		newLives = (!relative ? newLives : this.game.globalVars.getBuiltIn("lives") + newLives);
-		this.game.globalVars.setBuiltInCall("lives", newLives);
+		this.game.setLives(!relative ? newLives : this.game.lives + newLives);
 		return 0;
 	}
 
 	static action_if_life([value, operation]) {
-		const lives = this.game.globalVars.getBuiltIn("lives");
+		const lives = this.game.lives;
 		switch (operation) {
 			case 0: // equal to
 				return (lives === value) ? 1 : 0;
@@ -6362,13 +6360,12 @@ export default class BuiltInFunctions {
 	// ### Health
 
 	static action_set_health([value], relative) {
-		value = (!relative ? value : this.game.globalVars.getBuiltIn("health") + value);
-		this.game.globalVars.setBuiltInCall("health", value);
+		this.game.setHealth(!relative ? value : this.game.health + value);
 		return 0;
 	}
 
 	static action_if_health([value, operation]) {
-		const health = this.game.globalVars.getBuiltIn("health");
+		const health = this.game.health;
 		switch (operation) {
 			case 0: // equal to
 				return (health === value) ? 1 : 0;

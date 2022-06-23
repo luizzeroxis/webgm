@@ -80,6 +80,10 @@ export class Game {
 
 		this.audioContext = null;
 		this.sounds = new Map();
+
+		this.score = 0;
+		this.lives = -1;
+		this.health = 100;
 	}
 
 	// Starts the game.
@@ -1379,6 +1383,32 @@ export class Game {
 		} else {
 			if (document.fullscreenElement) {
 				await document.exitFullscreen();
+			}
+		}
+	}
+
+	setLives(value) {
+		const previous = this.lives;
+		this.lives = value;
+
+		if (value <= 0 && previous > 0) {
+			const OTHER_NO_MORE_LIVES = 6;
+			for (const instance of this.instances) {
+				if (!instance.exists) continue;
+				await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_NO_MORE_LIVES), instance);
+			}
+		}
+	}
+
+	setHealth(value) {
+		const previous = this.health;
+		this.health = value;
+
+		if (value <= 0 && previous > 0) {
+			const OTHER_NO_MORE_HEALTH = 9;
+			for (const instance of this.instances) {
+				if (!instance.exists) continue;
+				await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_NO_MORE_HEALTH), instance);
 			}
 		}
 	}

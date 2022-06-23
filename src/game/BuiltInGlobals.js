@@ -152,27 +152,20 @@ export default class BuiltInGlobals {
 
 	// Game play / Score
 
-	static score = {type: "integer", default: 0};
+	static score = {direct: true, type: "integer"
+		directGet() { return this.score; },
+		directSet(value) { this.score = value; },
+	};
 
-	static lives = {type: "integer", default: -1, async set(value, previous) {
-		if (value <= 0 && previous > 0) {
-			const OTHER_NO_MORE_LIVES = 6;
-			for (const instance of this.instances) {
-				if (!instance.exists) continue;
-				await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_NO_MORE_LIVES), instance);
-			}
-		}
-	}};
+	static lives = {direct: true, type: "integer",
+		directGet() { return this.lives; },
+		directSet(value) { this.setLives(value); },
+	};
 
-	static health = {type: "real", default: 100, async set(value, previous) {
-		if (value <= 0 && previous > 0) {
-			const OTHER_NO_MORE_HEALTH = 9;
-			for (const instance of this.instances) {
-				if (!instance.exists) continue;
-				await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_NO_MORE_HEALTH), instance);
-			}
-		}
-	}};
+	static health = {direct: true, type: "real",
+		directGet() { return this.health; },
+		directSet(value) { this.setHealth(value); },
+	};
 
 	static show_score = {type: "bool", default: 1};
 	static show_lives = {type: "bool", default: 0};

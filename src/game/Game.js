@@ -1272,20 +1272,25 @@ export class Game {
 		const aData = offscreenCtx.getImageData(0, 0, aImage.image.width, aImage.image.height);
 		const bData = offscreenCtx.getImageData(aImage.image.width, 0, bImage.image.width, bImage.image.height);
 
+		// Get the 'global' (in relation to room) rect in the intersection between the two rects.
 		const gX1 = Math.max(aX1, bX1);
 		const gY1 = Math.max(aY1, bY1);
 		const gX2 = Math.min(aX2, bX2);
 		const gY2 = Math.min(aY2, bY2);
 
+		// Loop through all pixels in that rect.
 		for (let gX = gX1; gX < gX2; ++gX)
 		for (let gY = gY1; gY < gY2; ++gY) {
-			const aDataX = gX - aX1;
-			const aDataY = gY - aY1;
+			// Here we undo all transformations made to the sprite.
+			// It's rounded down to the nearest pixel.
+			const aDataX = Math.floor(gX - aX1);
+			const aDataY = Math.floor(gY - aY1);
+			// TODO this may be out of bounds.
 			const aCol = (aData.data[(aDataY * aData.width + aDataX) * 4 + 3]) >= (255-a.sprite.alphaTolerance);
 			if (!aCol) continue;
 
-			const bDataX = gX - bX1;
-			const bDataY = gY - bY1;
+			const bDataX = Math.floor(gX - bX1);
+			const bDataY = Math.floor(gY - bY1);
 			const bCol = (bData.data[(bDataY * bData.width + bDataX) * 4 + 3]) >= (255-b.sprite.alphaTolerance);
 			if (bCol) {
 				return true;

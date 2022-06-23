@@ -152,19 +152,19 @@ export default class BuiltInGlobals {
 
 	// Game play / Score
 
-	static score = {direct: true, type: "integer"
+	static score = {direct: true, type: "integer",
 		directGet() { return this.score; },
 		directSet(value) { this.score = value; },
 	};
 
 	static lives = {direct: true, type: "integer",
 		directGet() { return this.lives; },
-		directSet(value) { this.setLives(value); },
+		async directSet(value) { await this.setLives(value); },
 	};
 
 	static health = {direct: true, type: "real",
 		directGet() { return this.health; },
-		directSet(value) { this.setHealth(value); },
+		async directSet(value) { await this.setHealth(value); },
 	};
 
 	static show_score = {type: "bool", default: 1};

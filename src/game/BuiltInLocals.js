@@ -50,13 +50,13 @@ export default class BuiltInLocals {
 
 	// Game play / Instances
 
-	static object_index = {readOnly: true, direct: true, directGet() {
-		return this.object_index;
-	}};
+	static object_index = {readOnly: true, direct: true,
+		directGet() { return this.object_index; },
+	};
 
-	static id = {readOnly: true, direct: true, directGet() {
-		return this.id;
-	}};
+	static id = {readOnly: true, direct: true,
+		directGet() { return this.id; },
+	};
 
 	static mask_index = {type: "integer", default: -1};
 	static solid = {type: "bool", default: 0};

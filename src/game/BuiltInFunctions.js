@@ -6329,8 +6329,8 @@ export default class BuiltInFunctions {
 
 	// ### Lives
 
-	static action_set_life([newLives], relative) {
-		this.game.setLives(!relative ? newLives : this.game.lives + newLives);
+	static async action_set_life([newLives], relative) {
+		await this.game.setLives(!relative ? newLives : this.game.lives + newLives);
 		return 0;
 	}
 
@@ -6359,8 +6359,8 @@ export default class BuiltInFunctions {
 
 	// ### Health
 
-	static action_set_health([value], relative) {
-		this.game.setHealth(!relative ? value : this.game.health + value);
+	static async action_set_health([value], relative) {
+		await this.game.setHealth(!relative ? value : this.game.health + value);
 		return 0;
 	}
 

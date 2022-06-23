@@ -867,7 +867,7 @@ export class Game {
 		const image = background.image;
 		if (!image) return false;
 
-		// TODO stretch, horizontalSpeed, verticalSpeed
+		// TODO stretch, horizontalSpeed, verticalSpeed, xScale, yScale, blend, alpha
 
 		let xStart = roomBackground.x;
 		let yStart = roomBackground.y;
@@ -1387,7 +1387,7 @@ export class Game {
 		}
 	}
 
-	setLives(value) {
+	async setLives(value) {
 		const previous = this.lives;
 		this.lives = value;
 
@@ -1400,7 +1400,7 @@ export class Game {
 		}
 	}
 
-	setHealth(value) {
+	async setHealth(value) {
 		const previous = this.health;
 		this.health = value;
 

@@ -15,25 +15,24 @@ export default class HWindowSound extends HWindow {
 			parent( add( new HElement("div", {class: "grid-resource resource-sound"}) ) );
 				parent( add( new HElement("div") ) );
 
-					let paramSound = sound.sound;
+					this.paramSound = sound.sound;
 
 					const inputName = add( new HTextInput("Name:", sound.name) );
 
-					add( new HButton("Load Sound", () => {
+					this.buttonLoadSound = add( new HButton("Load Sound", () => {
 						VirtualFileSystem.openDialog("audio/*")
 						.then(file => {
-							paramSound = new AbstractAudio(file);
-							audioPreview.html.src = paramSound.src;
+							this.loadSoundFromFile(file);
 						});
 					}) );
 
 					parent( add( new HElement("div", {class: "preview"}) ) );
 
-						const audioPreview = add( new HElement("audio") );
-						audioPreview.html.controls = true;
-						audioPreview.html.loop = true;
-						if (paramSound) {
-							audioPreview.html.src = paramSound.src;
+						this.audioPreview = add( new HElement("audio") );
+						this.audioPreview.html.controls = true;
+						this.audioPreview.html.loop = true;
+						if (this.paramSound) {
+							this.audioPreview.html.src = this.paramSound.src;
 						}
 						endparent();
 
@@ -45,12 +44,30 @@ export default class HWindowSound extends HWindow {
 			this.makeApplyOkButtons(
 				() => {
 					this.editor.changeResourceName(sound, inputName.getValue());
-					sound.sound = paramSound;
+					sound.sound = this.paramSound;
 					sound.volume = parseFloat(inputVolume.getValue());
 					//
 				},
 				() => this.close(),
 			);
 			endparent();
+	}
+
+	loadSoundFromFile(file) {
+		this.buttonLoadSound.setDisabled(true);
+
+		const sound = new AbstractAudio(file);
+
+		sound.promise
+		.then(() => {
+			this.paramSound = sound;
+			this.audioPreview.html.src = sound.src;
+		})
+		.catch(() => {
+			alert("Error when opening audio");
+		})
+		.finally(() => {
+			this.buttonLoadSound.setDisabled(false);
+		});
 	}
 }

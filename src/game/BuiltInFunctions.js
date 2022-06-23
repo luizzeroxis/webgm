@@ -6492,7 +6492,7 @@ export default class BuiltInFunctions {
 	// ### Other
 
 	static action_set_cursor([sprite, cursor]) {
-		this.game.globalVars.setBuiltInCall("cursor_sprite", sprite);
+		this.game.cursorSprite = this.game.getResourceById("ProjectSprite", sprite);
 
 		if (cursor == 0) {
 			this.game.canvas.classList.add("no-cursor");

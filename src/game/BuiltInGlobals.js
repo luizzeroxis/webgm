@@ -221,9 +221,12 @@ export default class BuiltInGlobals {
 	static mouse_button = {type: "integer", default: 0}; // TODO I think this is an enum
 	static mouse_lastbutton = {type: "integer", default: 0};
 
-	static cursor_sprite = {type: "integer", default: -1, set(cursor_sprite) {
-		this.cursorSprite = this.getResourceById("ProjectSprite", cursor_sprite);
-	}};
+	static cursor_sprite = {direct: true, type: "integer",
+		directGet() { return this.cursorSprite?.id ?? -1; },
+		directSet(value) {
+			this.cursorSprite = this.getResourceById("ProjectSprite", value);
+		},
+	};
 
 	// Game Graphics / Backgrounds
 

@@ -102,8 +102,8 @@ export default class GML {
 			Modulo: {_a: 0, _b: 3,
 				_aNode: c => c[0], _bNode: c => c[3]},
 			// Parentheses: 1,
-			Number: function(/*_integer, _dot, _decimals*/) { return Number(this.sourceString); },
-			String: function(_0, _string/*, _1*/) { return _string.sourceString; },
+			Number: function(_integer, _dot, _decimals) { return Number(this.sourceString); }, // eslint-disable-line no-unused-vars
+			String: function(_0, _string, _1) { return _string.sourceString; }, // eslint-disable-line no-unused-vars
 			VariableGet: {_variable: 0,
 				_variableNode: c => c[0]},
 		};

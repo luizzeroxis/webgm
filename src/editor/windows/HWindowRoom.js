@@ -55,6 +55,7 @@ export default class HWindowRoom extends HWindow {
 
 					parent( this.tabControl.addTab("Backgrounds") );
 
+						this.inputDrawBackgroundColor = add( new HCheckBoxInput("Draw background color", room.drawBackgroundColor) );
 						this.inputBackgroundColor = add( new HColorInput("Background color:", room.backgroundColor) );
 
 						const getBackground = (index) => {
@@ -165,6 +166,8 @@ export default class HWindowRoom extends HWindow {
 
 					this.inputWidth.setOnChange(() => this.updateCanvasPreview());
 					this.inputHeight.setOnChange(() => this.updateCanvasPreview());
+
+					this.inputDrawBackgroundColor.setOnChange(() => this.updateCanvasPreview());
 					this.inputBackgroundColor.setOnChange(() => this.updateCanvasPreview());
 
 					endparent();
@@ -260,21 +263,6 @@ export default class HWindowRoom extends HWindow {
 						}
 					};
 
-					// TODO: move this to onAdd, and remove on onRemove
-					document.onmouseup = () => {
-						this.mouseIsDown = false;
-
-						if (this.movingInstance) {
-							if (this.radioAdd.getChecked()) {
-								this.deleteUnderlying();
-							}
-						}
-
-						this.movingInstance = null;
-
-						this.updateCanvasPreview();
-					};
-
 					endparent();
 				endparent();
 
@@ -289,6 +277,7 @@ export default class HWindowRoom extends HWindow {
 					room.height = parseInt(this.inputHeight.getValue());
 					room.speed = parseInt(this.inputSpeed.getValue());
 
+					room.drawBackgroundColor = this.inputDrawBackgroundColor.getChecked();
 					room.backgroundColor = this.inputBackgroundColor.getValue();
 
 					room.backgrounds = this.paramBackgrounds;
@@ -315,6 +304,19 @@ export default class HWindowRoom extends HWindow {
 	}
 
 	onAdd() {
+		this.mouseUpHandler = () => {
+			this.mouseIsDown = false;
+
+			if (this.movingInstance) {
+				if (this.radioAdd.getChecked()) {
+					this.deleteUnderlying();
+				}
+				this.movingInstance = null;
+				this.updateCanvasPreview();
+			}
+		};
+		document.addEventListener("mouseup", this.mouseUpHandler);
+
 		this.listeners = this.editor.dispatcher.listen({
 			changeObjectSprite: () => {
 				this.updateCanvasPreview();
@@ -329,6 +331,8 @@ export default class HWindowRoom extends HWindow {
 	}
 
 	onRemove() {
+		document.removeEventListener("mouseup", this.mouseUpHandler);
+
 		this.editor.dispatcher.stopListening(this.listeners);
 	}
 
@@ -430,51 +434,103 @@ export default class HWindowRoom extends HWindow {
 		}
 	}
 
-	updateCanvasPreview() {
+	async updateCanvasPreview() {
+		// Setting the size resets the background to black, in case 'draw background color' isn't on.
 		this.canvasPreview.html.width = this.inputWidth.getValue();
 		this.canvasPreview.html.height = this.inputHeight.getValue();
 
-		this.ctx.fillStyle = this.inputBackgroundColor.getValue();
-		this.ctx.fillRect(0, 0, this.canvasPreview.html.width, this.canvasPreview.html.height);
+		if (this.inputDrawBackgroundColor.getChecked()) {
+			this.ctx.fillStyle = this.inputBackgroundColor.getValue();
+			this.ctx.fillRect(0, 0, this.canvasPreview.html.width, this.canvasPreview.html.height);
+		}
 
 		// backgrounds
 		for (const roomBackground of this.paramBackgrounds) {
 			if (!roomBackground) continue;
 			if (roomBackground.isForeground == true) continue;
-			this.drawRoomBackground(roomBackground);
+			await this.drawRoomBackground(roomBackground);
 		}
 
 		// instance
 		for (const roomInstance of this.paramInstances) {
-			const object = this.editor.project.getResourceById("ProjectObject", roomInstance.object_index);
-			const sprite = this.editor.project.getResourceById("ProjectSprite", object.sprite_index);
-			let image, ox=0, oy=0;
-
-			if (sprite) {
-				ox = sprite.originx;
-				oy = sprite.originy;
-				if (sprite.images.length > 0) {
-					image = sprite.images[0];
-				} else {
-					// won't show if there is a sprite, but no images
-					continue;
-				}
-			} else {
-				image = this.defaultInstanceImage;
-			}
-			image.promise.then(() => {
-				this.ctx.drawImage(image.image, roomInstance.x - ox, roomInstance.y - oy);
-			});
+			await this.drawRoomInstance(roomInstance);
 		}
 
 		// foregrounds
 		for (const roomBackground of this.paramBackgrounds) {
 			if (!roomBackground) continue;
 			if (roomBackground.isForeground == false) continue;
-			this.drawRoomBackground(roomBackground);
+			await this.drawRoomBackground(roomBackground);
 		}
 
 		// grid
+		this.drawGrid();
+	}
+
+	async drawRoomInstance(roomInstance) {
+		const object = this.editor.project.getResourceById("ProjectObject", roomInstance.object_index);
+		const sprite = this.editor.project.getResourceById("ProjectSprite", object.sprite_index);
+		let image, ox=0, oy=0;
+
+		if (sprite) {
+			ox = sprite.originx;
+			oy = sprite.originy;
+			if (sprite.images.length > 0) {
+				image = sprite.images[0];
+			} else {
+				// won't show if there is a sprite, but no images
+				return;
+			}
+		} else {
+			image = this.defaultInstanceImage;
+		}
+
+		if (image) {
+			await image.promise;
+			this.ctx.drawImage(image.image, roomInstance.x - ox, roomInstance.y - oy);
+		}
+	}
+
+	async drawRoomBackground(roomBackground) {
+		if (!roomBackground.visibleAtStart) return false;
+
+		const background = this.editor.project.getResourceById("ProjectBackground", roomBackground.backgroundIndex);
+		if (!background) return false;
+
+		const image = background.image;
+		if (!image) return false;
+
+		// TODO stretch
+
+		await image.promise;
+
+		let xStart = roomBackground.x;
+		let yStart = roomBackground.y;
+
+		if (roomBackground.tileHorizontally) {
+			xStart = (roomBackground.x % background.image.image.width) - background.image.image.width;
+		}
+		if (roomBackground.tileVertically) {
+			yStart = (roomBackground.y % background.image.image.height) - background.image.image.height;
+		}
+
+		for (let x = xStart; x < this.canvasPreview.html.width; x += background.image.image.width) {
+			for (let y = yStart; y < this.canvasPreview.html.height; y += background.image.image.height) {
+				this.ctx.drawImage(image.image, x, y);
+
+				if (!roomBackground.tileVertically) {
+					break;
+				}
+			}
+			if (!roomBackground.tileHorizontally) {
+				break;
+			}
+		}
+
+		return true;
+	}
+
+	drawGrid() {
 		if (this.inputShowGrid.getChecked()) {
 			this.ctx.globalCompositeOperation = "difference";
 			this.ctx.fillStyle = "white";
@@ -497,44 +553,6 @@ export default class HWindowRoom extends HWindow {
 
 			this.ctx.globalCompositeOperation = "source-over";
 		}
-	}
-
-	drawRoomBackground(roomBackground) {
-		if (!roomBackground.visibleAtStart) return false;
-
-		const background = this.editor.project.getResourceById("ProjectBackground", roomBackground.backgroundIndex);
-		if (!background) return false;
-
-		const image = background.image;
-		if (!image) return false;
-
-		// TODO stretch
-
-		image.promise.then(() => {
-			let xStart = roomBackground.x;
-			let yStart = roomBackground.y;
-
-			if (roomBackground.tileHorizontally) {
-				xStart = (roomBackground.x % background.image.image.width) - background.image.image.width;
-			}
-			if (roomBackground.tileVertically) {
-				yStart = (roomBackground.y % background.image.image.height) - background.image.image.height;
-			}
-
-			for (let x = xStart; x < this.canvasPreview.html.width; x += background.image.image.width) {
-				for (let y = yStart; y < this.canvasPreview.html.height; y += background.image.image.height) {
-					this.ctx.drawImage(image.image, x, y);
-
-					if (!roomBackground.tileVertically) {
-						break;
-					}
-				}
-				if (!roomBackground.tileHorizontally) {
-					break;
-				}
-			}
-		});
-		return true;
 	}
 
 	drawLine(x1, y1, x2, y2) {

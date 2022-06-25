@@ -862,7 +862,7 @@ export default class BuiltInFunctions {
 	}
 
 	static async instance_create([x, y, obj]) {
-		const object = this.game.getResourceById("ProjectObject", obj);
+		const object = this.game.project.getResourceById("ProjectObject", obj);
 		if (object == null) {
 			throw this.game.makeNonFatalError({
 					type: "creating_instance_for_non_existing_object",
@@ -943,7 +943,7 @@ export default class BuiltInFunctions {
 	// ## Rooms
 
 	static room_goto([numb]) {
-		const room = this.game.getResourceById("ProjectRoom", numb);
+		const room = this.game.project.getResourceById("ProjectRoom", numb);
 		if (room == null) {
 			throw this.game.makeFatalError({
 					type: "unexisting_room_number",
@@ -1321,7 +1321,7 @@ export default class BuiltInFunctions {
 
 	static draw_sprite([spriteIndex, subimg, x, y]) {
 		if (spriteIndex >= 0) {
-			const sprite = this.game.project.resources.ProjectSprite.find(x => x.id == spriteIndex);
+			const sprite = this.game.project.getResourceById("ProjectSprite", spriteIndex);
 			if (sprite) {
 				this.game.drawSprite(sprite, subimg % sprite.images.length, x, y);
 			} else {
@@ -2450,7 +2450,7 @@ export default class BuiltInFunctions {
 	// ## Basic sound functions
 
 	static sound_play([index]) {
-		const sound = this.game.getResourceById("ProjectSound", index);
+		const sound = this.game.project.getResourceById("ProjectSound", index);
 		if (!sound) {
 			throw this.game.makeNonFatalError({
 				type: "sound_does_not_exist",
@@ -2463,7 +2463,7 @@ export default class BuiltInFunctions {
 	}
 
 	static sound_loop([index]) {
-		const sound = this.game.getResourceById("ProjectSound", index);
+		const sound = this.game.project.getResourceById("ProjectSound", index);
 		if (!sound) {
 			throw this.game.makeNonFatalError({
 				type: "sound_does_not_exist",
@@ -2476,7 +2476,7 @@ export default class BuiltInFunctions {
 	}
 
 	static sound_stop([index]) {
-		const sound = this.game.getResourceById("ProjectSound", index);
+		const sound = this.game.project.getResourceById("ProjectSound", index);
 		if (!sound) {
 			throw this.game.makeNonFatalError({
 				type: "sound_does_not_exist",
@@ -2493,7 +2493,7 @@ export default class BuiltInFunctions {
 	}
 
 	static sound_isplaying([index]) {
-		const sound = this.game.getResourceById("ProjectSound", index);
+		const sound = this.game.project.getResourceById("ProjectSound", index);
 		if (!sound) return 0;
 
 		for (const audioNode of this.game.sounds.get(sound).audioNodes) {
@@ -2506,7 +2506,7 @@ export default class BuiltInFunctions {
 	}
 
 	static sound_volume([index, value]) {
-		const sound = this.game.getResourceById("ProjectSound", index);
+		const sound = this.game.project.getResourceById("ProjectSound", index);
 		if (!sound) return 0; // TODO check if error
 
 		this.game.sounds.get(sound).volume = value;
@@ -3022,7 +3022,7 @@ export default class BuiltInFunctions {
 	// ## Sprites
 
 	static sprite_exists([ind]) {
-		const sprite = this.game.getResourceById("ProjectSprite", ind);
+		const sprite = this.game.project.getResourceById("ProjectSprite", ind);
 		return sprite ? 1 : 0;
 	}
 
@@ -3089,7 +3089,7 @@ export default class BuiltInFunctions {
 	// ## Sounds
 
 	static sound_exists([ind]) {
-		const sound = this.game.getResourceById("ProjectSound", ind);
+		const sound = this.game.project.getResourceById("ProjectSound", ind);
 		return sound ? 1 : 0;
 	}
 
@@ -3121,7 +3121,7 @@ export default class BuiltInFunctions {
 	// ## Backgrounds
 
 	static background_exists([ind]) {
-		const background = this.game.getResourceById("ProjectBackground", ind);
+		const background = this.game.project.getResourceById("ProjectBackground", ind);
 		return background ? 1 : 0;
 	}
 
@@ -3148,7 +3148,7 @@ export default class BuiltInFunctions {
 	// ## Fonts
 
 	static font_exists([ind]) {
-		const font = this.game.getResourceById("ProjectFont", ind);
+		const font = this.game.project.getResourceById("ProjectFont", ind);
 		return font ? 1 : 0;
 	}
 
@@ -3185,7 +3185,7 @@ export default class BuiltInFunctions {
 	// ## Paths
 
 	static path_exists([ind]) {
-		const path = this.game.getResourceById("ProjectPath", ind);
+		const path = this.game.project.getResourceById("ProjectPath", ind);
 		return path ? 1 : 0;
 	}
 
@@ -3252,7 +3252,7 @@ export default class BuiltInFunctions {
 	// ## Scripts
 
 	static script_exists([ind]) {
-		const script = this.game.getResourceById("ProjectScript", ind);
+		const script = this.game.project.getResourceById("ProjectScript", ind);
 		return script ? 1 : 0;
 	}
 
@@ -3269,7 +3269,7 @@ export default class BuiltInFunctions {
 	// ## Time lines
 
 	static timeline_exists([ind]) {
-		const timeline = this.game.getResourceById("ProjectTimeline", ind);
+		const timeline = this.game.project.getResourceById("ProjectTimeline", ind);
 		return timeline ? 1 : 0;
 	}
 
@@ -3281,7 +3281,7 @@ export default class BuiltInFunctions {
 	// ## Objects
 
 	static object_exists([ind]) {
-		const object = this.game.getResourceById("ProjectObject", ind);
+		const object = this.game.project.getResourceById("ProjectObject", ind);
 		return object ? 1 : 0;
 	}
 
@@ -3333,7 +3333,7 @@ export default class BuiltInFunctions {
 	// ## Rooms
 
 	static room_exists([ind]) {
-		const room = this.game.getResourceById("ProjectRoom", ind);
+		const room = this.game.project.getResourceById("ProjectRoom", ind);
 		return room ? 1 : 0;
 	}
 
@@ -3637,7 +3637,7 @@ export default class BuiltInFunctions {
 	}
 
 	static script_execute([scr, ...args]) {
-		const script = this.game.getResourceById("ProjectScript", scr);
+		const script = this.game.project.getResourceById("ProjectScript", scr);
 		if (script) {
 			return this.execute(this.game.gmlCache.get(script), this.currentInstance, this.currentOther, args);
 		} else {
@@ -6253,7 +6253,7 @@ export default class BuiltInFunctions {
 	// ### Code
 
 	static action_execute_script([script, argument0, argument1, argument2, argument3, argument4]) {
-		const scriptResource = this.game.getResourceById("ProjectScript", script);
+		const scriptResource = this.game.project.getResourceById("ProjectScript", script);
 
 		if (scriptResource) {
 			return this.execute(this.game.gmlCache.get(scriptResource), this.currentInstance, this.currentOther,
@@ -6491,7 +6491,7 @@ export default class BuiltInFunctions {
 	// ### Other
 
 	static action_set_cursor([sprite, cursor]) {
-		this.game.cursorSprite = this.game.getResourceById("ProjectSprite", sprite);
+		this.game.cursorSprite = this.game.project.getResourceById("ProjectSprite", sprite);
 
 		if (cursor == 0) {
 			this.game.canvas.classList.add("no-cursor");

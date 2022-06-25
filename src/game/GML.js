@@ -256,7 +256,7 @@ export default class GML {
 				const name = _name; // no need to interpret?
 				const args = await this.interpretASTNode(_args);
 
-				const script = this.game.project.resources.ProjectScript.find(x => x.name == name);
+				const script = this.game.project.getResourceById("ProjectScript", name);
 
 				if (script) {
 					return this.execute(this.game.gmlCache.get(script), this.currentInstance, this.currentOther, args);

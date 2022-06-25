@@ -250,8 +250,7 @@ export default class HWindowRoom extends HWindow {
 						{
 							const hover = this.getInstanceAtPosition(pos);
 							if (hover) {
-								this.spanObject.html.textContent = this.editor.project.resources.ProjectObject
-									.find(x => x.id == hover.object_index).name;
+								this.spanObject.html.textContent = this.editor.project.getResourceById("ProjectObject", hover.object_index).name;
 								if (hover.id != null) {
 									this.spanId.html.textContent = hover.id;
 								} else {
@@ -400,8 +399,8 @@ export default class HWindowRoom extends HWindow {
 	}
 
 	isInstanceAtPosition(instance, pos) {
-		const object = this.editor.project.resources.ProjectObject.find(x => x.id == instance.object_index);
-		const sprite = this.editor.project.resources.ProjectSprite.find(x => x.id == object.sprite_index);
+		const object = this.editor.project.getResourceById("ProjectObject", instance.object_index);
+		const sprite = this.editor.project.getResourceById("ProjectSprite", object.sprite_index);
 
 		let w=32, h=32, ox=0, oy=0;
 
@@ -447,8 +446,8 @@ export default class HWindowRoom extends HWindow {
 
 		// instance
 		for (const roomInstance of this.paramInstances) {
-			const object = this.editor.project.resources.ProjectObject.find(x => x.id == roomInstance.object_index);
-			const sprite = this.editor.project.resources.ProjectSprite.find(x => x.id == object.sprite_index);
+			const object = this.editor.project.getResourceById("ProjectObject", roomInstance.object_index);
+			const sprite = this.editor.project.getResourceById("ProjectSprite", object.sprite_index);
 			let image, ox=0, oy=0;
 
 			if (sprite) {
@@ -503,7 +502,7 @@ export default class HWindowRoom extends HWindow {
 	drawRoomBackground(roomBackground) {
 		if (!roomBackground.visibleAtStart) return false;
 
-		const background = this.editor.project.resources.ProjectBackground.find(x => x.id == roomBackground.backgroundIndex);
+		const background = this.editor.project.getResourceById("ProjectBackground", roomBackground.backgroundIndex);
 		if (!background) return false;
 
 		const image = background.image;

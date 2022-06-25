@@ -17,8 +17,8 @@ export default class Instance {
 		this.vars.setBuiltIn("y", y);
 
 		// Caching of data
-		this.object = game.getResourceById("ProjectObject", this.object_index);
-		// this.sprite = game.getResourceById('ProjectSprite', this.object.sprite_index); // already called when setting sprite_index
+		this.object = game.project.getResourceById("ProjectObject", this.object_index);
+		// this.sprite = game.project.getResourceById('ProjectSprite', this.object.sprite_index); // already called when setting sprite_index
 
 		// Inherited from object
 		this.vars.setBuiltInCall("sprite_index", this.object.sprite_index);

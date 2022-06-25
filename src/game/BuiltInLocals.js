@@ -78,7 +78,7 @@ export default class BuiltInLocals {
 
 	static sprite_index = {type: "integer", default: -1, set(sprite_index) {
 		// Update sprite cache
-		this.sprite = this.game.getResourceById("ProjectSprite", sprite_index);
+		this.sprite = this.game.project.getResourceById("ProjectSprite", sprite_index);
 		this.vars.setBuiltIn("image_index", 0);
 	}};
 

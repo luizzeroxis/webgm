@@ -224,7 +224,7 @@ export default class BuiltInGlobals {
 	static cursor_sprite = {direct: true, type: "integer",
 		directGet() { return this.cursorSprite?.id ?? -1; },
 		directSet(value) {
-			this.cursorSprite = this.getResourceById("ProjectSprite", value);
+			this.cursorSprite = this.project.getResourceById("ProjectSprite", value);
 		},
 	};
 
@@ -273,7 +273,7 @@ export default class BuiltInGlobals {
 	static background_width = {readOnly: true, direct: true, dimensions: 1,
 		directLength() { return 8; },
 		directGet(index) {
-			const background = this.game.getResourceById("ProjectBackground", this.room.backgrounds[index]);
+			const background = this.project.getResourceById("ProjectBackground", this.room.backgrounds[index]);
 			return background?.image.image.width ?? 0;
 		},
 	};
@@ -281,7 +281,7 @@ export default class BuiltInGlobals {
 	static background_height = {readOnly: true, direct: true, dimensions: 1,
 		directLength() { return 8; },
 		directGet(index) {
-			const background = this.game.getResourceById("ProjectBackground", this.room.backgrounds[index]);
+			const background = this.project.getResourceById("ProjectBackground", this.room.backgrounds[index]);
 			return background?.image.image.height ?? 0;
 		},
 	};

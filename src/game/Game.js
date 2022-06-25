@@ -861,7 +861,7 @@ export class Game {
 	drawRoomBackground(roomBackground) {
 		if (!roomBackground.visible) return false;
 
-		const background = this.getResourceById("ProjectBackground", roomBackground.backgroundIndex);
+		const background = this.project.getResourceById("ProjectBackground", roomBackground.backgroundIndex);
 		if (!background) return false;
 
 		const image = background.image;
@@ -1518,11 +1518,6 @@ export class Game {
 		const subtypes = this.mapEvents.get(type);
 		if (!subtypes) return [];
 		return [...subtypes.entries()];
-	}
-
-	// Get a project resource by its type and id.
-	getResourceById(type, id) {
-		return this.project.resources[type].find(x => x.id == id);
 	}
 
 	// Interpret apply to option, returns a list of instances that should be applied to.

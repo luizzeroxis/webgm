@@ -566,7 +566,7 @@ export default class HWindowObject extends HWindow {
 					} else {
 						const resourceType = this.constructor.actionArgResourceTypes[actionArg.kind];
 						if (!resourceType) throw new Error("Impossible action arg kind "+actionArg.kind);
-						const resource = this.editor.project.resources[resourceType.getClassName()].find(x => x.id == actionArg.value);
+						const resource = this.editor.project.getResourceById(resourceType.getClassName(), actionArg.value);
 						return previous + (resource ? resource.name : "<undefined>");
 					}
 				}
@@ -577,7 +577,7 @@ export default class HWindowObject extends HWindow {
 				case "w": {
 					if (action.appliesTo == -1) return "";
 					if (action.appliesTo == -2) return "for the other object: ";
-					const resource = this.editor.project.resources.ProjectObject.find(x => x.id == action.appliesTo);
+					const resource = this.editor.project.getResourceById("ProjectObject", action.appliesTo);
 					return previous + "for object " + (resource ? resource.name : "<undefined>") + ": ";
 				}
 

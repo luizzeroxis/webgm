@@ -98,23 +98,14 @@ export default class Editor {
 	// Resource management
 
 	createResource(type) {
-		const resource = new type();
-		resource.id = this.project.counter[type.getClassName()];
-		resource.name = type.getName() + this.project.counter[type.getClassName()];
-
-		this.project.counter[type.getClassName()]++;
-		this.project.resources[type.getClassName()].push(resource);
-
+		const resource = this.project.createResource(type);
 		this.dispatcher.speak("createResource", resource);
-
 		return resource;
 	}
 
 	deleteResource(resource) {
 		if (confirm("You are about to delete "+resource.name+". This will be permanent. Continue?")) {
-			const index = this.project.resources[resource.constructor.getClassName()].findIndex(x => x == resource);
-			this.project.resources[resource.constructor.getClassName()].splice(index, 1);
-
+			this.project.deleteResource(resource);
 			this.dispatcher.speak("deleteResource", resource);
 		}
 	}

@@ -34,6 +34,28 @@ export class Project {
 		}
 	}
 
+	createResource(type) {
+		const resource = new type();
+		resource.id = this.counter[type.getClassName()];
+		resource.name = type.getName() + this.counter[type.getClassName()].toString();
+
+		this.counter[type.getClassName()]++;
+		this.resources[type.getClassName()].push(resource);
+		return resource;
+	}
+
+	deleteResource(resource) {
+		const index = this.resources[resource.constructor.getClassName()].findIndex(x => x == resource);
+		this.resources[resource.constructor.getClassName()].splice(index, 1);
+	}
+
+	getResourceById(type, id) {
+		if (typeof type == "object") {
+			type = type.getClassName();
+		}
+		return this.resources[type].find(x => x.id == id);
+	}
+
 	static getTypes() {
 		return [
 			ProjectSprite,

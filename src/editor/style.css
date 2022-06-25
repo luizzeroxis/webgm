@@ -173,7 +173,10 @@ body, button, input {
 }
 
 .grid-resource.resource-sprite {
-	grid-template-columns: 250px 250px minmax(300px, 1fr);
+	grid-template-columns: 200px 250px minmax(250px, 1fr);
+}
+.grid-resource.resource-sprite .origin-x-y {
+	display: flex;
 }
 .grid-resource.resource-sprite .preview {
 	overflow: auto;
@@ -181,7 +184,7 @@ body, button, input {
 }
 
 .grid-resource.resource-background {
-	grid-template-columns: 300px minmax(300px, 1fr);
+	grid-template-columns: 250px minmax(250px, 1fr);
 }
 .grid-resource.resource-background .preview {
 	overflow: auto;

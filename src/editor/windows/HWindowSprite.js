@@ -61,8 +61,10 @@ export default class HWindowSprite extends HWindow {
 
 						add( new HElement("legend", {}, "Origin") );
 
-						const inputOriginX = add( new HNumberInput("X:", paramOriginX, 1, 0) );
-						const inputOriginY = add( new HNumberInput("Y:", paramOriginY, 1, 0) );
+						parent( add( new HElement("div", {class: "origin-x-y"})) );
+							const inputOriginX = add( new HNumberInput("X:", paramOriginX, 1, 0) );
+							const inputOriginY = add( new HNumberInput("Y:", paramOriginY, 1, 0) );
+							endparent();
 
 						add( new HButton("Center", () => {
 							let w=16, h=16;

@@ -3,8 +3,16 @@ export default class BuiltInLocals {
 
 	// Game play / Moving around
 
-	static x = {type: "real", default: 0};
-	static y = {type: "real", default: 0};
+	static x = {direct: true, type: "real",
+		directGet() { return this.x; },
+		directSet(value) { this.x = value; },
+	};
+
+	static y = {direct: true, type: "real",
+		directGet() { return this.y; },
+		directSet(value) { this.y = value; },
+	};
+
 	static xprevious = {type: "real", default: 0};
 	static yprevious = {type: "real", default: 0};
 	static xstart = {type: "real", default: 0};
@@ -126,28 +134,28 @@ export default class BuiltInLocals {
 		if (this.sprite == null) return -100000;
 
 		const image = this.sprite.images[this.getImageIndex()];
-		return this.vars.getBuiltIn("x") + (image ? -this.sprite.originx : 0);
+		return this.x + (image ? -this.sprite.originx : 0);
 	}};
 
 	static bbox_right = {readOnly: true, direct: true, directGet() {
 		if (this.sprite == null) return -100000;
 
 		const image = this.sprite.images[this.getImageIndex()];
-		return this.vars.getBuiltIn("x") + (image ? -this.sprite.originx + image.image.width: 0);
+		return this.x + (image ? -this.sprite.originx + image.image.width: 0);
 	}};
 
 	static bbox_top = {readOnly: true, direct: true, directGet() {
 		if (this.sprite == null) return -100000;
 
 		const image = this.sprite.images[this.getImageIndex()];
-		return this.vars.getBuiltIn("y") + (image ? -this.sprite.originy : 0);
+		return this.y + (image ? -this.sprite.originy : 0);
 	}};
 
 	static bbox_bottom = {readOnly: true, direct: true, directGet() {
 		if (this.sprite == null) return -100000;
 
 		const image = this.sprite.images[this.getImageIndex()];
-		return this.vars.getBuiltIn("y") + (image ? -this.sprite.originy + image.image.height: 0);
+		return this.y + (image ? -this.sprite.originy + image.image.height: 0);
 	}};
 
 	// Unknown

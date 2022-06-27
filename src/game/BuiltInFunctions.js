@@ -559,7 +559,7 @@ export default class BuiltInFunctions {
 	}
 
 	static place_snapped([hsnap, vsnap]) {
-		return (this.currentInstance.vars.getBuiltIn("x") % hsnap == 0) && (this.currentInstance.vars.getBuiltIn("y") % vsnap == 0);
+		return (this.currentInstance.x % hsnap == 0) && (this.currentInstance.y % vsnap == 0);
 	}
 
 	static move_random([hsnap, vsnap]) {
@@ -574,8 +574,8 @@ export default class BuiltInFunctions {
 			y = Math.floor((Math.random() * this.game.room.height) / vsnap) * vsnap;
 
 			if (!this.game.collisionInstanceOnInstances(this.currentInstance, this.game.instances, x, y, true)) {
-				this.currentInstance.vars.setBuiltIn("x", x);
-				this.currentInstance.vars.setBuiltIn("y", y);
+				this.currentInstance.x = x;
+				this.currentInstance.y = y;
 				break;
 			}
 		}
@@ -584,37 +584,37 @@ export default class BuiltInFunctions {
 	}
 
 	static move_snap([hsnap, vsnap]) {
-		this.currentInstance.vars.setBuiltIn("x", Math.floor(this.currentInstance.vars.getBuiltIn("x") / hsnap) * hsnap);
-		this.currentInstance.vars.setBuiltIn("y", Math.floor(this.currentInstance.vars.getBuiltIn("y") / vsnap) * vsnap);
+		this.currentInstance.x = Math.floor(this.currentInstance.x / hsnap) * hsnap;
+		this.currentInstance.y = Math.floor(this.currentInstance.y / vsnap) * vsnap;
 		return 0;
 	}
 
 	static move_wrap([hor, vert, margin]) {
 		if (hor) {
-			const x = this.currentInstance.vars.getBuiltIn("x");
+			const x = this.currentInstance.x;
 			if (x >= this.game.room.width + margin) {
-				this.currentInstance.vars.setBuiltIn("x", x - this.game.room.width - margin*2);
+				this.currentInstance.x = x - this.game.room.width - margin*2;
 			} else
 			if (x < 0 - margin) {
-				this.currentInstance.vars.setBuiltIn("x", this.game.room.width + x + margin*2);
+				this.currentInstance.x = this.game.room.width + x + margin*2;
 			}
 		}
 
 		if (vert) {
-			const y = this.currentInstance.vars.getBuiltIn("y");
+			const y = this.currentInstance.y;
 			if (y >= this.game.room.height + margin) {
-				this.currentInstance.vars.setBuiltIn("y", y - this.game.room.height - margin*2);
+				this.currentInstance.y = y - this.game.room.height - margin*2;
 			} else
 			if (y < 0 - margin) {
-				this.currentInstance.vars.setBuiltIn("y", this.game.room.height + y - margin*2);
+				this.currentInstance.y = this.game.room.height + y - margin*2;
 			}
 		}
 		return 0;
 	}
 
 	static move_towards_point([x, y, sp]) {
-		const cx = this.currentInstance.vars.getBuiltIn("x");
-		const cy = this.currentInstance.vars.getBuiltIn("y");
+		const cx = this.currentInstance.x;
+		const cy = this.currentInstance.y;
 		this.currentInstance.setDirectionAndSpeed(Math.atan2(-(y - cy), x - cx) * (180 / Math.PI), sp);
 		return 0;
 	}
@@ -5774,8 +5774,8 @@ export default class BuiltInFunctions {
 		// If not relative: x - instance.x (you subtract to make instance the center)
 		// If relative: x - instance.x + instance.x == x
 		if (!relative) {
-			x -= this.currentInstance.vars.getBuiltIn("x");
-			y -= this.currentInstance.vars.getBuiltIn("y");
+			x -= this.currentInstance.x;
+			y -= this.currentInstance.y;
 		}
 
 		this.currentInstance.setDirectionAndSpeed(Math.atan2(-y, x) * (180 / Math.PI), speed);
@@ -5821,16 +5821,16 @@ export default class BuiltInFunctions {
 	// ### Jump
 
 	static action_move_to([x, y], relative) {
-		x = (!relative ? x : this.currentInstance.vars.getBuiltIn("x") + x);
-		y = (!relative ? y : this.currentInstance.vars.getBuiltIn("y") + y);
-		this.currentInstance.vars.setBuiltIn("x", x);
-		this.currentInstance.vars.setBuiltIn("y", y);
+		x = (!relative ? x : this.currentInstance.x + x);
+		y = (!relative ? y : this.currentInstance.y + y);
+		this.currentInstance.x = x;
+		this.currentInstance.y = y;
 		return 0;
 	}
 
 	static action_move_start([]) {
-		this.currentInstance.vars.setBuiltIn("x", this.currentInstance.vars.getBuiltIn("xstart"));
-		this.currentInstance.vars.setBuiltIn("y", this.currentInstance.vars.getBuiltIn("ystart"));
+		this.currentInstance.x = this.currentInstance.vars.getBuiltIn("xstart");
+		this.currentInstance.y = this.currentInstance.vars.getBuiltIn("ystart");
 		return 0;
 	}
 
@@ -5860,26 +5860,26 @@ export default class BuiltInFunctions {
 		}
 
 		if (horizontal) {
-			const x = this.currentInstance.vars.getBuiltIn("x");
+			const x = this.currentInstance.x;
 			if (x >= this.game.room.width
 				&& this.currentInstance.vars.getBuiltIn("hspeed") > 0) {
-				this.currentInstance.vars.setBuiltIn("x", x - this.game.room.width - spriteW);
+				this.currentInstance.x = x - this.game.room.width - spriteW;
 			} else
 			if (x < 0
 				&& this.currentInstance.vars.getBuiltIn("hspeed") < 0) {
-				this.currentInstance.vars.setBuiltIn("x", this.game.room.width + x + spriteW);
+				this.currentInstance.x = this.game.room.width + x + spriteW;
 			}
 		}
 
 		if (vertical) {
-			const y = this.currentInstance.vars.getBuiltIn("y");
+			const y = this.currentInstance.y;
 			if (y >= this.game.room.height
 				&& this.currentInstance.vars.getBuiltIn("vspeed") > 0) {
-				this.currentInstance.vars.setBuiltIn("y", y - this.game.room.height - spriteH);
+				this.currentInstance.y = y - this.game.room.height - spriteH;
 			} else
 			if (y < 0
 				&& this.currentInstance.vars.getBuiltIn("vspeed") < 0) {
-				this.currentInstance.vars.setBuiltIn("y", this.game.room.height + y + spriteH);
+				this.currentInstance.y = this.game.room.height + y + spriteH;
 			}
 		}
 
@@ -5939,8 +5939,8 @@ export default class BuiltInFunctions {
 	// ### Objects
 
 	static async action_create_object([object, x, y], relative) {
-		x = (!relative ? x : this.currentInstance.vars.getBuiltIn("x") + x);
-		y = (!relative ? y : this.currentInstance.vars.getBuiltIn("y") + y);
+		x = (!relative ? x : this.currentInstance.x + x);
+		y = (!relative ? y : this.currentInstance.y + y);
 
 		await BuiltInFunctions.instance_create.call(this, [x, y, object]);
 
@@ -6184,8 +6184,8 @@ export default class BuiltInFunctions {
 	// ### Questions
 
 	static action_if_empty([x, y, objects], relative) {
-		x = (!relative ? x : this.currentInstance.vars.getBuiltIn("x") + x);
-		y = (!relative ? y : this.currentInstance.vars.getBuiltIn("y") + y);
+		x = (!relative ? x : this.currentInstance.x + x);
+		y = (!relative ? y : this.currentInstance.y + y);
 		if (objects == 0) { // Only solid
 			return BuiltInFunctions.place_free.call(this, [x, y]);
 		} else if (objects == 1) { // All
@@ -6195,8 +6195,8 @@ export default class BuiltInFunctions {
 	}
 
 	static action_if_collision([x, y, objects], relative) {
-		x = (!relative ? x : this.currentInstance.vars.getBuiltIn("x") + x);
-		y = (!relative ? y : this.currentInstance.vars.getBuiltIn("y") + y);
+		x = (!relative ? x : this.currentInstance.x + x);
+		y = (!relative ? y : this.currentInstance.y + y);
 		if (objects == 0) { // Only solid
 			return !(BuiltInFunctions.place_free.call(this, [x, y]));
 		} else if (objects == 1) { // All
@@ -6206,8 +6206,8 @@ export default class BuiltInFunctions {
 	}
 
 	static action_if_object([object, x, y], relative) {
-		x = (!relative ? x : this.currentInstance.vars.getBuiltIn("x") + x);
-		y = (!relative ? y : this.currentInstance.vars.getBuiltIn("y") + y);
+		x = (!relative ? x : this.currentInstance.x + x);
+		y = (!relative ? y : this.currentInstance.y + y);
 		return BuiltInFunctions.place_meeting.call(this, [x, y, object]);
 	}
 
@@ -6511,8 +6511,8 @@ export default class BuiltInFunctions {
 	// ### Drawing
 
 	static action_draw_sprite([sprite, x, y, subimage], relative) {
-		x = (!relative ? x : this.currentInstance.vars.getBuiltIn("x") + x);
-		y = (!relative ? y : this.currentInstance.vars.getBuiltIn("y") + y);
+		x = (!relative ? x : this.currentInstance.x + x);
+		y = (!relative ? y : this.currentInstance.y + y);
 		subimage = (subimage != -1) ? subimage : this.currentInstance.vars.getBuiltIn("image_index");
 		BuiltInFunctions.draw_sprite.call(this, [sprite, subimage, x, y]);
 		return 0;
@@ -6524,8 +6524,8 @@ export default class BuiltInFunctions {
 	}
 
 	static action_draw_text([text, x, y], relative) {
-		x = (!relative ? x : this.currentInstance.vars.getBuiltIn("x") + x);
-		y = (!relative ? y : this.currentInstance.vars.getBuiltIn("y") + y);
+		x = (!relative ? x : this.currentInstance.x + x);
+		y = (!relative ? y : this.currentInstance.y + y);
 		BuiltInFunctions.draw_text.call(this, [x, y, text]);
 		return 0;
 	}
@@ -6536,10 +6536,10 @@ export default class BuiltInFunctions {
 	}
 
 	static action_draw_rectangle([x1, y1, x2, y2, filled], relative) {
-		x1 = (!relative ? x1 : this.currentInstance.vars.getBuiltIn("x") + x1);
-		y1 = (!relative ? y1 : this.currentInstance.vars.getBuiltIn("y") + y1);
-		x2 = (!relative ? x2 : this.currentInstance.vars.getBuiltIn("x") + x2);
-		y2 = (!relative ? y2 : this.currentInstance.vars.getBuiltIn("y") + y2);
+		x1 = (!relative ? x1 : this.currentInstance.x + x1);
+		y1 = (!relative ? y1 : this.currentInstance.y + y1);
+		x2 = (!relative ? x2 : this.currentInstance.x + x2);
+		y2 = (!relative ? y2 : this.currentInstance.y + y2);
 		BuiltInFunctions.draw_rectangle.call(this, [x1, y1, x2, y2, filled]); // 0=filled, 1=outline
 		return 0;
 	}
@@ -6555,10 +6555,10 @@ export default class BuiltInFunctions {
 	}
 
 	static action_draw_ellipse([x1, y1, x2, y2, filled], relative) {
-		x1 = (!relative ? x1 : this.currentInstance.vars.getBuiltIn("x") + x1);
-		y1 = (!relative ? y1 : this.currentInstance.vars.getBuiltIn("y") + y1);
-		x2 = (!relative ? x2 : this.currentInstance.vars.getBuiltIn("x") + x2);
-		y2 = (!relative ? y2 : this.currentInstance.vars.getBuiltIn("y") + y2);
+		x1 = (!relative ? x1 : this.currentInstance.x + x1);
+		y1 = (!relative ? y1 : this.currentInstance.y + y1);
+		x2 = (!relative ? x2 : this.currentInstance.x + x2);
+		y2 = (!relative ? y2 : this.currentInstance.y + y2);
 		BuiltInFunctions.draw_ellipse.call(this, [x1, y1, x2, y2, filled]); // 0=filled, 1=outline
 		return 0;
 	}
@@ -6569,10 +6569,10 @@ export default class BuiltInFunctions {
 	}
 
 	static action_draw_line([x1, y1, x2, y2], relative) {
-		x1 = (!relative ? x1 : this.currentInstance.vars.getBuiltIn("x") + x1);
-		y1 = (!relative ? y1 : this.currentInstance.vars.getBuiltIn("y") + y1);
-		x2 = (!relative ? x2 : this.currentInstance.vars.getBuiltIn("x") + x2);
-		y2 = (!relative ? y2 : this.currentInstance.vars.getBuiltIn("y") + y2);
+		x1 = (!relative ? x1 : this.currentInstance.x + x1);
+		y1 = (!relative ? y1 : this.currentInstance.y + y1);
+		x2 = (!relative ? x2 : this.currentInstance.x + x2);
+		y2 = (!relative ? y2 : this.currentInstance.y + y2);
 		BuiltInFunctions.draw_line.call(this, [x1, y1, x2, y2]);
 		return 0;
 	}

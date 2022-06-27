@@ -683,8 +683,8 @@ export class Game {
 			let hspeedNew = hspeedOld;
 			let vspeedNew = vspeedOld;
 
-			instance.vars.setBuiltIn("x", instance.vars.getBuiltIn("x") + hspeedOld);
-			instance.vars.setBuiltIn("y", instance.vars.getBuiltIn("y") + vspeedOld);
+			instance.x += hspeedOld;
+			instance.y += vspeedOld;
 
 			if (instance.vars.getBuiltIn("friction") != 0) {
 				const direction = instance.vars.getBuiltIn("direction") * (Math.PI / 180);
@@ -742,8 +742,8 @@ export class Game {
 		// Update some instance variables
 		for (const instance of this.instances) {
 			if (!instance.exists) continue;
-			instance.vars.setBuiltIn("xprevious", instance.vars.getBuiltIn("x"));
-			instance.vars.setBuiltIn("yprevious", instance.vars.getBuiltIn("y"));
+			instance.vars.setBuiltIn("xprevious", instance.x);
+			instance.vars.setBuiltIn("yprevious", instance.y);
 
 			const imageNumber = (instance.sprite ? instance.sprite.images.length : 0);
 
@@ -836,7 +836,7 @@ export class Game {
 				} else {
 					// No draw event, draw sprite if it has one.
 					if (instance.sprite) {
-						this.drawSprite(instance.sprite, instance.getImageIndex(), instance.vars.getBuiltIn("x"), instance.vars.getBuiltIn("y"));
+						this.drawSprite(instance.sprite, instance.getImageIndex(), instance.x, instance.y);
 					}
 				}
 			}
@@ -1237,16 +1237,16 @@ export class Game {
 
 	// Check if two instances, with precise shape, are colliding.
 	collisionInstancePreciseOnInstancePrecise(a, b, aX, aY, bX, bY) {
-		aX = (aX == null) ? Math.floor(a.vars.getBuiltIn("x")) : aX;
-		aY = (aY == null) ? Math.floor(a.vars.getBuiltIn("y")) : aY;
+		aX = aX ?? Math.floor(a.x);
+		aY = aY ?? Math.floor(a.y);
 		const aImage = a.sprite.images[a.getImageIndex()];
 		const aX1 = aX - a.sprite.originx;
 		const aY1 = aY - a.sprite.originy;
 		const aX2 = aX1 + aImage.image.width;
 		const aY2 = aY1 + aImage.image.height;
 
-		bX = (bX == null) ? Math.floor(b.vars.getBuiltIn("x")) : bX;
-		bY = (bY == null) ? Math.floor(b.vars.getBuiltIn("y")) : bY;
+		bX = bX ?? Math.floor(b.x);
+		bY = bY ?? Math.floor(b.y);
 		const bImage = b.sprite.images[b.getImageIndex()];
 		const bX1 = bX - b.sprite.originx;
 		const bY1 = bY - b.sprite.originy;
@@ -1302,14 +1302,14 @@ export class Game {
 
 	// Check if two instances, with rectangular shape, are colliding.
 	collisionInstanceRectangleOnInstanceRectangle(a, b, aX, aY, bX, bY) {
-		aX = (aX == null) ? a.vars.getBuiltIn("x") : aX;
-		aY = (aY == null) ? a.vars.getBuiltIn("y") : aY;
+		aX = aX ?? a.x;
+		aY = aY ?? a.y;
 		const aX1 = aX - a.sprite.originx;
 		const aY1 = aY - a.sprite.originy;
 		const aImage = a.sprite.images[a.getImageIndex()];
 
-		bX = (bX == null) ? b.vars.getBuiltIn("x") : bX;
-		bY = (bY == null) ? b.vars.getBuiltIn("y") : bY;
+		bX = bX ?? b.x;
+		bY = bY ?? b.y;
 		const bX1 = bX - b.sprite.originx;
 		const bY1 = bY - b.sprite.originy;
 		const bImage = b.sprite.images[b.getImageIndex()];
@@ -1324,8 +1324,8 @@ export class Game {
 
 	// Check if an instance, with rectangular shape, and a point are colliding.
 	collisionInstanceRectangleOnPoint(instance, point) {
-		const instanceX = instance.vars.getBuiltIn("x") - instance.sprite.originx;
-		const instanceY = instance.vars.getBuiltIn("y") - instance.sprite.originy;
+		const instanceX = instance.x - instance.sprite.originx;
+		const instanceY = instance.y - instance.sprite.originy;
 		const instanceImage = instance.sprite.images[instance.getImageIndex()];
 
 		return (

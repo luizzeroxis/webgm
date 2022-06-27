@@ -5,16 +5,14 @@ import BuiltInLocals from "./BuiltInLocals.js";
 export default class Instance {
 	constructor(id, x, y, object_index, game) {
 		this.id = id;
+		this.x = x;
+		this.y = y;
 		this.object_index = object_index;
 		this.game = game;
 
 		this.exists = true;
 
 		this.vars = new VariableHolder(this, BuiltInLocals);
-
-		// Set by constructor
-		this.vars.setBuiltIn("x", x);
-		this.vars.setBuiltIn("y", y);
 
 		// Caching of data
 		this.object = game.project.getResourceById("ProjectObject", this.object_index);

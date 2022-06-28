@@ -37,6 +37,8 @@ export default class Instance {
 		this.direction = 0;
 		this.speed = 0;
 
+		this.alarms = [];
+
 		this.imageIndex = 0;
 		this.imageSpeed = 1;
 	}

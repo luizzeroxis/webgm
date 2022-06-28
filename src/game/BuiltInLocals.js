@@ -102,7 +102,11 @@ export default class BuiltInLocals {
 
 	// Game play / Timing
 
-	static alarm = {type: "integer", dimensions: 1, default: () => new Array(12).fill(-1)};
+	static alarm = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 12; },
+		directGet(index) { return this.alarms[index] ?? -1; },
+		directSet(value, index) { this.alarms[index] = value; },
+	};
 
 	static timeline_index = {type: "integer", default: -1};
 	static timeline_loop = {type: "bool", default: 0};

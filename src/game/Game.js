@@ -586,11 +586,10 @@ export class Game {
 				// Update alarm (decrease by one) here, before running event
 				// Alarm stays 0 until next alarm check, where it becomes -1 forever (that's doom as heck)
 
-				const alarm = instance.vars.getBuiltInArray("alarm", [subtype]);
-				if (alarm >= 0) {
-					instance.vars.setBuiltInArray("alarm", [subtype], alarm - 1);
+				if (instance.alarms[subtype] >= 0) {
+					instance.alarms[subtype] -= 1;
 				}
-				if (instance.vars.getBuiltInArray("alarm", [subtype]) == 0) {
+				if (instance.alarms[subtype] == 0) {
 					await this.doEvent(event, instance);
 				}
 			}

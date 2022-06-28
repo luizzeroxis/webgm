@@ -6046,8 +6046,8 @@ export default class BuiltInFunctions {
 	// ### Timing
 
 	static action_set_alarm([numberOfSteps, inAlarmNo], relative) {
-		numberOfSteps = (!relative ? numberOfSteps : this.currentInstance.vars.getBuiltInArray("alarm", [inAlarmNo]) + numberOfSteps);
-		this.currentInstance.vars.setBuiltInArray("alarm", [inAlarmNo], numberOfSteps);
+		numberOfSteps = (!relative ? numberOfSteps : this.currentInstance.alarms[inAlarmNo] + numberOfSteps);
+		this.currentInstance.alarms[inAlarmNo] = numberOfSteps;
 		return 0;
 	}
 

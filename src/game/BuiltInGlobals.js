@@ -13,7 +13,7 @@ export default class BuiltInGlobals {
 		direct: true, dimensions: 1,
 		directLength() { return 16; },
 		directGet(index) {
-			return this.arguments[index] != undefined ? this.arguments[index] : 0;
+			return this.arguments[index] ?? 0;
 		},
 		directSet(value, index) {
 			this.argument[index] = value;

@@ -482,7 +482,7 @@ export class Game {
 
 	// Loads the first room of the game.
 	async loadFirstRoom() {
-		await this.loadRoom(this.project.resources.ProjectRoom[0]);
+		await this.loadRoom(this.project.resources.ProjectRoom[0], true);
 	}
 
 	// Run a step and set timeout for next step. With error catching.
@@ -1056,10 +1056,9 @@ export class Game {
 	// // Actions execution
 
 	// Loads a room. Only use this inside the stepStopAction function, or at the beginning of the game.
-	async loadRoom(room) {
-		const isFirstRoom = (this.room == null);
-
-		if (!isFirstRoom) {
+	// isGameStart is set when it's the first room loaded or the game is restarted.
+	async loadRoom(room, isGameStart=false) {
+		if (!isGameStart) {
 			// If one instance calls a step stop exception, then the entire chain stops
 			try {
 				for (const instance of this.instances) {
@@ -1076,6 +1075,8 @@ export class Game {
 			}
 
 			this.instances = this.instances.filter(instance => instance.exists && instance.persistent);
+		} else {
+			this.instances = []; // TODO check if when it restarts it calls destroy events
 		}
 
 		this.room = {
@@ -1128,7 +1129,7 @@ export class Game {
 			await this.doEvent(this.getEventOfInstance(instance, "create"), instance);
 		}
 
-		if (isFirstRoom) {
+		if (isGameStart) {
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
 				const OTHER_GAME_START = 2;
@@ -1380,6 +1381,7 @@ export class Game {
 		}
 	}
 
+	// Set the fullscreen status.
 	async setFullscreen(fullscreen) {
 		if (fullscreen) {
 			try {
@@ -1394,6 +1396,12 @@ export class Game {
 		}
 	}
 
+	// Get the fullscreen status.
+	getFullscreen() {
+		return (document.fullscreenElement != null);
+	}
+
+	// Sets the lives variable, calling the relevant events.
 	async setLives(value) {
 		const previous = this.lives;
 		this.lives = value;
@@ -1407,6 +1415,7 @@ export class Game {
 		}
 	}
 
+	// Sets the health variable, calling the relevant events.
 	async setHealth(value) {
 		const previous = this.health;
 		this.health = value;
@@ -1418,10 +1427,6 @@ export class Game {
 				await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_NO_MORE_HEALTH), instance);
 			}
 		}
-	}
-
-	getFullscreen() {
-		return (document.fullscreenElement != null);
 	}
 
 	// Get state of a key. dict should be key, keyPressed or keyReleased.
@@ -1455,7 +1460,7 @@ export class Game {
 		this.mouseWheel = 0;
 	}
 
-	// Compile and execute GML string.
+	// Compile and execute a GML string.
 	async executeString(gml, instance, other, args) {
 		const result = this.gml.compile(gml);
 		if (!result.succeeded) {

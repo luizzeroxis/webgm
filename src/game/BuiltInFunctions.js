@@ -992,9 +992,12 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 
-	static game_restart([_]) {
-		throw new EngineException("Function game_restart is not implemented");
-		// return 0;
+	static game_restart([]) {
+		this.game.stepStopAction = async () => {
+			await this.game.loadFirstRoom();
+			this.game.startMainLoop();
+		};
+		return 0;
 	}
 
 	static game_save([_]) {

@@ -37,7 +37,7 @@ export default class Instance {
 		this.direction = 0;
 		this.speed = 0;
 		this.friction = 0;
-		
+
 		this.gravity = 0;
 		this.gravityDirection = 270;
 

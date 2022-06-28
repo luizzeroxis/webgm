@@ -21,10 +21,6 @@ export default class VariableHolder {
 				} else {
 					throw new Error("Non-direct built in variable has no default!");
 				}
-			} else {
-
-				// this.builtInList[name] = {}; // TODO Temporary
-
 			}
 		}
 	}
@@ -55,7 +51,6 @@ export default class VariableHolder {
 
 		indexes = indexes || [];
 
-		// TODO get dimensions from built in when direct
 		// Get difference between dimensions of variable and amount of indexes
 		let difference = dimensions - indexes.length;
 

@@ -677,8 +677,8 @@ export class Game {
 		for (const instance of this.instances) {
 			if (!instance.exists) continue;
 
-			const hspeedOld = instance.vars.getBuiltIn("hspeed");
-			const vspeedOld = instance.vars.getBuiltIn("vspeed");
+			const hspeedOld = instance.hSpeed;
+			const vspeedOld = instance.vSpeed;
 
 			let hspeedNew = hspeedOld;
 			let vspeedNew = vspeedOld;
@@ -687,7 +687,7 @@ export class Game {
 			instance.y += vspeedOld;
 
 			if (instance.vars.getBuiltIn("friction") != 0) {
-				const direction = instance.vars.getBuiltIn("direction") * (Math.PI / 180);
+				const direction = instance.direction * (Math.PI / 180);
 
 				if (hspeedOld != 0) {
 					hspeedNew = hspeedOld - Math.cos(direction) * instance.vars.getBuiltIn("friction");

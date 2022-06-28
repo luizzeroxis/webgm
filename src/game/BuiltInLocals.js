@@ -33,29 +33,33 @@ export default class BuiltInLocals {
 		directSet(value) { this.yStart = value; },
 	};
 
-	static hspeed = {type: "real", default: 0, set(hspeed) {
-		const vspeed = this.vars.getBuiltIn("vspeed");
-		this.vars.setBuiltIn("speed", Math.hypot(hspeed, vspeed));
-		this.vars.setBuiltIn("direction", Math.atan2(-vspeed, hspeed) * (180 / Math.PI));
-	}};
+	static hspeed = {direct: true, type: "real",
+		directGet() { return this.hSpeed; },
+		directSet(value) {
+			this.setHspeedAndVspeed(value, this.vSpeed);
+		},
+	};
 
-	static vspeed = {type: "real", default: 0, set(vspeed) {
-		const hspeed = this.vars.getBuiltIn("hspeed");
-		this.vars.setBuiltIn("speed", Math.hypot(hspeed, vspeed));
-		this.vars.setBuiltIn("direction", Math.atan2(-vspeed, hspeed) * (180 / Math.PI));
-	}};
+	static vspeed = {direct: true, type: "real",
+		directGet() { return this.vSpeed; },
+		directSet(value) {
+			this.setHspeedAndVspeed(this.hSpeed, value);
+		},
+	};
 
-	static direction = {type: "real", default: 0, set(direction) {
-		const dir = direction * (Math.PI / 180);
-		this.vars.setBuiltIn("hspeed", Math.cos(dir) * this.vars.getBuiltIn("speed"));
-		this.vars.setBuiltIn("vspeed", -Math.sin(dir) * this.vars.getBuiltIn("speed"));
-	}};
+	static direction = {direct: true, type: "real",
+		directGet() { return this.direction; },
+		directSet(value) {
+			this.setDirectionAndSpeed(value, this.speed);
+		},
+	};
 
-	static speed = {type: "real", default: 0, set(speed) {
-		const dir = this.vars.getBuiltIn("direction") * (Math.PI / 180);
-		this.vars.setBuiltIn("hspeed", Math.cos(dir) * speed);
-		this.vars.setBuiltIn("vspeed", -Math.sin(dir) * speed);
-	}};
+	static speed = {direct: true, type: "real",
+		directGet() { return this.speed; },
+		directSet(value) {
+			this.setDirectionAndSpeed(this.direction, value);
+		},
+	};
 
 	static friction = {type: "real", default: 0};
 	static gravity = {type: "real", default: 0};

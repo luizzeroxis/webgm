@@ -536,10 +536,10 @@ export default class BuiltInFunctions {
 	}
 
 	static motion_add([dir, speed]) {
-		const dir_radians = dir * (Math.PI / 180);
+		const dirRadians = dir * (Math.PI / 180);
 		this.currentInstance.setHspeedAndVspeed(
-			this.currentInstance.vars.getBuiltIn("hspeed") + Math.cos(dir_radians) * speed,
-			this.currentInstance.vars.getBuiltIn("vspeed") + -Math.sin(dir_radians) * speed,
+			this.currentInstance.hSpeed + Math.cos(dirRadians) * speed,
+			this.currentInstance.vSpeed + -Math.sin(dirRadians) * speed,
 		);
 		return 0;
 	}
@@ -5752,10 +5752,10 @@ export default class BuiltInFunctions {
 		const chosenAngle = possibleAngles[Math.floor( Math.random() * possibleAngles.length )];
 
 		if (chosenAngle != null) {
-			speed = (!relative ? speed : this.currentInstance.vars.getBuiltIn("speed") + speed);
+			speed = (!relative ? speed : this.currentInstance.speed + speed);
 			this.currentInstance.setDirectionAndSpeed(chosenAngle, speed);
 		} else {
-			this.currentInstance.vars.setBuiltIn("speed", 0);
+			this.currentInstance.setDirectionAndSpeed(this.currentInstance.direction, 0);
 		}
 
 		return 0;
@@ -5783,14 +5783,14 @@ export default class BuiltInFunctions {
 	}
 
 	static action_set_hspeed([horSpeed], relative) {
-		horSpeed = (!relative ? horSpeed : this.currentInstance.vars.getBuiltIn("hspeed") + horSpeed);
-		this.currentInstance.vars.setBuiltInCall("hspeed", horSpeed);
+		horSpeed = (!relative ? horSpeed : this.currentInstance.hSpeed + horSpeed);
+		this.currentInstance.setHspeedAndVspeed(horSpeed, this.currentInstance.vSpeed);
 		return 0;
 	}
 
 	static action_set_vspeed([vertSpeed], relative) {
-		vertSpeed = (!relative ? vertSpeed : this.currentInstance.vars.getBuiltIn("vspeed") + vertSpeed);
-		this.currentInstance.vars.setBuiltInCall("vspeed", vertSpeed);
+		vertSpeed = (!relative ? vertSpeed : this.currentInstance.vSpeed + vertSpeed);
+		this.currentInstance.setHspeedAndVspeed(this.currentInstance.hSpeed, vertSpeed);
 		return 0;
 	}
 
@@ -5803,12 +5803,12 @@ export default class BuiltInFunctions {
 	}
 
 	static action_reverse_xdir([]) {
-		this.currentInstance.vars.setBuiltInCall("hspeed", this.currentInstance.vars.getBuiltIn("hspeed") * -1);
+		this.currentInstance.setHspeedAndVspeed(-this.currentInstance.hSpeed, this.currentInstance.vSpeed);
 		return 0;
 	}
 
 	static action_reverse_ydir([]) {
-		this.currentInstance.vars.setBuiltInCall("vspeed", this.currentInstance.vars.getBuiltIn("vspeed") * -1);
+		this.currentInstance.setHspeedAndVspeed(this.currentInstance.hSpeed, -this.currentInstance.vSpeed);
 		return 0;
 	}
 
@@ -5861,24 +5861,20 @@ export default class BuiltInFunctions {
 
 		if (horizontal) {
 			const x = this.currentInstance.x;
-			if (x >= this.game.room.width
-				&& this.currentInstance.vars.getBuiltIn("hspeed") > 0) {
+			if (x >= this.game.room.width && this.currentInstance.hSpeed > 0) {
 				this.currentInstance.x = x - this.game.room.width - spriteW;
 			} else
-			if (x < 0
-				&& this.currentInstance.vars.getBuiltIn("hspeed") < 0) {
+			if (x < 0 && this.currentInstance.hSpeed < 0) {
 				this.currentInstance.x = this.game.room.width + x + spriteW;
 			}
 		}
 
 		if (vertical) {
 			const y = this.currentInstance.y;
-			if (y >= this.game.room.height
-				&& this.currentInstance.vars.getBuiltIn("vspeed") > 0) {
+			if (y >= this.game.room.height && this.currentInstance.vSpeed > 0) {
 				this.currentInstance.y = y - this.game.room.height - spriteH;
 			} else
-			if (y < 0
-				&& this.currentInstance.vars.getBuiltIn("vspeed") < 0) {
+			if (y < 0 && this.currentInstance.vSpeed < 0) {
 				this.currentInstance.y = this.game.room.height + y + spriteH;
 			}
 		}

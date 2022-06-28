@@ -32,6 +32,11 @@ export default class Instance {
 		this.xStart = x;
 		this.yStart = y;
 
+		this.hSpeed = 0;
+		this.vSpeed = 0;
+		this.direction = 0;
+		this.speed = 0;
+
 		this.imageIndex = 0;
 		this.imageSpeed = 1;
 	}
@@ -40,20 +45,20 @@ export default class Instance {
 		return Math.floor(this.imageIndex % (this.sprite ? this.sprite.images.length : 0));
 	}
 
-	setDirectionAndSpeed(direction, speed) {
-		this.vars.setBuiltIn("direction", direction);
-		this.vars.setBuiltIn("speed", speed);
+	setHspeedAndVspeed(hspeed, vspeed) {
+		this.hSpeed = hspeed;
+		this.vSpeed = vspeed;
 
-		const direction_radians = direction * (Math.PI / 180);
-		this.vars.setBuiltIn("hspeed", Math.cos(direction_radians) * speed);
-		this.vars.setBuiltIn("vspeed", -Math.sin(direction_radians) * speed);
+		this.speed = Math.hypot(hspeed, vspeed);
+		this.direction = Math.atan2(-vspeed, hspeed) * (180 / Math.PI);
 	}
 
-	setHspeedAndVspeed(hspeed, vspeed) {
-		this.vars.setBuiltIn("hspeed", hspeed);
-		this.vars.setBuiltIn("vspeed", vspeed);
+	setDirectionAndSpeed(direction, speed) {
+		this.direction = direction;
+		this.speed = speed;
 
-		this.vars.setBuiltIn("speed", Math.hypot(hspeed, vspeed));
-		this.vars.setBuiltIn("direction", Math.atan2(-vspeed, hspeed) * (180 / Math.PI));
+		const directionRadians = direction * (Math.PI / 180);
+		this.hSpeed = Math.cos(directionRadians) * speed;
+		this.vSpeed = -Math.sin(directionRadians) * speed;
 	}
 }

@@ -185,7 +185,7 @@ export default class BuiltInGlobals {
 	}};
 
 	static event_object = {readOnly: true, direct: true, directGet() {
-		return this.currentEventInstance ? this.currentEventInstance.object_index : 0;
+		return this.currentEventInstance ? this.currentEventInstance.objectIndex : 0;
 	}};
 
 	static event_action = {readOnly: true, direct: true, directGet() {

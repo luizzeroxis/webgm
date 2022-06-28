@@ -3,38 +3,41 @@ import VariableHolder from "../common/VariableHolder.js";
 import BuiltInLocals from "./BuiltInLocals.js";
 
 export default class Instance {
-	constructor(id, x, y, object_index, game) {
+	constructor(id, x, y, objectIndex, game) {
+		// Arguments
 		this.id = id;
 		this.x = x;
 		this.y = y;
-		this.object_index = object_index;
+		this.objectIndex = objectIndex;
 		this.game = game;
 
-		this.exists = true;
-
-		this.vars = new VariableHolder(this, BuiltInLocals);
-
-		// Caching of data
-		this.object = game.project.getResourceById("ProjectObject", this.object_index);
-		// this.sprite = game.project.getResourceById('ProjectSprite', this.object.sprite_index); // already called when setting sprite_index
+		this.object = game.project.getResourceById("ProjectObject", this.objectIndex);
 
 		// Inherited from object
-		this.vars.setBuiltInCall("sprite_index", this.object.sprite_index);
-		this.vars.setBuiltIn("visible", this.object.visible ? 1 : 0);
-		this.vars.setBuiltIn("solid", this.object.solid ? 1 : 0);
-		this.vars.setBuiltIn("depth", this.object.depth);
-		this.vars.setBuiltIn("persistent", this.object.persistent ? 1 : 0);
-		this.vars.setBuiltIn("mask_index", this.object.mask_index);
+		this.spriteIndex = this.object.sprite_index;
+		this.visible = this.object.visible;
+		this.solid = this.object.solid;
+		this.depth = this.object.depth;
+		this.persistent = this.object.persistent;
+		this.maskIndex = this.object.mask_index;
 
-		// Started up variables
-		this.vars.setBuiltIn("xprevious", x);
-		this.vars.setBuiltIn("yprevious", y);
-		this.vars.setBuiltIn("xstart", x);
-		this.vars.setBuiltIn("ystart", y);
+		// Internal
+		this.exists = true;
+		this.vars = new VariableHolder(this, BuiltInLocals);
+		this.sprite = this.game.project.getResourceById("ProjectSprite", this.spriteIndex);
+
+		// Variables
+		this.xPrevious = x;
+		this.yPrevious = y;
+		this.xStart = x;
+		this.yStart = y;
+
+		this.imageIndex = 0;
+		this.imageSpeed = 1;
 	}
 
 	getImageIndex() {
-		return Math.floor(this.vars.getBuiltIn("image_index") % (this.sprite ? this.sprite.images.length : 0));
+		return Math.floor(this.imageIndex % (this.sprite ? this.sprite.images.length : 0));
 	}
 
 	setDirectionAndSpeed(direction, speed) {

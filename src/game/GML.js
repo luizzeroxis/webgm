@@ -669,7 +669,7 @@ export default class GML {
 	*/
 	objectReferenceToInstances(object) {
 		if (object >= 0 && object <= 100000) { // object index
-			const instances = this.game.instances.filter(instance => instance.exists && instance.object_index == object);
+			const instances = this.game.instances.filter(instance => instance.exists && instance.objectIndex == object);
 			return instances;
 		} else if (object > 100000) { // instance id
 			const instance = this.game.instances.find(instance => instance.exists && instance.id == object);

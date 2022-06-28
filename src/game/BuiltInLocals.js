@@ -13,10 +13,25 @@ export default class BuiltInLocals {
 		directSet(value) { this.y = value; },
 	};
 
-	static xprevious = {type: "real", default: 0};
-	static yprevious = {type: "real", default: 0};
-	static xstart = {type: "real", default: 0};
-	static ystart = {type: "real", default: 0};
+	static xPrevious = {direct: true, type: "real",
+		directGet() { return this.xPrevious; },
+		directSet(value) { this.xPrevious = value; },
+	};
+
+	static yPrevious = {direct: true, type: "real",
+		directGet() { return this.yPrevious; },
+		directSet(value) { this.yPrevious = value; },
+	};
+
+	static xStart = {direct: true, type: "real",
+		directGet() { return this.xStart; },
+		directSet(value) { this.xStart = value; },
+	};
+
+	static yStart = {direct: true, type: "real",
+		directGet() { return this.yStart; },
+		directSet(value) { this.yStart = value; },
+	};
 
 	static hspeed = {type: "real", default: 0, set(hspeed) {
 		const vspeed = this.vars.getBuiltIn("vspeed");
@@ -59,16 +74,27 @@ export default class BuiltInLocals {
 	// Game play / Instances
 
 	static object_index = {readOnly: true, direct: true,
-		directGet() { return this.object_index; },
+		directGet() { return this.objectIndex; },
 	};
 
 	static id = {readOnly: true, direct: true,
 		directGet() { return this.id; },
 	};
 
-	static mask_index = {type: "integer", default: -1};
-	static solid = {type: "bool", default: 0};
-	static persistent = {type: "bool", default: 0};
+	static mask_index = {direct: true, type: "integer",
+		directGet() { return this.maskIndex; },
+		directSet(value) { this.maskIndex = value; },
+	};
+
+	static solid = {direct: true, type: "bool",
+		directGet() { return this.solid ? 1 : 0; },
+		directSet(value) { this.solid = value; },
+	};
+
+	static persistent = {direct: true, type: "bool",
+		directGet() { return this.persistent ? 1 : 0; },
+		directSet(value) { this.persistent = value; },
+	};
 
 	// Game play / Timing
 
@@ -82,13 +108,19 @@ export default class BuiltInLocals {
 
 	// Game Graphics / Sprites and Images
 
-	static visible = {type: "bool", default: 1};
+	static visible = {direct: true, type: "bool",
+		directGet() { return this.visible ? 1 : 0; },
+		directSet(value) { this.visible = value; },
+	};
 
-	static sprite_index = {type: "integer", default: -1, set(sprite_index) {
-		// Update sprite cache
-		this.sprite = this.game.project.getResourceById("ProjectSprite", sprite_index);
-		this.vars.setBuiltIn("image_index", 0);
-	}};
+	static sprite_index = {direct: true, type: "integer",
+		directGet() { return this.spriteIndex; },
+		directSet(value) {
+			this.spriteIndex = value;
+			this.sprite = this.game.project.getResourceById("ProjectSprite", value);
+			this.imageIndex = 0;
+		},
+	};
 
 	static sprite_width = {readOnly: true, direct: true, directGet() {
 		if (this.sprite == null) return 0;
@@ -119,10 +151,20 @@ export default class BuiltInLocals {
 		return this.sprite.images.length;
 	}};
 
-	static image_index = {type: "real", default: 0};
-	static image_speed = {type: "real", default: 1};
+	static image_index = {direct: true, type: "real",
+		directGet() { return this.imageIndex; },
+		directSet(value) { this.imageIndex = value; },
+	};
 
-	static depth = {type: "real", default: 0};
+	static image_speed = {direct: true, type: "real",
+		directGet() { return this.imageSpeed; },
+		directSet(value) { this.imageSpeed = value; },
+	};
+
+	static depth = {direct: true, type: "real",
+		directGet() { return this.depth; },
+		directSet(value) { this.depth = value; },
+	};
 
 	static image_xscale = {type: "real", default: 1};
 	static image_yscale = {type: "real", default: 1};
@@ -141,7 +183,7 @@ export default class BuiltInLocals {
 		if (this.sprite == null) return -100000;
 
 		const image = this.sprite.images[this.getImageIndex()];
-		return this.x + (image ? -this.sprite.originx + image.image.width: 0);
+		return this.x + (image ? (-this.sprite.originx + image.image.width) : 0);
 	}};
 
 	static bbox_top = {readOnly: true, direct: true, directGet() {
@@ -155,13 +197,16 @@ export default class BuiltInLocals {
 		if (this.sprite == null) return -100000;
 
 		const image = this.sprite.images[this.getImageIndex()];
-		return this.y + (image ? -this.sprite.originy + image.image.height: 0);
+		return this.y + (image ? (-this.sprite.originy + image.image.height) : 0);
 	}};
 
 	// Unknown
 
-	static image_single = {type: "real", default: -1, set(image_single) {
-		this.vars.setBuiltIn("image_index", image_single);
-		this.vars.setBuiltIn("image_speed", 0);
-	}};
+	static image_single = {direct: true, type: "real",
+		directGet() { return this.imageIndex; },
+		directSet(value) {
+			this.imageIndex = value;
+			this.imageSpeed = 0;
+		},
+	};
 }

@@ -720,7 +720,7 @@ export class Game {
 				if (!instance.exists) continue;
 				for (const other of this.instances) {
 					if (!other.exists) continue;
-					if (!(other.object_index == subtype)) continue;
+					if (!(other.objectIndex == subtype)) continue;
 					if (this.collisionInstanceOnInstance(instance, other)) {
 						// TODO collision shenanigans
 						await this.doEvent(event, instance, other);
@@ -742,16 +742,16 @@ export class Game {
 		// Update some instance variables
 		for (const instance of this.instances) {
 			if (!instance.exists) continue;
-			instance.vars.setBuiltIn("xprevious", instance.x);
-			instance.vars.setBuiltIn("yprevious", instance.y);
+			instance.xPrevious = instance.x;
+			instance.yPrevious = instance.y;
 
 			const imageNumber = (instance.sprite ? instance.sprite.images.length : 0);
 
-			let i = instance.vars.getBuiltIn("image_index") + instance.vars.getBuiltIn("image_speed");
+			let i = instance.imageIndex + instance.imageSpeed;
 			if (i >= imageNumber) {
 				i -= imageNumber;
 			}
-			instance.vars.setBuiltIn("image_index", i);
+			instance.vars.imageIndex = i;
 		}
 
 		// Check global game settings default keys
@@ -822,13 +822,13 @@ export class Game {
 
 		const instances_by_depth = this.instances
 			.filter(x => x.exists)
-			.sort((a, b) => a.vars.getBuiltIn("depth") - b.vars.getBuiltIn("depth"));
+			.sort((a, b) => a.depth - b.depth);
 
 		for (const instance of instances_by_depth) {
 			if (!instance.exists) continue;
 
 			// Only draw if visible
-			if (instance.vars.getBuiltIn("visible")) {
+			if (instance.visible) {
 				const drawEvent = this.getEventOfInstance(instance, "draw");
 
 				if (drawEvent) {
@@ -1073,7 +1073,7 @@ export class Game {
 				}
 			}
 
-			this.instances = this.instances.filter(instance => instance.exists && instance.vars.getBuiltIn("persistent"));
+			this.instances = this.instances.filter(instance => instance.exists && instance.persistent);
 		}
 
 		this.room = {
@@ -1208,7 +1208,7 @@ export class Game {
 		// place_free / place_empty / place_meeting
 		for (const otherInstance of otherInstances) {
 			if (!otherInstance.exists) continue;
-			if (solidOnly && (otherInstance.vars.getBuiltIn("solid") == 0)) continue;
+			if (solidOnly && !otherInstance.solid) continue;
 			const c = this.collisionInstanceOnInstance(instance, otherInstance, x, y);
 			if (c) return true;
 		}
@@ -1529,7 +1529,7 @@ export class Game {
 			case -2:
 				return [this.currentEventOther || this.currentEventInstance];
 			default:
-				return this.instances.filter(x => x.exists && x.object_index == appliesTo);
+				return this.instances.filter(x => x.exists && x.objectIndex == appliesTo);
 		}
 	}
 

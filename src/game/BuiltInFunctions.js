@@ -5829,8 +5829,8 @@ export default class BuiltInFunctions {
 	}
 
 	static action_move_start([]) {
-		this.currentInstance.x = this.currentInstance.vars.getBuiltIn("xstart");
-		this.currentInstance.y = this.currentInstance.vars.getBuiltIn("ystart");
+		this.currentInstance.x = this.currentInstance.xStart;
+		this.currentInstance.y = this.currentInstance.yStart;
 		return 0;
 	}
 
@@ -5975,11 +5975,12 @@ export default class BuiltInFunctions {
 	/// ### Sprite
 
 	static action_sprite_set([sprite, subimage, speed]) {
-		this.currentInstance.vars.setBuiltInCall("sprite_index", sprite);
+		this.currentInstance.spriteIndex = sprite;
+		this.currentInstance.sprite = this.game.project.getResourceById("ProjectSprite", sprite);
 		if (subimage != -1) {
-			this.currentInstance.vars.setBuiltIn("image_index", subimage);
+			this.currentInstance.imageIndex = subimage;
 		}
-		this.currentInstance.vars.setBuiltIn("image_speed", speed);
+		this.currentInstance.imageSpeed = speed;
 		return 0;
 	}
 
@@ -6513,7 +6514,7 @@ export default class BuiltInFunctions {
 	static action_draw_sprite([sprite, x, y, subimage], relative) {
 		x = (!relative ? x : this.currentInstance.x + x);
 		y = (!relative ? y : this.currentInstance.y + y);
-		subimage = (subimage != -1) ? subimage : this.currentInstance.vars.getBuiltIn("image_index");
+		subimage = (subimage != -1) ? subimage : this.currentInstance.imageIndex;
 		BuiltInFunctions.draw_sprite.call(this, [sprite, subimage, x, y]);
 		return 0;
 	}

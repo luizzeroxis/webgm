@@ -1577,7 +1577,7 @@ export class Game {
 			"\n___________________________________________\n"
 			+ (isFatal ? "FATAL " : "") + "ERROR in\n"
 			+ "action number " + _actionNumber.toString() + "\n"
-			+ "of " + Events.getEventName(_event) + " Event\n"
+			+ "of " + Events.getEventName(_event, this.project) + " Event\n"
 			+ "for object " + _object.name + ":\n\n"
 			+ extraText,
 

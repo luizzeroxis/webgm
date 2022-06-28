@@ -13,22 +13,22 @@ export default class BuiltInLocals {
 		directSet(value) { this.y = value; },
 	};
 
-	static xPrevious = {direct: true, type: "real",
+	static xprevious = {direct: true, type: "real",
 		directGet() { return this.xPrevious; },
 		directSet(value) { this.xPrevious = value; },
 	};
 
-	static yPrevious = {direct: true, type: "real",
+	static yprevious = {direct: true, type: "real",
 		directGet() { return this.yPrevious; },
 		directSet(value) { this.yPrevious = value; },
 	};
 
-	static xStart = {direct: true, type: "real",
+	static xstart = {direct: true, type: "real",
 		directGet() { return this.xStart; },
 		directSet(value) { this.xStart = value; },
 	};
 
-	static yStart = {direct: true, type: "real",
+	static ystart = {direct: true, type: "real",
 		directGet() { return this.yStart; },
 		directSet(value) { this.yStart = value; },
 	};

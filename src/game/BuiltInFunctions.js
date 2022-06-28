@@ -5795,10 +5795,10 @@ export default class BuiltInFunctions {
 	}
 
 	static action_set_gravity([direction, gravity], relative) {
-		direction = (!relative ? direction : this.currentInstance.vars.getBuiltIn("gravity_direction") + direction); // lol
-		this.currentInstance.vars.setBuiltIn("gravity_direction", direction);
-		gravity = (!relative ? gravity : this.currentInstance.vars.getBuiltIn("gravity") + gravity);
-		this.currentInstance.vars.setBuiltIn("gravity", gravity);
+		direction = (!relative ? direction : this.currentInstance.gravityDirection + direction);
+		this.currentInstance.gravityDirection = direction;
+		gravity = (!relative ? gravity : this.currentInstance.gravity + gravity);
+		this.currentInstance.gravity = gravity;
 		return 0;
 	}
 
@@ -5813,8 +5813,8 @@ export default class BuiltInFunctions {
 	}
 
 	static action_set_friction([friction], relative) {
-		friction = (!relative ? friction : this.currentInstance.vars.getBuiltIn("friction") + friction);
-		this.currentInstance.vars.setBuiltIn("friction", friction);
+		friction = (!relative ? friction : this.currentInstance.friction + friction);
+		this.currentInstance.friction = friction;
 		return 0;
 	}
 

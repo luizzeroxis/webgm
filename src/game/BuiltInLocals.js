@@ -61,9 +61,20 @@ export default class BuiltInLocals {
 		},
 	};
 
-	static friction = {type: "real", default: 0};
-	static gravity = {type: "real", default: 0};
-	static gravity_direction = {type: "real", default: 270};
+	static friction = {direct: true, type: "real",
+		directGet() { return this.friction; },
+		directSet(value) { this.friction = value; },
+	};
+
+	static gravity = {direct: true, type: "real",
+		directGet() { return this.gravity; },
+		directSet(value) { this.gravity = value; },
+	};
+
+	static gravity_direction = {direct: true, type: "real",
+		directGet() { return this.gravityDirection; },
+		directSet(value) { this.gravityDirection = value; },
+	};
 
 	// Game play / Paths
 

@@ -84,6 +84,9 @@ export class Game {
 		this.score = 0;
 		this.lives = -1;
 		this.health = 100;
+
+		this.transitionKind = 0;
+		this.transitionSteps = 80;
 	}
 
 	// Starts the game.
@@ -685,27 +688,27 @@ export class Game {
 			instance.x += hspeedOld;
 			instance.y += vspeedOld;
 
-			if (instance.vars.getBuiltIn("friction") != 0) {
+			if (instance.friction != 0) {
 				const direction = instance.direction * (Math.PI / 180);
 
 				if (hspeedOld != 0) {
-					hspeedNew = hspeedOld - Math.cos(direction) * instance.vars.getBuiltIn("friction");
+					hspeedNew = hspeedOld - Math.cos(direction) * instance.friction;
 					if (Math.sign(hspeedNew) != Math.sign(hspeedOld)) { // If changed sign, that is, going in the opposite direction, don't do that
 						hspeedNew = 0;
 					}
 				}
 
 				if (vspeedOld != 0) {
-					vspeedNew = vspeedOld - -Math.sin(direction) * instance.vars.getBuiltIn("friction");
+					vspeedNew = vspeedOld - -Math.sin(direction) * instance.friction;
 					if (Math.sign(vspeedNew) != Math.sign(vspeedOld)) {
 						vspeedNew = 0;
 					}
 				}
 			}
 
-			if (instance.vars.getBuiltIn("gravity") != 0) {
-				hspeedNew += Math.cos(instance.vars.getBuiltIn("gravity_direction") * (Math.PI / 180)) * instance.vars.getBuiltIn("gravity");
-				vspeedNew += -Math.sin(instance.vars.getBuiltIn("gravity_direction") * (Math.PI / 180)) * instance.vars.getBuiltIn("gravity");
+			if (instance.gravity != 0) {
+				hspeedNew += Math.cos(instance.gravityDirection * (Math.PI / 180)) * instance.gravity;
+				vspeedNew += -Math.sin(instance.gravityDirection * (Math.PI / 180)) * instance.gravity;
 			}
 
 			instance.setHspeedAndVspeed(hspeedNew, vspeedNew);

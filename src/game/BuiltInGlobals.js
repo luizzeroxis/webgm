@@ -142,13 +142,15 @@ export default class BuiltInGlobals {
 		directSet(value) { this.room.persistent = value; },
 	};
 
-	static transition_kind = {type: "integer", default: 0};
+	static transition_kind = {direct: true, type: "integer",
+		directGet() { return this.transitionKind; },
+		directSet(value) { this.transitionKind = value; },
+	};
 
-	static transition_steps = {type: "integer", default: 80, set(value) {
-		if (value < 1) {
-			this.globalVars.vars.setBuiltIn("transition_steps", 1);
-		}
-	}};
+	static transition_steps = {direct: true, type: "integer",
+		directGet() { return this.transitionSteps; },
+		directSet(value) { this.transitionSteps = Math.max(1, value); },
+	};
 
 	// Game play / Score
 

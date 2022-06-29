@@ -1,10 +1,26 @@
 import {parent, endparent, add, HElement, HButton, HImage} from "../common/H.js";
 import {ProjectSprite, ProjectSound, ProjectBackground, ProjectObject} from "../common/Project.js";
 
-import Editor from "./Editor.js";
+import DefaultProjectFontIcon from "./img/default-ProjectFont-icon.png";
+import DefaultProjectPathIcon from "./img/default-ProjectPath-icon.png";
+import DefaultProjectRoomIcon from "./img/default-ProjectRoom-icon.png";
+import DefaultProjectScriptIcon from "./img/default-ProjectScript-icon.png";
 import DefaultProjectSoundIcon from "./img/default-ProjectSound-icon.png";
+import DefaultProjectTimelineIcon from "./img/default-ProjectTimeline-icon.png";
 
 export default class HResourceListItem extends HElement {
+	static resourceTypesIcons = {
+		"ProjectSprite": null,
+		"ProjectSound": DefaultProjectSoundIcon,
+		"ProjectBackground": null,
+		"ProjectPath": DefaultProjectPathIcon,
+		"ProjectScript": DefaultProjectScriptIcon,
+		"ProjectFont": DefaultProjectFontIcon,
+		"ProjectTimeline": DefaultProjectTimelineIcon,
+		"ProjectObject": null,
+		"ProjectRoom": DefaultProjectRoomIcon,
+	};
+
 	constructor(resource, editor) {
 		super("li");
 
@@ -106,7 +122,7 @@ export default class HResourceListItem extends HElement {
 				}
 			}
 		} else {
-			src = Editor.resourceTypesInfo.find(x => x.class == this.resource.constructor).resourceIcon;
+			src = HResourceListItem.resourceTypesIcons[this.resource.constructor.getClassName()];
 		}
 
 		this.htmlIcon.setSrc(src);

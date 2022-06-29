@@ -24,12 +24,6 @@ import HAreaMenu from "./areas/HAreaMenu.js";
 import HAreaResources from "./areas/HAreaResources.js";
 import HAreaWindows from "./areas/HAreaWindows.js";
 import BuiltInLibraries from "./BuiltInLibraries.js";
-import DefaultProjectFontIcon from "./img/default-ProjectFont-icon.png";
-import DefaultProjectPathIcon from "./img/default-ProjectPath-icon.png";
-import DefaultProjectRoomIcon from "./img/default-ProjectRoom-icon.png";
-import DefaultProjectScriptIcon from "./img/default-ProjectScript-icon.png";
-import DefaultProjectSoundIcon from "./img/default-ProjectSound-icon.png";
-import DefaultProjectTimelineIcon from "./img/default-ProjectTimeline-icon.png";
 import PreferencesManager from "./PreferencesManager.js";
 import ThemeManager from "./ThemeManager.js";
 import HWindowBackground from "./windows/HWindowBackground.js";
@@ -47,15 +41,15 @@ import "./style.css";
 
 export default class Editor {
 	static resourceTypesInfo = [
-		{class: ProjectSprite,     windowClass: HWindowSprite,     resourceIcon: null                      },
-		{class: ProjectSound,      windowClass: HWindowSound,      resourceIcon: DefaultProjectSoundIcon   },
-		{class: ProjectBackground, windowClass: HWindowBackground, resourceIcon: null                      },
-		{class: ProjectPath,       windowClass: HWindowPath,       resourceIcon: DefaultProjectPathIcon    },
-		{class: ProjectScript,     windowClass: HWindowScript,     resourceIcon: DefaultProjectScriptIcon  },
-		{class: ProjectFont,       windowClass: HWindowFont,       resourceIcon: DefaultProjectFontIcon    },
-		{class: ProjectTimeline,   windowClass: HWindowTimeline,   resourceIcon: DefaultProjectTimelineIcon},
-		{class: ProjectObject,     windowClass: HWindowObject,     resourceIcon: null                      },
-		{class: ProjectRoom,       windowClass: HWindowRoom,       resourceIcon: DefaultProjectRoomIcon    },
+		{class: ProjectSprite,     windowClass: HWindowSprite    },
+		{class: ProjectSound,      windowClass: HWindowSound     },
+		{class: ProjectBackground, windowClass: HWindowBackground},
+		{class: ProjectPath,       windowClass: HWindowPath      },
+		{class: ProjectScript,     windowClass: HWindowScript    },
+		{class: ProjectFont,       windowClass: HWindowFont      },
+		{class: ProjectTimeline,   windowClass: HWindowTimeline  },
+		{class: ProjectObject,     windowClass: HWindowObject    },
+		{class: ProjectRoom,       windowClass: HWindowRoom      },
 	];
 
 	constructor() {

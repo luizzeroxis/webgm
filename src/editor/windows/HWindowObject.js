@@ -564,7 +564,7 @@ export default class HWindowObject extends HWindow {
 					} else if ("menu" == actionArg.kind) {
 						return previous + actionType.args[part.number].menu[actionArg.value];
 					} else {
-						const resourceType = this.constructor.actionArgResourceTypes[actionArg.kind];
+						const resourceType = HWindowObject.actionArgResourceTypes[actionArg.kind];
 						if (!resourceType) throw new Error("Impossible action arg kind "+actionArg.kind);
 						const resource = this.editor.project.getResourceById(resourceType.getClassName(), actionArg.value);
 						return previous + (resource ? resource.name : "<undefined>");

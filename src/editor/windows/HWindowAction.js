@@ -4,6 +4,8 @@ import {parseArrowString, stringifyArrowValues, decimalToHex, hexToDecimal} from
 import HResourceSelect from "../HResourceSelect.js";
 import HWindow from "../HWindow.js";
 
+import HWindowObject from "./HWindowObject.js";
+
 export default class HWindowAction extends HWindow {
 	constructor(editor, id, action, object) {
 		super(editor, id);
@@ -169,7 +171,7 @@ export default class HWindowAction extends HWindow {
 	}
 
 	makeResourceInterface(name, resourceTypeName, value) {
-		const resourceType = this.object.constructor.actionArgResourceTypes[resourceTypeName];
+		const resourceType = HWindowObject.actionArgResourceTypes[resourceTypeName];
 
 		const select = add( new HResourceSelect(this.editor, name, resourceType) );
 		select.setValue(value);

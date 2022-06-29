@@ -6,15 +6,6 @@ import {parent, endparent, add, HElement, setOnFileDrop} from "../common/H.js";
 import {
 	Project,
 	ProjectAction,
-	ProjectSprite,
-	ProjectSound,
-	ProjectBackground,
-	ProjectPath,
-	ProjectScript,
-	ProjectFont,
-	ProjectTimeline,
-	ProjectObject,
-	ProjectRoom,
 } from "../common/Project.js";
 import ProjectSerializer from "../common/ProjectSerializer.js";
 import VirtualFileSystem from "../common/VirtualFileSystem.js";
@@ -26,32 +17,11 @@ import HAreaWindows from "./areas/HAreaWindows.js";
 import BuiltInLibraries from "./BuiltInLibraries.js";
 import PreferencesManager from "./PreferencesManager.js";
 import ThemeManager from "./ThemeManager.js";
-import HWindowBackground from "./windows/HWindowBackground.js";
-import HWindowFont from "./windows/HWindowFont.js";
 import HWindowGame from "./windows/HWindowGame.js";
-import HWindowObject from "./windows/HWindowObject.js";
-import HWindowPath from "./windows/HWindowPath.js";
-import HWindowRoom from "./windows/HWindowRoom.js";
-import HWindowScript from "./windows/HWindowScript.js";
-import HWindowSound from "./windows/HWindowSound.js";
-import HWindowSprite from "./windows/HWindowSprite.js";
-import HWindowTimeline from "./windows/HWindowTimeline.js";
 
 import "./style.css";
 
 export default class Editor {
-	static resourceTypesInfo = [
-		{class: ProjectSprite,     windowClass: HWindowSprite    },
-		{class: ProjectSound,      windowClass: HWindowSound     },
-		{class: ProjectBackground, windowClass: HWindowBackground},
-		{class: ProjectPath,       windowClass: HWindowPath      },
-		{class: ProjectScript,     windowClass: HWindowScript    },
-		{class: ProjectFont,       windowClass: HWindowFont      },
-		{class: ProjectTimeline,   windowClass: HWindowTimeline  },
-		{class: ProjectObject,     windowClass: HWindowObject    },
-		{class: ProjectRoom,       windowClass: HWindowRoom      },
-	];
-
 	constructor() {
 		this.project = new Project();
 		this.game = null;

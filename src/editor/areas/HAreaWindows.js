@@ -1,7 +1,27 @@
 import {parent, endparent, add, remove, HElement} from "../../common/H.js";
-import Editor from "../Editor.js";
+import HWindowBackground from "../windows/HWindowBackground.js";
+import HWindowFont from "../windows/HWindowFont.js";
+import HWindowObject from "../windows/HWindowObject.js";
+import HWindowPath from "../windows/HWindowPath.js";
+import HWindowRoom from "../windows/HWindowRoom.js";
+import HWindowScript from "../windows/HWindowScript.js";
+import HWindowSound from "../windows/HWindowSound.js";
+import HWindowSprite from "../windows/HWindowSprite.js";
+import HWindowTimeline from "../windows/HWindowTimeline.js";
 
 export default class HAreaWindows extends HElement {
+	static resourceTypesWindowClasses = {
+		"ProjectSprite": HWindowSprite,
+		"ProjectSound": HWindowSound,
+		"ProjectBackground": HWindowBackground,
+		"ProjectPath": HWindowPath,
+		"ProjectScript": HWindowScript,
+		"ProjectFont": HWindowFont,
+		"ProjectTimeline": HWindowTimeline,
+		"ProjectObject": HWindowObject,
+		"ProjectRoom": HWindowRoom,
+	};
+
 	constructor(editor) {
 		super("div", {class: "windows"});
 
@@ -42,7 +62,7 @@ export default class HAreaWindows extends HElement {
 
 	// Open or focus on a resource window.
 	openResource(resource) {
-		const windowClass = Editor.resourceTypesInfo.find(x => x.class == resource.constructor).windowClass;
+		const windowClass = HAreaWindows.resourceTypesWindowClasses[resource.constructor.getClassName()];
 		this.open(windowClass, resource, resource);
 	}
 

@@ -9,7 +9,7 @@ import {
 } from "../common/Project.js";
 import ProjectSerializer from "../common/ProjectSerializer.js";
 import VirtualFileSystem from "../common/VirtualFileSystem.js";
-import {Game} from "../game/Game.js";
+import Game from "../game/Game.js";
 
 import HAreaMenu from "./areas/HAreaMenu.js";
 import HAreaResources from "./areas/HAreaResources.js";

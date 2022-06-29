@@ -11,7 +11,7 @@ import BuiltInGlobals from "./BuiltInGlobals.js";
 import GML from "./GML.js";
 import Instance from "./Instance.js";
 
-export class Game {
+export default class Game {
 	constructor(project, canvas, input) {
 		this.project = new Project(project);
 		this.canvas = canvas;

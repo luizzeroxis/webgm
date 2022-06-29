@@ -169,6 +169,7 @@ export default class Game {
 		this.input.removeEventListener("mouseup", this.mouseUpHandler);
 		this.input.removeEventListener("mousemove", this.mouseMoveHandler);
 		this.input.removeEventListener("wheel", this.wheelHandler);
+		this.input.removeEventListener("contextmenu", this.contextMenuHandler);
 
 		// audio
 		this.stopAllSounds();
@@ -189,6 +190,7 @@ export default class Game {
 	// Called by start, inits the input system.
 	startInput() {
 		// Keyboard
+
 		this.keyDownHandler = (e) => {
 			e.preventDefault();
 			this.key[e.which] = true;
@@ -237,6 +239,11 @@ export default class Game {
 			this.mouseWheel += e.deltaY;
 		};
 		this.input.addEventListener("wheel", this.wheelHandler);
+
+		this.contextMenuHandler = (e) => {
+			e.preventDefault();
+		};
+		this.input.addEventListener("contextmenu", this.contextMenuHandler);
 	}
 
 	// Called by start, inits general engine stuff.

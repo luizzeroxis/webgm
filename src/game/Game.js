@@ -19,10 +19,17 @@ export default class Game {
 
 		this.dispatcher = new Dispatcher();
 
+		// Canvas
 		this.ctx = null;
 
+		// Input
 		this.keyDownHandler = null;
 		this.keyUpHandler = null;
+		this.mouseDownHandler = null;
+		this.mouseUpHandler = null;
+		this.mouseMoveHandler = null;
+		this.wheelHandler = null;
+		this.contextMenuHandler = null;
 
 		this.key = {};
 		this.keyPressed = {};
@@ -35,61 +42,79 @@ export default class Game {
 		this.mouseY = 0;
 		this.mouseWheel = 0;
 
+		// Engine
 		this.builtInGlobalVars = null;
 		this.globalVars = null;
 		this.globalObjectVars = null;
 
 		this.constants = null;
 
+		this.lastId = null;
+
+		// Events and actions
+		this.currentEvent = null;
+		this.currentEventInstance = null;
+		this.currentEventOther = null;
+		this.currentEventActionNumber = null;
+
+		// GML
+		this.gml = null;
+		this.gmlCache = new Map();
+		this.actionsCache = new Map();
+
 		this.arguments = [];
 		this.argumentRelative = false;
 
-		this.instances = [];
-		this.lastId = null;
+		// Fonts
+		this.cssFontsCache = {
+			"-1": makeCSSFont("Arial", 12, false, false),
+		};
 
+		// Main loop
+		this.timeout = null;
+		this.mapEvents = null;
+		this.stepStopAction = null;
+
+		// FPS
 		this.lastFPSCheck = null;
 		this.fps = 0;
 		this.fpsFrameCount = 0;
 
+		// Room
+		this.room = null;
+		this.instances = [];
+
+		// Audio
+		this.audioContext = null;
+		this.sounds = new Map();
+
+		// Cursor
+		this.cursorSprite = null;
+		this.cursorImageIndex = 0;
+
+		// Transitions
+		this.transitionKind = 0;
+		this.transitionSteps = 80;
+
+		// Draw functions
 		this.drawColor = 0;
 		this.drawAlpha = 1;
 		this.drawFont = -1;
 		this.drawHAlign = 0;
 		this.drawVAlign = 0;
 
-		this.cssFontsCache = {
-			"-1": makeCSSFont("Arial", 12, false, false),
-		};
-
-		this.gml = null;
-		this.gmlCache = new Map();
-		this.actionsCache = new Map();
-
-		this.room = null;
-
-		this.currentEvent = null;
-		this.currentEventInstance = null;
-		this.currentEventOther = null;
-		this.currentEventActionNumber = null;
-
-		this.timeout = null;
-
-		this.mapEvents = null;
-
-		this.stepStopAction = null;
-
-		this.cursorSprite = null;
-		this.cursorImageIndex = 0;
-
-		this.audioContext = null;
-		this.sounds = new Map();
-
+		// Score, lives, health
 		this.score = 0;
 		this.lives = -1;
 		this.health = 100;
 
-		this.transitionKind = 0;
-		this.transitionSteps = 80;
+		this.showHealth = false;
+		this.showLives = false;
+		this.showScore = true;
+
+		this.captionHealth = "Health: ";
+		this.captionLives = "Lives: ";
+		this.captionScore = "Score: ";
 	}
 
 	// Starts the game.

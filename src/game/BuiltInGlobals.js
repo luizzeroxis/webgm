@@ -169,12 +169,36 @@ export default class BuiltInGlobals {
 		async directSet(value) { await this.setHealth(value); },
 	};
 
-	static show_score = {type: "bool", default: 1};
-	static show_lives = {type: "bool", default: 0};
-	static show_health = {type: "bool", default: 0};
-	static caption_health = {type: "string", default: "Health: "};
-	static caption_lives = {type: "string", default: "Lives: "};
-	static caption_score = {type: "string", default: "Score: "};
+	static show_score = {direct: true, type: "bool",
+		directGet() { return this.showScore ? 1 : 0; },
+		directSet(value) { this.showScore = value; },
+	};
+
+	static show_lives = {direct: true, type: "bool",
+		directGet() { return this.showLives ? 1 : 0; },
+		directSet(value) { this.showLives = value; },
+	};
+
+	static show_health = {direct: true, type: "bool",
+		directGet() { return this.showHealth ? 1 : 0; },
+		directSet(value) { this.showHealth = value; },
+	};
+
+	static caption_score = {direct: true, type: "string",
+		directGet() { return this.captionScore; },
+		directSet(value) { this.captionScore = value; },
+	};
+
+	static caption_lives = {direct: true, type: "string",
+		directGet() { return this.captionLives; },
+		directSet(value) { this.captionLives = value; },
+	};
+
+	static caption_health = {direct: true, type: "string",
+		directGet() { return this.captionHealth; },
+		directSet(value) { this.captionHealth = value; },
+	};
+
 
 	// Game play / Generating events
 

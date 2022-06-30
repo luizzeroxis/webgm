@@ -222,10 +222,22 @@ export default class BuiltInGlobals {
 
 	static error_occurred = {type: "bool", default: 0};
 	static error_last = {type: "string", default: ""};
-	static debug_mode = {default: 0, readOnly: true};
-	static gamemaker_pro = {default: 1, readOnly: true};
-	static gamemaker_registered = {default: 1, readOnly: true};
-	static gamemaker_version = {default: 800, readOnly: true};
+
+	static debug_mode = {readOnly: true, direct: true,
+		directGet() { return 0; }, // TODO
+	};
+
+	static gamemaker_pro = {readOnly: true, direct: true,
+		directGet() { return 1; },
+	};
+
+	static gamemaker_registered = {readOnly: true, direct: true,
+		directGet() { return 1; },
+	};
+
+	static gamemaker_version = {readOnly: true, direct: true,
+		directGet() { return 800; },
+	};
 
 	// User Interaction / The Keyboard
 
@@ -382,14 +394,27 @@ export default class BuiltInGlobals {
 
 	// Files, registry, and executing programs / Files
 
-	static game_id = {default: 0, readOnly: true};
-	static working_directory = {default: "", readOnly: true};
-	static program_directory = {default: "", readOnly: true};
-	static temp_directory = {default: "", readOnly: true};
+	static game_id = {readOnly: true, direct: true,
+		directGet() { return 0; }, // TODO
+	};
+
+	static working_directory = {readOnly: true, direct: true,
+		directGet() { return ""; }, // TODO?
+	};
+
+	static program_directory = {readOnly: true, direct: true,
+		directGet() { return ""; }, // TODO?
+	};
+
+	static temp_directory = {readOnly: true, direct: true,
+		directGet() { return ""; }, // TODO?
+	};
 
 	// Files, registry, and executing programs / Executing programs
 
-	static secure_mode = {default: 0, readOnly: true};
+	static secure_mode = {readOnly: true, direct: true,
+		directGet() { return 0; }, // TODO?
+	};
 }
 
 // Static initialization

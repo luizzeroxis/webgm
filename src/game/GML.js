@@ -265,6 +265,7 @@ export default class GML {
 				}
 			},
 			VarDeclare: async ({_names}) => {
+				// TODO throw "Cannot redeclare a builtin variable." (global and local)
 				for (const name of _names) { // is _names always an array of strings?
 					if (!this.vars.exists(name)) {
 						await this.vars.set(name, null);
@@ -273,7 +274,11 @@ export default class GML {
 			},
 			GlobalVarDeclare: async ({_names}) => {
 				for (const name of _names) {
-					if (!this.game.globalVars.exists(name)) {
+					// TODO throw "Cannot redeclare a builtin variable." (global and local)
+					if (this.game.globalObjectVars.exists(name)) {
+						const saved = this.game.globalObjectVars.save(name);
+						this.game.globalVars.load(name, saved);
+					} else {
 						await this.game.globalVars.set(name, 0);
 					}
 				}
@@ -579,6 +584,8 @@ export default class GML {
 					return this.game.constants[varInfo.name];
 				if (this.vars.exists(varInfo.name))
 					return this.vars.get(varInfo.name, varInfo.indexes);
+				if (this.game.builtInGlobalVars.exists(varInfo.name))
+					return this.game.builtInGlobalVars.get(varInfo.name, varInfo.indexes);
 				if (this.game.globalVars.exists(varInfo.name))
 					return this.game.globalVars.get(varInfo.name, varInfo.indexes);
 
@@ -594,9 +601,11 @@ export default class GML {
 				}
 
 				if (instances == "global") {
-					// TODO: "global." vars should be in this.game.globalVars.
-					// There is a list that contains all "global." vars that have been "globalvar"'d.
-					// This would be checked when getting/setting vars with a dot and when "globalvar" declarations are called.
+					if (this.game.globalVars.exists(varInfo.name))
+						return this.game.globalVars.get(varInfo.name, varInfo.indexes);
+					if (this.game.globalObjectVars.exists(varInfo.name))
+						return this.game.globalObjectVars.get(varInfo.name, varInfo.indexes);
+
 					throw this.makeErrorInGMLNode("Unknown variable " + varInfo.name, node);
 				}
 
@@ -625,6 +634,8 @@ export default class GML {
 					throw this.makeErrorInGMLNode("Variable name expected. (it's a constant)", node);
 				if (this.vars.exists(varInfo.name))
 					return await this.vars.set(varInfo.name, value, varInfo.indexes);
+				if (this.game.builtInGlobalVars.exists(varInfo.name))
+					return await this.game.builtInGlobalVars.set(varInfo.name, value, varInfo.indexes);
 				if (this.game.globalVars.exists(varInfo.name))
 					return await this.game.globalVars.set(varInfo.name, value, varInfo.indexes);
 
@@ -638,9 +649,11 @@ export default class GML {
 				}
 
 				if (instances == "global") {
-					// TODO: "global." vars should be in this.game.globalVars.
-					// There is a list that contains all "global." vars that have been "globalvar"'d.
-					// This would be checked when getting/setting vars with a dot and when "globalvar" declarations are called.
+					if (this.game.globalVars.exists(varInfo.name))
+						return await this.game.globalVars.set(varInfo.name, value, varInfo.indexes);
+					if (this.game.globalObjectVars.exists(varInfo.name))
+						return await this.game.globalObjectVars.set(varInfo.name, value, varInfo.indexes);
+
 					throw this.makeErrorInGMLNode("Cannot assign to the variable", node);
 				}
 

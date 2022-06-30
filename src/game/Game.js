@@ -35,7 +35,10 @@ export default class Game {
 		this.mouseY = 0;
 		this.mouseWheel = 0;
 
+		this.builtInGlobalVars = null;
 		this.globalVars = null;
+		this.globalObjectVars = null;
+
 		this.constants = null;
 
 		this.arguments = [];
@@ -248,7 +251,10 @@ export default class Game {
 
 	// Called by start, inits general engine stuff.
 	startEngine() {
-		this.globalVars = new VariableHolder(this, BuiltInGlobals);
+		this.builtInGlobalVars = new VariableHolder(this, BuiltInGlobals);
+		this.globalVars = new VariableHolder(this);
+		this.globalObjectVars = new VariableHolder(this);
+
 		this.constants = BuiltInConstants.getList();
 
 		// TODO Add user defined constants

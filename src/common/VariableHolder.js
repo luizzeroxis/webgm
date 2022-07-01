@@ -44,7 +44,7 @@ export default class VariableHolder {
 		// Get dimensions of varInfo
 		if (varInfo.list == this.builtInList) {
 			builtIn = this.builtInClass[name];
-			dimensions = (builtIn.dimensions == undefined ? 0 : builtIn.dimensions);
+			dimensions = (builtIn.dimensions ?? 0);
 		} else {
 			dimensions = varInfo.reference.dimensions;
 		}
@@ -119,22 +119,8 @@ export default class VariableHolder {
 		return variable.value;
 	}
 
-	// Get built in variable that isn't an array. Meant to be used by the code, doesn't do any checks.
-	getBuiltIn(name) {
-		return this.builtInList[name].value;
-	}
-
-	// Get built in variable that is an array. Meant to be used by the code, doesn't do any checks.
-	getBuiltInArray(name, indexes) {
-		let variable = this.builtInList[name];
-		for (const index of indexes) {
-			variable = variable.value[index];
-		}
-		return variable.value;
-	}
-
 	// Set variable value. Use when you don't know what kinda variable it is (e.g. from GML).
-	async set(name, value, indexes, overrideReadOnly, callSet=true) {
+	async set(name, value, indexes) {
 		let varInfo = this.getVariableInfo(name);
 		let builtIn;
 		let dimensions;
@@ -151,14 +137,14 @@ export default class VariableHolder {
 
 		if (varInfo.list == this.builtInList) {
 			builtIn = this.builtInClass[name];
-			dimensions = (builtIn.dimensions == undefined ? 0 : builtIn.dimensions);
+			dimensions = (builtIn.dimensions ?? 0);
 
-			if (builtIn.readOnly && !overrideReadOnly) {
+			if (builtIn.readOnly) {
 				throw new VariableException({type: "read_only"});
 			}
 
 			if (builtIn.direct) {
-				dimensions = (builtIn.dimensions == undefined ? 0 : builtIn.dimensions);
+				dimensions = (builtIn.dimensions ?? 0);
 			}
 
 			if (builtIn.type != null) {
@@ -254,54 +240,8 @@ export default class VariableHolder {
 			variable = variable.value[index];
 		}
 
-		const previous = variable.value;
-
 		// Actually set variable
 		variable.value = value;
-
-		// Call built in set function
-		if (builtIn && callSet && this.caller != null && builtIn.set) {
-			await builtIn.set.call(this.caller, value, previous, indexes || []);
-		}
-	}
-
-	// Set built in variable that ins't an array. Meant to be used by the code, doesn't do any checks or calls.
-	setBuiltIn(name, value) {
-		this.builtInList[name].value = value;
-	}
-
-	// Get built in variable that is an array. Meant to be used by the code, doesn't do any checks or calls.
-	setBuiltInArray(name, indexes, value) {
-		let variable = this.builtInList[name];
-		for (const index of indexes) {
-			variable = variable.value[index];
-		}
-		variable.value = value;
-	}
-
-	// Same as setBuiltIn, but calls the set function.
-	setBuiltInCall(name, value) {
-		const variable = this.builtInList[name];
-		const previous = variable.value;
-
-		// Call built in set function
-		this.builtInClass[name].set.call(this.caller, value, previous);
-
-		variable.value = value;
-	}
-
-	// Same as setBuiltInArray, but calls the set function.
-	setBuiltInArrayCall(name, indexes, value) {
-		let variable = this.builtInList[name];
-		for (const index of indexes) {
-			variable = variable.value[index];
-		}
-
-		const previous = variable.value;
-		variable.value = value;
-
-		// Call built in set function
-		this.builtInClass[name].set.call(this.caller, value, previous, indexes);
 	}
 
 	// Get a reference to a variable and the list it's on.

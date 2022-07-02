@@ -1183,7 +1183,25 @@ export default class Game {
 			})),
 
 			// tiles
-			// views
+
+			views: room.views.map(view => ({
+				visible: view.visibleAtStart,
+				viewX: view.viewX,
+				viewY: view.viewY,
+				viewW: view.viewW,
+				viewH: view.viewH,
+				portX: view.portX,
+				portY: view.portY,
+				portW: view.portW,
+				portH: view.portH,
+				objectFollowIndex: view.objectFollowIndex,
+				objectFollowHorizontalBorder: view.objectFollowHorizontalBorder,
+				objectFollowVerticalBorder: view.objectFollowVerticalBorder,
+				objectFollowHorizontalSpeed: view.objectFollowHorizontalSpeed,
+				objectFollowVerticalSpeed: view.objectFollowVerticalSpeed,
+
+				angle: 0,
+			})),
 		};
 
 		this.canvas.width = room.width;

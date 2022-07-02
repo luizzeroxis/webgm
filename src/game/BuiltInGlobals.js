@@ -403,23 +403,104 @@ export default class BuiltInGlobals {
 
 	// Game Graphics / Views
 
-	static view_enabled = {type: "bool", default: 0};
-	static view_current = {default: 0, readOnly: true};
-	static view_visible = {type: "bool", dimensions: 1, default: () => new Array(8).fill(0)};
-	static view_xview = {type: "integer", dimensions: 1, default: () => new Array(8).fill(0)};
-	static view_yview = {type: "integer", dimensions: 1, default: () => new Array(8).fill(0)};
-	static view_wview = {type: "integer", dimensions: 1, default: () => new Array(8).fill(640)};
-	static view_hview = {type: "integer", dimensions: 1, default: () => new Array(8).fill(480)};
-	static view_xport = {type: "integer", dimensions: 1, default: () => new Array(8).fill(0)};
-	static view_yport = {type: "integer", dimensions: 1, default: () => new Array(8).fill(0)};
-	static view_wport = {type: "integer", dimensions: 1, default: () => new Array(8).fill(640)};
-	static view_hport = {type: "integer", dimensions: 1, default: () => new Array(8).fill(480)};
-	static view_angle = {type: "real", dimensions: 1, default: () => new Array(8).fill(0)};
-	static view_hborder = {type: "integer", dimensions: 1, default: () => new Array(8).fill(32)};
-	static view_vborder = {type: "integer", dimensions: 1, default: () => new Array(8).fill(32)};
-	static view_hspeed = {type: "integer", dimensions: 1, default: () => new Array(8).fill(-1)};
-	static view_vspeed = {type: "integer", dimensions: 1, default: () => new Array(8).fill(-1)};
-	static view_object = {type: "integer", dimensions: 1, default: () => new Array(8).fill(-1)};
+	static view_enabled = {direct: true, type: "bool",
+		directGet() { return this.room.viewsEnabled ? 1 : 0; },
+		directSet(value) { this.room.viewsEnabled = value; },
+	};
+
+	static view_current = {readOnly: true, direct: true,
+		directGet() { return this.currentView ? 1 : 0; },
+	};
+
+	static view_visible = {direct: true, type: "bool", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.views[index].visible ? 1 : 0; },
+		directSet(value, index) { this.views[index].visible = value; },
+	};
+
+	static view_xview = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.views[index].viewX; },
+		directSet(value, index) { this.views[index].viewX = value; },
+	};
+
+	static view_yview = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.views[index].viewY; },
+		directSet(value, index) { this.views[index].viewY = value; },
+	};
+
+	static view_wview = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.views[index].viewW; },
+		directSet(value, index) { this.views[index].viewW = value; },
+	};
+
+	static view_hview = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.views[index].viewH; },
+		directSet(value, index) { this.views[index].viewH = value; },
+	};
+
+	static view_xport = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.views[index].portX; },
+		directSet(value, index) { this.views[index].portX = value; },
+	};
+
+	static view_yport = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.views[index].portY; },
+		directSet(value, index) { this.views[index].portY = value; },
+	};
+
+	static view_wport = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.views[index].portW; },
+		directSet(value, index) { this.views[index].portW = value; },
+	};
+
+	static view_hport = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.views[index].portH; },
+		directSet(value, index) { this.views[index].portH = value; },
+	};
+
+	static view_angle = {direct: true, type: "real", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.views[index].angle; },
+		directSet(value, index) { this.views[index].angle = value; },
+	};
+
+	static view_hborder = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.views[index].objectFollowHorizontalBorder; },
+		directSet(value, index) { this.views[index].objectFollowHorizontalBorder = value; },
+	};
+
+	static view_vborder = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.views[index].objectFollowVerticalBorder; },
+		directSet(value, index) { this.views[index].objectFollowVerticalBorder = value; },
+	};
+
+	static view_hspeed = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.views[index].objectFollowHorizontalSpeed; },
+		directSet(value, index) { this.views[index].objectFollowHorizontalSpeed = value; },
+	};
+
+	static view_vspeed = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.views[index].objectFollowVerticalSpeed; },
+		directSet(value, index) { this.views[index].objectFollowVerticalSpeed = value; },
+	};
+
+	static view_object = {direct: true, type: "integer", dimensions: 1,
+		directLength() { return 8; },
+		directGet(index) { return this.views[index].objectFollowIndex; },
+		directSet(value, index) { this.views[index].objectFollowIndex = value; },
+	};
 
 	// Files, registry, and executing programs / Files
 

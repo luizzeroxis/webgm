@@ -1,3 +1,5 @@
+import {hexToDecimal, decimalToHex} from "../common/tools.js";
+
 export default class BuiltInLocals {
 	// this = Instance
 
@@ -78,13 +80,39 @@ export default class BuiltInLocals {
 
 	// Game play / Paths
 
-	static path_index = {default: -1, readOnly: true};
-	static path_position = {type: "unit", default: 0};
-	static path_positionprevious = {type: "unit", default: 0};
-	static path_speed = {type: "real", default: 0};
-	static path_orientation = {type: "real", default: 0};
-	static path_scale = {type: "real", default: 1};
-	static path_endaction = {type: "integer", default: 0};
+	static path_index = {readOnly: true, direct: true,
+		directGet() { return this.path?.id; },
+	};
+
+	static path_position = {direct: true, type: "unit",
+		directGet() { return this.pathPosition; },
+		directSet(value) { this.pathPosition = value; },
+	};
+
+	static path_positionprevious = {direct: true, type: "unit",
+		directGet() { return this.pathPreviousPosition; },
+		directSet(value) { this.pathPreviousPosition = value; },
+	};
+
+	static path_speed = {direct: true, type: "real",
+		directGet() { return this.pathSpeed; },
+		directSet(value) { this.pathSpeed = value; },
+	};
+
+	static path_orientation = {direct: true, type: "real",
+		directGet() { return this.pathOrientation; },
+		directSet(value) { this.pathOrientation = value; },
+	};
+
+	static path_scale = {direct: true, type: "real",
+		directGet() { return this.pathScale; },
+		directSet(value) { this.pathScale = value; },
+	};
+
+	static path_endaction = {direct: true, type: "integer",
+		directGet() { return this.pathEndAction; },
+		directSet(value) { this.pathEndAction = value; },
+	};
 
 	// Game play / Instances
 
@@ -119,11 +147,31 @@ export default class BuiltInLocals {
 		directSet(value, index) { this.alarms[index] = value; },
 	};
 
-	static timeline_index = {type: "integer", default: -1};
-	static timeline_loop = {type: "bool", default: 0};
-	static timeline_position = {type: "real", default: 0};
-	static timeline_running = {type: "bool", default: 0};
-	static timeline_speed = {type: "real", default: 1};
+	static timeline_index = {direct: true, type: "integer",
+		directGet() { return this.timelineIndex; },
+		directSet(value) { this.timelineIndex = value; },
+	};
+
+	static timeline_position = {direct: true, type: "real",
+		directGet() { return this.timelinePosition; },
+		directSet(value) { this.timelinePosition = value; },
+	};
+
+	static timeline_speed = {direct: true, type: "real",
+		directGet() { return this.timelineSpeed; },
+		directSet(value) { this.timelineSpeed = value; },
+	};
+
+	static timeline_running = {direct: true, type: "bool",
+		directGet() { return this.timelineRunning ? 1 : 0; },
+		directSet(value) { this.timelineRunning = value; },
+	};
+
+	static timeline_loop = {direct: true, type: "bool",
+		directGet() { return this.timelineLoop ? 1 : 0; },
+		directSet(value) { this.timelineLoop = value; },
+	};
+
 
 	// Game Graphics / Sprites and Images
 
@@ -185,11 +233,30 @@ export default class BuiltInLocals {
 		directSet(value) { this.depth = value; },
 	};
 
-	static image_xscale = {type: "real", default: 1};
-	static image_yscale = {type: "real", default: 1};
-	static image_angle = {type: "real", default: 0};
-	static image_alpha = {type: "real", default: 1};
-	static image_blend = {type: "integer", default: 16777215};
+	static image_xscale = {direct: true, type: "real",
+		directGet() { return this.imageXScale; },
+		directSet(value) { this.imageXScale = value; },
+	};
+
+	static image_yscale = {direct: true, type: "real",
+		directGet() { return this.imageYScale; },
+		directSet(value) { this.imageYScale = value; },
+	};
+
+	static image_angle = {direct: true, type: "real",
+		directGet() { return this.imageAngle; },
+		directSet(value) { this.imageAngle = value; },
+	};
+
+	static image_alpha = {direct: true, type: "real",
+		directGet() { return this.imageAlpha; },
+		directSet(value) { this.imageAlpha = value; },
+	};
+
+	static image_blend = {direct: true, type: "integer",
+		directGet() { return hexToDecimal(this.imageBlend); },
+		directSet(value) { this.imageBlend = decimalToHex(value); },
+	};
 
 	static bbox_left = {readOnly: true, direct: true, directGet() {
 		if (this.sprite == null) return -100000;

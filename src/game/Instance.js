@@ -41,10 +41,29 @@ export default class Instance {
 		this.gravity = 0;
 		this.gravityDirection = 270;
 
+		this.path = null;
+		this.pathPosition = 0;
+		this.pathPreviousPosition = 0;
+		this.pathSpeed = 0;
+		this.pathOrientation = 0;
+		this.pathScale = 1;
+		this.pathEndAction = 0;
+
 		this.alarms = [];
+
+		this.timelineIndex = -1;
+		this.timelinePosition = 0;
+		this.timelineSpeed = 1;
+		this.timelineRunning = false;
+		this.timelineLoop = false;
 
 		this.imageIndex = 0;
 		this.imageSpeed = 1;
+		this.imageXScale = 1;
+		this.imageYScale = 1;
+		this.imageAngle = 0;
+		this.imageAlpha = 1;
+		this.imageBlend = "#ffffff";
 	}
 
 	getImageIndex() {

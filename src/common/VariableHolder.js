@@ -5,24 +5,7 @@ export default class VariableHolder {
 	constructor(caller, builtInClass) {
 		this.caller = caller;
 		this.builtInClass = builtInClass;
-		this.builtInList = {};
 		this.customList = {};
-
-		for (const name in this.builtInClass) {
-			if (!this.builtInClass[name].direct) {
-				if (typeof this.builtInClass[name].default == "function") {
-					let value = this.builtInClass[name].default.call(this);
-					if (Array.isArray(value)) {
-						value = value.map(x => ({value: x}));
-					}
-					this.builtInList[name] = {value: value};
-				} else if (this.builtInClass[name].default != null) {
-					this.builtInList[name] = {value: this.builtInClass[name].default};
-				} else {
-					throw new Error("Non-direct built in variable has no default!");
-				}
-			}
-		}
 	}
 
 	// Check if variable exists in this holder.
@@ -33,7 +16,6 @@ export default class VariableHolder {
 	// Get variable value. Use when you don't know what kinda variable it is (e.g. from GML).
 	get(name, indexes) {
 		const varInfo = this.getVariableInfo(name);
-		let builtIn;
 		let dimensions;
 
 		if (varInfo == null) {
@@ -42,9 +24,8 @@ export default class VariableHolder {
 		}
 
 		// Get dimensions of varInfo
-		if (varInfo.list == this.builtInList) {
-			builtIn = this.builtInClass[name];
-			dimensions = (builtIn.dimensions ?? 0);
+		if (varInfo.builtIn) {
+			dimensions = (varInfo.builtIn.dimensions ?? 0);
 		} else {
 			dimensions = varInfo.reference.dimensions;
 		}
@@ -78,51 +59,46 @@ export default class VariableHolder {
 			}
 		}
 
-		// Check direct built ins, where data isn't stored here, we use a funcion to get that data from elsewhere
-		if (builtIn && builtIn.direct) {
-			if (indexes.length != dimensions) {
-				throw new VariableException({type: "index_not_in_bounds"});
-			}
-
+		// If built in, check lengths and call get function directly
+		if (varInfo.builtIn) {
 			for (const [i, index] of indexes.entries()) {
-				if (index >= builtIn.directLength.call(this.caller, i)) {
+				if (index >= varInfo.builtIn.directLength.call(this.caller, i)) {
 					throw new VariableException({type: "index_not_in_bounds"});
 				}
 			}
 
-			return builtIn.directGet.call(this.caller, ...indexes);
-		}
+			return varInfo.builtIn.directGet.call(this.caller, ...indexes);
+		} else {
+			let variable = varInfo.reference;
 
-		let variable = varInfo.reference;
-
-		// Find part of array that indexes are referencing
-		for (const index of indexes) {
-			if (!Array.isArray(variable.value)) {
-				// If index is 0, keep same variable reference, even if it's not an array
-				if (index != 0) {
-					throw new VariableException({type: "index_not_in_bounds"});
+			// Find part of array that indexes are referencing
+			for (const index of indexes) {
+				if (!Array.isArray(variable.value)) {
+					// If index is 0, keep same variable reference, even if it's not an array
+					if (index != 0) {
+						throw new VariableException({type: "index_not_in_bounds"});
+					}
+				} else {
+					// Index should be inside size
+					if (index >= variable.value.length) {
+						throw new VariableException({type: "index_not_in_bounds"});
+					}
+					// Sometimes the variable is undefined because indexes have been jumped.
+					if (variable.value[index] == undefined) {
+						variable.value[index] = {value: 0};
+					}
+					// Get reference to object that refers to that index
+					variable = variable.value[index];
 				}
-			} else {
-				// Index should be inside size
-				if (index >= variable.value.length) {
-					throw new VariableException({type: "index_not_in_bounds"});
-				}
-				// Sometimes the variable is undefined because indexes have been jumped.
-				if (variable.value[index] == undefined) {
-					variable.value[index] = {value: 0};
-				}
-				// Get reference to object that refers to that index
-				variable = variable.value[index];
 			}
-		}
 
-		return variable.value;
+			return variable.value;
+		}
 	}
 
 	// Set variable value. Use when you don't know what kinda variable it is (e.g. from GML).
 	async set(name, value, indexes) {
 		let varInfo = this.getVariableInfo(name);
-		let builtIn;
 		let dimensions;
 
 		if (varInfo == null) {
@@ -131,34 +107,28 @@ export default class VariableHolder {
 
 			varInfo = {
 				reference: this.customList[name],
-				list: this.customList,
 			};
 		}
 
-		if (varInfo.list == this.builtInList) {
-			builtIn = this.builtInClass[name];
-			dimensions = (builtIn.dimensions ?? 0);
+		if (varInfo.builtIn) {
+			dimensions = (varInfo.builtIn.dimensions ?? 0);
 
-			if (builtIn.readOnly) {
+			if (varInfo.builtIn.readOnly) {
 				throw new VariableException({type: "read_only"});
 			}
 
-			if (builtIn.direct) {
-				dimensions = (builtIn.dimensions ?? 0);
-			}
-
-			if (builtIn.type != null) {
-				if (builtIn.type == "string") {
+			if (varInfo.builtIn.type != null) {
+				if (varInfo.builtIn.type == "string") {
 					value = forceString(value);
-				} else if (builtIn.type == "real") {
+				} else if (varInfo.builtIn.type == "real") {
 					value = forceReal(value);
-				} else if (builtIn.type == "integer") {
+				} else if (varInfo.builtIn.type == "integer") {
 					value = forceInteger(value);
-				} else if (builtIn.type == "bool") {
+				} else if (varInfo.builtIn.type == "bool") {
 					value = forceBool(value);
-				} else if (builtIn.type == "unit") {
+				} else if (varInfo.builtIn.type == "unit") {
 					value = forceUnit(value);
-				} else if (builtIn.type == "char") {
+				} else if (varInfo.builtIn.type == "char") {
 					value = forceChar(value);
 				}
 			}
@@ -191,7 +161,7 @@ export default class VariableHolder {
 
 			// If there's still more indexes than dimensions...
 			if (difference != 0) {
-				if (builtIn) {
+				if (varInfo.builtIn) {
 					// For built ins, ignore indexes and use first possible value.
 					indexes = new Array(dimensions).fill(0);
 				} else {
@@ -205,56 +175,50 @@ export default class VariableHolder {
 			}
 		}
 
-		// Check direct built ins, where data ins't store here, we use a function to set that data to elsewhere
-		if (builtIn && builtIn.direct) {
-			// TODO check some lengths and all
-			await builtIn.directSet.call(this.caller, value, ...indexes);
-			return;
-		}
-
-		let variable = varInfo.reference;
-
-		// Find part of array that indexes are referencing
-		for (let index of indexes) {
-			if (!Array.isArray(variable.value)) {
-				if (builtIn) {
-					throw new Error("Built in is not an array. Did you forget to set the default properly?");
+		// If built in, check lengths and call get function directly
+		if (varInfo.builtIn) {
+			for (const [i, index] of indexes.entries()) {
+				if (index >= varInfo.builtIn.directLength.call(this.caller, i)) {
+					// If outside length, ignore indexes and use first possible value.
+					indexes = new Array(dimensions).fill(0);
+					break;
 				}
-				// Variable is higher dimension but this particular index has not been changed to array. Do it now.
-				variable.value = [ {value: variable.value} ];
 			}
 
-			if (builtIn) {
-				// If after length, default to using first index. This could get funky with dimensions higher than 1, but luckly we don't have those in built ins.
-				if (index >= variable.value.length) {
-					index = 0;
+			await varInfo.builtIn.directSet.call(this.caller, value, ...indexes);
+		} else {
+			let variable = varInfo.reference;
+
+			// Find part of array that indexes are referencing
+			for (const index of indexes) {
+				if (!Array.isArray(variable.value)) {
+					// Variable is higher dimension but this particular index has not been changed to array. Do it now.
+					variable.value = [ {value: variable.value} ];
 				}
-			} else {
+
 				// If index doesn't exist, create it (after length or middle)
 				if (variable.value[index] == undefined) {
 					variable.value[index] = {value: 0};
 				}
+
+				// Get reference to object that refers to that index
+				variable = variable.value[index];
 			}
 
-			// Get reference to object that refers to that index
-			variable = variable.value[index];
+			// Actually set variable
+			variable.value = value;
 		}
-
-		// Actually set variable
-		variable.value = value;
 	}
 
 	// Get a reference to a variable and the list it's on.
 	getVariableInfo(name) {
 		if (this.builtInClass != undefined && this.builtInClass[name] != undefined) {
 			return {
-				reference: this.builtInList[name],
-				list: this.builtInList,
+				builtIn: this.builtInClass[name],
 			};
 		} else if (this.customList[name] != undefined) {
 			return {
 				reference: this.customList[name],
-				list: this.customList,
 			};
 		} else {
 			return null;
@@ -264,32 +228,25 @@ export default class VariableHolder {
 	// Save all information about a variable.
 	save(name) {
 		const varInfo = this.getVariableInfo(name);
-		if (varInfo == null) {
-			throw new Error("wtf?");
+		if (varInfo?.reference == null) {
+			throw new Error("Cannot save variable "+name+", it's not defined!");
 		}
 
-		const result = {};
-		result.dimensions = varInfo.reference.dimensions;
-		result.value = this.saveValue(varInfo.reference.value);
-		return result;
+		return {
+			dimensions: varInfo.reference.dimensions,
+			value: this.saveValue(varInfo.reference.value),
+		};
 	}
 
 	// Load information saved by save().
 	load(name, saved) {
-		let list = this.customList;
-		const varInfo = this.getVariableInfo(name);
-		if (varInfo != null) {
-			list = varInfo.list;
-		}
-
-		list[name] = saved;
+		this.customList[name] = saved;
 	}
 
 	// Save all information about this holder.
 	saveAll() {
 		return {
 			builtInClass: this.builtInClass,
-			builtInList: this.saveList(this.builtInList),
 			customList: this.saveList(this.customList),
 		};
 	}
@@ -297,7 +254,6 @@ export default class VariableHolder {
 	// Load information saved by saveAll().
 	loadAll(saved) {
 		this.builtInClass = saved.builtInClass;
-		this.builtInList = saved.builtInList;
 		this.customList = saved.customList;
 	}
 
@@ -305,9 +261,10 @@ export default class VariableHolder {
 	saveList(list) {
 		const result = {};
 		for (const name of Object.keys(list)) {
-			result[name] = {};
-			result[name].dimensions = list[name].dimensions;
-			result[name].value = this.saveValue(list[name].value);
+			result[name] = {
+				dimensions: list[name].dimensions,
+				value: this.saveValue(list[name].value),
+			};
 		}
 		return result;
 	}
@@ -324,8 +281,6 @@ export default class VariableHolder {
 
 	// Clear all information stored in this holder.
 	clearAll() {
-		this.builtInClass = null;
-		this.builtInList = {};
 		this.customList = {};
 	}
 }

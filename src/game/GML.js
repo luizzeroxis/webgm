@@ -561,6 +561,7 @@ export default class GML {
 			this.currentInstance = instance;
 			this.currentOther = other;
 
+			// TODO Non fatal errors should be caught here.
 			const result = await func.call(this, args, relative);
 
 			this.currentInstance = previousInstance;

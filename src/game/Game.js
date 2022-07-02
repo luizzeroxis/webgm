@@ -115,6 +115,10 @@ export default class Game {
 		this.captionHealth = "Health: ";
 		this.captionLives = "Lives: ";
 		this.captionScore = "Score: ";
+
+		// Errors
+		this.errorOccurred = false;
+		this.errorLast = "";
 	}
 
 	// Starts the game.
@@ -961,6 +965,8 @@ export default class Game {
 					break;
 				} if (e instanceof NonFatalErrorException) {
 					this.showError(e);
+					this.errorOccurred = true;
+					this.errorLast = exception.text;
 				} else {
 					throw e;
 				}

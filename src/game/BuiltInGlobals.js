@@ -220,8 +220,15 @@ export default class BuiltInGlobals {
 
 	// Game play / Miscellaneous variables and functions
 
-	static error_occurred = {type: "bool", default: 0};
-	static error_last = {type: "string", default: ""};
+	static error_occurred = {direct: true, type: "bool",
+		directGet() { return this.errorOccurred ? 1 : 0; },
+		directSet(value) { this.errorOccurred = value; },
+	};
+
+	static error_last = {direct: true, type: "string",
+		directGet() { return this.errorLast; },
+		directSet(value) { this.errorLast = value; },
+	};
 
 	static debug_mode = {readOnly: true, direct: true,
 		directGet() { return 0; }, // TODO

@@ -278,8 +278,15 @@ export default class BuiltInGlobals {
 		directGet() { return this.mouseY; },
 	};
 
-	static mouse_button = {type: "integer", default: 0}; // TODO I think this is an enum
-	static mouse_lastbutton = {type: "integer", default: 0};
+	static mouse_button = {direct: true, type: "integer",
+		directGet() { return this.currentMouse; },
+		directSet(value) { this.currentMouse = value; }, // TODO I think this is an enum, should check bounds or something
+	};
+
+	static mouse_lastbutton = {direct: true, type: "integer",
+		directGet() { return this.lastMouse; },
+		directSet(value) { this.lastMouse = value; },
+	};
 
 	static cursor_sprite = {direct: true, type: "integer",
 		directGet() { return this.cursorSprite?.id ?? -1; },

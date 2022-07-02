@@ -47,6 +47,9 @@ export default class Game {
 		this.mouseY = 0;
 		this.mouseWheel = 0;
 
+		this.currentMouse = 0;
+		this.lastMouse = 0;
+
 		// Engine
 		this.builtInGlobalVars = null;
 		this.globalVars = null;
@@ -250,6 +253,8 @@ export default class Game {
 			e.preventDefault();
 			this.key[e.which] = false;
 			this.keyReleased[e.which] = true;
+
+			this.currentKey = 0;
 		};
 		this.input.addEventListener("keyup", this.keyUpHandler);
 
@@ -263,15 +268,24 @@ export default class Game {
 
 		this.mouseDownHandler = (e) => {
 			e.preventDefault();
-			this.mouse[toEngineButton(e.button)] = true;
-			this.mousePressed[toEngineButton(e.button)] = true;
+
+			const button = toEngineButton(e.button);
+			this.mouse[button] = true;
+			this.mousePressed[button] = true;
+
+			this.currentMouse = button;
+			this.lastMouse = button;
 		};
 		this.input.addEventListener("mousedown", this.mouseDownHandler);
 
 		this.mouseUpHandler = (e) => {
 			e.preventDefault();
-			this.mouse[toEngineButton(e.button)] = false;
-			this.mouseReleased[toEngineButton(e.button)] = true;
+
+			const button = toEngineButton(e.button);
+			this.mouse[button] = false;
+			this.mouseReleased[button] = true;
+
+			this.currentMouse = 0;
 		};
 		this.input.addEventListener("mouseup", this.mouseUpHandler);
 
@@ -1515,9 +1529,6 @@ export default class Game {
 	clearIO() {
 		this.keyPressed = {};
 		this.keyReleased = {};
-
-		this.currentKey = 0;
-
 		this.mousePressed = {};
 		this.mouseReleased = {};
 		this.mouseWheel = 0;

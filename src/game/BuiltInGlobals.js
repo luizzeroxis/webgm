@@ -248,10 +248,25 @@ export default class BuiltInGlobals {
 
 	// User Interaction / The Keyboard
 
-	static keyboard_lastkey = {type: "integer", default: 0};
-	static keyboard_key = {type: "integer", default: 0};
-	static keyboard_lastchar = {type: "char", default: ""};
-	static keyboard_string = {type: "string", default: ""};
+	static keyboard_lastkey = {direct: true, type: "integer",
+		directGet() { return this.lastKey; },
+		directSet(value) { this.lastKey = value; },
+	};
+
+	static keyboard_key = {direct: true, type: "integer",
+		directGet() { return this.currentKey; },
+		directSet(value) { this.currentKey = value; },
+	};
+
+	static keyboard_lastchar = {direct: true, type: "char",
+		directGet() { return this.lastKeyChar; },
+		directSet(value) { this.lastKeyChar = value; },
+	};
+
+	static keyboard_string = {direct: true, type: "string",
+		directGet() { return this.keyboardString; },
+		directSet(value) { this.keyboardString = value; },
+	};
 
 	// User Interaction / The Mouse
 

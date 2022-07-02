@@ -35,6 +35,11 @@ export default class Game {
 		this.keyPressed = {};
 		this.keyReleased = {};
 
+		this.currentKey = 0;
+		this.lastKey = 0;
+		this.lastKeyChar = "\0";
+		this.keyboardString = "";
+
 		this.mouse = {};
 		this.mousePressed = {};
 		this.mouseReleased = {};
@@ -227,6 +232,17 @@ export default class Game {
 			e.preventDefault();
 			this.key[e.which] = true;
 			this.keyPressed[e.which] = true;
+
+			this.currentKey = e.which;
+			this.lastKey = e.which;
+
+			if (e.key.length == 1) {
+				this.lastKeyChar = e.key;
+				this.keyboardString = (this.keyboardString + e.key).slice(-1024);
+			} else if (e.key == "Backspace") {
+				this.lastKeyChar = "\b";
+				this.keyboardString = this.keyboardString.slice(0, -1);
+			}
 		};
 		this.input.addEventListener("keydown", this.keyDownHandler);
 
@@ -966,7 +982,7 @@ export default class Game {
 				} if (e instanceof NonFatalErrorException) {
 					this.showError(e);
 					this.errorOccurred = true;
-					this.errorLast = exception.text;
+					this.errorLast = e.text;
 				} else {
 					throw e;
 				}
@@ -1499,6 +1515,9 @@ export default class Game {
 	clearIO() {
 		this.keyPressed = {};
 		this.keyReleased = {};
+
+		this.currentKey = 0;
+
 		this.mousePressed = {};
 		this.mouseReleased = {};
 		this.mouseWheel = 0;

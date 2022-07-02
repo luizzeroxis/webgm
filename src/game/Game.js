@@ -941,7 +941,7 @@ export default class Game {
 		const image = background.image;
 		if (!image) return false;
 
-		// TODO stretch, horizontalSpeed, verticalSpeed, xScale, yScale, blend, alpha
+		// TODO horizontalSpeed, verticalSpeed, xScale, yScale, blend, alpha
 
 		let xStart = roomBackground.x;
 		let yStart = roomBackground.y;
@@ -1164,23 +1164,33 @@ export default class Game {
 			backgroundColor: room.backgroundColor,
 			viewsEnabled: room.enableViews,
 
-			backgrounds: room.backgrounds.map(background => ({
-				visible: background.visibleAtStart,
-				isForeground: background.isForeground,
-				backgroundIndex: background.backgroundIndex,
-				tileHorizontally: background.tileHorizontally,
-				tileVertically: background.tileVertically,
-				x: background.x,
-				y: background.y,
-				stretch: background.stretch, // TODO check if is the same as xscale and yscale
-				horizontalSpeed: background.horizontalSpeed,
-				verticalSpeed: background.verticalSpeed,
+			backgrounds: room.backgrounds.map(roomBackground => {
+				let xScale = 1;
+				let yScale = 1;
+				if (roomBackground.stretch) {
+					const backgroundImage = this.project.getResourceById("ProjectBackground", roomBackground.backgroundIndex)?.image;
+					if (backgroundImage) {
+						xScale = backgroundImage.image.width / room.width;
+						yScale = backgroundImage.image.height / room.height;
+					}
+				}
+				return {
+					visible: roomBackground.visibleAtStart,
+					isForeground: roomBackground.isForeground,
+					backgroundIndex: roomBackground.backgroundIndex,
+					tileHorizontally: roomBackground.tileHorizontally,
+					tileVertically: roomBackground.tileVertically,
+					x: roomBackground.x,
+					y: roomBackground.y,
+					horizontalSpeed: roomBackground.horizontalSpeed,
+					verticalSpeed: roomBackground.verticalSpeed,
 
-				xScale: 1, // TODO
-				yScale: 1, // TODO
-				blend: 16777215, // TODO
-				alpha: 1, // TODO
-			})),
+					xScale: xScale, // TODO
+					yScale: yScale, // TODO
+					blend: 16777215, // TODO
+					alpha: 1, // TODO
+				};
+			}),
 
 			// tiles
 
@@ -1439,6 +1449,53 @@ export default class Game {
 		this.ctx.drawImage(image.image, x-sprite.originx, y-sprite.originy);
 
 		return true;
+	}
+
+	// Get a room background. If it doesn't exist, create one with default parameters.
+	getRoomBackground(index) {
+		if (this.room.backgrounds[index] == null) {
+			this.room.backgrounds[index] = {
+				visible: false,
+				isForeground: false,
+				backgroundIndex: -1,
+				tileHorizontally: true,
+				tileVertically: true,
+				x: 0,
+				y: 0,
+				horizontalSpeed: 0,
+				verticalSpeed: 0,
+				xScale: 1,
+				yScale: 1,
+				blend: 16777215,
+				alpha: 1,
+			};
+		}
+		return this.room.backgrounds[index];
+	}
+
+	// Get a room view. If it doesn't exist, create one with default parameters.
+	getRoomView(index) {
+		if (this.room.views[index] == null) {
+			this.room.views[index] = {
+				visible: false,
+				viewX: 0,
+				viewY: 0,
+				viewW: 640,
+				viewH: 480,
+				portX: 0,
+				portY: 0,
+				portW: 640,
+				portH: 480,
+				objectFollowIndex: -1,
+				objectFollowHorizontalBorder: 32,
+				objectFollowVerticalBorder: 32,
+				objectFollowHorizontalSpeed: -1,
+				objectFollowVerticalSpeed: -1,
+
+				angle: 0,
+			};
+		}
+		return this.room.views[index];
 	}
 
 	// Play a sound, on loop or not.

@@ -81,7 +81,7 @@ export default class BuiltInLocals {
 	// Game play / Paths
 
 	static path_index = {readOnly: true, direct: true,
-		directGet() { return this.path?.id; },
+		directGet() { return this.path?.id ?? -1; },
 	};
 
 	static path_position = {direct: true, type: "unit",

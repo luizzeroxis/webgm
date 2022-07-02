@@ -309,38 +309,38 @@ export default class BuiltInGlobals {
 
 	static background_visible = {direct: true, type: "bool", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.room.backgrounds[index].visible ? 1 : 0; },
-		directSet(value, index) { this.room.backgrounds[index].visible = value; },
+		directGet(index) { return this.getRoomBackground(index).visible ? 1 : 0; },
+		directSet(value, index) { this.getRoomBackground(index).visible = value; },
 	};
 
 	static background_foreground = {direct: true, type: "bool", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.room.backgrounds[index].isForeground ? 1 : 0; },
-		directSet(value, index) { this.room.backgrounds[index].isForeground = value; },
+		directGet(index) { return this.getRoomBackground(index).isForeground ? 1 : 0; },
+		directSet(value, index) { this.getRoomBackground(index).isForeground = value; },
 	};
 
 	static background_index = {direct: true, type: "integer", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.room.backgrounds[index].backgroundIndex; },
-		directSet(value, index) { this.room.backgrounds[index].backgroundIndex = value; },
+		directGet(index) { return this.getRoomBackground(index).backgroundIndex; },
+		directSet(value, index) { this.getRoomBackground(index).backgroundIndex = value; },
 	};
 
 	static background_x = {direct: true, type: "real", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.room.backgrounds[index].x; },
-		directSet(value, index) { this.room.backgrounds[index].x = value; },
+		directGet(index) { return this.getRoomBackground(index).x; },
+		directSet(value, index) { this.getRoomBackground(index).x = value; },
 	};
 
 	static background_y = {direct: true, type: "real", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.room.backgrounds[index].y; },
-		directSet(value, index) { this.room.backgrounds[index].y = value; },
+		directGet(index) { return this.getRoomBackground(index).y; },
+		directSet(value, index) { this.getRoomBackground(index).y = value; },
 	};
 
 	static background_width = {readOnly: true, direct: true, dimensions: 1,
 		directLength() { return 8; },
 		directGet(index) {
-			const background = this.project.getResourceById("ProjectBackground", this.room.backgrounds[index]);
+			const background = this.project.getResourceById("ProjectBackground", this.getRoomBackground(index));
 			return background?.image.image.width ?? 0;
 		},
 	};
@@ -348,57 +348,57 @@ export default class BuiltInGlobals {
 	static background_height = {readOnly: true, direct: true, dimensions: 1,
 		directLength() { return 8; },
 		directGet(index) {
-			const background = this.project.getResourceById("ProjectBackground", this.room.backgrounds[index]);
+			const background = this.project.getResourceById("ProjectBackground", this.getRoomBackground(index));
 			return background?.image.image.height ?? 0;
 		},
 	};
 
 	static background_htiled = {direct: true, type: "bool", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.room.backgrounds[index].tileHorizontally ? 1 : 0; },
-		directSet(value, index) { this.room.backgrounds[index].tileHorizontally = value; },
+		directGet(index) { return this.getRoomBackground(index).tileHorizontally ? 1 : 0; },
+		directSet(value, index) { this.getRoomBackground(index).tileHorizontally = value; },
 	};
 
 	static background_vtiled = {direct: true, type: "bool", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.room.backgrounds[index].tileVertically ? 1 : 0; },
-		directSet(value, index) { this.room.backgrounds[index].tileVertically = value; },
+		directGet(index) { return this.getRoomBackground(index).tileVertically ? 1 : 0; },
+		directSet(value, index) { this.getRoomBackground(index).tileVertically = value; },
 	};
 
 	static background_xscale = {direct: true, type: "real", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.room.backgrounds[index].xScale; },
-		directSet(value, index) { this.room.backgrounds[index].xScale = value; },
+		directGet(index) { return this.getRoomBackground(index).xScale; },
+		directSet(value, index) { this.getRoomBackground(index).xScale = value; },
 	};
 
 	static background_yscale = {direct: true, type: "real", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.room.backgrounds[index].yScale; },
-		directSet(value, index) { this.room.backgrounds[index].yScale = value; },
+		directGet(index) { return this.getRoomBackground(index).yScale; },
+		directSet(value, index) { this.getRoomBackground(index).yScale = value; },
 	};
 
 	static background_hspeed = {direct: true, type: "real", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.room.backgrounds[index].horizontalSpeed; },
-		directSet(value, index) { this.room.backgrounds[index].horizontalSpeed = value; },
+		directGet(index) { return this.getRoomBackground(index).horizontalSpeed; },
+		directSet(value, index) { this.getRoomBackground(index).horizontalSpeed = value; },
 	};
 
 	static background_vspeed = {direct: true, type: "real", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.room.backgrounds[index].verticalSpeed; },
-		directSet(value, index) { this.room.backgrounds[index].verticalSpeed = value; },
+		directGet(index) { return this.getRoomBackground(index).verticalSpeed; },
+		directSet(value, index) { this.getRoomBackground(index).verticalSpeed = value; },
 	};
 
 	static background_blend = {direct: true, type: "integer", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.room.backgrounds[index].blend; },
-		directSet(value, index) { this.room.backgrounds[index].blend = value; },
+		directGet(index) { return this.getRoomBackground(index).blend; },
+		directSet(value, index) { this.getRoomBackground(index).blend = value; },
 	};
 
 	static background_alpha = {direct: true, type: "real", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.room.backgrounds[index].alpha; },
-		directSet(value, index) { this.room.backgrounds[index].alpha = value; },
+		directGet(index) { return this.getRoomBackground(index).alpha; },
+		directSet(value, index) { this.getRoomBackground(index).alpha = value; },
 	};
 
 	// Game Graphics / Views
@@ -414,92 +414,92 @@ export default class BuiltInGlobals {
 
 	static view_visible = {direct: true, type: "bool", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.views[index].visible ? 1 : 0; },
-		directSet(value, index) { this.views[index].visible = value; },
+		directGet(index) { return this.getRoomView(index).visible ? 1 : 0; },
+		directSet(value, index) { this.getRoomView(index).visible = value; },
 	};
 
 	static view_xview = {direct: true, type: "integer", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.views[index].viewX; },
-		directSet(value, index) { this.views[index].viewX = value; },
+		directGet(index) { return this.getRoomView(index).viewX; },
+		directSet(value, index) { this.getRoomView(index).viewX = value; },
 	};
 
 	static view_yview = {direct: true, type: "integer", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.views[index].viewY; },
-		directSet(value, index) { this.views[index].viewY = value; },
+		directGet(index) { return this.getRoomView(index).viewY; },
+		directSet(value, index) { this.getRoomView(index).viewY = value; },
 	};
 
 	static view_wview = {direct: true, type: "integer", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.views[index].viewW; },
-		directSet(value, index) { this.views[index].viewW = value; },
+		directGet(index) { return this.getRoomView(index).viewW; },
+		directSet(value, index) { this.getRoomView(index).viewW = value; },
 	};
 
 	static view_hview = {direct: true, type: "integer", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.views[index].viewH; },
-		directSet(value, index) { this.views[index].viewH = value; },
+		directGet(index) { return this.getRoomView(index).viewH; },
+		directSet(value, index) { this.getRoomView(index).viewH = value; },
 	};
 
 	static view_xport = {direct: true, type: "integer", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.views[index].portX; },
-		directSet(value, index) { this.views[index].portX = value; },
+		directGet(index) { return this.getRoomView(index).portX; },
+		directSet(value, index) { this.getRoomView(index).portX = value; },
 	};
 
 	static view_yport = {direct: true, type: "integer", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.views[index].portY; },
-		directSet(value, index) { this.views[index].portY = value; },
+		directGet(index) { return this.getRoomView(index).portY; },
+		directSet(value, index) { this.getRoomView(index).portY = value; },
 	};
 
 	static view_wport = {direct: true, type: "integer", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.views[index].portW; },
-		directSet(value, index) { this.views[index].portW = value; },
+		directGet(index) { return this.getRoomView(index).portW; },
+		directSet(value, index) { this.getRoomView(index).portW = value; },
 	};
 
 	static view_hport = {direct: true, type: "integer", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.views[index].portH; },
-		directSet(value, index) { this.views[index].portH = value; },
+		directGet(index) { return this.getRoomView(index).portH; },
+		directSet(value, index) { this.getRoomView(index).portH = value; },
 	};
 
 	static view_angle = {direct: true, type: "real", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.views[index].angle; },
-		directSet(value, index) { this.views[index].angle = value; },
+		directGet(index) { return this.getRoomView(index).angle; },
+		directSet(value, index) { this.getRoomView(index).angle = value; },
 	};
 
 	static view_hborder = {direct: true, type: "integer", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.views[index].objectFollowHorizontalBorder; },
-		directSet(value, index) { this.views[index].objectFollowHorizontalBorder = value; },
+		directGet(index) { return this.getRoomView(index).objectFollowHorizontalBorder; },
+		directSet(value, index) { this.getRoomView(index).objectFollowHorizontalBorder = value; },
 	};
 
 	static view_vborder = {direct: true, type: "integer", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.views[index].objectFollowVerticalBorder; },
-		directSet(value, index) { this.views[index].objectFollowVerticalBorder = value; },
+		directGet(index) { return this.getRoomView(index).objectFollowVerticalBorder; },
+		directSet(value, index) { this.getRoomView(index).objectFollowVerticalBorder = value; },
 	};
 
 	static view_hspeed = {direct: true, type: "integer", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.views[index].objectFollowHorizontalSpeed; },
-		directSet(value, index) { this.views[index].objectFollowHorizontalSpeed = value; },
+		directGet(index) { return this.getRoomView(index).objectFollowHorizontalSpeed; },
+		directSet(value, index) { this.getRoomView(index).objectFollowHorizontalSpeed = value; },
 	};
 
 	static view_vspeed = {direct: true, type: "integer", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.views[index].objectFollowVerticalSpeed; },
-		directSet(value, index) { this.views[index].objectFollowVerticalSpeed = value; },
+		directGet(index) { return this.getRoomView(index).objectFollowVerticalSpeed; },
+		directSet(value, index) { this.getRoomView(index).objectFollowVerticalSpeed = value; },
 	};
 
 	static view_object = {direct: true, type: "integer", dimensions: 1,
 		directLength() { return 8; },
-		directGet(index) { return this.views[index].objectFollowIndex; },
-		directSet(value, index) { this.views[index].objectFollowIndex = value; },
+		directGet(index) { return this.getRoomView(index).objectFollowIndex; },
+		directSet(value, index) { this.getRoomView(index).objectFollowIndex = value; },
 	};
 
 	// Files, registry, and executing programs / Files

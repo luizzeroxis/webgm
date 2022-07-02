@@ -16,7 +16,7 @@ export default class BuiltInGlobals {
 			return this.arguments[index] ?? 0;
 		},
 		directSet(value, index) {
-			this.argument[index] = value;
+			this.arguments[index] = value;
 		},
 	};
 
@@ -24,13 +24,13 @@ export default class BuiltInGlobals {
 	/*
 	static {
 		for (let i=0; i<16; ++i) {
-			this['argument' + i.toString()] = {
+			this["argument" + i.toString()] = {
 				direct: true,
 				directGet() {
-					return this.arguments[i] != undefined ? this.arguments[i] : 0;
+					return this.arguments[i] ?? 0;
 				},
 				directSet(value) {
-					this.argument[i] = value;
+					this.arguments[i] = value;
 				},
 			};
 		}
@@ -533,10 +533,10 @@ for (let i=0; i<16; ++i) {
 	BuiltInGlobals["argument" + i.toString()] = {
 		direct: true,
 		directGet() {
-			return BuiltInGlobals.arguments[i] != undefined ? BuiltInGlobals.arguments[i] : 0;
+			return this.arguments[i] ?? 0;
 		},
 		directSet(value) {
-			BuiltInGlobals.argument[i] = value;
+			this.arguments[i] = value;
 		},
 	};
 }

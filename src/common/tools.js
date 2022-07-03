@@ -91,6 +91,13 @@ export function decimalToHexAlpha(color, alpha) {
 	return decimalToHex(color) + Math.round(alpha * 255).toString(16).padStart(2, "0");
 }
 
+export function hexAlphaToDecimal(hex) {
+	return {
+		color: hexToDecimal(hex),
+		alpha: (parseInt(hex.substr(1+2*3, 2), 16) / 255),
+	};
+}
+
 export function makeCSSFont(family, size, bold, italic) {
 	return (italic ? "italic " : "") + (bold ? "bold " : "") + size + "pt \"" + family + "\"";
 }

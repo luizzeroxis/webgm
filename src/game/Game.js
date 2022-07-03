@@ -105,8 +105,7 @@ export default class Game {
 		this.transitionSteps = 80;
 
 		// Draw functions
-		this.drawColor = 0;
-		this.drawAlpha = 1;
+		this.drawColorAlpha = "#000000ff";
 		this.drawFont = -1;
 		this.drawHAlign = 0;
 		this.drawVAlign = 0;

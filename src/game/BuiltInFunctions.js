@@ -1,5 +1,5 @@
 import {EngineException} from "../common/Exceptions.js";
-import {decimalToHSV, decimalToHex, decimalToHexAlpha, rgbToDecimal, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger, parseNewLineHash} from "../common/tools.js";
+import {decimalToHSV, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger, parseNewLineHash} from "../common/tools.js";
 
 export default class BuiltInFunctions {
 	// this = GML
@@ -1442,13 +1442,13 @@ export default class BuiltInFunctions {
 	}
 
 	static draw_point([x, y]) {
-		this.game.ctx.fillStyle = decimalToHexAlpha(this.game.drawColor, this.game.drawAlpha);
+		this.game.ctx.fillStyle = this.game.drawColorAlpha;
 		this.game.ctx.fillRect(x, y, 1, 1);
 		return 0;
 	}
 
 	static draw_line([x1, y1, x2, y2]) {
-		this.game.ctx.strokeStyle = decimalToHexAlpha(this.game.drawColor, this.game.drawAlpha);
+		this.game.ctx.strokeStyle = this.game.drawColorAlpha;
 
 		this.game.ctx.save();
 		this.game.ctx.translate(0.5, 0.5);
@@ -1470,15 +1470,14 @@ export default class BuiltInFunctions {
 	}
 
 	static draw_rectangle([x1, y1, x2, y2, outline]) {
-		this.game.ctx.fillStyle = decimalToHexAlpha(this.game.drawColor, this.game.drawAlpha);
-		this.game.ctx.strokeStyle = decimalToHexAlpha(this.game.drawColor, this.game.drawAlpha);
-
 		if (outline >= 1) {
+			this.game.ctx.strokeStyle = this.game.drawColorAlpha;
 			this.game.ctx.save();
 			this.game.ctx.translate(0.5, 0.5);
 			this.game.ctx.strokeRect(x1, y1, x2-x1, y2-y1);
 			this.game.ctx.restore();
 		} else {
+			this.game.ctx.fillStyle = this.game.drawColorAlpha;
 			this.game.ctx.fillRect(x1, y1, x2-x1, y2-y1);
 		}
 
@@ -1496,15 +1495,13 @@ export default class BuiltInFunctions {
 	}
 
 	static draw_circle([x, y, r, outline]) {
-		const style = decimalToHexAlpha(this.game.drawColor, this.game.drawAlpha);
-		this.game.ctx.fillStyle = style;
-		this.game.ctx.strokeStyle = style;
-
 		this.game.ctx.beginPath();
 		this.game.ctx.arc(x, y, r, 0, Math.PI*2);
 		if (outline >= 1) {
+			this.game.ctx.strokeStyle = this.game.drawColorAlpha;
 			this.game.ctx.stroke();
 		} else {
+			this.game.ctx.fillStyle = this.game.drawColorAlpha;
 			this.game.ctx.fill();
 		}
 		this.game.ctx.closePath();
@@ -1513,18 +1510,16 @@ export default class BuiltInFunctions {
 	}
 
 	static draw_ellipse([x1, y1, x2, y2, outline]) {
-		const style = decimalToHexAlpha(this.game.drawColor, this.game.drawAlpha);
 		const x = (x2 - x1) / 2 + x1;
 		const y = (y2 - y1) / 2 + y1;
-
-		this.game.ctx.fillStyle = style;
-		this.game.ctx.strokeStyle = style;
 
 		this.game.ctx.beginPath();
 		this.game.ctx.ellipse(x, y, x2 - x, y2 - y, 0, 0, Math.PI*2);
 		if (outline >= 1) {
+			this.game.ctx.strokeStyle = this.game.drawColorAlpha;
 			this.game.ctx.stroke();
 		} else {
+			this.game.ctx.fillStyle = this.game.drawColorAlpha;
 			this.game.ctx.fill();
 		}
 		this.game.ctx.closePath();
@@ -1558,21 +1553,21 @@ export default class BuiltInFunctions {
 	}
 
 	static draw_set_color([color]) {
-		this.game.drawColor = color;
+		this.game.drawColorAlpha = decimalToHexAlpha(color, hexAlphaToDecimal(this.game.drawColorAlpha).alpha);
 		return 0;
 	}
 
 	static draw_set_alpha([alpha]) {
-		this.game.drawAlpha = alpha;
+		this.game.drawColorAlpha = decimalToHexAlpha(hexAlphaToDecimal(this.game.drawColorAlpha).color, alpha);
 		return 0;
 	}
 
 	static draw_get_color([]) {
-		return this.game.drawColor;
+		return hexAlphaToDecimal(this.game.drawColorAlpha).color;
 	}
 
 	static draw_get_alpha([]) {
-		return this.game.drawAlpha;
+		return hexAlphaToDecimal(this.game.drawColorAlpha).alpha;
 	}
 
 	static make_color_rgb([red, green, blue]) {
@@ -1653,7 +1648,7 @@ export default class BuiltInFunctions {
 		y = forceReal(y);
 		string = asString(string);
 
-		this.game.ctx.fillStyle = decimalToHexAlpha(this.game.drawColor, this.game.drawAlpha);
+		this.game.ctx.fillStyle = this.game.drawColorAlpha;
 
 		this.game.ctx.font = this.game.cssFontsCache[this.game.drawFont];
 
@@ -6894,8 +6889,4 @@ export default class BuiltInFunctions {
 		// return 0;
 	}
 	*/
-
-	static debugger() {
-		debugger; // eslint-disable-line
-	}
 }

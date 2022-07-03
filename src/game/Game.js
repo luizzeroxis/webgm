@@ -280,6 +280,8 @@ export default class Game {
 		this.mouseUpHandler = (e) => {
 			e.preventDefault();
 
+			this.canvas.focus();
+
 			const button = toEngineButton(e.button);
 			this.mouse[button] = false;
 			this.mouseReleased[button] = true;
@@ -864,7 +866,11 @@ export default class Game {
 		// }
 
 		// Reset keyboard/mouse states
-		this.clearIO();
+		this.keyPressed = {};
+		this.keyReleased = {};
+		this.mousePressed = {};
+		this.mouseReleased = {};
+		this.mouseWheel = 0;
 
 		// Delete instances
 		this.instances = this.instances.filter(instance => instance.exists);
@@ -1601,11 +1607,15 @@ export default class Game {
 
 	// Clears the state of per step input variables.
 	clearIO() {
+		this.key = {};
 		this.keyPressed = {};
 		this.keyReleased = {};
+		this.currentKey = 0;
+		this.mouse = {};
 		this.mousePressed = {};
 		this.mouseReleased = {};
 		this.mouseWheel = 0;
+		this.currentMouse = 0;
 	}
 
 	// Compile and execute a GML string.

@@ -1933,31 +1933,38 @@ export default class BuiltInLibraries {
 							},
 						],
 					},
-					/*
 					{
-						id: 999,
+						id: 613,
 						description: "Draw Variable",
-						listText: [""],
-						hintText: [""],
+						listText: ["Draw the value of variable ", a[0]],
+						hintText: [w, "at ", r, "position (", a[1], ",", a[2], ") draw the value of: ", a[0]],
 						kind: "normal",
 						execution: "function",
-						executionFunction: "",
+						executionFunction: "action_draw_variable",
 
 						interfaceKind: "normal",
 						isQuestion: false,
-						hasApplyTo: false,
-						hasRelative: false,
+						hasApplyTo: true,
+						hasRelative: true,
 
 						args: [
 							{
-								name: "",
-								kind: "",
+								name: "variable:",
+								kind: "expression",
 								default: "",
+							},
+							{
+								name: "x:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "y:",
+								kind: "expression",
+								default: "0",
 							},
 						],
 					},
-					*/
-
 				],
 			},
 			{

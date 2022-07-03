@@ -6304,9 +6304,11 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 
-	static action_draw_variable([_]) {
-		throw new EngineException("Function action_draw_variable is not implemented");
-		// return 0;
+	static action_draw_variable([variable, x, y], relative) {
+		x = (!relative ? x : this.currentInstance.x + x);
+		y = (!relative ? y : this.currentInstance.y + y);
+		BuiltInFunctions.draw_text.call(this, [x, y, variable]);
+		return 0;
 	}
 
 	// ## score

@@ -1673,9 +1673,9 @@ export default class BuiltInFunctions {
 		if (this.game.drawVAlign == 0) { // top
 			currentY = y;
 		} else if (this.game.drawVAlign == 1) { // middle
-			currentY = y - (height * lines.length)/2;
+			currentY = y - (height * (lines.length - 1)) / 2;
 		} else if (this.game.drawVAlign == 2) { // bottom
-			currentY = y - (height * lines.length);
+			currentY = y - (height * (lines.length - 1));
 		}
 
 		for (const line of lines) {

@@ -152,13 +152,13 @@ export default class Game {
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
 				const OTHER_ROOM_END = 5;
-				await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_ROOM_END), instance);
+				await this.doEventOfInstance("other", OTHER_ROOM_END, instance);
 			}
 
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
 				const OTHER_GAME_END = 3;
-				await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_GAME_END), instance);
+				await this.doEventOfInstance("other", OTHER_GAME_END, instance);
 			}
 		} catch (e) {
 			if (e instanceof StepStopException) {
@@ -1143,7 +1143,7 @@ export default class Game {
 				for (const instance of this.instances) {
 					if (!instance.exists) continue;
 					const OTHER_ROOM_END = 5;
-					await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_ROOM_END), instance);
+					await this.doEventOfInstance("other", OTHER_ROOM_END, instance);
 				}
 			} catch (e) {
 				if (e instanceof StepStopException) {
@@ -1233,14 +1233,14 @@ export default class Game {
 
 		for (const instance of createdInstances) {
 			// TODO run instance creation code
-			await this.doEvent(this.getEventOfInstance(instance, "create"), instance);
+			await this.doEventOfInstance("create", null, instance);
 		}
 
 		if (isGameStart) {
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
 				const OTHER_GAME_START = 2;
-				await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_GAME_START), instance);
+				await this.doEventOfInstance("other", OTHER_GAME_START, instance);
 			}
 		}
 
@@ -1249,7 +1249,7 @@ export default class Game {
 		for (const instance of this.instances) {
 			if (!instance.exists) continue;
 			const OTHER_ROOM_START = 4;
-			await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_ROOM_START), instance);
+			await this.doEventOfInstance("other", OTHER_ROOM_START, instance);
 		}
 
 		await this.drawViews();
@@ -1259,7 +1259,7 @@ export default class Game {
 	async instanceCreate(id, x, y, object) {
 		const instance = this.instanceCreateNoEvents(id, x, y, object);
 
-		await this.doEvent(this.getEventOfInstance(instance, "create"), instance);
+		await this.doEventOfInstance("create", null, instance);
 
 		return instance.id;
 	}
@@ -1564,7 +1564,7 @@ export default class Game {
 			const OTHER_NO_MORE_LIVES = 6;
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
-				await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_NO_MORE_LIVES), instance);
+				await this.doEventOfInstance("other", OTHER_NO_MORE_LIVES, instance);
 			}
 		}
 	}
@@ -1578,7 +1578,7 @@ export default class Game {
 			const OTHER_NO_MORE_HEALTH = 9;
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
-				await this.doEvent(this.getEventOfInstance(instance, "other", OTHER_NO_MORE_HEALTH), instance);
+				await this.doEventOfInstance("other", OTHER_NO_MORE_HEALTH, instance);
 			}
 		}
 	}
@@ -1635,6 +1635,11 @@ export default class Game {
 	}
 
 	// // Helper functions
+
+	// Do the event of a type and subtype (optional) of an instance.
+	doEventOfInstance(type, subtype, instance) {
+		return this.doEvent(this.getEventOfInstance(instance, type, subtype), instance);
+	}
 
 	// Get event of type and subtype (optional) of an instance.
 	getEventOfInstance(instance, type, subtype) {

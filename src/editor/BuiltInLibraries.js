@@ -570,29 +570,49 @@ export default class BuiltInLibraries {
 							},
 						],
 					},
-					/*
 					{
-						id: 999,
+						id: 206,
 						description: "Create Moving",
-						listText: [""],
-						hintText: [""],
+						listText: ["Create moving instance of ", a[0]],
+						hintText: [w, "create instance of object ", a[0], " at ", r, "position (", a[1], ",", a[2], ") with speed ", a[3], " in direction ", a[4]],
 						kind: "normal",
 						execution: "function",
-						executionFunction: "",
+						executionFunction: "action_create_object_motion",
 
 						interfaceKind: "normal",
 						isQuestion: false,
-						hasApplyTo: false,
-						hasRelative: false,
+						hasApplyTo: true,
+						hasRelative: true,
 
 						args: [
 							{
-								name: "",
-								kind: "",
-								default: "",
+								name: "object:",
+								kind: "object",
+								default: -100,
+							},
+							{
+								name: "x:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "y:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "speed:",
+								kind: "expression",
+								default: "0",
+							},
+							{
+								name: "direction:",
+								kind: "expression",
+								default: "0",
 							},
 						],
 					},
+					/*
 					{
 						id: 999,
 						description: "Create Random",

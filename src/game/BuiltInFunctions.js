@@ -879,7 +879,7 @@ export default class BuiltInFunctions {
 	}
 
 	static async instance_destroy([]) {
-		await this.game.doEvent(this.game.getEventOfInstance(this.currentInstance, "destroy"), this.currentInstance);
+		await this.game.doEventOfInstance("destroy", null, this.currentInstance);
 		this.currentInstance.exists = false;
 		return 0;
 	}
@@ -5947,9 +5947,24 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 
-	static action_create_object_motion([_]) {
-		throw new EngineException("Function action_create_object_motion is not implemented");
-		// return 0;
+	static async action_create_object_motion([object, x, y, speed, direction], relative) {
+		x = (!relative ? x : this.currentInstance.x + x);
+		y = (!relative ? y : this.currentInstance.y + y);
+
+		const objectResource = this.game.project.getResourceById("ProjectObject", object);
+		if (objectResource == null) {
+			throw this.game.makeNonFatalError({
+					type: "creating_instance_for_non_existing_object",
+					objectIndex: object,
+				}, "Creating instance for non-existing object: " + object.toString());
+		}
+
+		const instance = this.game.instanceCreateNoEvents(null, x, y, object);
+		instance.setDirectionAndSpeed(direction, speed);
+
+		await this.game.doEventOfInstance("create", null, instance);
+
+		return 0;
 	}
 
 	static action_create_object_random([_]) {

@@ -1663,12 +1663,16 @@ export default class BuiltInFunctions {
 
 		// Look, I tried making this be like GM but it just doesn't add up. Hopefully will be fixed if and when we change to a custom font renderer
 
-		// Calculate heights and initial y
-		const textMetrics = this.game.ctx.measureText("");
-		const height = Math.abs(textMetrics.fontBoundingBoxDescent) + Math.abs(textMetrics.fontBoundingBoxAscent);
-
 		const lines = parseNewLineHash(string).split("\n");
+		let height = 0;
 
+		// Calculate heights, only if more than 1 line
+		if (lines.length > 1) {
+			const textMetrics = this.game.ctx.measureText("");
+			height = Math.abs(textMetrics.fontBoundingBoxDescent) + Math.abs(textMetrics.fontBoundingBoxAscent);
+		}
+
+		// Calculate initial y
 		let currentY;
 		if (this.game.drawVAlign == 0) { // top
 			currentY = y;
@@ -6890,4 +6894,8 @@ export default class BuiltInFunctions {
 		// return 0;
 	}
 	*/
+
+	static debugger() {
+		debugger; // eslint-disable-line
+	}
 }

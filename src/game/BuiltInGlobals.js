@@ -9,13 +9,12 @@ export default class BuiltInGlobals {
 
 	// GML Language Overview / Scripts
 
-	static argument = {
-		direct: true, dimensions: 1,
-		directLength() { return 16; },
-		directGet(index) {
+	static argument = {dimensions: 1,
+		length() { return 16; },
+		get(index) {
 			return this.arguments[index] ?? 0;
 		},
-		directSet(value, index) {
+		set(value, index) {
 			this.arguments[index] = value;
 		},
 	};
@@ -25,11 +24,10 @@ export default class BuiltInGlobals {
 	static {
 		for (let i=0; i<16; ++i) {
 			this["argument" + i.toString()] = {
-				direct: true,
-				directGet() {
+				get() {
 					return this.arguments[i] ?? 0;
 				},
-				directSet(value) {
+				set(value) {
 					this.arguments[i] = value;
 				},
 			};
@@ -37,26 +35,26 @@ export default class BuiltInGlobals {
 	}
 	*/
 
-	static argument_relative = {readOnly: true, direct: true,
-		directGet() { return this.argumentRelative; },
+	static argument_relative = {readOnly: true,
+		get() { return this.argumentRelative; },
 	};
 
 	// Game play / Instances
 
-	static instance_count = {readOnly: true, direct: true,
-		directGet() { return this.instances.length; },
+	static instance_count = {readOnly: true,
+		get() { return this.instances.length; },
 	};
 
-	static instance_id = {readOnly: true, direct: true, dimensions: 1,
-		directLength() { return this.instances.length; },
-		directGet(index) { return this.instances[index].id; },
+	static instance_id = {readOnly: true, dimensions: 1,
+		length() { return this.instances.length; },
+		get(index) { return this.instances[index].id; },
 	};
 
 	// Game play / Timing
 
-	static room_speed = {direct: true, type: "integer",
-		directGet() { return this.room.speed; },
-		directSet(value) {
+	static room_speed = {type: "integer",
+		get() { return this.room.speed; },
+		set(value) {
 			if (value <= 0) {
 				// TODO So, in GM you get 2 errors right after another. I have no idea how to replicate this.
 				throw new NonFatalErrorException({
@@ -70,460 +68,460 @@ export default class BuiltInGlobals {
 		},
 	};
 
-	static fps = {readOnly: true, direct: true,
-		directGet() { return this.fps; },
+	static fps = {readOnly: true,
+		get() { return this.fps; },
 	};
 
-	static current_time = {readOnly: true, direct: true, directGet() {
+	static current_time = {readOnly: true, get() {
 		return Math.floor(performance.now());
 	}};
 
-	static current_year = {readOnly: true, direct: true, directGet() {
+	static current_year = {readOnly: true, get() {
 		return (new Date()).getFullYear();
 	}};
 
-	static current_month = {readOnly: true, direct: true, directGet() {
+	static current_month = {readOnly: true, get() {
 		return (new Date()).getMonth() + 1;
 	}};
 
-	static current_day = {readOnly: true, direct: true, directGet() {
+	static current_day = {readOnly: true, get() {
 		return (new Date()).getDate();
 	}};
 
-	static current_weekday = {readOnly: true, direct: true, directGet() {
+	static current_weekday = {readOnly: true, get() {
 		return (new Date()).getDay() + 1;
 	}};
 
-	static current_hour = {readOnly: true, direct: true, directGet() {
+	static current_hour = {readOnly: true, get() {
 		return (new Date()).getHours();
 	}};
 
-	static current_minute = {readOnly: true, direct: true, directGet() {
+	static current_minute = {readOnly: true, get() {
 		return (new Date()).getMinutes();
 	}};
 
-	static current_second = {readOnly: true, direct: true, directGet() {
+	static current_second = {readOnly: true, get() {
 		return (new Date()).getSeconds();
 	}};
 
 	// Game play / Rooms
 
-	static room = {direct: true, type: "integer",
-		directGet() { return this.room.resource.id; },
-		directSet(value) {
+	static room = {type: "integer",
+		get() { return this.room.resource.id; },
+		set(value) {
 			// TODO check if room value is changed immediately or only after room change
 			BuiltInFunctions.room_goto.call(this.gml, [value]);
 		},
 	};
 
-	static room_first = {readOnly: true, direct: true, directGet() {
+	static room_first = {readOnly: true, get() {
 		return this.project.resources.ProjectRoom[0].id;
 	}};
 
-	static room_last = {readOnly: true, direct: true, directGet() {
+	static room_last = {readOnly: true, get() {
 		return this.project.resources.ProjectRoom[this.project.resources.ProjectRoom.length - 1].id;
 	}};
 
-	static room_width = {readOnly: true, direct: true, directGet() {
+	static room_width = {readOnly: true, get() {
 		return this.room.width;
 	}};
 
-	static room_height = {readOnly: true, direct: true, directGet() {
+	static room_height = {readOnly: true, get() {
 		return this.room.height;
 	}};
 
-	static room_caption = {direct: true, type: "string",
-		directGet() { return this.room.caption; },
-		directSet(value) { this.room.caption = value; },
+	static room_caption = {type: "string",
+		get() { return this.room.caption; },
+		set(value) { this.room.caption = value; },
 	};
 
-	static room_persistent = {direct: true, type: "bool",
-		directGet() { return this.room.persistent ? 1 : 0; },
-		directSet(value) { this.room.persistent = value; },
+	static room_persistent = {type: "bool",
+		get() { return this.room.persistent ? 1 : 0; },
+		set(value) { this.room.persistent = value; },
 	};
 
-	static transition_kind = {direct: true, type: "integer",
-		directGet() { return this.transitionKind; },
-		directSet(value) { this.transitionKind = value; },
+	static transition_kind = {type: "integer",
+		get() { return this.transitionKind; },
+		set(value) { this.transitionKind = value; },
 	};
 
-	static transition_steps = {direct: true, type: "integer",
-		directGet() { return this.transitionSteps; },
-		directSet(value) { this.transitionSteps = Math.max(1, value); },
+	static transition_steps = {type: "integer",
+		get() { return this.transitionSteps; },
+		set(value) { this.transitionSteps = Math.max(1, value); },
 	};
 
 	// Game play / Score
 
-	static score = {direct: true, type: "integer",
-		directGet() { return this.score; },
-		directSet(value) { this.score = value; },
+	static score = {type: "integer",
+		get() { return this.score; },
+		set(value) { this.score = value; },
 	};
 
-	static lives = {direct: true, type: "integer",
-		directGet() { return this.lives; },
-		async directSet(value) { await this.setLives(value); },
+	static lives = {type: "integer",
+		get() { return this.lives; },
+		async set(value) { await this.setLives(value); },
 	};
 
-	static health = {direct: true, type: "real",
-		directGet() { return this.health; },
-		async directSet(value) { await this.setHealth(value); },
+	static health = {type: "real",
+		get() { return this.health; },
+		async set(value) { await this.setHealth(value); },
 	};
 
-	static show_score = {direct: true, type: "bool",
-		directGet() { return this.showScore ? 1 : 0; },
-		directSet(value) { this.showScore = value; },
+	static show_score = {type: "bool",
+		get() { return this.showScore ? 1 : 0; },
+		set(value) { this.showScore = value; },
 	};
 
-	static show_lives = {direct: true, type: "bool",
-		directGet() { return this.showLives ? 1 : 0; },
-		directSet(value) { this.showLives = value; },
+	static show_lives = {type: "bool",
+		get() { return this.showLives ? 1 : 0; },
+		set(value) { this.showLives = value; },
 	};
 
-	static show_health = {direct: true, type: "bool",
-		directGet() { return this.showHealth ? 1 : 0; },
-		directSet(value) { this.showHealth = value; },
+	static show_health = {type: "bool",
+		get() { return this.showHealth ? 1 : 0; },
+		set(value) { this.showHealth = value; },
 	};
 
-	static caption_score = {direct: true, type: "string",
-		directGet() { return this.captionScore; },
-		directSet(value) { this.captionScore = value; },
+	static caption_score = {type: "string",
+		get() { return this.captionScore; },
+		set(value) { this.captionScore = value; },
 	};
 
-	static caption_lives = {direct: true, type: "string",
-		directGet() { return this.captionLives; },
-		directSet(value) { this.captionLives = value; },
+	static caption_lives = {type: "string",
+		get() { return this.captionLives; },
+		set(value) { this.captionLives = value; },
 	};
 
-	static caption_health = {direct: true, type: "string",
-		directGet() { return this.captionHealth; },
-		directSet(value) { this.captionHealth = value; },
+	static caption_health = {type: "string",
+		get() { return this.captionHealth; },
+		set(value) { this.captionHealth = value; },
 	};
 
 
 	// Game play / Generating events
 
-	static event_type = {readOnly: true, direct: true, directGet() {
+	static event_type = {readOnly: true, get() {
 		return this.currentEvent ? Events.listEventTypes.find(x => x.value == this.currentEvent.type).id : 0;
 	}};
 
-	static event_number = {readOnly: true, direct: true, directGet() {
+	static event_number = {readOnly: true, get() {
 		return this.currentEvent ? this.currentEvent.subtype : 0;
 	}};
 
-	static event_object = {readOnly: true, direct: true, directGet() {
+	static event_object = {readOnly: true, get() {
 		return this.currentEventInstance ? this.currentEventInstance.objectIndex : 0;
 	}};
 
-	static event_action = {readOnly: true, direct: true, directGet() {
+	static event_action = {readOnly: true, get() {
 		return this.currentEventActionNumber ? this.currentEventActionNumber : 0;
 	}};
 
 	// Game play / Miscellaneous variables and functions
 
-	static error_occurred = {direct: true, type: "bool",
-		directGet() { return this.errorOccurred ? 1 : 0; },
-		directSet(value) { this.errorOccurred = value; },
+	static error_occurred = {type: "bool",
+		get() { return this.errorOccurred ? 1 : 0; },
+		set(value) { this.errorOccurred = value; },
 	};
 
-	static error_last = {direct: true, type: "string",
-		directGet() { return this.errorLast; },
-		directSet(value) { this.errorLast = value; },
+	static error_last = {type: "string",
+		get() { return this.errorLast; },
+		set(value) { this.errorLast = value; },
 	};
 
-	static debug_mode = {readOnly: true, direct: true,
-		directGet() { return 0; }, // TODO
+	static debug_mode = {readOnly: true,
+		get() { return 0; }, // TODO
 	};
 
-	static gamemaker_pro = {readOnly: true, direct: true,
-		directGet() { return 1; },
+	static gamemaker_pro = {readOnly: true,
+		get() { return 1; },
 	};
 
-	static gamemaker_registered = {readOnly: true, direct: true,
-		directGet() { return 1; },
+	static gamemaker_registered = {readOnly: true,
+		get() { return 1; },
 	};
 
-	static gamemaker_version = {readOnly: true, direct: true,
-		directGet() { return 800; },
+	static gamemaker_version = {readOnly: true,
+		get() { return 800; },
 	};
 
 	// User Interaction / The Keyboard
 
-	static keyboard_lastkey = {direct: true, type: "integer",
-		directGet() { return this.lastKey; },
-		directSet(value) { this.lastKey = value; },
+	static keyboard_lastkey = {type: "integer",
+		get() { return this.lastKey; },
+		set(value) { this.lastKey = value; },
 	};
 
-	static keyboard_key = {direct: true, type: "integer",
-		directGet() { return this.currentKey; },
-		directSet(value) { this.currentKey = value; },
+	static keyboard_key = {type: "integer",
+		get() { return this.currentKey; },
+		set(value) { this.currentKey = value; },
 	};
 
-	static keyboard_lastchar = {direct: true, type: "char",
-		directGet() { return this.lastKeyChar; },
-		directSet(value) { this.lastKeyChar = value; },
+	static keyboard_lastchar = {type: "char",
+		get() { return this.lastKeyChar; },
+		set(value) { this.lastKeyChar = value; },
 	};
 
-	static keyboard_string = {direct: true, type: "string",
-		directGet() { return this.keyboardString; },
-		directSet(value) { this.keyboardString = value; },
+	static keyboard_string = {type: "string",
+		get() { return this.keyboardString; },
+		set(value) { this.keyboardString = value; },
 	};
 
 	// User Interaction / The Mouse
 
-	static mouse_x = {readOnly: true, direct: true,
-		directGet() { return this.mouseX; },
+	static mouse_x = {readOnly: true,
+		get() { return this.mouseX; },
 	};
 
-	static mouse_y = {readOnly: true, direct: true,
-		directGet() { return this.mouseY; },
+	static mouse_y = {readOnly: true,
+		get() { return this.mouseY; },
 	};
 
-	static mouse_button = {direct: true, type: "integer",
-		directGet() { return this.currentMouse; },
-		directSet(value) { this.currentMouse = value; }, // TODO I think this is an enum, should check bounds or something
+	static mouse_button = {type: "integer",
+		get() { return this.currentMouse; },
+		set(value) { this.currentMouse = value; }, // TODO I think this is an enum, should check bounds or something
 	};
 
-	static mouse_lastbutton = {direct: true, type: "integer",
-		directGet() { return this.lastMouse; },
-		directSet(value) { this.lastMouse = value; },
+	static mouse_lastbutton = {type: "integer",
+		get() { return this.lastMouse; },
+		set(value) { this.lastMouse = value; },
 	};
 
-	static cursor_sprite = {direct: true, type: "integer",
-		directGet() { return this.cursorSprite?.id ?? -1; },
-		directSet(value) {
+	static cursor_sprite = {type: "integer",
+		get() { return this.cursorSprite?.id ?? -1; },
+		set(value) {
 			this.cursorSprite = this.project.getResourceById("ProjectSprite", value);
 		},
 	};
 
 	// Game Graphics / Backgrounds
 
-	static background_color = {direct: true, type: "integer",
-		directGet() { return hexToDecimal(this.room.backgroundColor); },
-		directSet(value) { this.room.backgroundColor = decimalToHex(value); },
+	static background_color = {type: "integer",
+		get() { return hexToDecimal(this.room.backgroundColor); },
+		set(value) { this.room.backgroundColor = decimalToHex(value); },
 	};
 
-	static background_showcolor = {direct: true, type: "bool",
-		directGet() { return this.room.backgroundShowColor ? 1 : 0; },
-		directSet(value) { this.room.backgroundShowColor = value; },
+	static background_showcolor = {type: "bool",
+		get() { return this.room.backgroundShowColor ? 1 : 0; },
+		set(value) { this.room.backgroundShowColor = value; },
 	};
 
-	static background_visible = {direct: true, type: "bool", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomBackground(index).visible ? 1 : 0; },
-		directSet(value, index) { this.getRoomBackground(index).visible = value; },
+	static background_visible = {type: "bool", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomBackground(index).visible ? 1 : 0; },
+		set(value, index) { this.getRoomBackground(index).visible = value; },
 	};
 
-	static background_foreground = {direct: true, type: "bool", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomBackground(index).isForeground ? 1 : 0; },
-		directSet(value, index) { this.getRoomBackground(index).isForeground = value; },
+	static background_foreground = {type: "bool", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomBackground(index).isForeground ? 1 : 0; },
+		set(value, index) { this.getRoomBackground(index).isForeground = value; },
 	};
 
-	static background_index = {direct: true, type: "integer", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomBackground(index).backgroundIndex; },
-		directSet(value, index) { this.getRoomBackground(index).backgroundIndex = value; },
+	static background_index = {type: "integer", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomBackground(index).backgroundIndex; },
+		set(value, index) { this.getRoomBackground(index).backgroundIndex = value; },
 	};
 
-	static background_x = {direct: true, type: "real", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomBackground(index).x; },
-		directSet(value, index) { this.getRoomBackground(index).x = value; },
+	static background_x = {type: "real", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomBackground(index).x; },
+		set(value, index) { this.getRoomBackground(index).x = value; },
 	};
 
-	static background_y = {direct: true, type: "real", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomBackground(index).y; },
-		directSet(value, index) { this.getRoomBackground(index).y = value; },
+	static background_y = {type: "real", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomBackground(index).y; },
+		set(value, index) { this.getRoomBackground(index).y = value; },
 	};
 
-	static background_width = {readOnly: true, direct: true, dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) {
+	static background_width = {readOnly: true, dimensions: 1,
+		length() { return 8; },
+		get(index) {
 			const background = this.project.getResourceById("ProjectBackground", this.getRoomBackground(index));
 			return background?.image.image.width ?? 0;
 		},
 	};
 
-	static background_height = {readOnly: true, direct: true, dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) {
+	static background_height = {readOnly: true, dimensions: 1,
+		length() { return 8; },
+		get(index) {
 			const background = this.project.getResourceById("ProjectBackground", this.getRoomBackground(index));
 			return background?.image.image.height ?? 0;
 		},
 	};
 
-	static background_htiled = {direct: true, type: "bool", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomBackground(index).tileHorizontally ? 1 : 0; },
-		directSet(value, index) { this.getRoomBackground(index).tileHorizontally = value; },
+	static background_htiled = {type: "bool", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomBackground(index).tileHorizontally ? 1 : 0; },
+		set(value, index) { this.getRoomBackground(index).tileHorizontally = value; },
 	};
 
-	static background_vtiled = {direct: true, type: "bool", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomBackground(index).tileVertically ? 1 : 0; },
-		directSet(value, index) { this.getRoomBackground(index).tileVertically = value; },
+	static background_vtiled = {type: "bool", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomBackground(index).tileVertically ? 1 : 0; },
+		set(value, index) { this.getRoomBackground(index).tileVertically = value; },
 	};
 
-	static background_xscale = {direct: true, type: "real", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomBackground(index).xScale; },
-		directSet(value, index) { this.getRoomBackground(index).xScale = value; },
+	static background_xscale = {type: "real", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomBackground(index).xScale; },
+		set(value, index) { this.getRoomBackground(index).xScale = value; },
 	};
 
-	static background_yscale = {direct: true, type: "real", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomBackground(index).yScale; },
-		directSet(value, index) { this.getRoomBackground(index).yScale = value; },
+	static background_yscale = {type: "real", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomBackground(index).yScale; },
+		set(value, index) { this.getRoomBackground(index).yScale = value; },
 	};
 
-	static background_hspeed = {direct: true, type: "real", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomBackground(index).horizontalSpeed; },
-		directSet(value, index) { this.getRoomBackground(index).horizontalSpeed = value; },
+	static background_hspeed = {type: "real", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomBackground(index).horizontalSpeed; },
+		set(value, index) { this.getRoomBackground(index).horizontalSpeed = value; },
 	};
 
-	static background_vspeed = {direct: true, type: "real", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomBackground(index).verticalSpeed; },
-		directSet(value, index) { this.getRoomBackground(index).verticalSpeed = value; },
+	static background_vspeed = {type: "real", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomBackground(index).verticalSpeed; },
+		set(value, index) { this.getRoomBackground(index).verticalSpeed = value; },
 	};
 
-	static background_blend = {direct: true, type: "integer", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomBackground(index).blend; },
-		directSet(value, index) { this.getRoomBackground(index).blend = value; },
+	static background_blend = {type: "integer", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomBackground(index).blend; },
+		set(value, index) { this.getRoomBackground(index).blend = value; },
 	};
 
-	static background_alpha = {direct: true, type: "real", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomBackground(index).alpha; },
-		directSet(value, index) { this.getRoomBackground(index).alpha = value; },
+	static background_alpha = {type: "real", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomBackground(index).alpha; },
+		set(value, index) { this.getRoomBackground(index).alpha = value; },
 	};
 
 	// Game Graphics / Views
 
-	static view_enabled = {direct: true, type: "bool",
-		directGet() { return this.room.viewsEnabled ? 1 : 0; },
-		directSet(value) { this.room.viewsEnabled = value; },
+	static view_enabled = {type: "bool",
+		get() { return this.room.viewsEnabled ? 1 : 0; },
+		set(value) { this.room.viewsEnabled = value; },
 	};
 
-	static view_current = {readOnly: true, direct: true,
-		directGet() { return this.currentView ? 1 : 0; },
+	static view_current = {readOnly: true,
+		get() { return this.currentView ? 1 : 0; },
 	};
 
-	static view_visible = {direct: true, type: "bool", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomView(index).visible ? 1 : 0; },
-		directSet(value, index) { this.getRoomView(index).visible = value; },
+	static view_visible = {type: "bool", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomView(index).visible ? 1 : 0; },
+		set(value, index) { this.getRoomView(index).visible = value; },
 	};
 
-	static view_xview = {direct: true, type: "integer", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomView(index).viewX; },
-		directSet(value, index) { this.getRoomView(index).viewX = value; },
+	static view_xview = {type: "integer", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomView(index).viewX; },
+		set(value, index) { this.getRoomView(index).viewX = value; },
 	};
 
-	static view_yview = {direct: true, type: "integer", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomView(index).viewY; },
-		directSet(value, index) { this.getRoomView(index).viewY = value; },
+	static view_yview = {type: "integer", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomView(index).viewY; },
+		set(value, index) { this.getRoomView(index).viewY = value; },
 	};
 
-	static view_wview = {direct: true, type: "integer", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomView(index).viewW; },
-		directSet(value, index) { this.getRoomView(index).viewW = value; },
+	static view_wview = {type: "integer", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomView(index).viewW; },
+		set(value, index) { this.getRoomView(index).viewW = value; },
 	};
 
-	static view_hview = {direct: true, type: "integer", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomView(index).viewH; },
-		directSet(value, index) { this.getRoomView(index).viewH = value; },
+	static view_hview = {type: "integer", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomView(index).viewH; },
+		set(value, index) { this.getRoomView(index).viewH = value; },
 	};
 
-	static view_xport = {direct: true, type: "integer", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomView(index).portX; },
-		directSet(value, index) { this.getRoomView(index).portX = value; },
+	static view_xport = {type: "integer", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomView(index).portX; },
+		set(value, index) { this.getRoomView(index).portX = value; },
 	};
 
-	static view_yport = {direct: true, type: "integer", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomView(index).portY; },
-		directSet(value, index) { this.getRoomView(index).portY = value; },
+	static view_yport = {type: "integer", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomView(index).portY; },
+		set(value, index) { this.getRoomView(index).portY = value; },
 	};
 
-	static view_wport = {direct: true, type: "integer", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomView(index).portW; },
-		directSet(value, index) { this.getRoomView(index).portW = value; },
+	static view_wport = {type: "integer", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomView(index).portW; },
+		set(value, index) { this.getRoomView(index).portW = value; },
 	};
 
-	static view_hport = {direct: true, type: "integer", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomView(index).portH; },
-		directSet(value, index) { this.getRoomView(index).portH = value; },
+	static view_hport = {type: "integer", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomView(index).portH; },
+		set(value, index) { this.getRoomView(index).portH = value; },
 	};
 
-	static view_angle = {direct: true, type: "real", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomView(index).angle; },
-		directSet(value, index) { this.getRoomView(index).angle = value; },
+	static view_angle = {type: "real", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomView(index).angle; },
+		set(value, index) { this.getRoomView(index).angle = value; },
 	};
 
-	static view_hborder = {direct: true, type: "integer", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomView(index).objectFollowHorizontalBorder; },
-		directSet(value, index) { this.getRoomView(index).objectFollowHorizontalBorder = value; },
+	static view_hborder = {type: "integer", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomView(index).objectFollowHorizontalBorder; },
+		set(value, index) { this.getRoomView(index).objectFollowHorizontalBorder = value; },
 	};
 
-	static view_vborder = {direct: true, type: "integer", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomView(index).objectFollowVerticalBorder; },
-		directSet(value, index) { this.getRoomView(index).objectFollowVerticalBorder = value; },
+	static view_vborder = {type: "integer", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomView(index).objectFollowVerticalBorder; },
+		set(value, index) { this.getRoomView(index).objectFollowVerticalBorder = value; },
 	};
 
-	static view_hspeed = {direct: true, type: "integer", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomView(index).objectFollowHorizontalSpeed; },
-		directSet(value, index) { this.getRoomView(index).objectFollowHorizontalSpeed = value; },
+	static view_hspeed = {type: "integer", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomView(index).objectFollowHorizontalSpeed; },
+		set(value, index) { this.getRoomView(index).objectFollowHorizontalSpeed = value; },
 	};
 
-	static view_vspeed = {direct: true, type: "integer", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomView(index).objectFollowVerticalSpeed; },
-		directSet(value, index) { this.getRoomView(index).objectFollowVerticalSpeed = value; },
+	static view_vspeed = {type: "integer", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomView(index).objectFollowVerticalSpeed; },
+		set(value, index) { this.getRoomView(index).objectFollowVerticalSpeed = value; },
 	};
 
-	static view_object = {direct: true, type: "integer", dimensions: 1,
-		directLength() { return 8; },
-		directGet(index) { return this.getRoomView(index).objectFollowIndex; },
-		directSet(value, index) { this.getRoomView(index).objectFollowIndex = value; },
+	static view_object = {type: "integer", dimensions: 1,
+		length() { return 8; },
+		get(index) { return this.getRoomView(index).objectFollowIndex; },
+		set(value, index) { this.getRoomView(index).objectFollowIndex = value; },
 	};
 
 	// Files, registry, and executing programs / Files
 
-	static game_id = {readOnly: true, direct: true,
-		directGet() { return 0; }, // TODO
+	static game_id = {readOnly: true,
+		get() { return 0; }, // TODO
 	};
 
-	static working_directory = {readOnly: true, direct: true,
-		directGet() { return ""; }, // TODO?
+	static working_directory = {readOnly: true,
+		get() { return ""; }, // TODO?
 	};
 
-	static program_directory = {readOnly: true, direct: true,
-		directGet() { return ""; }, // TODO?
+	static program_directory = {readOnly: true,
+		get() { return ""; }, // TODO?
 	};
 
-	static temp_directory = {readOnly: true, direct: true,
-		directGet() { return ""; }, // TODO?
+	static temp_directory = {readOnly: true,
+		get() { return ""; }, // TODO?
 	};
 
 	// Files, registry, and executing programs / Executing programs
 
-	static secure_mode = {readOnly: true, direct: true,
-		directGet() { return 0; }, // TODO?
+	static secure_mode = {readOnly: true,
+		get() { return 0; }, // TODO?
 	};
 }
 
@@ -531,11 +529,10 @@ export default class BuiltInGlobals {
 
 for (let i=0; i<16; ++i) {
 	BuiltInGlobals["argument" + i.toString()] = {
-		direct: true,
-		directGet() {
+		get() {
 			return this.arguments[i] ?? 0;
 		},
-		directSet(value) {
+		set(value) {
 			this.arguments[i] = value;
 		},
 	};

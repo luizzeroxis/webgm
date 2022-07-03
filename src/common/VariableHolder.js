@@ -62,12 +62,12 @@ export default class VariableHolder {
 		// If built in, check lengths and call get function directly
 		if (varInfo.builtIn) {
 			for (const [i, index] of indexes.entries()) {
-				if (index >= varInfo.builtIn.directLength.call(this.caller, i)) {
+				if (index >= varInfo.builtIn.length.call(this.caller, i)) {
 					throw new VariableException({type: "index_not_in_bounds"});
 				}
 			}
 
-			return varInfo.builtIn.directGet.call(this.caller, ...indexes);
+			return varInfo.builtIn.get.call(this.caller, ...indexes);
 		} else {
 			let variable = varInfo.reference;
 
@@ -178,14 +178,14 @@ export default class VariableHolder {
 		// If built in, check lengths and call get function directly
 		if (varInfo.builtIn) {
 			for (const [i, index] of indexes.entries()) {
-				if (index >= varInfo.builtIn.directLength.call(this.caller, i)) {
+				if (index >= varInfo.builtIn.length.call(this.caller, i)) {
 					// If outside length, ignore indexes and use first possible value.
 					indexes = new Array(dimensions).fill(0);
 					break;
 				}
 			}
 
-			await varInfo.builtIn.directSet.call(this.caller, value, ...indexes);
+			await varInfo.builtIn.set.call(this.caller, value, ...indexes);
 		} else {
 			let variable = varInfo.reference;
 

@@ -13,10 +13,43 @@ export default class VariableHolder {
 		return (this.getVariableInfo(name) != null);
 	}
 
+	// Normalize the indexes given by the user to try and fit within the amount of dimensions the variable actually has.
+	// 'indexes' are the normalized indexes.
+	// 'difference' contains the excess of indexes more than dimensions, that couldn't be removed.
+	normalizeIndexes(indexes, dimensions) {
+		// Get difference between dimensions of variable and amount of indexes
+		let difference = dimensions - indexes.length;
+
+		// If there are more dimensions than indexes specify
+		if (difference > 0) {
+			// Pad left indexes with 0s
+			const extra_indexes = new Array(difference).fill(0);
+			indexes.unshift(...extra_indexes);
+			difference = 0;
+
+		// If specifies more indexes than there are dimensions
+		} else if (difference < 0) {
+			// Make difference positive
+			difference = Math.abs(difference);
+
+			// Remove leading 0s in extra indexes, they don't matter
+			while (indexes[0] == 0 && difference != 0) {
+				indexes.shift();
+				difference--;
+			}
+		}
+
+		return {
+			indexes: indexes,
+			difference: difference,
+		};
+	}
+
 	// Get variable value. Use when you don't know what kinda variable it is (e.g. from GML).
 	get(name, indexes) {
 		const varInfo = this.getVariableInfo(name);
 		let dimensions;
+		let difference;
 
 		if (varInfo == null) {
 			// This should never happen
@@ -30,33 +63,11 @@ export default class VariableHolder {
 			dimensions = varInfo.reference.dimensions;
 		}
 
-		indexes = indexes || [];
+		({indexes, difference} = this.normalizeIndexes(indexes ?? [], dimensions));
 
-		// Get difference between dimensions of variable and amount of indexes
-		let difference = dimensions - indexes.length;
-
-		// If there are more dimensions than indexes specify
-		if (difference > 0) {
-			// Pad left indexes with 0s
-			const extra_indexes = new Array(difference).fill(0);
-			indexes.unshift(...extra_indexes);
-		}
-
-		// If specifies more indexes than there are dimensions
-		if (difference < 0) {
-			// Make difference positive
-			difference = Math.abs(difference);
-
-			// Remove leading 0s in extra indexes, they don't matter
-			while (indexes[0] == 0 && difference != 0) {
-				indexes.shift();
-				difference--;
-			}
-
-			// If there are still indexes left, then it's just wrong.
-			if (difference != 0) {
-				throw new VariableException({type: "index_not_in_bounds"});
-			}
+		// If there are still indexes left, then it's just wrong.
+		if (difference != 0) {
+			throw new VariableException({type: "index_not_in_bounds"});
 		}
 
 		// If built in, check lengths and call get function directly
@@ -100,6 +111,7 @@ export default class VariableHolder {
 	async set(name, value, indexes) {
 		let varInfo = this.getVariableInfo(name);
 		let dimensions;
+		let difference;
 
 		if (varInfo == null) {
 			// Variable doesn't exist, create it
@@ -111,8 +123,6 @@ export default class VariableHolder {
 		}
 
 		if (varInfo.builtIn) {
-			dimensions = (varInfo.builtIn.dimensions ?? 0);
-
 			if (varInfo.builtIn.readOnly) {
 				throw new VariableException({type: "read_only"});
 			}
@@ -132,45 +142,25 @@ export default class VariableHolder {
 					value = forceChar(value);
 				}
 			}
+
+			dimensions = (varInfo.builtIn.dimensions ?? 0);
 		} else {
 			dimensions = varInfo.reference.dimensions;
 		}
 
-		indexes = indexes || [];
+		({indexes, difference} = this.normalizeIndexes(indexes ?? [], dimensions));
 
-		// Get difference between dimensions of variable and amount of indexes
-		let difference = dimensions - indexes.length;
-
-		// If there are more dimensions than indexes specify
-		if (difference > 0) {
-			// Pad left indexes with 0s
-			const extra_indexes = new Array(difference).fill(0);
-			indexes.unshift(...extra_indexes);
-		}
-
-		// If specifies more indexes than there are dimensions
-		if (difference < 0) {
-			// Make difference positive
-			difference = Math.abs(difference);
-
-			// Remove leading 0 indexes, they don't matter
-			while (indexes[0] == 0 && difference != 0) {
-				indexes.shift();
-				difference--;
-			}
-
-			// If there's still more indexes than dimensions...
-			if (difference != 0) {
-				if (varInfo.builtIn) {
-					// For built ins, ignore indexes and use first possible value.
-					indexes = new Array(dimensions).fill(0);
-				} else {
-					// Convert to higher dimension until there's no more difference.
-					for (let i=0; i<difference; ++i) {
-						// Move entire value (array or not) into index 0 of the new first dimension
-						varInfo.reference.dimensions++;
-						varInfo.reference.value = [ {value: varInfo.reference.value} ];
-					}
+		// If there's still more indexes than dimensions...
+		if (difference != 0) {
+			if (varInfo.builtIn) {
+				// For built ins, ignore indexes and use first possible value.
+				indexes = new Array(dimensions).fill(0);
+			} else {
+				// Convert to higher dimension until there's no more difference.
+				for (let i=0; i<difference; ++i) {
+					// Move entire value (array or not) into index 0 of the new first dimension
+					varInfo.reference.dimensions++;
+					varInfo.reference.value = [ {value: varInfo.reference.value} ];
 				}
 			}
 		}

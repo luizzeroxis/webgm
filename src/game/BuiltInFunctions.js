@@ -6161,9 +6161,9 @@ export default class BuiltInFunctions {
 
 	// ### Game
 
-	static action_restart_game([_]) {
-		throw new EngineException("Function action_restart_game is not implemented");
-		// return 0;
+	static action_restart_game([]) {
+		BuiltInFunctions.game_restart.call(this, []);
+		return 0;
 	}
 
 	static action_end_game([]) {

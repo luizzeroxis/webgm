@@ -1348,30 +1348,18 @@ export default class BuiltInLibraries {
 						name: "Game",
 						kind: "label",
 					},
-					/*
 					{
-						id: 999,
+						id: 331,
 						description: "Restart Game",
-						listText: [""],
-						hintText: [""],
+						listText: ["Restart the game"],
+						hintText: ["restart the game"],
 						kind: "normal",
 						execution: "function",
-						executionFunction: "",
+						executionFunction: "action_restart_game",
 
-						interfaceKind: "normal",
+						interfaceKind: "none",
 						isQuestion: false,
-						hasApplyTo: false,
-						hasRelative: false,
-
-						args: [
-							{
-								name: "",
-								kind: "",
-								default: "",
-							},
-						],
 					},
-					*/
 					{
 						id: 332,
 						description: "End Game",

@@ -6616,9 +6616,15 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 
-	static action_fullscreen([_]) {
-		throw new EngineException("Function action_fullscreen is not implemented");
-		// return 0;
+	static async action_fullscreen([action]) {
+		if (action == 0) { // switch
+			await this.game.setFullscreen(!this.game.getFullscreen());
+		} else if (action == 1) { // window
+			await this.game.setFullscreen(false);
+		} else if (action == 2) { // fullscreen
+			await this.game.setFullscreen(true);
+		}
+		return 0;
 	}
 
 	// ### Other

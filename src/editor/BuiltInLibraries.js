@@ -3163,15 +3163,14 @@ export default class BuiltInLibraries {
 							},
 						],
 					},
-					/*
 					{
-						id: 999,
+						id: 531,
 						description: "Set Full Screen",
-						listText: [""],
-						hintText: [""],
+						listText: ["Change full screen mode"],
+						hintText: ["set screen mode to: ", a[0]],
 						kind: "normal",
 						execution: "function",
-						executionFunction: "",
+						executionFunction: "action_fullscreen",
 
 						interfaceKind: "normal",
 						isQuestion: false,
@@ -3180,12 +3179,14 @@ export default class BuiltInLibraries {
 
 						args: [
 							{
-								name: "",
-								kind: "",
-								default: "",
+								name: "action:",
+								kind: "menu",
+								menu: ["switch", "window", "fullscreen"],
+								default: 0,
 							},
 						],
 					},
+					/*
 					{
 						name: "Other",
 						kind: "label",

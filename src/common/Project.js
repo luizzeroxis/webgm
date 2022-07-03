@@ -599,7 +599,7 @@ export class ProjectGlobalGameSettings {
 
 			this.keyEscEndsGame = object.keyEscEndsGame;
 			this.keyF1ShowsGameInformation = object.keyF1ShowsGameInformation;
-			this.ketF4SwitchesFullScreen = object.ketF4SwitchesFullScreen;
+			this.keyF4SwitchesFullscreen = object.keyF4SwitchesFullscreen;
 			this.keyF5SavesF6Loads = object.keyF5SavesF6Loads;
 			this.keyF9Screenshots = object.keyF9Screenshots;
 			this.versionMajor = object.versionMajor;

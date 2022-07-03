@@ -759,18 +759,19 @@ export default class BuiltInLibraries {
 							},
 						],
 					},
+					*/
 					{
 						name: "Sounds",
 						kind: "label",
 					},
 					{
-						id: 999,
+						id: 211,
 						description: "Play Sound",
-						listText: [""],
-						hintText: [""],
+						listText: ["Play sound ", a[0]],
+						hintText: ["play sound ", a[0], "; looping: ", a[1]],
 						kind: "normal",
 						execution: "function",
-						executionFunction: "",
+						executionFunction: "action_sound",
 
 						interfaceKind: "normal",
 						isQuestion: false,
@@ -779,20 +780,25 @@ export default class BuiltInLibraries {
 
 						args: [
 							{
-								name: "",
-								kind: "",
-								default: "",
+								name: "sound:",
+								kind: "sound",
+								default: -1,
+							},
+							{
+								name: "loop:",
+								kind: "boolean",
+								default: false,
 							},
 						],
 					},
 					{
-						id: 999,
+						id: 212,
 						description: "Stop Sound",
-						listText: [""],
-						hintText: [""],
+						listText: ["Stop sound ", a[0]],
+						hintText: ["stop sound ", a[0]],
 						kind: "normal",
 						execution: "function",
-						executionFunction: "",
+						executionFunction: "action_end_sound",
 
 						interfaceKind: "normal",
 						isQuestion: false,
@@ -801,35 +807,34 @@ export default class BuiltInLibraries {
 
 						args: [
 							{
-								name: "",
-								kind: "",
-								default: "",
+								name: "sound:",
+								kind: "sound",
+								default: -1,
 							},
 						],
 					},
 					{
-						id: 999,
+						id: 213,
 						description: "Check Sound",
-						listText: [""],
-						hintText: [""],
+						listText: ["If sound ", a[0], " is ", n, "playing"],
+						hintText: ["if sound ", a[0], " is ", n, "playing"],
 						kind: "normal",
 						execution: "function",
-						executionFunction: "",
+						executionFunction: "action_if_sound",
 
 						interfaceKind: "normal",
-						isQuestion: false,
+						isQuestion: true,
 						hasApplyTo: false,
 						hasRelative: false,
 
 						args: [
 							{
-								name: "",
-								kind: "",
-								default: "",
+								name: "sound:",
+								kind: "sound",
+								default: -1,
 							},
 						],
 					},
-					*/
 					{
 						name: "Rooms",
 						kind: "label",

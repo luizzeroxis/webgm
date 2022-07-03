@@ -2819,8 +2819,10 @@ export default class BuiltInFunctions {
 
 	static show_message([str]) {
 		str = asString(str);
+		str = parseNewLineHash(str);
 		this.game.clearIO();
-		alert(parseNewLineHash(str));
+		alert(str);
+
 		return 0;
 	}
 
@@ -5994,19 +5996,22 @@ export default class BuiltInFunctions {
 
 	/// ### Sounds
 
-	static action_sound([_]) {
-		throw new EngineException("Function action_sound is not implemented");
-		// return 0;
+	static action_sound([sound, loop]) {
+		if (loop == 0) {
+			BuiltInFunctions.sound_play.call(this, [sound]);
+		} else if (loop == 1) {
+			BuiltInFunctions.sound_loop.call(this, [sound]);
+		}
+		return 0;
 	}
 
-	static action_end_sound([_]) {
-		throw new EngineException("Function action_end_sound is not implemented");
-		// return 0;
+	static action_end_sound([sound]) {
+		BuiltInFunctions.sound_stop.call(this, [sound]);
+		return 0;
 	}
 
-	static action_if_sound([_]) {
-		throw new EngineException("Function action_if_sound is not implemented");
-		// return 0;
+	static action_if_sound([sound]) {
+		return BuiltInFunctions.sound_isplaying.call(this, [sound]);
 	}
 
 	/// ### Rooms

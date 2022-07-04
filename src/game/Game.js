@@ -1071,7 +1071,7 @@ export default class Game {
 				}
 
 			case "block":
-				for (const blockTreeAction of treeAction) {
+				for (const blockTreeAction of treeAction.actions) {
 					await this.doTreeAction(blockTreeAction);
 				}
 				break;
@@ -1278,6 +1278,9 @@ export default class Game {
 
 	// Check if two instances are colliding.
 	collisionInstanceOnInstance(instanceA, instanceB, x, y) {
+		// Don't allow collision with self
+		if (instanceA == instanceB) return false;
+
 		// TODO masks
 		// TODO solid
 

@@ -55,6 +55,10 @@ body, button, input {
 	font-size: 10pt;
 }
 
+canvas {
+	image-rendering: pixelated;
+}
+
 .bold {
 	font-weight: bold;
 }
@@ -70,53 +74,60 @@ body, button, input {
 	padding: 8px;
 }
 
+.code {
+	width: 100%;
+	height: 256px;
+}
+
 .editor {
 	padding: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
 }
 
-.grid {
-	display: grid;
-	grid-template-columns: 300px auto;
-	grid-gap: 4px;
-}
-.grid .menu {
-	grid-column: 1/span 2;
-}
-.grid .resources {
-	grid-column: 1;
-}
-.grid .windows {
-	grid-column: 2;
-}
-.grid .game {
-	grid-column: 1/span 2;
+.editor > .horizontal {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 4px;
 }
 
-.menu, .resources, .windows, .game {
+.editor > .horizontal > .resources-area {
+	flex: 0 1 auto;
+	width: 300px;
+}
+
+.editor > .horizontal > .windows-area {
+	flex: 1;
+}
+
+.menu-area, .resources-area, .windows-area {
 	border: 1px solid var(--area-border);
 	padding: 8px;
 }
 
-.menu {
+.menu-area {
 	display: flex;
 }
 
-.menu .separator {
+.menu-area .separator {
 	width: 8px;
 }
 
-.resources ul {
+.resources-area ul {
+	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
-.resources ul > li > .item {
+.resources-area ul > li > .item {
 	display: flex;
 	align-items: center;
 	padding-bottom: 4px;
 }
 
-.resources ul > li > .item > .icon {
+.resources-area ul > li > .item > .icon {
 	width: 16px;
 	height: 16px;
 	object-fit: contain;
@@ -124,148 +135,181 @@ body, button, input {
 	visibility: hidden;
 	padding-right: 4px;
 }
-.resources ul > li > .item > .icon[src] {
+.resources-area ul > li > .item > .icon[src] {
 	visibility: visible;
 }
 
-.resources ul > li > .item > .name {
+.resources-area ul > li > .item > .name {
 	flex: 1;
 }
 
-.resources li > ul {
+.resources-area li > ul {
 	padding-left: 1em;
 }
 
-.windows {
-	display: grid;
+.windows-area {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
 }
 
-.window {
+.windows-area > .window {
 	border: 1px solid var(--window-border);
 }
 
-.titlebar {
+.windows-area > .window > .titlebar {
 	display: flex;
 	background-color: var(--titlebar-background);
 	align-items: center;
 }
 
-.titlebar .title {
+.windows-area > .window > .titlebar > .title {
 	flex: 1;
 }
 
-.titlebar .close {
+.windows-area > .window > .titlebar > .close {
 	align-self: flex-start;
 }
 
-.client {
+.windows-area > .window > .client {
 	padding: 8px;
 }
 
-.grid-resource {
-	display: grid;
-	grid-gap: 4px;
-	grid-template-columns: 1fr;
+.windows-area > .window > .client > .horizontal {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 4px;
 }
-.grid-resource > div {
+
+.windows-area > .window > .client > .horizontal > div {
 	border: 1px solid var(--grid-resource-cell-border);
 	padding: 8px;
 }
 
-.grid-resource.resource-sprite {
-	grid-template-columns: 200px 250px minmax(250px, 1fr);
+.windows-area > .window > .client > .window-sprite > .properties {
+	flex: 0 1 auto;
+	width: 200px;
 }
-.grid-resource.resource-sprite .origin-x-y {
+
+.windows-area > .window > .client > .window-sprite > .properties .origin-x-y {
 	display: flex;
 }
-.grid-resource.resource-sprite .preview {
+
+.windows-area > .window > .client > .window-sprite > .mask {
+	flex: 0 1 auto;
+	width: 250px;
+}
+
+.windows-area > .window > .client > .window-sprite > .preview {
+	flex: 1;
+	min-width: 250px;
 	overflow: auto;
 	max-height: 80vh;
 }
 
-.grid-resource.resource-background {
-	grid-template-columns: 250px minmax(250px, 1fr);
+/*.windows-area > .window > .client > .window-sound {}*/
+
+.windows-area > .window > .client > .window-background > .properties {
+	flex: 0 1 auto;
+	width: 250px;
 }
-.grid-resource.resource-background .preview {
+
+.windows-area > .window > .client > .window-background > .preview {
+	flex: 1;
+	min-width: 250px;
 	overflow: auto;
 	max-height: 80vh;
 }
 
-.grid-resource.resource-object {
-	grid-template-columns: 200px 200px minmax(200px, 1fr) 250px;
+/*.windows-area > .window > .client > .window-path {}*/
+/*.windows-area > .window > .client > .window-script {}*/
+/*.windows-area > .window > .client > .window-font {}*/
+/*.windows-area > .window > .client > .window-timeline {}*/
+
+.windows-area > .window > .client > .window-object > .properties {
+	flex: 0 1 auto;
+	width: 200px;
 }
-.grid-resource.resource-object .events label {
+
+.windows-area > .window > .client > .window-object > .events {
+	flex: 0 1 auto;
+	min-width: 200px;
+}
+
+.windows-area > .window > .client > .window-object > .events .events-list label,
+.windows-area > .window > .client > .window-object > .actions .actions-list label {
 	width: 100%;
 }
-.grid-resource.resource-object .events select {
-	height: calc(12*16px);
-	resize: vertical;
-}
-.grid-resource.resource-object .actions label {
-	width: 100%;
-}
-.grid-resource.resource-object .actions select {
+
+.windows-area > .window > .client > .window-object > .events .events-list select,
+.windows-area > .window > .client > .window-object > .actions .actions-list select {
 	height: calc(12*16px);
 	resize: vertical;
 }
 
-.grid-resource.resource-object .grid-action-types {
+.windows-area > .window > .client > .window-object > .actions {
+	flex: 1;
+	min-width: 200px;
+}
+
+.windows-area > .window > .client > .window-object > .libraries {
+	flex: 0 1 auto;
+	width: 250px;
+}
+
+.windows-area > .window > .client > .window-object > .libraries .action-types {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 	overflow-wrap: break-word;
 }
 
-.grid-resource.resource-object .label {
+.windows-area > .window > .client > .window-object > .libraries .action-types .label {
 	grid-column: 1 / -1;
 }
 
-.grid-resource.resource-object .action-type {
+.windows-area > .window > .client > .window-object > .libraries .action-types .action-type {
 	padding: 0;
 }
-.grid-resource.resource-object .action-type img {
-	display: block;
-}
 
-.grid-resource.resource-object .action-type.new-row {
+.windows-area > .window > .client > .window-object > .libraries .action-types .action-type.new-row {
 	grid-column-start: 1;
 }
 
-.arrow-interface {
+.windows-area > .window > .client > .window-object > .libraries .action-types img {
+	display: block;
+}
+
+.windows-area > .window > .client > .window-action .arrow-interface {
 	display: grid;
 	grid-template-columns: repeat(3, max-content);
 }
 
-.code {
-	width: 100%;
-	height: 256px;
+.windows-area > .window > .client > .window-room > .properties {
+	flex: 0 1 auto;
+	width: 300px;
 }
 
-.grid-resource.resource-room {
-	grid-template-columns: 300px minmax(300px, 1fr);
-}
-.grid-resource.resource-room .backgrounds label {
+.windows-area > .window > .client > .window-room .backgrounds label {
 	width: 100%;
 }
-.grid-resource.resource-room .backgrounds select {
+
+.windows-area > .window > .client > .window-room .backgrounds select {
 	overflow: auto;
 }
-.grid-resource.resource-room .preview {
+
+.windows-area > .window > .client > .window-room > .preview {
+	flex: 1;
+	min-width: 300px;
 	overflow: auto;
 	max-height: 80vh;
 }
 
-.hidden {
-	display: none;
-}
-
-.game canvas {
+.windows-area > .window > .client > .window-game > canvas {
 	display: block;
 	margin: 0 auto;
 }
 
-canvas {
-	image-rendering: pixelated;
-}
-canvas.no-cursor {
+.windows-area > .window > .client > .window-game > canvas.no-cursor {
 	cursor: none;
 }

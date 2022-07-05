@@ -23,7 +23,7 @@ export default class HAreaWindows extends HElement {
 	};
 
 	constructor(editor) {
-		super("div", {class: "windows"});
+		super("div", {class: "windows-area"});
 
 		this.editor = editor;
 		this.windows = [];

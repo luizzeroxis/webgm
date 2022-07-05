@@ -21,93 +21,96 @@ export default class HWindowAction extends HWindow {
 		const actionTypeInfoItem = actionTypeInfo.find(x => x.kind == this.actionType.kind && x.interfaceKind == this.actionType.interfaceKind);
 
 		parent(this.client);
+			parent( add( new HElement("div", {class: "window-action"}) ) );
 
-			this.actionTypeHasApplyTo = this.actionType.hasApplyTo;
-			if (this.actionType.hasApplyTo == undefined) {
-				this.actionTypeHasApplyTo = actionTypeInfoItem.hasApplyTo;
-			}
-
-			if (this.actionTypeHasApplyTo) {
-				parent( add( new HElement("fieldset") ) );
-
-					add( new HElement("legend", {}, "Applies to") );
-
-					const appliesToGroup = "_radio_"+uniqueID();
-
-					this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, "Self", (action.appliesTo == -1)) );
-					this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, "Other", (action.appliesTo == -2)) );
-					this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, "Object:", (action.appliesTo >= 0)) );
-
-					this.selectObject = add( new HResourceSelect(this.editor, null, ProjectObject) );
-
-					if (action.appliesTo >= 0)
-						this.selectObject.setValue(action.appliesTo);
-
-					endparent();
-			}
-
-			this.actionTypeArgs = this.actionType.args;
-			if (this.actionType.args == undefined) {
-				this.actionTypeArgs = actionTypeInfoItem.args;
-			}
-
-			this.argsInterfaces = [];
-
-			this.actionTypeArgs.forEach((argType, i) => {
-				switch (argType.kind) {
-					case "expression":
-					case "string":
-					case "both":
-						if (this.actionType.interfaceKind == "arrows" && i == 0) {
-							this.argsInterfaces[i] = this.makeDirectionInterface(argType.name, action.args[i].value);
-						} else {
-							this.argsInterfaces[i] = this.makeTextInterface(argType.name, action.args[i].value);
-						}
-						break;
-
-					case "boolean":
-						this.argsInterfaces[i] = this.makeMenuInterface(argType.name, ["false", "true"], action.args[i].value);
-						break;
-
-					case "menu":
-						this.argsInterfaces[i] = this.makeMenuInterface(argType.name, argType.menu, action.args[i].value);
-						break;
-
-					case "color":
-						this.argsInterfaces[i] = this.makeColorInterface(argType.name, action.args[i].value);
-						break;
-
-					case "sprite":
-					case "sound":
-					case "background":
-					case "path":
-					case "script":
-					case "object":
-					case "room":
-					case "font":
-					case "timeline":
-						this.argsInterfaces[i] = this.makeResourceInterface(argType.name, argType.kind, action.args[i].value);
-						break;
+				this.actionTypeHasApplyTo = this.actionType.hasApplyTo;
+				if (this.actionType.hasApplyTo == undefined) {
+					this.actionTypeHasApplyTo = actionTypeInfoItem.hasApplyTo;
 				}
-			});
 
-			this.actionTypeHasRelative = this.actionType.hasRelative;
-			if (this.actionTypeHasRelative == undefined) {
-				this.actionTypeHasRelative = actionTypeInfoItem.hasRelative;
-			}
+				if (this.actionTypeHasApplyTo) {
+					parent( add( new HElement("fieldset") ) );
 
-			if (this.actionTypeHasRelative) {
-				this.inputRelative = add( new HCheckBoxInput("Relative", action.relative) );
-			}
+						add( new HElement("legend", {}, "Applies to") );
 
-			this.actionTypeIsQuestion = this.actionType.isQuestion;
-			if (this.actionTypeIsQuestion == undefined) {
-				this.actionTypeIsQuestion = actionTypeInfoItem.isQuestion;
-			}
+						const appliesToGroup = "_radio_"+uniqueID();
 
-			if (this.actionTypeIsQuestion) {
-				this.inputNot = add( new HCheckBoxInput("NOT", action.not) );
-			}
+						this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, "Self", (action.appliesTo == -1)) );
+						this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, "Other", (action.appliesTo == -2)) );
+						this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, "Object:", (action.appliesTo >= 0)) );
+
+						this.selectObject = add( new HResourceSelect(this.editor, null, ProjectObject) );
+
+						if (action.appliesTo >= 0)
+							this.selectObject.setValue(action.appliesTo);
+
+						endparent();
+				}
+
+				this.actionTypeArgs = this.actionType.args;
+				if (this.actionType.args == undefined) {
+					this.actionTypeArgs = actionTypeInfoItem.args;
+				}
+
+				this.argsInterfaces = [];
+
+				this.actionTypeArgs.forEach((argType, i) => {
+					switch (argType.kind) {
+						case "expression":
+						case "string":
+						case "both":
+							if (this.actionType.interfaceKind == "arrows" && i == 0) {
+								this.argsInterfaces[i] = this.makeDirectionInterface(argType.name, action.args[i].value);
+							} else {
+								this.argsInterfaces[i] = this.makeTextInterface(argType.name, action.args[i].value);
+							}
+							break;
+
+						case "boolean":
+							this.argsInterfaces[i] = this.makeMenuInterface(argType.name, ["false", "true"], action.args[i].value);
+							break;
+
+						case "menu":
+							this.argsInterfaces[i] = this.makeMenuInterface(argType.name, argType.menu, action.args[i].value);
+							break;
+
+						case "color":
+							this.argsInterfaces[i] = this.makeColorInterface(argType.name, action.args[i].value);
+							break;
+
+						case "sprite":
+						case "sound":
+						case "background":
+						case "path":
+						case "script":
+						case "object":
+						case "room":
+						case "font":
+						case "timeline":
+							this.argsInterfaces[i] = this.makeResourceInterface(argType.name, argType.kind, action.args[i].value);
+							break;
+					}
+				});
+
+				this.actionTypeHasRelative = this.actionType.hasRelative;
+				if (this.actionTypeHasRelative == undefined) {
+					this.actionTypeHasRelative = actionTypeInfoItem.hasRelative;
+				}
+
+				if (this.actionTypeHasRelative) {
+					this.inputRelative = add( new HCheckBoxInput("Relative", action.relative) );
+				}
+
+				this.actionTypeIsQuestion = this.actionType.isQuestion;
+				if (this.actionTypeIsQuestion == undefined) {
+					this.actionTypeIsQuestion = actionTypeInfoItem.isQuestion;
+				}
+
+				if (this.actionTypeIsQuestion) {
+					this.inputNot = add( new HCheckBoxInput("NOT", action.not) );
+				}
+
+				endparent();
 
 			this.makeApplyOkButtons(
 				() => {

@@ -11,7 +11,7 @@ export default class HWindowScript extends HWindow {
 		this.title.html.textContent = "Edit Script "+script.name;
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "grid-resource resource-script"}) ) );
+			parent( add( new HElement("div", {class: "window-script"}) ) );
 				parent( add( new HElement("div") ) );
 
 					const inputName = add( new HTextInput("Name:", script.name) );

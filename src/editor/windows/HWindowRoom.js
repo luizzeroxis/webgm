@@ -18,8 +18,8 @@ export default class HWindowRoom extends HWindow {
 		this.copyProperties();
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "grid-resource resource-room"}) ) );
-				parent( add( new HElement("div") ) );
+			parent( add( new HElement("div", {class: "horizontal window-room"}) ) );
+				parent( add( new HElement("div", {class: "properties"}) ) );
 
 					// left area
 

@@ -4,7 +4,7 @@ import HWindowPreferences from "../windows/HWindowPreferences.js";
 
 export default class HAreaMenu extends HElement {
 	constructor(editor) {
-		super("div", {class: "menu"});
+		super("div", {class: "menu-area"});
 
 		this.editor = editor;
 

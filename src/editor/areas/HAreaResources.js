@@ -10,7 +10,7 @@ import HWindowGlobalGameSettings from "../windows/HWindowGlobalGameSettings.js";
 
 export default class HAreaResources extends HElement {
 	constructor(editor) {
-		super("div", {class: "resources"});
+		super("div", {class: "resources-area"});
 
 		this.editor = editor;
 		this.resourceTypes = {};

@@ -10,7 +10,7 @@ export default class HWindowGame extends HWindow {
 		this.title.html.textContent = "Game";
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "game"}) ) );
+			parent( add( new HElement("div", {class: "window-game"}) ) );
 				this.canvas = add( new HCanvas(640, 480) );
 				this.canvas.html.setAttribute("tabindex", 0);
 				endparent();

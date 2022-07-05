@@ -10,7 +10,7 @@ export default class HWindowTimeline extends HWindow {
 		this.title.html.textContent = "Edit Time Line "+timeline.name;
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "grid-resource resource-timeline"}) ) );
+			parent( add( new HElement("div", {class: "window-timeline"}) ) );
 				parent( add( new HElement("div") ) );
 
 					const inputName = add( new HTextInput("Name:", timeline.name) );

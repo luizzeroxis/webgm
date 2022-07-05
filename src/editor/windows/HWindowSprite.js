@@ -12,8 +12,8 @@ export default class HWindowSprite extends HWindow {
 		this.title.html.textContent = "Edit Sprite "+sprite.name;
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "grid-resource resource-sprite"}) ) );
-				parent( add( new HElement("div") ) );
+			parent( add( new HElement("div", {class: "horizontal window-sprite"}) ) );
+				parent( add( new HElement("div", {class: "properties"}) ) );
 
 					const paramName = sprite.name;
 					this.paramImages = sprite.images;

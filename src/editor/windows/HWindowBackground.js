@@ -12,8 +12,8 @@ export default class HWindowBackground extends HWindow {
 		this.title.html.textContent = "Edit Background "+background.name;
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "grid-resource resource-background"}) ) );
-				parent( add( new HElement("div") ) );
+			parent( add( new HElement("div", {class: "horizontal window-background"}) ) );
+				parent( add( new HElement("div", {class: "properties"}) ) );
 
 					this.paramImage = background.image;
 

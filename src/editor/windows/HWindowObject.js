@@ -36,9 +36,9 @@ export default class HWindowObject extends HWindow {
 		this.copyProperties();
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "grid-resource resource-object"}) ) );
+			parent( add( new HElement("div", {class: "horizontal window-object"}) ) );
 
-				parent( add( new HElement("div") ) ); // Properties area
+				parent( add( new HElement("div", {class: "properties"}) ) );
 
 					const inputName = add( new HTextInput("Name:", object.name) );
 
@@ -52,11 +52,11 @@ export default class HWindowObject extends HWindow {
 
 					endparent();
 
-				parent( add( new HElement("div") ) ); // Events area
+				parent( add( new HElement("div", {class: "events"}) ) );
 
 					// Event select
 
-					this.selectEvents = add( new HSelect("Events:", "events") );
+					this.selectEvents = add( new HSelect("Events:", "events-list") );
 					this.selectEvents.select.html.size = 2;
 
 					this.selectEvents.setOnChange(() => {
@@ -157,11 +157,11 @@ export default class HWindowObject extends HWindow {
 
 					endparent();
 
-				parent( add( new HElement("div") ) ); // Actions area
+				parent( add( new HElement("div", {class: "actions"}) ) );
 
 					// // Actions
 
-					this.selectActions = add( new HSelect("Actions:", "actions") );
+					this.selectActions = add( new HSelect("Actions:", "actions-list") );
 					this.selectActions.select.html.size = 2;
 
 					this.selectActions.setOnChange(() => {
@@ -229,7 +229,7 @@ export default class HWindowObject extends HWindow {
 
 					endparent();
 
-				parent( add( new HElement("div") ) ); // Libraries area
+				parent( add( new HElement("div", {class: "libraries"}) ) );
 
 					this.librariesTabControl = add( new HTabControl() );
 
@@ -238,7 +238,7 @@ export default class HWindowObject extends HWindow {
 
 							let nextClass = null;
 
-							parent( add( new HElement("div", {class: "grid-action-types"}) ) );
+							parent( add( new HElement("div", {class: "action-types"}) ) );
 
 								library.items.forEach(actionType => {
 									if (actionType.kind == "label") {

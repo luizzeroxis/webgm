@@ -40,14 +40,14 @@ export default class Editor {
 		// Areas
 		this.div = parent( new HElement("div", {class: "editor"}) );
 
-			add( new HElement("div", {}, "Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!") );
+			add( new HElement("div", {class: "warning"},
+				"Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!") );
 
-			parent( add( new HElement("div", {class: "grid"}) ) );
+			this.menuArea = add( new HAreaMenu(this) );
 
-				this.menuArea = add( new HAreaMenu(this) );
+			parent( add( new HElement("div", {class: "horizontal"}) ) );
 				this.resourcesArea = add( new HAreaResources(this) );
 				this.windowsArea = add( new HAreaWindows(this) );
-
 				endparent();
 
 			endparent();

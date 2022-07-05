@@ -10,7 +10,7 @@ export default class HWindowFont extends HWindow {
 		this.title.html.textContent = "Edit Font "+font.name;
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "grid-resource resource-font"}) ) );
+			parent( add( new HElement("div", {class: "window-font"}) ) );
 				parent( add( new HElement("div") ) );
 
 					this.inputName = add( new HTextInput("Name:", font.name) );

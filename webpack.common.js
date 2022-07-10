@@ -41,7 +41,7 @@ module.exports = {
 		}),
 		new MiniCssExtractPlugin(),
 		new ESLintPlugin({
-			files: path.resolve(__dirname, "src"),
+			files: path.resolve(__dirname, "."),
 		}),
 	],
 	optimization: {

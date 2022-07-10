@@ -117,7 +117,7 @@ export default class ProjectSerializer {
 						return value;
 					});
 				} catch (e) {
-					throw new UnserializeException("Error parsing \"project.json\" file.");
+					throw new UnserializeException("Failed parsing \"project.json\" file.");
 				}
 
 				Project.getTypes().forEach(x => {
@@ -203,7 +203,7 @@ export default class ProjectSerializer {
 		try {
 			jsonObject = JSON.parse(json);
 		} catch (e) {
-			throw new UnserializeException("Error parsing JSON file.");
+			throw new UnserializeException("Failed parsing JSON file.");
 		}
 
 		if (!jsonObject.resources) return null;

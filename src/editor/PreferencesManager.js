@@ -38,8 +38,9 @@ export default class PreferencesManager {
 
 		if (loadedValues != null) {
 			this.values = Object.assign(this.values, loadedValues);
-			this.dispatcher.speak("change", this.values);
 		}
+
+		this.dispatcher.speak("change", this.values);
 	}
 
 	save() {

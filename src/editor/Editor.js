@@ -45,6 +45,8 @@ export default class Editor {
 			add( new HElement("div", {class: "warning"},
 				"Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!") );
 
+			this.titlebar = add( new HElement("div", {class: "titlebar"}, "<new game> - webgm") );
+
 			this.menuArea = add( new HAreaMenu(this) );
 
 			parent( add( new HElement("div", {class: "horizontal"}) ) );
@@ -113,6 +115,7 @@ export default class Editor {
 	newProject() {
 		this.project = new Project();
 		this.projectFileHandle = null;
+		this.updateProjectName(null);
 
 		this.resourcesArea.refresh();
 		this.windowsArea.clear();
@@ -174,7 +177,23 @@ export default class Editor {
 		this.resourcesArea.refresh();
 		this.windowsArea.clear();
 
-		this.projectName = file.name.substring(0, file.name.lastIndexOf("."));
+		this.updateProjectName(file.name);
+	}
+
+	updateProjectName(filename) {
+		if (filename != null) {
+			const dotPosition = filename.lastIndexOf(".");
+			if (dotPosition != -1) {
+				this.projectName = filename.substring(0, dotPosition);
+			} else {
+				this.projectName = filename;
+			}
+			this.titlebar.html.textContent = filename + " - webgm";
+		} else {
+			this.projectName = "game";
+			this.titlebar.html.textContent = "<new game> - webgm";
+		}
+		document.querySelector("title").textContent = this.titlebar.html.textContent;
 	}
 
 	// Called from HAreaMenu
@@ -215,6 +234,7 @@ export default class Editor {
 				throw e;
 			}
 
+			this.updateProjectName(this.projectFileHandle.name);
 			this.saveProjectToFileHandle();
 		} else {
 			throw new Error("Not supposed to call saveProjectAs when the File System Access API is not supported!");

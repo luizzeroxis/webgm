@@ -104,6 +104,7 @@ export default class HAreaResources extends HElement {
 		for (const resource of this.resources) {
 			remove(resource);
 		}
+		this.resources = [];
 		Project.getTypes().forEach(type => {
 			this.editor.project.resources[type.getClassName()].forEach(resource => {
 				this.add(resource);

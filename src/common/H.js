@@ -364,26 +364,42 @@ export function uniqueID() {
 
 //// Helpers
 
+export function setOnFileDropAsFileHandle(element, onSelectFile, multiple=false) {
+	return setOnFileDrop(element, onSelectFile, multiple, true);
+}
+
 // Make a element be able to receive drops of files from anywhere.
-export function setOnFileDrop(element, onSelectFile, multiple=false) {
+export function setOnFileDrop(element, onSelectFile, multiple=false, asFileHandle=false) {
 	element.addEventListener("dragover", e => {
 		e.stopPropagation();
 		e.preventDefault();
 	});
 
 	element.addEventListener("drop", async e => {
+		e.preventDefault();
 		e.stopPropagation();
+
+		const files = Array.from(e.dataTransfer.items).filter(item => item.kind == "file");
+
+		let fileOrFiles;
+
 		if (multiple) {
-			if (!await onSelectFile(e.dataTransfer.files)) {
-				e.preventDefault();
+			if (asFileHandle) {
+				fileOrFiles = await Promise.all(files.map(async file => await file.getAsFileSystemHandle()))
+				.filter(handle => (handle.kind == "file"));
+				if (fileOrFiles == null) return;
+			} else {
+				fileOrFiles = files.map(file => file.getAsFile());
 			}
 		} else {
-			const file = e.dataTransfer.files[0];
-			if (file != undefined) {
-				if (!await onSelectFile(file)) {
-					e.preventDefault();
-				}
+			if (asFileHandle) {
+				fileOrFiles = await files[0]?.getAsFileSystemHandle();
+				if (fileOrFiles?.kind != "file") return;
+			} else {
+				fileOrFiles = files[0].getAsFile();
 			}
 		}
+
+		onSelectFile(fileOrFiles);
 	});
 }

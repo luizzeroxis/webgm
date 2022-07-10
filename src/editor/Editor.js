@@ -2,13 +2,13 @@
 
 import Dispatcher from "../common/Dispatcher.js";
 import {WebGMException, UnserializeException} from "../common/Exceptions.js";
-import {parent, endparent, add, HElement, setOnFileDrop} from "../common/H.js";
+import {parent, endparent, add, HElement, setOnFileDrop, setOnFileDropAsFileHandle} from "../common/H.js";
 import {
 	Project,
 	ProjectAction,
 } from "../common/Project.js";
 import ProjectSerializer from "../common/ProjectSerializer.js";
-import {saveFile, readFileAsText} from "../common/tools.js";
+import {openFile, saveFile, readFileAsText} from "../common/tools.js";
 import Game from "../game/Game.js";
 
 import HAreaMenu from "./areas/HAreaMenu.js";
@@ -32,6 +32,8 @@ export default class Editor {
 		this.preferences = new PreferencesManager();
 		this.themeManager = new ThemeManager(this);
 
+		this.projectFileHandle = null;
+
 		this.gameWindow = null;
 
 		// Libraries
@@ -53,7 +55,14 @@ export default class Editor {
 			endparent();
 
 		// Open file if dropped in the editor body
-		setOnFileDrop(this.div.html, file => this.openProjectFromFile(file));
+		if ("showOpenFilePicker" in window) {
+			setOnFileDropAsFileHandle(this.div.html, async handle => {
+				this.projectFileHandle = handle;
+				this.openProjectFromFile(await this.projectFileHandle.getFile());
+			});
+		} else {
+			setOnFileDrop(this.div.html, file => this.openProjectFromFile(file));
+		}
 
 		// Actually add to the DOM
 		add(this.div);
@@ -103,9 +112,46 @@ export default class Editor {
 	// Called from HAreaMenu
 	newProject() {
 		this.project = new Project();
+		this.projectFileHandle = null;
 
 		this.resourcesArea.refresh();
 		this.windowsArea.clear();
+	}
+
+	// Called from HAreaMenu
+	async openProject() {
+		let file;
+		if ("showOpenFilePicker" in window) {
+			try {
+				[this.projectFileHandle] = await window.showOpenFilePicker({
+					types: [
+						{
+							description: "webgm project files",
+							accept: {
+								"application/zip": [".zip"],
+								"application/json": [".json"],
+							},
+						},
+					],
+				});
+
+				file = await this.projectFileHandle.getFile();
+			} catch (e) {
+				if (e instanceof DOMException) {
+					if (e.name == "AbortError") {
+						return;
+					} else if (e.name == "NotAllowedError") {
+						alert("Error: Not allowed to read from this file.");
+						return;
+					}
+				}
+				throw e;
+			}
+		} else {
+			file = await openFile("application/zip,application/json");
+		}
+
+		this.openProjectFromFile(file);
 	}
 
 	// Called from HAreaMenu
@@ -117,24 +163,84 @@ export default class Editor {
 			} else {
 				this.project = await ProjectSerializer.unserializeZIP(file);
 			}
-
-			this.resourcesArea.refresh();
-			this.windowsArea.clear();
-
-			this.projectName = file.name.substring(0, file.name.lastIndexOf("."));
 		} catch (e) {
 			if (e instanceof UnserializeException) {
-				alert("Error reading file: " + e.message);
-			} else {
-				throw e;
+				alert("Error: " + e.message);
+				return;
 			}
+			throw e;
 		}
+
+		this.resourcesArea.refresh();
+		this.windowsArea.clear();
+
+		this.projectName = file.name.substring(0, file.name.lastIndexOf("."));
 	}
 
 	// Called from HAreaMenu
 	async saveProject() {
-		const blob = await ProjectSerializer.serializeZIP(this.project);
-		saveFile(blob, this.projectName + ".zip");
+		if ("showOpenFilePicker" in window) {
+			if (!this.projectFileHandle) {
+				this.saveProjectAs();
+			} else {
+				this.saveProjectToFileHandle();
+			}
+		} else {
+			const blob = await ProjectSerializer.serializeZIP(this.project);
+			saveFile(blob, this.projectName + ".zip");
+		}
+	}
+
+	// Called from HAreaMenu
+	async saveProjectAs() {
+		if ("showOpenFilePicker" in window) {
+			try {
+				this.projectFileHandle = await window.showSaveFilePicker({
+					suggestedName: (this.projectName ?? "game") + ".zip",
+					types: [
+						{
+							description: "webgm project files",
+							accept: {
+								"application/zip": [".zip"],
+							},
+						},
+					],
+				});
+			} catch (e) {
+				if (e instanceof DOMException) {
+					if (e.name == "AbortError") {
+						return;
+					}
+				}
+				throw e;
+			}
+
+			this.saveProjectToFileHandle();
+		} else {
+			throw new Error("Not supposed to call saveProjectAs when the File System Access API is not supported!");
+		}
+	}
+
+	async saveProjectToFileHandle() {
+		if ("showOpenFilePicker" in window) {
+			const blob = await ProjectSerializer.serializeZIP(this.project);
+
+			try {
+				const writableStream = await this.projectFileHandle.createWritable();
+				await writableStream.write(blob);
+				await writableStream.close();
+			} catch (e) {
+				if (e instanceof DOMException) {
+					if (e.name == "NotAllowedError") {
+						alert("Error: Not allowed to write to this file.");
+						return;
+					}
+				}
+				throw e;
+			}
+		} else {
+			throw new Error("Not supposed to call saveProjectToFileHandle when the File System Access API is not supported!");
+		}
 	}
 
 	// Called from HAreaMenu

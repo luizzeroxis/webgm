@@ -1,6 +1,6 @@
 import AbstractAudio from "../../common/AbstractAudio.js";
 import {parent, endparent, add, HElement, HButton, HTextInput, HRangeInput} from "../../common/H.js";
-import VirtualFileSystem from "../../common/VirtualFileSystem.js";
+import {openFile} from "../../common/tools.js";
 import HWindow from "../HWindow.js";
 
 export default class HWindowSound extends HWindow {
@@ -19,11 +19,9 @@ export default class HWindowSound extends HWindow {
 
 					const inputName = add( new HTextInput("Name:", sound.name) );
 
-					this.buttonLoadSound = add( new HButton("Load Sound", () => {
-						VirtualFileSystem.openDialog("audio/*")
-						.then(file => {
-							this.loadSoundFromFile(file);
-						});
+					this.buttonLoadSound = add( new HButton("Load Sound", async () => {
+						const file = await openFile("audio/*");
+						this.loadSoundFromFile(file);
 					}) );
 
 					parent( add( new HElement("div", {class: "preview"}) ) );

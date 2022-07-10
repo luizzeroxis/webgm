@@ -1,6 +1,6 @@
 import AbstractImage from "../../common/AbstractImage.js";
 import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HImage, HCheckBoxInput, setOnFileDrop} from "../../common/H.js";
-import VirtualFileSystem from "../../common/VirtualFileSystem.js";
+import {openFile} from "../../common/tools.js";
 import HWindow from "../HWindow.js";
 
 export default class HWindowSprite extends HWindow {
@@ -22,11 +22,9 @@ export default class HWindowSprite extends HWindow {
 
 					const inputName = add( new HTextInput("Name:", paramName) );
 
-					this.buttonLoadSprite = add( new HButton("Load Sprite", () => {
-						VirtualFileSystem.openDialog("image/*", true)
-						.then(files => {
-							this.loadSpriteFromFiles(files);
-						});
+					this.buttonLoadSprite = add( new HButton("Load Sprite", async () => {
+						const files = await openFile("image/*", true);
+						this.loadSpriteFromFiles(files);
 					}) );
 
 					parent( add( new HElement("div", {}, "Width: ")) );

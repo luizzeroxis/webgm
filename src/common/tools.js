@@ -1,6 +1,49 @@
-//Bunch of random functions that make my life easier
+// Bunch of random functions that make my life easier
 
-//= Base 64 =
+import {HElement} from "./H.js";
+
+// Open and save files
+
+export function openFile(accept, multiple=false) {
+	return new Promise((resolve) => {
+		const f = new HElement("input");
+		f.html.accept = accept;
+		f.html.type = "file";
+		if (multiple) {
+			f.html.multiple = true;
+		}
+		f.html.addEventListener("change", () => {
+			if (multiple) {
+				resolve(f.html.files);
+			} else {
+				resolve(f.html.files[0]);
+			}
+		});
+		f.html.click();
+	});
+}
+
+export function saveFile(blob, name) {
+	const a = new HElement("a");
+	a.html.href = URL.createObjectURL(blob);
+	a.html.download = name;
+	a.html.click();
+}
+
+export function readFileAsText(file) {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.addEventListener("load", () => {
+			resolve(reader.result);
+		});
+		reader.addEventListener("error", (e) => {
+			reject(e);
+		});
+		reader.readAsText(file);
+	});
+}
+
+// Base 64
 export function base64ToBlob(base64Data, contentType) {
 	contentType = contentType || "";
 	const sliceSize = 1024;

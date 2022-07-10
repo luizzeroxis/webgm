@@ -8,7 +8,7 @@ import {
 	ProjectAction,
 } from "../common/Project.js";
 import ProjectSerializer from "../common/ProjectSerializer.js";
-import VirtualFileSystem from "../common/VirtualFileSystem.js";
+import {saveFile, readFileAsText} from "../common/tools.js";
 import Game from "../game/Game.js";
 
 import HAreaMenu from "./areas/HAreaMenu.js";
@@ -109,42 +109,32 @@ export default class Editor {
 	}
 
 	// Called from HAreaMenu
-	openProjectFromFile(file) {
-		let promise;
-
-		if (file.type == "application/json") {
-			promise = VirtualFileSystem.readEntireFile(file)
-			.then(json => ProjectSerializer.unserializeV1(json));
-		} else {
-			promise = ProjectSerializer.unserializeZIP(file);
-		}
-
-		promise.then(project => {
-			if (project) {
-				this.project = project;
-
-				this.resourcesArea.refresh();
-				this.windowsArea.clear();
-
-				this.projectName = file.name.substring(0, file.name.lastIndexOf("."));
+	async openProjectFromFile(file) {
+		try {
+			if (file.type == "application/json") {
+				const json = readFileAsText(file);
+				this.project = await ProjectSerializer.unserializeV1(json);
 			} else {
-				alert("Error Loading: File seems to be corrupt.");
+				this.project = await ProjectSerializer.unserializeZIP(file);
 			}
-		}).catch(e => {
+
+			this.resourcesArea.refresh();
+			this.windowsArea.clear();
+
+			this.projectName = file.name.substring(0, file.name.lastIndexOf("."));
+		} catch (e) {
 			if (e instanceof UnserializeException) {
 				alert("Error reading file: " + e.message);
 			} else {
 				throw e;
 			}
-		});
+		}
 	}
 
 	// Called from HAreaMenu
-	saveProject() {
-		ProjectSerializer.serializeZIP(this.project)
-		.then(blob => {
-			VirtualFileSystem.save(blob, this.projectName+".zip");
-		});
+	async saveProject() {
+		const blob = await ProjectSerializer.serializeZIP(this.project);
+		saveFile(blob, this.projectName + ".zip");
 	}
 
 	// Called from HAreaMenu

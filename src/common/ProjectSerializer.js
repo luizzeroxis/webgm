@@ -89,7 +89,7 @@ export default class ProjectSerializer {
 		.then(versionString => {
 			version = parseInt(versionString);
 			console.log("ZIP version:", version);
-			if (version < 1 || version > 2) throw new UnserializeException("Unsupported "+version.toString+" version.");
+			if (version < 1 || version > 2) throw new UnserializeException("Unsupported "+version.toString()+" version.");
 		})
 		.then(() => {
 			const file = zip.file("project.json");
@@ -99,7 +99,7 @@ export default class ProjectSerializer {
 		.then(json => {
 			if (version == 1) {
 				return ProjectSerializer.unserializeV1(json);
-			}
+			} else
 			if (version == 2) {
 				let project;
 				const promises = [];
@@ -164,7 +164,7 @@ export default class ProjectSerializer {
 				});
 			}
 
-			return null;
+			throw new UnserializeException("Unsupported "+version.toString()+" version.");
 		});
 	}
 

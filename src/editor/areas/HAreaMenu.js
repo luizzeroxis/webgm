@@ -1,5 +1,5 @@
 import {parent, endparent, add, HElement, HButton} from "../../common/H.js";
-import VirtualFileSystem from "../../common/VirtualFileSystem.js";
+import {openFile} from "../../common/tools.js";
 import HWindowPreferences from "../windows/HWindowPreferences.js";
 
 export default class HAreaMenu extends HElement {
@@ -15,11 +15,9 @@ export default class HAreaMenu extends HElement {
 				this.editor.newProject();
 			}) );
 
-			add( new HButton("Open", () => {
-				VirtualFileSystem.openDialog("application/zip,application/json")
-				.then(file => {
-					this.editor.openProjectFromFile(file);
-				});
+			add( new HButton("Open", async () => {
+				const file = await openFile("application/zip,application/json");
+				this.editor.openProjectFromFile(file);
 			}) );
 
 			add( new HButton("Save", () => {

@@ -1,6 +1,6 @@
 import AbstractImage from "../../common/AbstractImage.js";
 import {parent, endparent, add, HElement, HButton, HTextInput, HImage, setOnFileDrop} from "../../common/H.js";
-import VirtualFileSystem from "../../common/VirtualFileSystem.js";
+import {openFile} from "../../common/tools.js";
 import HWindow from "../HWindow.js";
 
 export default class HWindowBackground extends HWindow {
@@ -19,11 +19,9 @@ export default class HWindowBackground extends HWindow {
 
 					const inputName = add( new HTextInput("Name:", background.name) );
 
-					this.buttonLoadBackground = add( new HButton("Load Background", () => {
-						VirtualFileSystem.openDialog("image/*")
-						.then(file => {
-							this.loadBackgroundFromFile(file);
-						});
+					this.buttonLoadBackground = add( new HButton("Load Background", async () => {
+						const file = await openFile("image/*");
+						this.loadBackgroundFromFile(file);
 					}) );
 
 					parent( add( new HElement("div", {}, "Width: ")) );

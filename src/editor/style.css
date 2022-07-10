@@ -1,17 +1,26 @@
 :root {
 	color-scheme: light dark;
+	--window-client-horizontal-border: #ccc;
 	--area-border: #444;
 	--window-border: #aaa;
 	--titlebar-background: #aaa;
-	--grid-resource-cell-border: #ccc;
+	/* Look into changing some of these colors, for... reasons. */
+	--menu-text: rgb(32, 33, 36);
+	--menu-background: rgb(255, 255, 255);
+	--menu-border: rgb(218, 220, 224);
+	--menu-item-selected-background: rgb(232, 232, 233);
 }
 
 :root.dark {
 	color-scheme: dark;
+	--window-client-horizontal-border: #333;
 	--area-border: #bbb;
 	--window-border: #555;
 	--titlebar-background: #555;
-	--grid-resource-cell-border: #333;
+	--menu-text: rgb(232, 234, 225);
+	--menu-background: rgb(41, 42, 45);
+	--menu-border: rgb(60, 64, 67);
+	--menu-item-selected-background: rgb(63, 64, 66);
 }
 :root.light {
 	color-scheme: light;
@@ -70,7 +79,7 @@ canvas {
 	display: inline-block;
 }
 .tab-content {
-	border: 1px solid var(--grid-resource-cell-border);
+	border: 1px solid var(--window-client-horizontal-border);
 	padding: 8px;
 }
 
@@ -127,13 +136,19 @@ canvas {
 	padding-bottom: 4px;
 }
 
+.resources-area ul > li > .item > .expander {
+	width: 16px;
+	height: 16px;
+	margin-right: 4px;
+}
+
 .resources-area ul > li > .item > .icon {
 	width: 16px;
 	height: 16px;
 	object-fit: contain;
 	vertical-align: middle;
 	visibility: hidden;
-	padding-right: 4px;
+	margin-right: 4px;
 }
 .resources-area ul > li > .item > .icon[src] {
 	visibility: visible;
@@ -144,7 +159,7 @@ canvas {
 }
 
 .resources-area li > ul {
-	padding-left: 1em;
+	padding-left: 20px;
 }
 
 .windows-area {
@@ -183,7 +198,7 @@ canvas {
 }
 
 .windows-area > .window > .client > .horizontal > div {
-	border: 1px solid var(--grid-resource-cell-border);
+	border: 1px solid var(--window-client-horizontal-border);
 	padding: 8px;
 }
 
@@ -312,4 +327,25 @@ canvas {
 
 .windows-area > .window > .client > .window-game > canvas.no-cursor {
 	cursor: none;
+}
+
+.menu {
+	position: absolute;
+	color: var(--menu-text);
+	background-color: var(--menu-background);
+	border: 1px solid var(--menu-border);
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+.menu-item {
+	display: flex;
+	align-items: center;
+	height: 24px;
+	padding-left: 32px;
+	padding-right: 56px;
+}
+
+.menu-item.selected {
+	background-color: var(--menu-item-selected-background);
 }

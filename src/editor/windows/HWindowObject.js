@@ -199,7 +199,7 @@ export default class HWindowObject extends HWindow {
 						this.updateActionsMenu();
 					}) );
 
-					this.buttonActionUp = add( new HButton("▲", () => {
+					this.buttonActionUp = add( new HButton("↑", () => {
 						const event = this.getSelectedEvent();
 						if (!event) return;
 
@@ -213,7 +213,7 @@ export default class HWindowObject extends HWindow {
 						this.updateActionsMenu();
 					}) );
 
-					this.buttonActionDown = add( new HButton("▼", () => {
+					this.buttonActionDown = add( new HButton("↓", () => {
 						const event = this.getSelectedEvent();
 						if (!event) return;
 

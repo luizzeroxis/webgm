@@ -15,6 +15,7 @@ import HAreaMenu from "./areas/HAreaMenu.js";
 import HAreaResources from "./areas/HAreaResources.js";
 import HAreaWindows from "./areas/HAreaWindows.js";
 import BuiltInLibraries from "./BuiltInLibraries.js";
+import HMenuManager from "./HMenuManager.js";
 import PreferencesManager from "./PreferencesManager.js";
 import ThemeManager from "./ThemeManager.js";
 import HWindowGame from "./windows/HWindowGame.js";
@@ -53,6 +54,8 @@ export default class Editor {
 				this.resourcesArea = add( new HAreaResources(this) );
 				this.windowsArea = add( new HAreaWindows(this) );
 				endparent();
+
+			this.menuManager = add( new HMenuManager() );
 
 			endparent();
 

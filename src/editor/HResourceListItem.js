@@ -32,17 +32,23 @@ export default class HResourceListItem extends HElement {
 
 			parent( add( new HElement("div", {class: "item"}) ) );
 
-				this.htmlIcon = add( new HImage(null, "icon") );
-				this.htmlIcon.html.width = 16;
-				this.htmlIcon.html.height = 16;
+				// add( new HElement("div", {class: "expander"}, "") );
+				this.icon = add( new HImage(null, "icon") );
+				this.icon.html.width = 16;
+				this.icon.html.height = 16;
 
 				this.updateIcon();
 
-				this.htmlName = add( new HElement("div", {class: "name"}) );
-				this.htmlName.html.textContent = this.resource.name;
+				this.name = add( new HElement("div", {class: "name"}) );
+				this.name.html.addEventListener("click", () => this.properties());
+				this.name.html.textContent = this.resource.name;
 
-				this.htmlEditButton = add( new HButton("Edit", () => this.properties()) );
-				this.htmlDeleteButton = add( new HButton("Delete", () => this.delete()) );
+				this.menuButton = add( new HButton("▼", () => {
+					this.editor.menuManager.openMenu([
+						{text: "Edit", onClick: () => this.properties()},
+						{text: "Delete", onClick: () => this.delete()},
+					], {fromElement: this.menuButton});
+				}) );
 
 				endparent();
 			endparent();
@@ -52,7 +58,7 @@ export default class HResourceListItem extends HElement {
 		this.listeners = this.editor.dispatcher.listen({
 			changeResourceName: i => {
 				if (i !== this.resource) return;
-				this.htmlName.html.textContent = i.name;
+				this.name.html.textContent = i.name;
 			},
 		});
 
@@ -125,7 +131,7 @@ export default class HResourceListItem extends HElement {
 			src = HResourceListItem.resourceTypesIcons[this.resource.constructor.getClassName()];
 		}
 
-		this.htmlIcon.setSrc(src);
+		this.icon.setSrc(src);
 	}
 
 	properties() {

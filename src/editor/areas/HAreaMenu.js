@@ -10,7 +10,6 @@ export default class HAreaMenu extends HElement {
 		parent(this);
 
 			add( new HButton("New", () => {
-				if (!confirm("Clear current project and start anew?")) return;
 				this.editor.newProject();
 			}) );
 

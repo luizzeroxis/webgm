@@ -62,11 +62,15 @@ export default class Editor {
 		// Open file if dropped in the editor body
 		if ("showOpenFilePicker" in window) {
 			setOnFileDropAsFileHandle(this.div.html, async handle => {
+				if (!confirm("Game may have been changed. Continue?")) return;
 				this.projectFileHandle = handle;
 				this.openProjectFromFile(await this.projectFileHandle.getFile());
 			});
 		} else {
-			setOnFileDrop(this.div.html, file => this.openProjectFromFile(file));
+			setOnFileDrop(this.div.html, file => {
+				if (!confirm("Game may have been changed. Continue?")) return;
+				this.openProjectFromFile(file);
+			});
 		}
 
 		// Actually add to the DOM
@@ -116,6 +120,8 @@ export default class Editor {
 
 	// Called from HAreaMenu
 	newProject() {
+		if (!confirm("Game may have been changed. Continue?")) return;
+
 		this.project = new Project();
 		this.projectFileHandle = null;
 		this.updateProjectName(null);

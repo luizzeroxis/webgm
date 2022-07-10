@@ -244,6 +244,9 @@ export default class Game {
 		this.arguments = [];
 		this.argumentRelative = false;
 
+		// Sprites
+		this.imageDataCache = new Map();
+
 		// Fonts
 		this.cssFontsCache = {
 			"-1": makeCSSFont("Arial", 12, false, false),
@@ -535,15 +538,29 @@ export default class Game {
 	// Return a list of promises of loading sprite images.
 	loadSprites() {
 		const promises = [];
+
+		const offscreen = new OffscreenCanvas(0, 0);
+		const offscreenCtx = offscreen.getContext("2d");
+
 		this.project.resources.ProjectSprite.forEach(sprite => {
 			sprite.images.forEach((image, imageNumber) => {
 				image.load();
 				promises.push(image.promise
+					.then(() => {
+						if (image.image.width > offscreen.width || image.image.height > offscreen.height) {
+							offscreen.width = image.image.width;
+							offscreen.height = image.image.height;
+						}
+						offscreenCtx.drawImage(image.image, 0, 0);
+						const data = offscreenCtx.getImageData(0, 0, image.image.width, image.image.height);
+						this.imageDataCache.set(image, data);
+					})
 					.catch(() => {
 						throw new EngineException("Could not load image " + imageNumber.toString() + " in sprite " + sprite.name);
 					}));
 			});
 		});
+
 		return Promise.all(promises);
 	}
 
@@ -1483,10 +1500,10 @@ export default class Game {
 
 		for (const collision of collisions) {
 			if (instanceA.sprite.shape == collision.shape1 && instanceB.sprite.shape == collision.shape2) {
-				return collision.func(instanceA, instanceB, x, y);
+				return collision.func.call(this, instanceA, instanceB, x, y);
 			} else
 			if (instanceA.sprite.shape == collision.shape2 && instanceB.sprite.shape == collision.shape1) {
-				return collision.func(instanceB, instanceA, x, y);
+				return collision.func.call(this, instanceB, instanceA, x, y);
 			}
 		}
 
@@ -1552,15 +1569,8 @@ export default class Game {
 
 		if (!rectCol) return false;
 
-		const offscreen = new OffscreenCanvas(aImage.image.width + bImage.image.width,
-			Math.max(aImage.image.height, bImage.image.height));
-
-		const offscreenCtx = offscreen.getContext("2d");
-		offscreenCtx.drawImage(aImage.image, 0, 0);
-		offscreenCtx.drawImage(bImage.image, aImage.image.width, 0);
-
-		const aData = offscreenCtx.getImageData(0, 0, aImage.image.width, aImage.image.height);
-		const bData = offscreenCtx.getImageData(aImage.image.width, 0, bImage.image.width, bImage.image.height);
+		const aData = this.imageDataCache.get(aImage);
+		const bData = this.imageDataCache.get(bImage);
 
 		// Get the 'global' (in relation to room) rect in the intersection between the two rects.
 		const gX1 = Math.max(aX1, bX1);

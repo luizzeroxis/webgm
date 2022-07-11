@@ -1,4 +1,5 @@
 import {parent, endparent, add, HElement, HButton} from "../../common/H.js";
+import {Project} from "../../common/Project.js";
 import HWindowPreferences from "../windows/HWindowPreferences.js";
 
 export default class HAreaMenu extends HElement {
@@ -42,6 +43,24 @@ export default class HAreaMenu extends HElement {
 				this.editor.stopGame();
 			}) );
 			this.stopButton.setDisabled(true);
+
+			add( new HElement("div", {class: "separator"}) );
+
+			Project.getTypes().forEach(type => {
+				add( new HButton("Create " + type.getScreenName(), () => {
+					this.editor.createResource(type);
+				}) );
+			});
+
+			add( new HElement("div", {class: "separator"}) );
+
+			add( new HButton("Change Game Information", () => {
+				this.editor.windowsArea.openGameInformation();
+			}) );
+
+			add( new HButton("Change Global Game Settings", () => {
+				this.editor.windowsArea.openGlobalGameSettings();
+			}) );
 
 			endparent();
 	}

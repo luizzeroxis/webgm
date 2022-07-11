@@ -107,6 +107,7 @@ export class Project {
 		}
 
 		static getName() { return "sprite"; }
+		static getScreenName() { return "Sprite"; }
 		static getScreenGroupName() { return "Sprites"; }
 		static getClassName() { return "ProjectSprite"; }
 	}
@@ -127,6 +128,7 @@ export class Project {
 		}
 
 		static getName() { return "sound"; }
+		static getScreenName() { return "Sound"; }
 		static getScreenGroupName() { return "Sounds"; }
 		static getClassName() { return "ProjectSound"; }
 	}
@@ -161,6 +163,7 @@ export class Project {
 		}
 
 		static getName() { return "background"; }
+		static getScreenName() { return "Background"; }
 		static getScreenGroupName() { return "Backgrounds"; }
 		static getClassName() { return "ProjectBackground"; }
 	}
@@ -187,6 +190,7 @@ export class Project {
 		}
 
 		static getName() { return "path"; }
+		static getScreenName() { return "Path"; }
 		static getScreenGroupName() { return "Paths"; }
 		static getClassName() { return "ProjectPath"; }
 	}
@@ -219,6 +223,7 @@ export class Project {
 		}
 
 		static getName() { return "script"; }
+		static getScreenName() { return "Script"; }
 		static getScreenGroupName() { return "Scripts"; }
 		static getClassName() { return "ProjectScript"; }
 	}
@@ -243,6 +248,7 @@ export class Project {
 		}
 
 		static getName() { return "font"; }
+		static getScreenName() { return "Font"; }
 		static getScreenGroupName() { return "Fonts"; }
 		static getClassName() { return "ProjectFont"; }
 	}
@@ -261,6 +267,7 @@ export class Project {
 		}
 
 		static getName() { return "timeline"; }
+		static getScreenName() { return "Time Line"; }
 		static getScreenGroupName() { return "Time Lines"; }
 		static getClassName() { return "ProjectTimeline"; }
 	}
@@ -305,6 +312,7 @@ export class Project {
 		}
 
 		static getName() { return "object"; }
+		static getScreenName() { return "Object"; }
 		static getScreenGroupName() { return "Objects"; }
 		static getClassName() { return "ProjectObject"; }
 	}
@@ -425,6 +433,7 @@ export class Project {
 		}
 
 		static getName() { return "room"; }
+		static getScreenName() { return "Room"; }
 		static getScreenGroupName() { return "Rooms"; }
 		static getClassName() { return "ProjectRoom"; }
 	}

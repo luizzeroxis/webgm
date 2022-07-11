@@ -4,8 +4,6 @@ import HResourceListItem from "../HResourceListItem.js";
 import FolderIcon from "../img/folder-icon.png";
 import GameInformationIcon from "../img/game-information-icon.png";
 import GameSettingsIcon from "../img/global-game-settings-icon.png";
-import HWindowGameInformation from "../windows/HWindowGameInformation.js";
-import HWindowGlobalGameSettings from "../windows/HWindowGlobalGameSettings.js";
 // import ExtensionPackagesIcon from './img/extension-packages-icon.png';
 
 export default class HAreaResources extends HElement {
@@ -23,11 +21,16 @@ export default class HAreaResources extends HElement {
 					parent( add( new HElement("li") ) );
 
 						parent( add( new HElement("div", {class: "item"}) ) );
+							// add( new HElement("div", {class: "expander"}, "") );
 							add( new HImage(FolderIcon, "icon") );
 							add( new HElement("div", {class: "name"}, type.getScreenGroupName()) );
-							add( new HButton("Create", () => {
-								this.editor.createResource(type);
-							}));
+
+							const menuButton = add( new HButton("▼", () => {
+								this.editor.menuManager.openMenu([
+									{text: "Create " + type.getScreenName(), onClick: () => this.editor.createResource(type)},
+								], {fromElement: menuButton});
+							}) );
+
 							endparent();
 
 						this.resourceTypes[type.name] = add( new HElement("ul", {class: "resource"}) );
@@ -37,30 +40,30 @@ export default class HAreaResources extends HElement {
 				parent( add( new HElement("li") ) );
 
 					parent( add( new HElement("div", {class: "item"}) ) );
+						// add( new HElement("div", {class: "expander"}, "") );
 						add( new HImage(GameInformationIcon, "icon") );
-						add( new HElement("div", {class: "name"}, "Game Information") );
-						add( new HButton("Edit", () => this.editor.windowsArea.open(HWindowGameInformation,
-							"game-information", this.editor.project.gameInformation)) );
+						const gameInformationName = add( new HElement("div", {class: "name"}, "Game Information") );
+						gameInformationName.html.addEventListener("click", () => this.editor.windowsArea.openGameInformation());
 						endparent();
 
 					endparent();
 
 				parent( add( new HElement("li") ) );
 					parent( add( new HElement("div", {class: "item"}) ) );
+						// add( new HElement("div", {class: "expander"}, "") );
 						add( new HImage(GameSettingsIcon, "icon") );
-						add( new HElement("div", {class: "name"}, "Global Game Settings") );
-						add( new HButton("Edit", () => this.editor.windowsArea.open(HWindowGlobalGameSettings,
-							"global-game-settings", this.editor.project.globalGameSettings )) );
+						const globalGameSettingsName = add( new HElement("div", {class: "name"}, "Global Game Settings") );
+						globalGameSettingsName.html.addEventListener("click", () => this.editor.windowsArea.openGlobalGameSettings());
 						endparent();
 
 					endparent();
 
 				// parent( add( new HElement('li') ) );
 				// 	parent( add( new HElement('div', {class: 'item'}) ) )
+				// 		// add( new HElement("div", {class: "expander"}, "") );
 				// 		add( new HImage(ExtensionPackagesIcon, 'icon') );
-				// 		add( new HElement('div', {class: 'name'}, 'Extension packages') )
-				// 		add( new HButton('Edit', () => this.editor.openWindow(HWindowExtensionPackages,
-				// 			'extension-packages', this.editor.project.extensionPackages)) )
+				// 		const extensionPackagesName = add( new HElement('div', {class: 'name'}, 'Extension packages') )
+				// 		extensionPackagesName.html.addEventListener("click", () => this.editor.windowsArea.openExtensionPackages());
 				// 		endparent();
 
 				endparent();

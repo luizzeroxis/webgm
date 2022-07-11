@@ -118,6 +118,7 @@ canvas {
 
 .menu-area {
 	display: flex;
+	flex-wrap: wrap;
 }
 
 .menu-area .separator {
@@ -134,6 +135,7 @@ canvas {
 	display: flex;
 	align-items: center;
 	padding-bottom: 4px;
+	height: 21px;
 }
 
 .resources-area ul > li > .item > .expander {
@@ -156,6 +158,11 @@ canvas {
 
 .resources-area ul > li > .item > .name {
 	flex: 1;
+	cursor: pointer;
+}
+
+.resources-area ul > li > .item > .name:hover {
+	text-decoration: underline;
 }
 
 .resources-area li > ul {

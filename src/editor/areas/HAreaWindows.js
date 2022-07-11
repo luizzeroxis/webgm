@@ -1,6 +1,8 @@
 import {parent, endparent, add, remove, HElement} from "../../common/H.js";
 import HWindowBackground from "../windows/HWindowBackground.js";
 import HWindowFont from "../windows/HWindowFont.js";
+import HWindowGameInformation from "../windows/HWindowGameInformation.js";
+import HWindowGlobalGameSettings from "../windows/HWindowGlobalGameSettings.js";
 import HWindowObject from "../windows/HWindowObject.js";
 import HWindowPath from "../windows/HWindowPath.js";
 import HWindowRoom from "../windows/HWindowRoom.js";
@@ -64,6 +66,16 @@ export default class HAreaWindows extends HElement {
 	openResource(resource) {
 		const windowClass = HAreaWindows.resourceTypesWindowClasses[resource.constructor.getClassName()];
 		this.open(windowClass, resource, resource);
+	}
+
+	// Open or focus on the game information window.
+	openGameInformation() {
+		this.open(HWindowGameInformation, "game-information", this.editor.project.gameInformation);
+	}
+
+	// Open or focus on the global game settings window.
+	openGlobalGameSettings() {
+		this.open(HWindowGlobalGameSettings, "global-game-settings", this.editor.project.globalGameSettings);
 	}
 
 	getId(id) {

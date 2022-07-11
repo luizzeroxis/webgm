@@ -86,6 +86,12 @@ export default class Editor {
 		return resource;
 	}
 
+	duplicateResource(oldResource) {
+		const resource = this.project.duplicateResource(oldResource);
+		this.dispatcher.speak("createResource", resource);
+		return resource;
+	}
+
 	deleteResource(resource) {
 		if (confirm("You are about to delete "+resource.name+". This will be permanent. Continue?")) {
 			this.project.deleteResource(resource);

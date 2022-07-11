@@ -44,6 +44,18 @@ export class Project {
 		return resource;
 	}
 
+	duplicateResource(oldResource) {
+		const type = oldResource.constructor;
+
+		const resource = new type(oldResource);
+		resource.id = this.counter[type.getClassName()];
+		resource.name = type.getName() + this.counter[type.getClassName()].toString();
+
+		this.counter[type.getClassName()]++;
+		this.resources[type.getClassName()].push(resource);
+		return resource;
+	}
+
 	deleteResource(resource) {
 		const index = this.resources[resource.constructor.getClassName()].findIndex(x => x == resource);
 		this.resources[resource.constructor.getClassName()].splice(index, 1);

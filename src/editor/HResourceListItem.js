@@ -46,6 +46,7 @@ export default class HResourceListItem extends HElement {
 				this.menuButton = add( new HButton("▼", () => {
 					this.editor.menuManager.openMenu([
 						{text: "Edit", onClick: () => this.properties()},
+						{text: "Duplicate", onClick: () => this.duplicate()},
 						{text: "Delete", onClick: () => this.delete()},
 					], {fromElement: this.menuButton});
 				}) );
@@ -136,6 +137,10 @@ export default class HResourceListItem extends HElement {
 
 	properties() {
 		this.editor.windowsArea.openResource(this.resource);
+	}
+
+	duplicate() {
+		this.editor.duplicateResource(this.resource);
 	}
 
 	delete() {

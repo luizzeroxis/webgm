@@ -40,11 +40,12 @@ export default class Editor {
 		// Libraries
 		this.libraries = BuiltInLibraries.getList();
 
+		// WIP warning
+		add( new HElement("div", {class: "warning"},
+				"Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!") );
+
 		// Areas
 		this.div = parent( new HElement("div", {class: "editor"}) );
-
-			add( new HElement("div", {class: "warning"},
-				"Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!") );
 
 			this.titlebar = add( new HElement("div", {class: "titlebar"}, "<new game> - webgm") );
 

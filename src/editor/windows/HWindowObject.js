@@ -163,6 +163,7 @@ export default class HWindowObject extends HWindow {
 
 					this.selectActions = add( new HSelect("Actions:", "actions-list") );
 					this.selectActions.select.html.size = 2;
+					this.selectActions.select.html.multiple = true;
 
 					this.selectActions.setOnChange(() => {
 						this.updateActionsMenu();
@@ -185,15 +186,13 @@ export default class HWindowObject extends HWindow {
 						const event = this.getSelectedEvent();
 						if (!event) return;
 
-						const actionIndex = this.selectActions.getSelectedIndex();
-						if (actionIndex < 0) return;
+						const selectedIndexes = this.selectActions.getSelectedIndexes();
 
-						const action = event.actions[actionIndex];
-						if (!action) return;
+						for (const index of selectedIndexes) {
+							this.deleteActionWindow(event.actions[index]);
+						}
 
-						this.deleteActionWindow(action);
-
-						event.actions.splice(actionIndex, 1);
+						event.actions = event.actions.filter((action, index) => !selectedIndexes.includes(index));
 
 						this.updateSelectActions();
 						this.updateActionsMenu();
@@ -474,7 +473,7 @@ export default class HWindowObject extends HWindow {
 					const option = add( new HOption(
 						(this.editor.preferences.get("hintTextInAction") ? hintText.text : listText.text), // text
 						null, // value
-						(listText.bold ? "bold " : "") + (listText.italic ? "italic " : ""), // class
+						[...(listText.bold ? ["bold"] : []), ...(listText.italic ? ["italic"] : [])], // class
 					) );
 					option.html.title = hintText.text;
 				}
@@ -482,23 +481,27 @@ export default class HWindowObject extends HWindow {
 
 			this.selectActions.setSelectedIndex(Math.min(index, event.actions.length-1));
 		}
-
-		this.updateActionsMenu();
 	}
 
 	updateActionsMenu() {
 		const event = this.getSelectedEvent();
 
-		if (this.selectActions.getSelectedIndex() < 0) {
+		if (this.selectActions.select.html.selectedOptions.length == 0) {
 			this.buttonActionEdit.setDisabled(true);
 			this.buttonActionDelete.setDisabled(true);
 			this.buttonActionUp.setDisabled(true);
 			this.buttonActionDown.setDisabled(true);
-		} else {
+		} else
+		if (this.selectActions.select.html.selectedOptions.length == 1) {
 			this.buttonActionEdit.setDisabled(false);
 			this.buttonActionDelete.setDisabled(false);
 			this.buttonActionUp.setDisabled(this.selectActions.getSelectedIndex() == 0);
 			this.buttonActionDown.setDisabled(this.selectActions.getSelectedIndex() == event.actions.length-1);
+		} else {
+			this.buttonActionEdit.setDisabled(true);
+			this.buttonActionDelete.setDisabled(false);
+			this.buttonActionUp.setDisabled(true);
+			this.buttonActionDown.setDisabled(true);
 		}
 	}
 

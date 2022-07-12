@@ -203,8 +203,10 @@ function callOnRemoveIfNotConnected(element) {
 
 function classToAttr(_class) {
 	if (Array.isArray(_class)) {
+		if (_class.length == 0) return null;
 		return _class.join(" ");
 	} else if (typeof _class == "string") {
+		if (_class == "") return null;
 		return _class;
 	} else {
 		return null;
@@ -383,6 +385,10 @@ export class HSelect extends HElement {
 
 	setSelectedIndex(index) {
 		this.select.html.selectedIndex = index;
+	}
+
+	getSelectedIndexes() {
+		return Array.from(this.select.html.selectedOptions).map(option => option.index);
 	}
 
 	setOnChange(onChange) {

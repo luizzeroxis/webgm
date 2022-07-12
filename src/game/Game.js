@@ -946,53 +946,43 @@ export default class Game {
 		for (const instance of this.instances) {
 			if (!instance.exists) continue;
 
-			const hspeedOld = instance.hSpeed;
-			const vspeedOld = instance.vSpeed;
+			instance.xPrevious = instance.x;
+			instance.yPrevious = instance.y;
 
-			let hspeedNew = hspeedOld;
-			let vspeedNew = vspeedOld;
-
-			instance.x += hspeedOld;
-			instance.y += vspeedOld;
-
-			if (instance.friction != 0) {
-				const direction = instance.direction * (Math.PI / 180);
-
-				if (hspeedOld != 0) {
-					hspeedNew = hspeedOld - Math.cos(direction) * instance.friction;
-					if (Math.sign(hspeedNew) != Math.sign(hspeedOld)) { // If changed sign, that is, going in the opposite direction, don't do that
-						hspeedNew = 0;
-					}
-				}
-
-				if (vspeedOld != 0) {
-					vspeedNew = vspeedOld - -Math.sin(direction) * instance.friction;
-					if (Math.sign(vspeedNew) != Math.sign(vspeedOld)) {
-						vspeedNew = 0;
-					}
-				}
-			}
-
-			if (instance.gravity != 0) {
-				hspeedNew += Math.cos(instance.gravityDirection * (Math.PI / 180)) * instance.gravity;
-				vspeedNew += -Math.sin(instance.gravityDirection * (Math.PI / 180)) * instance.gravity;
-			}
-
-			instance.setHspeedAndVspeed(hspeedNew, vspeedNew);
-
-			// TODO paths?
+			this.updateInstancePosition(instance);
 		}
 
 		// Collisions
 		for (const [subtype, list] of this.getEventsOfType("collision")) {
 			for (const {event, instance} of list) {
-				if (!instance.exists) continue;
+				// TODO test what happens when colliding with multiple instances at once
 				for (const other of this.instances) {
+					if (!instance.exists) continue;
 					if (!other.exists) continue;
 					if (!(other.objectIndex == subtype)) continue;
 					if (this.collisionInstanceOnInstance(instance, other)) {
-						// TODO collision shenanigans
+						// Collision shenanigans
+						if (other.solid) {
+							// Move instance back
+							instance.x = instance.xPrevious;
+							instance.y = instance.yPrevious;
+						}
+
 						await this.doEvent(event, instance, other);
+
+						// Yes, the event can change solid variable
+						if (other.solid) {
+							// Move to new position
+							if (!instance.exists) continue;
+							this.updateInstancePosition(instance);
+
+							// Check collision again, if still collides, keep previous position.
+							if (!other.exists) continue;
+							if (this.collisionInstanceOnInstance(instance, other)) {
+								instance.x = instance.xPrevious;
+								instance.y = instance.yPrevious;
+							}
+						}
 					}
 				}
 			}
@@ -1011,6 +1001,7 @@ export default class Game {
 		// Update some instance variables
 		for (const instance of this.instances) {
 			if (!instance.exists) continue;
+
 			instance.xPrevious = instance.x;
 			instance.yPrevious = instance.y;
 
@@ -1068,6 +1059,45 @@ export default class Game {
 
 		// Delete instances
 		this.instances = this.instances.filter(instance => instance.exists);
+	}
+
+	//
+	updateInstancePosition(instance) {
+		const hspeedOld = instance.hSpeed;
+		const vspeedOld = instance.vSpeed;
+
+		let hspeedNew = hspeedOld;
+		let vspeedNew = vspeedOld;
+
+		instance.x += hspeedOld;
+		instance.y += vspeedOld;
+
+		if (instance.friction != 0) {
+			const direction = instance.direction * (Math.PI / 180);
+
+			if (hspeedOld != 0) {
+				hspeedNew = hspeedOld - Math.cos(direction) * instance.friction;
+				if (Math.sign(hspeedNew) != Math.sign(hspeedOld)) { // If changed sign, that is, going in the opposite direction, don't do that
+					hspeedNew = 0;
+				}
+			}
+
+			if (vspeedOld != 0) {
+				vspeedNew = vspeedOld - -Math.sin(direction) * instance.friction;
+				if (Math.sign(vspeedNew) != Math.sign(vspeedOld)) {
+					vspeedNew = 0;
+				}
+			}
+		}
+
+		if (instance.gravity != 0) {
+			hspeedNew += Math.cos(instance.gravityDirection * (Math.PI / 180)) * instance.gravity;
+			vspeedNew += -Math.sin(instance.gravityDirection * (Math.PI / 180)) * instance.gravity;
+		}
+
+		instance.setHspeedAndVspeed(hspeedNew, vspeedNew);
+
+		// TODO paths?
 	}
 
 	// Draw all the views of the current room.

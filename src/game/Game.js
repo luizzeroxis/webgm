@@ -1095,7 +1095,7 @@ export default class Game {
 
 		const instances_by_depth = this.instances
 			.filter(x => x.exists)
-			.sort((a, b) => a.depth - b.depth);
+			.sort((a, b) => b.depth - a.depth);
 
 		for (const instance of instances_by_depth) {
 			if (!instance.exists) continue;

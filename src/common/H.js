@@ -391,6 +391,12 @@ export class HSelect extends HElement {
 		return Array.from(this.select.html.selectedOptions).map(option => option.index);
 	}
 
+	setSelectedIndexes(indexes) {
+		for (const option of this.select.html.options) {
+			option.selected = indexes.includes(option.index);
+		}
+	}
+
 	setOnChange(onChange) {
 		this.select.html.addEventListener("change", onChange);
 	}

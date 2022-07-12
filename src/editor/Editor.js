@@ -35,6 +35,8 @@ export default class Editor {
 
 		this.projectFileHandle = null;
 
+		this.clipboard = {};
+
 		this.gameWindow = null;
 
 		// Libraries

@@ -182,17 +182,46 @@ export default class HWindowObject extends HWindow {
 						this.openActionWindow(action);
 					}) );
 
-					this.buttonActionDelete = add( new HButton("Delete action", () => {
+					this.buttonActionCopy = add( new HButton("Copy", () => {
 						const event = this.getSelectedEvent();
 						if (!event) return;
 
-						const selectedIndexes = this.selectActions.getSelectedIndexes();
+						const actionIndexes = this.selectActions.getSelectedIndexes();
+						if (actionIndexes.length == 0) return;
 
-						for (const index of selectedIndexes) {
+						this.editor.clipboard.actions = actionIndexes.map(index => new ProjectAction(event.actions[index]));
+					}) );
+
+					this.buttonActionPaste = add( new HButton("Paste", () => {
+						if (this.editor.clipboard.actions) {
+							const event = this.getSelectedEvent();
+							if (!event) return;
+
+							const actionIndexes = this.selectActions.getSelectedIndexes();
+							const insertIndex = (actionIndexes.length == 0) ? event.actions.length : actionIndexes[actionIndexes.length-1]+1;
+
+							const actions = this.editor.clipboard.actions.map(action => new ProjectAction(action));
+							event.actions.splice(insertIndex, 0, ...actions);
+
+							const pastedActionIndexes = Array.from({length: actions.length}, (x, i) => i+insertIndex);
+
+							this.updateSelectActions();
+							this.selectActions.setSelectedIndexes(pastedActionIndexes);
+							this.updateActionsMenu();
+						}
+					}) );
+
+					this.buttonActionDelete = add( new HButton("Delete", () => {
+						const event = this.getSelectedEvent();
+						if (!event) return;
+
+						const actionIndexes = this.selectActions.getSelectedIndexes();
+
+						for (const index of actionIndexes) {
 							this.deleteActionWindow(event.actions[index]);
 						}
 
-						event.actions = event.actions.filter((action, index) => !selectedIndexes.includes(index));
+						event.actions = event.actions.filter((action, index) => !actionIndexes.includes(index));
 
 						this.updateSelectActions();
 						this.updateActionsMenu();
@@ -488,17 +517,23 @@ export default class HWindowObject extends HWindow {
 
 		if (this.selectActions.select.html.selectedOptions.length == 0) {
 			this.buttonActionEdit.setDisabled(true);
+			this.buttonActionCopy.setDisabled(true);
+			this.buttonActionPaste.setDisabled(!event);
 			this.buttonActionDelete.setDisabled(true);
 			this.buttonActionUp.setDisabled(true);
 			this.buttonActionDown.setDisabled(true);
 		} else
 		if (this.selectActions.select.html.selectedOptions.length == 1) {
 			this.buttonActionEdit.setDisabled(false);
+			this.buttonActionCopy.setDisabled(false);
+			this.buttonActionPaste.setDisabled(false);
 			this.buttonActionDelete.setDisabled(false);
 			this.buttonActionUp.setDisabled(this.selectActions.getSelectedIndex() == 0);
 			this.buttonActionDown.setDisabled(this.selectActions.getSelectedIndex() == event.actions.length-1);
 		} else {
 			this.buttonActionEdit.setDisabled(true);
+			this.buttonActionCopy.setDisabled(false);
+			this.buttonActionPaste.setDisabled(false);
 			this.buttonActionDelete.setDisabled(false);
 			this.buttonActionUp.setDisabled(true);
 			this.buttonActionDown.setDisabled(true);

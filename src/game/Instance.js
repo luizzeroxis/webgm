@@ -66,6 +66,10 @@ export default class Instance {
 		this.imageBlend = "#ffffff";
 	}
 
+	getCurrentImage() {
+		return this.sprite?.images[Math.floor(this.imageIndex % this.sprite.images.length)]?.image;
+	}
+
 	getImageIndex() {
 		return Math.floor(this.imageIndex % (this.sprite ? this.sprite.images.length : 0));
 	}

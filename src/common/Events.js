@@ -197,8 +197,8 @@ export default class Events {
 	];
 
 	static listOtherSubtypes = [
-		{id: 0, value: 0, name: "Outside"},
-		{id: 1, value: 1, name: "Boundary"},
+		{id: 0, value: 0, name: "Outside room"},
+		{id: 1, value: 1, name: "Intersect boundary"},
 		{id: 40, value: 40, name: "Outside view 0"},
 		{id: 41, value: 41, name: "Outside view 1"},
 		{id: 42, value: 42, name: "Outside view 2"},

@@ -952,6 +952,47 @@ export default class Game {
 			this.updateInstancePosition(instance);
 		}
 
+		// Outside room and intersect boundary
+		const OTHER_OUTSIDE = 0;
+		for (const {event, instance} of this.getEventsOfTypeAndSubtype("other", OTHER_OUTSIDE)) {
+			if (!instance.exists) continue;
+
+			const image = instance.getCurrentImage();
+
+			// TODO use sprite bounding box (probably should use this in a lot of places)
+			const offsetLeft = image ? -instance.sprite.originx : 0;
+			const offsetRight = image ? -instance.sprite.originx + image.width : 0;
+			const offsetTop = image ? -instance.sprite.originy : 0;
+			const offsetBottom = image ? -instance.sprite.originy + image.height : 0;
+
+			if (instance.x + offsetRight < 0
+				|| instance.x + offsetLeft >= this.room.width
+				|| instance.y + offsetBottom < 0
+				|| instance.y + offsetTop >= this.room.height) {
+				await this.doEvent(event, instance);
+			}
+		}
+
+		const OTHER_BOUNDARY = 1;
+		for (const {event, instance} of this.getEventsOfTypeAndSubtype("other", OTHER_BOUNDARY)) {
+			if (!instance.exists) continue;
+
+			const image = instance.getCurrentImage();
+
+			// TODO use sprite bounding box (probably should use this in a lot of places)
+			const offsetLeft = image ? -instance.sprite.originx : 0;
+			const offsetRight = image ? -instance.sprite.originx + image.width : 0;
+			const offsetTop = image ? -instance.sprite.originy : 0;
+			const offsetBottom = image ? -instance.sprite.originy + image.height : 0;
+
+			if (instance.x + offsetLeft < 0
+				|| instance.x + offsetRight >= this.room.width
+				|| instance.y + offsetTop < 0
+				|| instance.y + offsetBottom >= this.room.height) {
+				await this.doEvent(event, instance);
+			}
+		}
+
 		// Collisions
 		for (const [subtype, list] of this.getEventsOfType("collision")) {
 			for (const {event, instance} of list) {

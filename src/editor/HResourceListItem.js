@@ -45,9 +45,11 @@ export default class HResourceListItem extends HElement {
 
 				this.menuButton = add( new HButton("▼", () => {
 					this.editor.menuManager.openMenu([
-						{text: "Edit", onClick: () => this.properties()},
+						{text: "Move up", onClick: () => this.moveUp()},
+						{text: "Move down", onClick: () => this.moveDown()},
 						{text: "Duplicate", onClick: () => this.duplicate()},
 						{text: "Delete", onClick: () => this.delete()},
+						{text: "Properties", onClick: () => this.properties()},
 					], {fromElement: this.menuButton});
 				}) );
 
@@ -135,8 +137,20 @@ export default class HResourceListItem extends HElement {
 		this.icon.setSrc(src);
 	}
 
-	properties() {
-		this.editor.windowsArea.openResource(this.resource);
+	moveUp() {
+		const list = this.editor.project.resources[this.resource.constructor.getClassName()];
+		const fromIndex = list.indexOf(this.resource);
+		if (fromIndex > 0) {
+			this.editor.moveResource(this.resource, fromIndex - 1);
+		}
+	}
+
+	moveDown() {
+		const list = this.editor.project.resources[this.resource.constructor.getClassName()];
+		const fromIndex = list.indexOf(this.resource);
+		if (fromIndex < list.length - 1) {
+			this.editor.moveResource(this.resource, fromIndex + 1);
+		}
 	}
 
 	duplicate() {
@@ -145,5 +159,9 @@ export default class HResourceListItem extends HElement {
 
 	delete() {
 		this.editor.deleteResource(this.resource);
+	}
+
+	properties() {
+		this.editor.windowsArea.openResource(this.resource);
 	}
 }

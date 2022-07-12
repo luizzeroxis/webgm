@@ -86,6 +86,15 @@ export default class Editor {
 		return resource;
 	}
 
+	moveResource(resource, toIndex) {
+		const list = this.project.resources[resource.constructor.getClassName()];
+		const fromIndex = list.indexOf(resource);
+		if (fromIndex == -1) throw new Error("Resource doesn't exist.");
+		list.splice(toIndex, 0, ...list.splice(fromIndex, 1));
+		this.dispatcher.speak("moveResource", resource, toIndex);
+		// this.resourcesArea.refresh();
+	}
+
 	duplicateResource(oldResource) {
 		const resource = this.project.duplicateResource(oldResource);
 		this.dispatcher.speak("createResource", resource);

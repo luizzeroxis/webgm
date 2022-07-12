@@ -1,4 +1,4 @@
-import {parent, endparent, add, remove, HElement, HButton, HImage} from "../../common/H.js";
+import {parent, endparent, add, moveAdd, moveBefore, remove, HElement, HButton, HImage} from "../../common/H.js";
 import {Project} from "../../common/Project.js";
 import HResourceListItem from "../HResourceListItem.js";
 import FolderIcon from "../img/folder-icon.png";
@@ -12,12 +12,14 @@ export default class HAreaResources extends HElement {
 
 		this.editor = editor;
 		this.resourceTypes = {};
-		this.resources = [];
+		this.resourceItemsByType = new Map();
 
 		parent(this);
 			parent( add( new HElement("ul") ) );
 
 				Project.getTypes().forEach(type => {
+					this.resourceItemsByType.set(type.name, []);
+
 					parent( add( new HElement("li") ) );
 
 						parent( add( new HElement("div", {class: "item"}) ) );
@@ -73,11 +75,14 @@ export default class HAreaResources extends HElement {
 
 	onAdd() {
 		this.listeners = this.editor.dispatcher.listen({
-			createResource: i => {
-				this.add(i);
+			createResource: resource => {
+				this.add(resource);
 			},
-			deleteResource: i => {
-				this.delete(i);
+			moveResource: (resource, toIndex) => {
+				this.move(resource, toIndex);
+			},
+			deleteResource: resource => {
+				this.delete(resource);
 			},
 		});
 	}
@@ -90,24 +95,47 @@ export default class HAreaResources extends HElement {
 	add(resource) {
 		parent(this.resourceTypes[resource.constructor.name]);
 			const r = add( new HResourceListItem(resource, this.editor) );
-			this.resources.push(r);
+			this.resourceItemsByType.get(resource.constructor.name).push(r);
 			endparent();
+	}
+
+	// Move resource in the resources tree to some index.
+	move(resource, toIndex) {
+		const list = this.resourceItemsByType.get(resource.constructor.name);
+		const fromIndex = list.findIndex(x => x.id == resource);
+
+		// Find which element to put before. If at the end, append to end of list.
+		// If element before comes after current element, add 1 to offset the fact we don't remove the item beforehand.
+		if (toIndex != list.length - 1) {
+			const elementBeforeIndex = (toIndex > fromIndex ? toIndex + 1 : toIndex);
+			moveBefore(list[elementBeforeIndex], list[fromIndex]);
+		} else {
+			parent(this.resourceTypes[resource.constructor.name]);
+				moveAdd(list[fromIndex]);
+				endparent();
+		}
+
+		list.splice(toIndex, 0, ...list.splice(fromIndex, 1));
 	}
 
 	// Delete resource from resources tree.
 	delete(resource) {
-		const index = this.resources.findIndex(x => x.id == resource);
-		if (index>=0) {
-			remove(this.resources[index]);
-			this.resources.splice(index, 1);
+		const list = this.resourceItemsByType.get(resource.constructor.name);
+		const index = list.findIndex(x => x.id == resource);
+		if (index >= 0) {
+			remove(list[index]);
+			list.splice(index, 1);
 		}
 	}
 
 	refresh() {
-		for (const resource of this.resources) {
-			remove(resource);
+		for (const [typeName, list] of this.resourceItemsByType.entries()) {
+			for (const resource of list) {
+				remove(resource);
+			}
+			this.resourceItemsByType.set(typeName, []);
 		}
-		this.resources = [];
+
 		Project.getTypes().forEach(type => {
 			this.editor.project.resources[type.getClassName()].forEach(resource => {
 				this.add(resource);

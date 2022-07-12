@@ -61,6 +61,9 @@ export function add(element) {
 		parent.children.push(element);
 
 		if (element instanceof HElement) {
+			if (element.parent) {
+				throw new Error("Trying to add element that already has a parent!");
+			}
 			element.parent = parent;
 			parent.html.append(element.html);
 			callOnAddIfConnected(element);
@@ -78,9 +81,82 @@ export function add(element) {
 	return element;
 }
 
+// Move element to place it inside the current parent.
+export function moveAdd(element) {
+	const parent = parentStack[parentStack.length - 1];
+
+	if (parent instanceof HElement) {
+		if (element instanceof HElement) {
+			if (element.parent) {
+				element.parent.children.splice(element.parent.children.indexOf(element), 1);
+			}
+			element.parent = parent;
+			parent.children.push(element);
+
+			const wasConnected = element.html.isConnected;
+			parent.html.append(element.html);
+
+			if (!wasConnected) {
+				callOnAddIfConnected(element);
+			} else {
+				callOnRemoveIfNotConnected(element);
+			}
+		} else {
+			parent.children.push(element);
+			parent.html.append(element);
+		}
+	} else {
+		if (element instanceof HElement) {
+			if (element.parent) {
+				element.parent.children.splice(element.parent.children.indexOf(element), 1);
+			}
+			element.parent = null;
+
+			const wasConnected = element.html.isConnected;
+			parent.append(element.html);
+
+			if (!wasConnected) {
+				callOnAddIfConnected(element);
+			} else {
+				callOnRemoveIfNotConnected(element);
+			}
+		} else {
+			parent.append(element);
+		}
+	}
+	return element;
+}
+
+// Move element to place it before another element.
+export function moveBefore(beforeElement, element) {
+	if (!(element instanceof HElement) || !(beforeElement instanceof HElement)) {
+		throw new Error("Not supported.");
+	}
+
+	if (element.parent) {
+		element.parent.children.splice(element.parent.children.indexOf(element), 1);
+	}
+	element.parent = beforeElement.parent;
+
+	const index = beforeElement.parent.children.indexOf(beforeElement);
+	beforeElement.parent.children.splice(index, 0, element);
+
+	const wasConnected = element.html.isConnected;
+	beforeElement.html.before(element.html);
+
+	if (!wasConnected) {
+		callOnAddIfConnected(element);
+	} else {
+		callOnRemoveIfNotConnected(element);
+	}
+}
+
 // Remove the element from its parent.
 export function remove(element) {
 	if (element instanceof HElement) {
+		if (!element.parent) {
+			throw new Error("Trying to remove element that already has no parent!");
+		}
 		if (element.parent) {
 			element.parent.children.splice(element.parent.children.indexOf(element), 1);
 			element.parent = null;

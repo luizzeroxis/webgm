@@ -31,7 +31,7 @@ export default class HMenuManager extends HElement {
 
 				const close = (resolveValue=null) => {
 					this.selectedIndex = resolveValue;
-					if (focusedBefore) {
+					if (focusedBefore && focusedBefore.isConnected) {
 						focusedBefore.focus();
 					} else {
 						menu.html.blur(); // This calls the event below

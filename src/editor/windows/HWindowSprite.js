@@ -140,16 +140,16 @@ export default class HWindowSprite extends HWindow {
 
 		if (this.paramImages.length > 0) {
 			this.paramImages[0].promise.then(() => {
-				this.divWidth.textContent = this.paramImages[0].image.width;
-				this.divHeight.textContent = this.paramImages[0].image.height;
+				this.divWidth.html.textContent = this.paramImages[0].image.width;
+				this.divHeight.html.textContent = this.paramImages[0].image.height;
 			});
 		} else {
 			this.imgSprite.setSrc(null);
-			this.divWidth.textContent = "32";
-			this.divHeight.textContent = "32";
+			this.divWidth.html.textContent = "32";
+			this.divHeight.html.textContent = "32";
 		}
 
-		this.divSubimages.textContent = this.paramImages.length.toString();
+		this.divSubimages.html.textContent = this.paramImages.length.toString();
 
 		this.updateShow();
 	}
@@ -159,7 +159,7 @@ export default class HWindowSprite extends HWindow {
 			this.imgSprite.setSrc(this.paramImages[this.showSubimage].image.src);
 		}
 
-		this.divShowSubimage.textContent = this.showSubimage.toString();
+		this.divShowSubimage.html.textContent = this.showSubimage.toString();
 		this.buttonShowSubimageLeft.setDisabled(this.showSubimage == 0);
 		this.buttonShowSubimageRight.setDisabled(this.showSubimage >= this.paramImages.length - 1);
 	}

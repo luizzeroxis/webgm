@@ -1,28 +1,27 @@
 :root {
 	color-scheme: light dark;
 	--window-client-horizontal-border: #ccc;
-	--warning-background: rgb(255, 192, 0);
+	--warning-background: #fb0;
 	--area-border: #444;
 	--window-border: #aaa;
 	--titlebar-background: #aaa;
-	/* Look into changing some of these colors, for... reasons. */
-	--menu-text: rgb(32, 33, 36);
-	--menu-background: rgb(255, 255, 255);
-	--menu-border: rgb(218, 220, 224);
-	--menu-item-selected-background: rgb(232, 232, 233);
+	--menu-text: #222;
+	--menu-background: #fff;
+	--menu-border: #ddd;
+	--menu-item-selected-background: #eee;
 }
 
 :root.dark {
 	color-scheme: dark;
 	--window-client-horizontal-border: #333;
-	--warning-background: rgb(128, 64, 0);
+	--warning-background: #740;
 	--area-border: #bbb;
 	--window-border: #555;
 	--titlebar-background: #555;
-	--menu-text: rgb(232, 234, 225);
-	--menu-background: rgb(41, 42, 45);
-	--menu-border: rgb(60, 64, 67);
-	--menu-item-selected-background: rgb(63, 64, 66);
+	--menu-text: #eee;
+	--menu-background: #222;
+	--menu-border: #444;
+	--menu-item-selected-background: #444;
 }
 :root.light {
 	color-scheme: light;

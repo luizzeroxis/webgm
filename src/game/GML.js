@@ -640,8 +640,7 @@ export default class GML {
 				if (this.game.globalVars.exists(varInfo.name))
 					return await this.game.globalVars.set(varInfo.name, value, varInfo.indexes);
 
-				await this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
-				return null;
+				return await this.currentInstance.vars.set(varInfo.name, value, varInfo.indexes);
 			} else {
 				const instances = this.objectReferenceToInstances(varInfo.object);
 
@@ -652,16 +651,13 @@ export default class GML {
 				if (instances == "global") {
 					if (this.game.globalVars.exists(varInfo.name))
 						return await this.game.globalVars.set(varInfo.name, value, varInfo.indexes);
-					if (this.game.globalObjectVars.exists(varInfo.name))
-						return await this.game.globalObjectVars.set(varInfo.name, value, varInfo.indexes);
 
-					throw this.makeErrorInGMLNode("Cannot assign to the variable", node);
+					return await this.game.globalObjectVars.set(varInfo.name, value, varInfo.indexes);
 				}
 
 				for (const instance of instances) {
 					await instance.vars.set(varInfo.name, value, varInfo.indexes);
 				}
-
 				return null;
 			}
 		} catch (e) {

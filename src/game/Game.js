@@ -957,7 +957,7 @@ export default class Game {
 		for (const {event, instance} of this.getEventsOfTypeAndSubtype("other", OTHER_OUTSIDE)) {
 			if (!instance.exists) continue;
 
-			const image = instance.getCurrentImage();
+			const image = instance.getImage();
 
 			// TODO use sprite bounding box (probably should use this in a lot of places)
 			const offsetLeft = image ? -instance.sprite.originx : 0;
@@ -977,7 +977,7 @@ export default class Game {
 		for (const {event, instance} of this.getEventsOfTypeAndSubtype("other", OTHER_BOUNDARY)) {
 			if (!instance.exists) continue;
 
-			const image = instance.getCurrentImage();
+			const image = instance.getImage();
 
 			// TODO use sprite bounding box (probably should use this in a lot of places)
 			const offsetLeft = image ? -instance.sprite.originx : 0;
@@ -1718,7 +1718,7 @@ export default class Game {
 		const image = sprite.images[imageIndex];
 		if (image == null) return false;
 
-		this.ctx.drawImage(image.image, x-sprite.originx, y-sprite.originy);
+		this.ctx.drawImage(image.image, x - sprite.originx, y - sprite.originy);
 
 		return true;
 	}

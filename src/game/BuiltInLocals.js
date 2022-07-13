@@ -191,16 +191,12 @@ export default class BuiltInLocals {
 
 	static sprite_width = {readOnly: true, get() {
 		if (this.sprite == null) return 0;
-
-		const image = this.sprite.images[this.getImageIndex()];
-		return image ? image.image.width : 1;
+		return this.getImage()?.width ?? 1;
 	}};
 
 	static sprite_height = {readOnly: true, get() {
 		if (this.sprite == null) return 0;
-
-		const image = this.sprite.images[this.getImageIndex()];
-		return image ? image.image.height : 1;
+		return this.getImage()?.height ?? 1;
 	}};
 
 	static sprite_xoffset = {readOnly: true, get() {
@@ -261,29 +257,29 @@ export default class BuiltInLocals {
 	static bbox_left = {readOnly: true, get() {
 		if (this.sprite == null) return -100000;
 
-		const image = this.sprite.images[this.getImageIndex()];
+		const image = this.getImage();
 		return this.x + (image ? -this.sprite.originx : 0);
 	}};
 
 	static bbox_right = {readOnly: true, get() {
 		if (this.sprite == null) return -100000;
 
-		const image = this.sprite.images[this.getImageIndex()];
-		return this.x + (image ? (-this.sprite.originx + image.image.width) : 0);
+		const image = this.getImage();
+		return this.x + (image ? (-this.sprite.originx + image.width) : 0);
 	}};
 
 	static bbox_top = {readOnly: true, get() {
 		if (this.sprite == null) return -100000;
 
-		const image = this.sprite.images[this.getImageIndex()];
+		const image = this.getImage();
 		return this.y + (image ? -this.sprite.originy : 0);
 	}};
 
 	static bbox_bottom = {readOnly: true, get() {
 		if (this.sprite == null) return -100000;
 
-		const image = this.sprite.images[this.getImageIndex()];
-		return this.y + (image ? (-this.sprite.originy + image.image.height) : 0);
+		const image = this.getImage();
+		return this.y + (image ? (-this.sprite.originy + image.height) : 0);
 	}};
 
 	// Unknown

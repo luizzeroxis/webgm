@@ -1323,16 +1323,9 @@ export default class BuiltInFunctions {
 	// ## Drawing sprites and backgrounds
 
 	static draw_sprite([spriteIndex, subimg, x, y]) {
-		if (spriteIndex >= 0) {
-			const sprite = this.game.project.getResourceById("ProjectSprite", spriteIndex);
-			if (sprite) {
-				this.game.drawSprite(sprite, subimg % sprite.images.length, x, y);
-			} else {
-				throw this.game.makeNonFatalError({
-					type: "trying_to_draw_non_existing_sprite",
-					spriteIndex: spriteIndex,
-				}, "Trying to draw non-existing sprite. (" + spriteIndex.toString() +")");
-			}
+		const sprite = this.game.project.getResourceById("ProjectSprite", spriteIndex);
+		if (sprite) {
+			this.game.drawSprite(sprite, subimg % sprite.images.length, x, y);
 		} else {
 			throw this.game.makeNonFatalError({
 				type: "trying_to_draw_non_existing_sprite",
@@ -5852,16 +5845,9 @@ export default class BuiltInFunctions {
 		const horizontal = (direction == 0 || direction == 2);
 		const vertical = (direction == 1 || direction == 2);
 
-		let spriteW = 0;
-		let spriteH = 0;
-
-		if (this.currentInstance.sprite) {
-			const image = this.currentInstance.sprite.images[this.currentInstance.getImageIndex()];
-			if (image) {
-				spriteW = image.image.width;
-				spriteH = image.image.height;
-			}
-		}
+		const image = this.currentInstance.getImage();
+		const spriteW = image?.width ?? 0;
+		const spriteH = image?.height ?? 0;
 
 		if (horizontal) {
 			const x = this.currentInstance.x;
@@ -6068,6 +6054,7 @@ export default class BuiltInFunctions {
 	// ### Timing
 
 	static action_set_alarm([numberOfSteps, inAlarmNo], relative) {
+		numberOfSteps = forceInteger(numberOfSteps);
 		numberOfSteps = (!relative ? numberOfSteps : this.currentInstance.alarms[inAlarmNo] + numberOfSteps);
 		this.currentInstance.alarms[inAlarmNo] = numberOfSteps;
 		return 0;
@@ -6917,4 +6904,8 @@ export default class BuiltInFunctions {
 		// return 0;
 	}
 	*/
+
+	static debugger() {
+		debugger; // eslint-disable-line no-debugger
+	}
 }

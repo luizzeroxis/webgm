@@ -1039,6 +1039,12 @@ export default class Game {
 		// Draw
 		await this.drawViews();
 
+		// Update some global variables
+		for (const roomBackground of this.room.backgrounds) {
+			roomBackground.x += roomBackground.horizontalSpeed;
+			roomBackground.y += roomBackground.verticalSpeed;
+		}
+
 		// Update some instance variables
 		for (const instance of this.instances) {
 			if (!instance.exists) continue;
@@ -1211,7 +1217,7 @@ export default class Game {
 		const image = background.image;
 		if (!image) return false;
 
-		// TODO horizontalSpeed, verticalSpeed, xScale, yScale, blend, alpha
+		// TODO xScale, yScale, blend, alpha
 
 		let xStart = roomBackground.x;
 		let yStart = roomBackground.y;

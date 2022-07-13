@@ -299,6 +299,18 @@ export class HNumberInput extends HLabelAndInput {
 		this.input.html.min = min;
 		this.input.html.max = max;
 	}
+
+	getIntValue(def=0) {
+		const value = parseInt(this.input.html.value);
+		if (Number.isNaN(value)) return def;
+		return value;
+	}
+
+	getFloatValue(def=0) {
+		const value = parseFloat(this.input.html.value);
+		if (Number.isNaN(value)) return def;
+		return value;
+	}
 }
 
 export class HRangeInput extends HLabelAndInput {
@@ -366,7 +378,9 @@ export class HSelect extends HElement {
 	constructor(label, _class) {
 		parent( super("div", {class: classToAttr(classToArray(_class).concat(["h-select"]))}) );
 			const id = "_id_" + uniqueID();
-			this.label = add( new HElement("label", {for: id}, label) );
+			if (label) {
+				this.label = add( new HElement("label", {for: id}, label) );
+			}
 			this.select = add( new HElement("select", {id: id}) );
 			endparent();
 	}

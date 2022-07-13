@@ -56,7 +56,7 @@ export default class HWindowRoom extends HWindow {
 					parent( this.tabControl.addTab("Backgrounds") );
 
 						this.inputDrawBackgroundColor = add( new HCheckBoxInput("Draw background color", room.drawBackgroundColor) );
-						this.inputBackgroundColor = add( new HColorInput("Background color:", room.backgroundColor) );
+						this.inputBackgroundColor = add( new HColorInput("Color:", room.backgroundColor) );
 
 						const getBackground = (index) => {
 							const currentBackground = this.paramBackgrounds[index];
@@ -86,12 +86,17 @@ export default class HWindowRoom extends HWindow {
 							const currentBackground = getBackground(currentBackgroundId);
 
 							this.inputBackgroundVisibleAtStart.setChecked(currentBackground.visibleAtStart);
+							this.inputForeground.setChecked(currentBackground.isForeground);
 							this.selectResourceBackground.setValue(currentBackground.backgroundIndex);
 							this.inputTileHorizontally.setChecked(currentBackground.tileHorizontally);
 							this.inputTileVertically.setChecked(currentBackground.tileVertically);
+							this.inputX.setValue(currentBackground.x);
+							this.inputY.setValue(currentBackground.y);
+							this.inputHorizontalSpeed.setValue(currentBackground.horizontalSpeed);
+							this.inputVerticalSpeed.setValue(currentBackground.verticalSpeed);
 						};
 
-						this.selectBackgrounds = add( new HSelect("Backgrounds:", "backgrounds") );
+						this.selectBackgrounds = add( new HSelect(null, "backgrounds") );
 						this.selectBackgroundsOptions = [];
 
 						parent(this.selectBackgrounds.select);
@@ -124,6 +129,12 @@ export default class HWindowRoom extends HWindow {
 							this.updateCanvasPreview();
 						});
 
+						this.inputForeground = add( new HCheckBoxInput("Foreground image") );
+						this.inputForeground.setOnChange(() => {
+							getOrCreateCurrentBackground().isForeground = this.inputForeground.getChecked();
+							this.updateCanvasPreview();
+						});
+
 						this.selectResourceBackground = add( new HResourceSelect(this.editor, null, ProjectBackground) );
 						this.selectResourceBackground.setOnChange(() => {
 							getOrCreateCurrentBackground().backgroundIndex = this.selectResourceBackground.getValue();
@@ -140,6 +151,28 @@ export default class HWindowRoom extends HWindow {
 						this.inputTileVertically.setOnChange(() => {
 							getOrCreateCurrentBackground().tileVertically = this.inputTileVertically.getChecked();
 							this.updateCanvasPreview();
+						});
+
+						this.inputX = add( new HNumberInput("X:") );
+						this.inputX.setOnChange(() => {
+							getOrCreateCurrentBackground().x = this.inputX.getFloatValue();
+							this.updateCanvasPreview();
+						});
+
+						this.inputY = add( new HNumberInput("Y:") );
+						this.inputY.setOnChange(() => {
+							getOrCreateCurrentBackground().y = this.inputY.getFloatValue();
+							this.updateCanvasPreview();
+						});
+
+						this.inputHorizontalSpeed = add( new HNumberInput("Hor. Speed:") );
+						this.inputHorizontalSpeed.setOnChange(() => {
+							getOrCreateCurrentBackground().horizontalSpeed = this.inputHorizontalSpeed.getFloatValue();
+						});
+
+						this.inputVerticalSpeed = add( new HNumberInput("Vert. Speed:") );
+						this.inputVerticalSpeed.setOnChange(() => {
+							getOrCreateCurrentBackground().verticalSpeed = this.inputVerticalSpeed.getFloatValue();
 						});
 
 						updateBackgroundProperties();

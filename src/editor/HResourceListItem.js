@@ -1,24 +1,24 @@
 import {parent, endparent, add, HElement, HButton, HImage} from "../common/H.js";
 import {ProjectSprite, ProjectSound, ProjectBackground, ProjectObject} from "../common/Project.js";
 
-import DefaultProjectFontIcon from "./img/default-ProjectFont-icon.png";
-import DefaultProjectPathIcon from "./img/default-ProjectPath-icon.png";
-import DefaultProjectRoomIcon from "./img/default-ProjectRoom-icon.png";
-import DefaultProjectScriptIcon from "./img/default-ProjectScript-icon.png";
-import DefaultProjectSoundIcon from "./img/default-ProjectSound-icon.png";
-import DefaultProjectTimelineIcon from "./img/default-ProjectTimeline-icon.png";
+import FontResourceIcon from "./img/font-resource-icon.png";
+import PathResourceIcon from "./img/path-resource-icon.png";
+import RoomResourceIcon from "./img/room-resource-icon.png";
+import ScriptResourceIcon from "./img/script-resource-icon.png";
+import SoundResourceIcon from "./img/sound-resource-icon.png";
+import TimelineResourceIcon from "./img/timeline-resource-icon.png";
 
 export default class HResourceListItem extends HElement {
-	static resourceTypesIcons = {
+	static resourceIcons = {
 		"ProjectSprite": null,
-		"ProjectSound": DefaultProjectSoundIcon,
+		"ProjectSound": SoundResourceIcon,
 		"ProjectBackground": null,
-		"ProjectPath": DefaultProjectPathIcon,
-		"ProjectScript": DefaultProjectScriptIcon,
-		"ProjectFont": DefaultProjectFontIcon,
-		"ProjectTimeline": DefaultProjectTimelineIcon,
+		"ProjectPath": PathResourceIcon,
+		"ProjectScript": ScriptResourceIcon,
+		"ProjectFont": FontResourceIcon,
+		"ProjectTimeline": TimelineResourceIcon,
 		"ProjectObject": null,
-		"ProjectRoom": DefaultProjectRoomIcon,
+		"ProjectRoom": RoomResourceIcon,
 	};
 
 	constructor(resource, editor) {
@@ -114,7 +114,7 @@ export default class HResourceListItem extends HElement {
 			}
 		} else
 		if (this.resource.constructor == ProjectSound) {
-			src = DefaultProjectSoundIcon; // TODO: different icon for different kinds of sounds
+			src = SoundResourceIcon; // TODO: different icon for different kinds of sounds
 		} else
 		if (this.resource.constructor == ProjectBackground) {
 			if (this.resource.image) {
@@ -131,7 +131,7 @@ export default class HResourceListItem extends HElement {
 				}
 			}
 		} else {
-			src = HResourceListItem.resourceTypesIcons[this.resource.constructor.getClassName()];
+			src = HResourceListItem.resourceIcons[this.resource.constructor.getClassName()];
 		}
 
 		this.icon.setSrc(src);

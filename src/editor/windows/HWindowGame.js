@@ -1,4 +1,5 @@
 import {parent, endparent, add, HElement, HCanvas} from "../../common/H.js";
+import HMenuManager from "../HMenuManager.js";
 import HWindow from "../HWindow.js";
 
 export default class HWindowGame extends HWindow {
@@ -13,6 +14,7 @@ export default class HWindowGame extends HWindow {
 			parent( add( new HElement("div", {class: "window-game"}) ) );
 				this.canvas = add( new HCanvas(640, 480) );
 				this.canvas.html.setAttribute("tabindex", 0);
+				this.menuManager = add(new HMenuManager());
 				endparent();
 			endparent();
 	}

@@ -183,10 +183,11 @@ export default class Game {
 		"WakeUp": -1,
 	};
 
-	constructor(project, canvas, input) {
-		this.project = new Project(project);
-		this.canvas = canvas;
-		this.input = input;
+	constructor(options) {
+		this.project = new Project(options.project);
+		this.canvas = options.canvas;
+		this.input = options.input;
+		this.menuManager = options.menuManager;
 
 		this.dispatcher = new Dispatcher();
 
@@ -220,6 +221,9 @@ export default class Game {
 
 		this.currentMouse = 0;
 		this.lastMouse = 0;
+
+		this.mouseDisplayX = 0;
+		this.mouseDisplayY = 0;
 
 		// Engine
 		this.builtInGlobalVars = null;
@@ -448,6 +452,8 @@ export default class Game {
 		this.mouseDownHandler = (e) => {
 			e.preventDefault();
 
+			this.canvas.focus({preventScroll: true});
+
 			const button = toEngineButton(e.button);
 			this.mouse[button] = true;
 			this.mousePressed[button] = true;
@@ -460,8 +466,6 @@ export default class Game {
 		this.mouseUpHandler = (e) => {
 			e.preventDefault();
 
-			this.canvas.focus();
-
 			const button = toEngineButton(e.button);
 			this.mouse[button] = false;
 			this.mouseReleased[button] = true;
@@ -472,6 +476,8 @@ export default class Game {
 
 		this.mouseMoveHandler = (e) => {
 			const rect = this.input.getBoundingClientRect();
+			this.mouseDisplayX = e.clientX + document.documentElement.scrollLeft;
+			this.mouseDisplayY = e.clientY + document.documentElement.scrollTop;
 			this.mouseX = Math.floor(Math.max(0, Math.min(e.clientX - rect.left, this.room.width || 0)));
 			this.mouseY = Math.floor(Math.max(0, Math.min(e.clientY - rect.top, this.room.height || 0)));
 		};

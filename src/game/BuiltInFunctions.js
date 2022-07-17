@@ -2189,14 +2189,12 @@ export default class BuiltInFunctions {
 		// return 0;
 	}
 
-	static display_mouse_get_x([_]) {
-		throw new EngineException("Function display_mouse_get_x is not implemented");
-		// return 0;
+	static display_mouse_get_x([]) {
+		return this.game.mouseDisplayX;
 	}
 
-	static display_mouse_get_y([_]) {
-		throw new EngineException("Function display_mouse_get_y is not implemented");
-		// return 0;
+	static display_mouse_get_y([]) {
+		return this.game.mouseDisplayY;
 	}
 
 	static display_mouse_set([_]) {
@@ -2907,14 +2905,20 @@ export default class BuiltInFunctions {
 		// return 0;
 	}
 
-	static show_menu([_]) {
-		throw new EngineException("Function show_menu is not implemented");
-		// return 0;
+	static async show_menu([str, def]) {
+		const x = this.game.mouseDisplayX;
+		const y = this.game.mouseDisplayY;
+
+		return await BuiltInFunctions.show_menu_pos.call(this, [x, y, str, def]);
 	}
 
-	static show_menu_pos([_]) {
-		throw new EngineException("Function show_menu_pos is not implemented");
-		// return 0;
+	static async show_menu_pos([x, y, str, def]) {
+		const items = str.split("|").map(text => ( { text: text } ));
+
+		const result = await this.game.menuManager.openMenu(items, {x: x, y: y});
+
+		if (result == null) return def;
+		return result;
 	}
 
 	static get_color([_]) {

@@ -76,6 +76,8 @@ export default class Editor {
 			});
 		}
 
+		this.updateProjectName();
+
 		// Actually add to the DOM
 		add(this.div);
 	}
@@ -311,7 +313,12 @@ export default class Editor {
 			this.gameWindow.canvas.html.focus({preventScroll: true});
 		}
 
-		this.game = new Game(this.project, this.gameWindow.canvas.html, this.gameWindow.canvas.html);
+		this.game = new Game({
+			project: this.project,
+			canvas: this.gameWindow.canvas.html,
+			input: this.gameWindow.canvas.html,
+			menuManager: this.gameWindow.menuManager,
+		});
 
 		const gameListeners = this.game.dispatcher.listen({
 			close: e => {

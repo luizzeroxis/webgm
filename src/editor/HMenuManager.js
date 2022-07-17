@@ -2,7 +2,7 @@ import {parent, endparent, add, remove, HElement} from "../common/H.js";
 
 export default class HMenuManager extends HElement {
 	constructor() {
-		super("div");
+		super("div", {class: "h-menu-manager"});
 
 		this.selectedIndex = null;
 	}
@@ -27,12 +27,12 @@ export default class HMenuManager extends HElement {
 				menu.html.style.top = y.toString() + "px";
 
 				const focusedBefore = document.activeElement;
-				menu.html.focus();
+				menu.html.focus({preventScroll: true});
 
 				const close = (resolveValue=null) => {
 					this.selectedIndex = resolveValue;
 					if (focusedBefore && focusedBefore.isConnected) {
-						focusedBefore.focus();
+						focusedBefore.focus({preventScroll: true});
 					} else {
 						menu.html.blur(); // This calls the event below
 					}
@@ -47,13 +47,13 @@ export default class HMenuManager extends HElement {
 					if (e.code == "Escape") {
 						close(null);
 					} else if (e.code == "Enter") {
+						e.preventDefault();
 						if (this.selectedIndex != null) {
 							items[this.selectedIndex].onClick?.();
 							close(this.selectedIndex);
 						} else {
 							close(null);
 						}
-						e.preventDefault();
 					} else if (e.code == "ArrowDown") {
 						e.preventDefault();
 						items[this.selectedIndex]?.menuItemElement.html.classList.remove("selected");
@@ -77,6 +77,10 @@ export default class HMenuManager extends HElement {
 
 						items[this.selectedIndex].menuItemElement.html.classList.add("selected");
 					}
+				});
+
+				menu.html.addEventListener("contextmenu", e => {
+					e.preventDefault();
 				});
 
 				parent(menu);

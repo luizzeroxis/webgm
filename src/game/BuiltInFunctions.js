@@ -203,9 +203,8 @@ export default class BuiltInFunctions {
 		return val.toString();
 	}
 
-	static string_format([_]) {
-		throw new EngineException("Function string_format is not implemented");
-		// return 0;
+	static string_format([val, tot, dec]) {
+		return val.toFixed(dec).padStart(tot);
 	}
 
 	static string_length([str]) {
@@ -224,14 +223,12 @@ export default class BuiltInFunctions {
 		return str[index - 1];
 	}
 
-	static string_delete([_]) {
-		throw new EngineException("Function string_delete is not implemented");
-		// return 0;
+	static string_delete([str, index, count]) {
+		return str.substring(0, index) + str.substring(index+count);
 	}
 
-	static string_insert([_]) {
-		throw new EngineException("Function string_insert is not implemented");
-		// return 0;
+	static string_insert([substr, str, index]) {
+		return str.substring(0, index) + substr + str.substring(index);
 	}
 
 	static string_replace([str, substr, newstr]) {
@@ -242,9 +239,16 @@ export default class BuiltInFunctions {
 		return str.replaceAll(substr, newstr);
 	}
 
-	static string_count([_]) {
-		throw new EngineException("Function string_count is not implemented");
-		// return 0;
+	static string_count([substr, str]) {
+		let count = 0;
+		let position;
+
+		while (true) {
+			position = str.indexOf(substr, position);
+			if (position == -1) return count;
+			position += substr.length;
+			count += 1;
+		}
 	}
 
 	static string_lower([str]) {
@@ -259,19 +263,16 @@ export default class BuiltInFunctions {
 		return str.repeat(count);
 	}
 
-	static string_letters([_]) {
-		throw new EngineException("Function string_letters is not implemented");
-		// return 0;
+	static string_letters([str]) {
+		return str.match(/[A-Za-z]/g).join("");
 	}
 
-	static string_digits([_]) {
-		throw new EngineException("Function string_digits is not implemented");
-		// return 0;
+	static string_digits([str]) {
+		return str.match(/[0-9]/g).join("");
 	}
 
-	static string_lettersdigits([_]) {
-		throw new EngineException("Function string_lettersdigits is not implemented");
-		// return 0;
+	static string_lettersdigits([str]) {
+		return str.match(/[A-Za-z0-9]/g).join("");
 	}
 
 	static clipboard_has_text([_]) {
@@ -807,9 +808,14 @@ export default class BuiltInFunctions {
 
 	// ## Instances
 
-	static instance_find([_]) {
-		throw new EngineException("Function instance_find is not implemented");
-		// return 0;
+	static instance_find([obj, n]) {
+		const instances = this.objectReferenceToInstances(obj);
+
+		if (Array.isArray(instances)) {
+			if (instances[n]) return instances[n].id;
+		}
+
+		return -4;
 	}
 
 	static instance_exists([obj]) {

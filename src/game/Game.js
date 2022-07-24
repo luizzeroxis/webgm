@@ -2,14 +2,13 @@ import Dispatcher from "../common/Dispatcher.js";
 import Events from "../common/Events.js";
 import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from "../common/Exceptions.js";
 import {Project} from "../common/Project.js";
-import {makeCSSFont} from "../common/tools.js";
 import VariableHolder from "../common/VariableHolder.js";
 
-import ActionsParser from "./ActionsParser.js";
 import BuiltInConstants from "./BuiltInConstants.js";
 import BuiltInGlobals from "./BuiltInGlobals.js";
 import GML from "./GML.js";
 import Instance from "./Instance.js";
+import ProjectLoader from "./ProjectLoader.js";
 
 export default class Game {
 	static codeToWhichMap = {
@@ -225,6 +224,9 @@ export default class Game {
 		this.mouseDisplayX = 0;
 		this.mouseDisplayY = 0;
 
+		// Project
+		this.loadedProject = new ProjectLoader(this, this.project);
+
 		// Engine
 		this.builtInGlobalVars = null;
 		this.globalVars = null;
@@ -241,20 +243,10 @@ export default class Game {
 		this.currentEventActionNumber = null;
 
 		// GML
-		this.gml = null;
-		this.gmlCache = new Map();
-		this.actionsCache = new Map();
+		this.gml = new GML(this);
 
 		this.arguments = [];
 		this.argumentRelative = false;
-
-		// Sprites
-		this.imageDataCache = new Map();
-
-		// Fonts
-		this.cssFontsCache = {
-			"-1": makeCSSFont("Arial", 12, false, false),
-		};
 
 		// Main loop
 		this.timeout = null;
@@ -272,7 +264,6 @@ export default class Game {
 
 		// Audio
 		this.audioContext = null;
-		this.sounds = new Map();
 
 		// Cursor
 		this.cursorSprite = null;
@@ -314,7 +305,7 @@ export default class Game {
 			this.startEngine();
 			this.startAudio();
 
-			await this.loadProject();
+			await this.loadedProject.loadProject();
 			await this.loadFirstRoom();
 
 			this.startMainLoop();
@@ -520,234 +511,6 @@ export default class Game {
 			if (this.audioContext.state == "suspended") {
 				this.audioContext.resume();
 			}
-		}
-	}
-
-	// // Project loading
-
-	// Makes sure all resources are loaded, and parses GML code.
-	loadProject() {
-		const promises = [
-			this.loadSprites(),
-			this.loadSounds(),
-			this.loadBackgrounds(),
-		];
-
-		this.loadFonts();
-
-		this.loadActions();
-		this.loadGML();
-
-		return Promise.all(promises);
-	}
-
-	// Return a list of promises of loading sprite images.
-	loadSprites() {
-		const promises = [];
-
-		const offscreen = new OffscreenCanvas(0, 0);
-		const offscreenCtx = offscreen.getContext("2d");
-
-		this.project.resources.ProjectSprite.forEach(sprite => {
-			sprite.images.forEach((image, imageNumber) => {
-				image.load();
-				promises.push(image.promise
-					.then(() => {
-						if (image.image.width > offscreen.width || image.image.height > offscreen.height) {
-							offscreen.width = image.image.width;
-							offscreen.height = image.image.height;
-						}
-						offscreenCtx.drawImage(image.image, 0, 0);
-						const data = offscreenCtx.getImageData(0, 0, image.image.width, image.image.height);
-						this.imageDataCache.set(image, data);
-					})
-					.catch(() => {
-						throw new EngineException("Could not load image " + imageNumber.toString() + " in sprite " + sprite.name);
-					}));
-			});
-		});
-
-		return Promise.all(promises);
-	}
-
-	// Returns a list of promises of loading sounds.
-	loadSounds() {
-		const promises = [];
-		this.project.resources.ProjectSound.forEach(sound => {
-			if (!sound.sound) return;
-			sound.sound.load();
-			promises.push(sound.sound.promise
-				.catch(() => {
-					throw new EngineException("Could not load audio in sound " + sound.name);
-				}));
-
-			this.sounds.set(sound, {volume: sound.volume, audioNodes: []});
-		});
-		return Promise.all(promises);
-	}
-
-	// Returns a list of promises of loading background images.
-	loadBackgrounds() {
-		const promises = [];
-		this.project.resources.ProjectBackground.forEach(background => {
-			if (!background.image) return;
-			background.image.load();
-			promises.push(background.image.promise
-				.catch(() => {
-					throw new EngineException("Could not load image in background " + background.name);
-				}));
-		});
-		return Promise.all(promises);
-	}
-
-	// Loads all fonts.
-	loadFonts() {
-		this.project.resources.ProjectFont.forEach(font => {
-			this.cssFontsCache[font.id] = makeCSSFont(font.font, font.size, font.bold, font.italic);
-		});
-	}
-
-	// Parse all action lists in events and timeline moments into action trees.
-	loadActions() {
-		this.loadActionsTimelines(); // TODO
-		this.loadActionsObjects();
-	}
-
-	// Parse all action lists in timelines.
-	loadActionsTimelines() {} // TODO
-
-	// Parse all action lists in objects.
-	loadActionsObjects() {
-		this.project.resources.ProjectObject.every(object => {
-			return object.events.every(event => {
-				const parsedActions = new ActionsParser().parse(event.actions);
-				this.actionsCache.set(event, parsedActions);
-				return true;
-			});
-		});
-	}
-
-	// Compile all GML code, parsing it and checking for errors.
-	loadGML() {
-		this.gml = new GML(this);
-
-		this.loadGMLScripts();
-		this.loadGMLTimelines(); // TODO
-		this.loadGMLObjects();
-		this.loadGMLRooms();
-	}
-
-	// Compile all GML inside of scripts.
-	loadGMLScripts() {
-		this.project.resources.ProjectScript.every(script => {
-			return this.compileGMLAndCache(script.code, script, matchResult => {
-				throw new FatalErrorException({
-					type: "compilation",
-					location: "script",
-					locationScript: script,
-					matchResult: matchResult,
-					text:
-						"\n___________________________________________\n"
-						+ "COMPILATION ERROR in Script: " + script.name + "\n\n"
-						+ matchResult.message + "\n",
-				});
-			});
-		});
-	}
-
-	// Compile all GML inside time lines.
-	loadGMLTimelines() {} // TODO
-
-	// Compile all GML inside objects.
-	loadGMLObjects() {
-		this.project.resources.ProjectObject.every(object => {
-			return object.events.every(event => {
-				return event.actions.every((action, actionNumber) => {
-					if (action.typeKind == "code") {
-						return this.compileGMLAndCache(action.args[0].value, action, matchResult => {
-							throw this.makeFatalError({
-									type: "compilation",
-									matchResult: matchResult,
-								},
-								"COMPILATION ERROR in code action:\n" + matchResult.message + "\n",
-								object, event, actionNumber,
-							);
-						});
-					} else if (action.typeKind == "normal" && action.typeExecution == "code") {
-						return this.compileGMLAndCache(action.args[0].value, action, matchResult => {
-							throw this.makeFatalError({
-									type: "compilation",
-									matchResult: matchResult,
-								},
-								"COMPILATION ERROR in code action (in action type in a library):\n" + matchResult.message + "\n",
-								object, event, actionNumber,
-							);
-						});
-					} else if (action.typeKind == "variable") {
-						const name = action.args[0].value;
-						const value = action.args[1].value;
-						const assignSymbol = action.relative ? " += " : " = ";
-						const code = name + assignSymbol + value;
-
-						return this.compileGMLAndCache(code, action, matchResult => {
-							throw this.makeFatalError({
-									type: "compilation",
-									matchResult: matchResult,
-								},
-								"COMPILATION ERROR in code action (in variable set):\n" + matchResult.message + "\n",
-								object, event, actionNumber,
-							);
-						});
-					}
-					return true;
-				});
-			});
-		});
-	}
-
-	// Compile all GML inside rooms.
-	loadGMLRooms() {
-		this.project.resources.ProjectRoom.every(room => {
-			if (!room.instances.every(instance => {
-				return this.compileGMLAndCache(instance.creationCode, instance, matchResult => {
-					throw new FatalErrorException({
-						type: "compilation",
-						location: "instanceCreationCode",
-						locationInstance: instance,
-						locationRoom: room,
-						matchResult: matchResult,
-						text:
-							"\n___________________________________________\n"
-							+ "COMPILATION ERROR in creation code for instance " + instance.id + " in room " + room.name + "\n\n"
-							+ matchResult.message + "\n",
-					});
-				});
-			})) return false;
-
-			return this.compileGMLAndCache(room.creationCode, room, matchResult => {
-				throw new FatalErrorException({
-					type: "compilation",
-					location: "roomCreationCode",
-					locationRoom: room,
-					matchResult: matchResult,
-					text:
-						"\n___________________________________________\n"
-						+ "COMPILATION ERROR in creation code of room " + room.name + "\n\n"
-						+ matchResult.message + "\n",
-				});
-			});
-		});
-	}
-
-	// Compiles a GML code string and stores the result in a cache. mapKey is used when accessing gmlCache.
-	compileGMLAndCache(code, mapKey, failureFunction) {
-		const result = this.gml.compile(code);
-		if (result.succeeded) {
-			this.gmlCache.set(mapKey, result.ast);
-			return true;
-		} else {
-			failureFunction(result.matchResult);
-			return false;
 		}
 	}
 
@@ -1263,7 +1026,7 @@ export default class Game {
 		this.currentEventInstance = instance;
 		this.currentEventOther = other;
 
-		const parsedActions = this.actionsCache.get(event);
+		const parsedActions = this.loadedProject.actionsCache.get(event);
 
 		for (const treeAction of parsedActions) {
 			try {
@@ -1325,7 +1088,7 @@ export default class Game {
 						if (treeAction.type == "executeFunction") {
 							currentResult = await this.gml.builtInFunction(treeAction.function, applyToInstance, otherInstance, args, treeAction.relative);
 						} else {
-							currentResult = await this.gml.execute(this.gmlCache.get(treeAction.action), applyToInstance, otherInstance, args, treeAction.relative);
+							currentResult = await this.gml.execute(this.loadedProject.gmlCache.get(treeAction.action), applyToInstance, otherInstance, args, treeAction.relative);
 						}
 
 						if (typeof currentResult !== "number" || currentResult < 0.5) {
@@ -1368,14 +1131,14 @@ export default class Game {
 			case "variable":
 				for (const applyToInstance of applyToInstances) {
 					if (!applyToInstance.exists) continue;
-					await this.gml.execute(this.gmlCache.get(treeAction.action), applyToInstance, otherInstance);
+					await this.gml.execute(this.loadedProject.gmlCache.get(treeAction.action), applyToInstance, otherInstance);
 				}
 				break;
 
 			case "code":
 				for (const applyToInstance of applyToInstances) {
 					if (!applyToInstance.exists) continue;
-					await this.gml.execute(this.gmlCache.get(treeAction.action), applyToInstance, otherInstance);
+					await this.gml.execute(this.loadedProject.gmlCache.get(treeAction.action), applyToInstance, otherInstance);
 				}
 				break;
 		}
@@ -1625,83 +1388,70 @@ export default class Game {
 		return false;
 	}
 
-	// Check if two instances, with precise shape, are colliding.
-	collisionInstancePreciseOnInstancePrecise(a, b, aX, aY, bX, bY) {
-		aX = aX ?? Math.floor(a.x);
-		aY = aY ?? Math.floor(a.y);
-		const aImage = a.sprite.images[a.getImageIndex()];
-		const aX1 = aX - a.sprite.originx;
-		const aY1 = aY - a.sprite.originy;
-		const aX2 = aX1 + aImage.image.width;
-		const aY2 = aY1 + aImage.image.height;
+	getInstanceCollisionInfo(instance, x, y) {
+		x = x ?? Math.floor(instance.x);
+		y = y ?? Math.floor(instance.y);
+		const image = instance.sprite.images[instance.getImageIndex()];
+		const x1 = x - instance.sprite.originx;
+		const y1 = y - instance.sprite.originy;
+		const x2 = x1 + image.image.width;
+		const y2 = y1 + image.image.height;
+		return {x, y, image, x1, y1, x2, y2};
+	}
 
-		bX = bX ?? Math.floor(b.x);
-		bY = bY ?? Math.floor(b.y);
-		const bImage = b.sprite.images[b.getImageIndex()];
-		const bX1 = bX - b.sprite.originx;
-		const bY1 = bY - b.sprite.originy;
-		const bX2 = bX1 + bImage.image.width;
-		const bY2 = bY1 + bImage.image.height;
+	// Check if two instances, with precise shape, are colliding.
+	collisionInstancePreciseOnInstancePrecise(aInstance, bInstance, aX, aY, bX, bY) {
+		const a = this.getInstanceCollisionInfo(aInstance, aX, aY);
+		const b = this.getInstanceCollisionInfo(bInstance, bX, bY);
 
 		const rectCol = (
-			aX1 <= bX1 + bImage.image.width
-			&& bX1 <= aX1 + aImage.image.width
-			&& aY1 <= bY1 + bImage.image.height
-			&& bY1 <= aY1 + aImage.image.height
+			a.x1 <= b.x2
+			&& b.x1 <= a.x2
+			&& a.y1 <= b.y2
+			&& b.y1 <= a.y2
 		);
 
 		if (!rectCol) return false;
 
-		const aData = this.imageDataCache.get(aImage);
-		const bData = this.imageDataCache.get(bImage);
+		const aData = this.loadedProject.imageDataCache.get(a.image);
+		const bData = this.loadedProject.imageDataCache.get(b.image);
 
 		// Get the 'global' (in relation to room) rect in the intersection between the two rects.
-		const gX1 = Math.max(aX1, bX1);
-		const gY1 = Math.max(aY1, bY1);
-		const gX2 = Math.min(aX2, bX2);
-		const gY2 = Math.min(aY2, bY2);
+		const gX1 = Math.max(a.x1, b.x1);
+		const gY1 = Math.max(a.y1, b.y1);
+		const gX2 = Math.min(a.x2, b.x2);
+		const gY2 = Math.min(a.y2, b.y2);
 
 		// Loop through all pixels in that rect.
 		for (let gX = gX1; gX < gX2; ++gX)
 		for (let gY = gY1; gY < gY2; ++gY) {
 			// Here we undo all transformations made to the sprite.
 			// It's rounded down to the nearest pixel.
-			const aDataX = Math.floor(gX - aX1);
-			const aDataY = Math.floor(gY - aY1);
+			const aDataX = Math.floor(gX - a.x1);
+			const aDataY = Math.floor(gY - a.y1);
 			// TODO this may be out of bounds.
-			const aCol = (aData.data[(aDataY * aData.width + aDataX) * 4 + 3]) >= (255-a.sprite.alphaTolerance);
+			const aCol = (aData.data[(aDataY * aData.width + aDataX) * 4 + 3]) >= (255-aInstance.sprite.alphaTolerance);
 			if (!aCol) continue;
 
-			const bDataX = Math.floor(gX - bX1);
-			const bDataY = Math.floor(gY - bY1);
-			const bCol = (bData.data[(bDataY * bData.width + bDataX) * 4 + 3]) >= (255-b.sprite.alphaTolerance);
-			if (bCol) {
-				return true;
-			}
+			const bDataX = Math.floor(gX - b.x1);
+			const bDataY = Math.floor(gY - b.y1);
+			const bCol = (bData.data[(bDataY * bData.width + bDataX) * 4 + 3]) >= (255-bInstance.sprite.alphaTolerance);
+			if (bCol) return true;
 		}
 
 		return false;
 	}
 
 	// Check if two instances, with rectangular shape, are colliding.
-	collisionInstanceRectangleOnInstanceRectangle(a, b, aX, aY, bX, bY) {
-		aX = aX ?? a.x;
-		aY = aY ?? a.y;
-		const aX1 = aX - a.sprite.originx;
-		const aY1 = aY - a.sprite.originy;
-		const aImage = a.sprite.images[a.getImageIndex()];
-
-		bX = bX ?? b.x;
-		bY = bY ?? b.y;
-		const bX1 = bX - b.sprite.originx;
-		const bY1 = bY - b.sprite.originy;
-		const bImage = b.sprite.images[b.getImageIndex()];
+	collisionInstanceRectangleOnInstanceRectangle(aInstance, bInstance, aX, aY, bX, bY) {
+		const a = this.getInstanceCollisionInfo(aInstance, aX, aY);
+		const b = this.getInstanceCollisionInfo(bInstance, bX, bY);
 
 		return (
-			aX1 <= bX1 + bImage.image.width
-			&& bX1 <= aX1 + aImage.image.width
-			&& aY1 <= bY1 + bImage.image.height
-			&& bY1 <= aY1 + aImage.image.height
+			a.x1 <= b.x2
+			&& b.x1 <= a.x2
+			&& a.y1 <= b.y2
+			&& b.y1 <= a.y2
 		);
 	}
 
@@ -1781,25 +1531,25 @@ export default class Game {
 		this.startAudio();
 		const audioNode = this.audioContext.createMediaElementSource(new Audio(sound.sound.src));
 		audioNode.connect(this.audioContext.destination);
-		audioNode.mediaElement.volume = this.sounds.get(sound).volume;
+		audioNode.mediaElement.volume = this.loadedProject.sounds.get(sound).volume;
 		audioNode.mediaElement.loop = loop;
 		audioNode.mediaElement.play();
 
-		this.sounds.get(sound).audioNodes.push(audioNode);
+		this.loadedProject.sounds.get(sound).audioNodes.push(audioNode);
 	}
 
 	// Stop all playing sounds from a sound resource.
 	stopSound(sound) {
-		for (const audioNode of this.sounds.get(sound).audioNodes) {
+		for (const audioNode of this.loadedProject.sounds.get(sound).audioNodes) {
 			audioNode.mediaElement.pause();
 			audioNode.disconnect();
 		}
-		this.sounds.get(sound).audioNodes = [];
+		this.loadedProject.sounds.get(sound).audioNodes = [];
 	}
 
 	// Stop all sounds being played.
 	stopAllSounds() {
-		for (const value of this.sounds.values()) {
+		for (const value of this.loadedProject.sounds.values()) {
 			for (const audioNode of value.audioNodes) {
 				audioNode.mediaElement.pause();
 				audioNode.disconnect();

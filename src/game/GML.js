@@ -259,7 +259,7 @@ export default class GML {
 				const script = this.game.project.resources.ProjectScript.find(x => x.name == name);
 
 				if (script) {
-					return this.execute(this.game.gmlCache.get(script), this.currentInstance, this.currentOther, args);
+					return this.execute(this.game.loadedProject.gmlCache.get(script), this.currentInstance, this.currentOther, args);
 				} else {
 					return this.builtInFunction(name, this.currentInstance, this.currentOther, args);
 				}

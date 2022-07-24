@@ -1649,7 +1649,7 @@ export default class BuiltInFunctions {
 
 		this.game.ctx.fillStyle = this.game.drawColorAlpha;
 
-		this.game.ctx.font = this.game.cssFontsCache[this.game.drawFont];
+		this.game.ctx.font = this.game.loadedProject.cssFontsCache[this.game.drawFont];
 
 		// holy shit now this is epic
 		this.game.ctx.textAlign = (["left", "center", "right"])[this.game.drawHAlign];
@@ -2495,7 +2495,7 @@ export default class BuiltInFunctions {
 		const sound = this.game.project.getResourceById("ProjectSound", index);
 		if (!sound) return 0;
 
-		for (const audioNode of this.game.sounds.get(sound).audioNodes) {
+		for (const audioNode of this.game.loadedProject.sounds.get(sound).audioNodes) {
 			if (!audioNode.mediaElement.ended) {
 				return 1;
 			}
@@ -2508,9 +2508,9 @@ export default class BuiltInFunctions {
 		const sound = this.game.project.getResourceById("ProjectSound", index);
 		if (!sound) return 0; // TODO check if error
 
-		this.game.sounds.get(sound).volume = value;
+		this.game.loadedProject.sounds.get(sound).volume = value;
 
-		for (const audioNode of this.game.sounds.get(sound).audioNodes) {
+		for (const audioNode of this.game.loadedProject.sounds.get(sound).audioNodes) {
 			audioNode.mediaElement.volume = value;
 		}
 
@@ -3646,7 +3646,7 @@ export default class BuiltInFunctions {
 	static script_execute([scr, ...args]) {
 		const script = this.game.project.getResourceById("ProjectScript", scr);
 		if (script) {
-			return this.execute(this.game.gmlCache.get(script), this.currentInstance, this.currentOther, args);
+			return this.execute(this.game.loadedProject.gmlCache.get(script), this.currentInstance, this.currentOther, args);
 		} else {
 			throw this.game.makeNonFatalError({
 					type: "trying_to_execute_non_existing_script",
@@ -6272,7 +6272,7 @@ export default class BuiltInFunctions {
 		const scriptResource = this.game.project.getResourceById("ProjectScript", script);
 
 		if (scriptResource) {
-			return this.execute(this.game.gmlCache.get(scriptResource), this.currentInstance, this.currentOther,
+			return this.execute(this.game.loadedProject.gmlCache.get(scriptResource), this.currentInstance, this.currentOther,
 				[argument0, argument1, argument2, argument3, argument4]);
 		}
 		return 0;

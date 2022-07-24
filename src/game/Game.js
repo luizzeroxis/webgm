@@ -827,7 +827,7 @@ export default class Game {
 			if (i >= imageNumber) {
 				i -= imageNumber;
 			}
-			instance.vars.imageIndex = i;
+			instance.imageIndex = i;
 		}
 
 		// Check global game settings default keys

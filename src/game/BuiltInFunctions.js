@@ -1331,7 +1331,7 @@ export default class BuiltInFunctions {
 	static draw_sprite([spriteIndex, subimg, x, y]) {
 		const sprite = this.game.project.getResourceById("ProjectSprite", spriteIndex);
 		if (sprite) {
-			this.game.drawSprite(sprite, subimg % sprite.images.length, x, y);
+			this.game.drawSprite(sprite, subimg, x, y);
 		} else {
 			throw this.game.makeNonFatalError({
 				type: "trying_to_draw_non_existing_sprite",

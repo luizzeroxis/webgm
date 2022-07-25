@@ -1471,7 +1471,7 @@ export default class Game {
 
 	// Draw a sprite with the image index at x and y.
 	drawSprite(sprite, imageIndex, x, y) {
-		const image = sprite.images[imageIndex];
+		const image = sprite.images[Math.floor(imageIndex) % sprite.images.length];
 		if (image == null) return false;
 
 		this.ctx.drawImage(image.image, x - sprite.originx, y - sprite.originy);

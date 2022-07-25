@@ -67,12 +67,12 @@ export default class Instance {
 	}
 
 	getImage() {
-		return this.sprite?.images[Math.floor(this.imageIndex % this.sprite.images.length)]?.image;
+		return this.sprite?.images[Math.floor(Math.floor(this.imageIndex) % this.sprite.images.length)]?.image;
 	}
 
 	getImageIndex() {
 		if (this.sprite == null || this.sprite.images.length == 0) return null;
-		return Math.floor(this.imageIndex % this.sprite.images.length);
+		return Math.floor(Math.floor(this.imageIndex) % this.sprite.images.length);
 	}
 
 	setHspeedAndVspeed(hspeed, vspeed) {

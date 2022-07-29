@@ -1040,9 +1040,12 @@ export default class BuiltInFunctions {
 		// return 0;
 	}
 
-	static event_user([_]) {
-		throw new EngineException("Function event_user is not implemented");
-		// return 0;
+	static async event_user([numb]) {
+		if (numb >= 0 && numb <= 15) {
+			// User 0 has id of 10
+			await this.game.doEventOfInstance("other", numb + 10, this.currentInstance);
+		}
+		return 0;
 	}
 
 	static event_inherited([_]) {
@@ -1328,17 +1331,16 @@ export default class BuiltInFunctions {
 
 	// ## Drawing sprites and backgrounds
 
-	static draw_sprite([spriteIndex, subimg, x, y]) {
-		const sprite = this.game.project.getResourceById("ProjectSprite", spriteIndex);
-		if (sprite) {
-			this.game.drawSprite(sprite, subimg, x, y);
+	static draw_sprite([sprite, subimg, x, y]) {
+		const spriteResource = this.game.project.getResourceById("ProjectSprite", sprite);
+		if (spriteResource) {
+			this.game.drawSprite(spriteResource, subimg, x, y);
 		} else {
 			throw this.game.makeNonFatalError({
 				type: "trying_to_draw_non_existing_sprite",
-				spriteIndex: spriteIndex,
-			}, "Trying to draw non-existing sprite. (" + spriteIndex.toString() +")");
+				sprite: sprite,
+			}, "Trying to draw non-existing sprite. (" + sprite.toString() +")");
 		}
-
 		return 0;
 	}
 
@@ -1357,9 +1359,17 @@ export default class BuiltInFunctions {
 		// return 0;
 	}
 
-	static draw_background([_]) {
-		throw new EngineException("Function draw_background is not implemented");
-		// return 0;
+	static draw_background([back, x, y]) {
+		const backgroundResource = this.game.project.getResourceById("ProjectBackground", back);
+		if (backgroundResource) {
+			this.game.ctx.drawImage(backgroundResource.image.image, x, y);
+		} else {
+			throw this.game.makeNonFatalError({
+				type: "trying_to_draw_non_existing_background",
+				background: back,
+			}, "Trying to draw non-existing background. (" + back.toString() +")");
+		}
+		return 0;
 	}
 
 	static draw_background_stretched([_]) {
@@ -1868,10 +1878,9 @@ export default class BuiltInFunctions {
 		// return 0;
 	}
 
-	static draw_set_blend_mode_ext([src, dest]) {
-		this.game.drawBlendModeSrc = src;
-		this.game.drawBlendModeDest = dest;
-		return 0;
+	static draw_set_blend_mode_ext([_]) {
+		throw new EngineException("Function draw_set_blend_mode_ext is not implemented");
+		// return 0;
 	}
 
 	// ## Drawing surfaces

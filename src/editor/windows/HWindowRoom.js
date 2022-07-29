@@ -90,6 +90,7 @@ export default class HWindowRoom extends HWindow {
 							this.selectResourceBackground.setValue(currentBackground.backgroundIndex);
 							this.inputTileHorizontally.setChecked(currentBackground.tileHorizontally);
 							this.inputTileVertically.setChecked(currentBackground.tileVertically);
+							this.inputStretch.setChecked(currentBackground.stretch);
 							this.inputX.setValue(currentBackground.x);
 							this.inputY.setValue(currentBackground.y);
 							this.inputHorizontalSpeed.setValue(currentBackground.horizontalSpeed);
@@ -150,6 +151,12 @@ export default class HWindowRoom extends HWindow {
 						this.inputTileVertically = add( new HCheckBoxInput("Tile Vert.") );
 						this.inputTileVertically.setOnChange(() => {
 							getOrCreateCurrentBackground().tileVertically = this.inputTileVertically.getChecked();
+							this.updateCanvasPreview();
+						});
+
+						this.inputStretch = add( new HCheckBoxInput("Stretch") );
+						this.inputStretch.setOnChange(() => {
+							getOrCreateCurrentBackground().stretch = this.inputStretch.getChecked();
 							this.updateCanvasPreview();
 						});
 
@@ -533,23 +540,24 @@ export default class HWindowRoom extends HWindow {
 		const image = background.image;
 		if (!image) return false;
 
-		// TODO stretch
-
 		await image.promise;
 
 		let xStart = roomBackground.x;
 		let yStart = roomBackground.y;
 
+		const width = roomBackground.stretch ? this.canvasPreview.html.width : background.image.image.width;
+		const height = roomBackground.stretch ? this.canvasPreview.html.height : background.image.image.height;
+
 		if (roomBackground.tileHorizontally) {
-			xStart = (roomBackground.x % background.image.image.width) - background.image.image.width;
+			xStart = (roomBackground.x % width) - width;
 		}
 		if (roomBackground.tileVertically) {
-			yStart = (roomBackground.y % background.image.image.height) - background.image.image.height;
+			yStart = (roomBackground.y % height) - height;
 		}
 
-		for (let x = xStart; x < this.canvasPreview.html.width; x += background.image.image.width) {
-			for (let y = yStart; y < this.canvasPreview.html.height; y += background.image.image.height) {
-				this.ctx.drawImage(image.image, x, y);
+		for (let x = xStart; x < this.canvasPreview.html.width; x += width) {
+			for (let y = yStart; y < this.canvasPreview.html.height; y += height) {
+				this.ctx.drawImage(image.image, x, y, width, height);
 
 				if (!roomBackground.tileVertically) {
 					break;

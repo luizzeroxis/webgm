@@ -986,21 +986,24 @@ export default class Game {
 		const image = background.image;
 		if (!image) return false;
 
-		// TODO xScale, yScale, blend, alpha
+		// TODO blend, alpha
 
 		let xStart = roomBackground.x;
 		let yStart = roomBackground.y;
 
+		const width = background.image.image.width * roomBackground.xScale;
+		const height = background.image.image.height * roomBackground.yScale;
+
 		if (roomBackground.tileHorizontally) {
-			xStart = (roomBackground.x % background.image.image.width) - background.image.image.width;
+			xStart = (roomBackground.x % width) - width;
 		}
 		if (roomBackground.tileVertically) {
-			yStart = (roomBackground.y % background.image.image.height) - background.image.image.height;
+			yStart = (roomBackground.y % height) - height;
 		}
 
-		for (let x = xStart; x < this.room.width; x += background.image.image.width) {
-			for (let y = yStart; y < this.room.height; y += background.image.image.height) {
-				this.ctx.drawImage(image.image, x, y);
+		for (let x = xStart; x < this.room.width; x += width) {
+			for (let y = yStart; y < this.room.height; y += height) {
+				this.ctx.drawImage(image.image, x, y, width, height);
 
 				if (!roomBackground.tileVertically) {
 					break;
@@ -1215,8 +1218,8 @@ export default class Game {
 				if (roomBackground.stretch) {
 					const backgroundImage = this.project.getResourceById("ProjectBackground", roomBackground.backgroundIndex)?.image;
 					if (backgroundImage) {
-						xScale = backgroundImage.image.width / room.width;
-						yScale = backgroundImage.image.height / room.height;
+						xScale = room.width / backgroundImage.image.width;
+						yScale = room.height / backgroundImage.image.height;
 					}
 				}
 				return {
@@ -1230,8 +1233,8 @@ export default class Game {
 					horizontalSpeed: roomBackground.horizontalSpeed,
 					verticalSpeed: roomBackground.verticalSpeed,
 
-					xScale: xScale, // TODO
-					yScale: yScale, // TODO
+					xScale: xScale,
+					yScale: yScale,
 					blend: 16777215, // TODO
 					alpha: 1, // TODO
 				};

@@ -216,7 +216,7 @@ export default class HWindowRoom extends HWindow {
 					// actual room area
 
 					this.canvasPreview = add( new HCanvas(room.width, room.height) );
-					this.ctx = this.canvasPreview.html.getContext("2d");
+					this.ctx = this.canvasPreview.html.getContext("2d", {alpha: false});
 					this.ctx.imageSmoothingEnabled = false;
 
 					// TODO: account for sprite size when moving and deleting

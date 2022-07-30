@@ -387,7 +387,7 @@ export default class Game {
 
 	// Called by start, inits the canvas.
 	startCanvas() {
-		this.ctx = this.canvas.getContext("2d");
+		this.ctx = this.canvas.getContext("2d", {alpha: false});
 		this.ctx.imageSmoothingEnabled = false;
 
 		if (!this.project.globalGameSettings.displayCursor) {

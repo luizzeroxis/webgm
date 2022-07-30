@@ -41,7 +41,7 @@ export default class ProjectLoader {
 		const promises = [];
 
 		const offscreen = new OffscreenCanvas(0, 0);
-		const offscreenCtx = offscreen.getContext("2d");
+		const offscreenCtx = offscreen.getContext("2d", {willReadFrequently: true});
 
 		this.project.resources.ProjectSprite.forEach(sprite => {
 			sprite.images.forEach((image, imageNumber) => {

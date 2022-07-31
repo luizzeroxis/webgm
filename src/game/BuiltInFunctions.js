@@ -1445,9 +1445,12 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 
-	static draw_clear_alpha([_]) {
-		throw new EngineException("Function draw_clear_alpha is not implemented");
-		// return 0;
+	static draw_clear_alpha([col, alpha]) {
+		this.game.ctx.clearRect(0, 0, this.game.canvas.width, this.game.canvas.height);
+
+		this.game.ctx.fillStyle = decimalToHexAlpha(col, alpha);
+		this.game.ctx.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
+		return 0;
 	}
 
 	static draw_point([x, y]) {
@@ -1473,9 +1476,11 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 
-	static draw_line_width([_]) {
-		throw new EngineException("Function draw_line_width is not implemented");
-		// return 0;
+	static draw_line_width([x1, y1, x2, y2, w]) {
+		this.game.ctx.lineWidth = w;
+		BuiltInFunctions.draw_line.call(this, [x1, y1, x2, y2]);
+		this.game.ctx.lineWidth = 1;
+		return 0;
 	}
 
 	static draw_rectangle([x1, y1, x2, y2, outline]) {
@@ -1498,9 +1503,29 @@ export default class BuiltInFunctions {
 		// return 0;
 	}
 
-	static draw_triangle([_]) {
-		throw new EngineException("Function draw_triangle is not implemented");
-		// return 0;
+	static draw_triangle([x1, y1, x2, y2, x3, y3, outline]) {
+		if (outline >= 1) {
+			this.game.ctx.strokeStyle = this.game.drawColorAlpha;
+			// this.game.ctx.save();
+			// this.game.ctx.translate(0.5, 0.5);
+		} else {
+			this.game.ctx.fillStyle = this.game.drawColorAlpha;
+		}
+
+		this.game.ctx.beginPath();
+		this.game.ctx.moveTo(x1, y1);
+		this.game.ctx.lineTo(x2, y2);
+		this.game.ctx.lineTo(x3, y3);
+		this.game.ctx.closePath();
+
+		if (outline >= 1) {
+			this.game.ctx.stroke();
+			// this.game.ctx.restore();
+		} else {
+			this.game.ctx.fill();
+		}
+
+		return 0;
 	}
 
 	static draw_circle([x, y, r, outline]) {

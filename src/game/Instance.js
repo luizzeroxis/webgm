@@ -1,3 +1,4 @@
+import {mod} from "../common/tools.js";
 import VariableHolder from "../common/VariableHolder.js";
 
 import BuiltInLocals from "./BuiltInLocals.js";
@@ -84,7 +85,7 @@ export default class Instance {
 	}
 
 	setDirectionAndSpeed(direction, speed) {
-		this.direction = direction;
+		this.direction = mod(direction, 360);
 		this.speed = speed;
 
 		const directionRadians = direction * (Math.PI / 180);

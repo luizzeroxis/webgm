@@ -95,8 +95,8 @@ export class Project {
 				this.separateCollisionMasks = false;
 				this.alphaTolerance = 0;
 				this.boundingBox = "automatic";
-				this.bbLeft = 31;
-				this.bbTop = 31;
+				this.bbLeft = 0;
+				this.bbTop = 0;
 				this.bbRight = 0;
 				this.bbBottom = 0;
 				this.shape = "precise";

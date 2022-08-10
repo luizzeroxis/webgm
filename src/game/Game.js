@@ -1337,14 +1337,14 @@ export default class Game {
 		const collisions = [
 			{shape1: "precise", shape2: "precise", func: this.collisionInstancePreciseOnInstancePrecise},
 			{shape1: "precise", shape2: "rectangle", func: this.collisionInstanceRectangleOnInstanceRectangle},
-			// {shape1: 'precise', shape2: 'disk', func: this.collisionInstanceRectangleOnInstanceRectangle},
-			// {shape1: 'precise', shape2: 'diamond', func: this.collisionInstanceRectangleOnInstanceRectangle},
+			// {shape1: "precise", shape2: "disk", func: this.collisionInstanceRectangleOnInstanceRectangle},
+			// {shape1: "precise", shape2: "diamond", func: this.collisionInstanceRectangleOnInstanceRectangle},
 			{shape1: "rectangle", shape2: "rectangle", func: this.collisionInstanceRectangleOnInstanceRectangle},
-			// {shape1: 'rectangle', shape2: 'disk', func: this.collisionInstanceRectangleOnInstanceRectangle},
-			// {shape1: 'rectangle', shape2: 'diamond', func: this.collisionInstanceRectangleOnInstanceRectangle},
-			// {shape1: 'disk', shape2: 'disk', func: this.collisionInstanceRectangleOnInstanceRectangle},
-			// {shape1: 'disk', shape2: 'diamond', func: this.collisionInstanceRectangleOnInstanceRectangle},
-			// {shape1: 'diamond', shape2: 'diamond', func: this.collisionInstanceRectangleOnInstanceRectangle},
+			// {shape1: "rectangle", shape2: "disk", func: this.collisionInstanceRectangleOnInstanceRectangle},
+			// {shape1: "rectangle", shape2: "diamond", func: this.collisionInstanceRectangleOnInstanceRectangle},
+			// {shape1: "disk", shape2: "disk", func: this.collisionInstanceRectangleOnInstanceRectangle},
+			// {shape1: "disk", shape2: "diamond", func: this.collisionInstanceRectangleOnInstanceRectangle},
+			// {shape1: "diamond", shape2: "diamond", func: this.collisionInstanceRectangleOnInstanceRectangle},
 		];
 
 		for (const collision of collisions) {

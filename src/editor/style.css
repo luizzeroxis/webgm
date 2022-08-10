@@ -23,6 +23,7 @@
 	--menu-border: #444;
 	--menu-item-selected-background: #444;
 }
+
 :root.light {
 	color-scheme: light;
 }

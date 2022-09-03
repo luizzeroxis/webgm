@@ -1371,26 +1371,6 @@ export default class Game {
 		return false;
 	}
 
-	// Check if instance is colliding with point.
-	collisionInstanceOnPoint(instance, point) {
-		if (instance.sprite == null || instance.sprite.images.length == 0) return false;
-
-		const collisions = [
-			{shape: "precise", func: this.collisionInstanceRectangleOnPoint},
-			{shape: "rectangle", func: this.collisionInstanceRectangleOnPoint},
-			// {shape: 'disk', func: this.collisionInstanceRectangleOnPoint},
-			// {shape: 'diamond', func: this.collisionInstanceRectangleOnPoint},
-		];
-
-		for (const collision of collisions) {
-			if (instance.sprite.shape == collision.shape) {
-				return collision.func(instance, point);
-			}
-		}
-
-		return false;
-	}
-
 	getInstanceCollisionInfo(instance, x, y) {
 		x = x ?? Math.floor(instance.x);
 		y = y ?? Math.floor(instance.y);
@@ -1402,19 +1382,21 @@ export default class Game {
 		return {x, y, image, x1, y1, x2, y2};
 	}
 
-	// Check if two instances, with precise shape, are colliding.
-	collisionInstancePreciseOnInstancePrecise(aInstance, bInstance, aX, aY, bX, bY) {
-		const a = this.getInstanceCollisionInfo(aInstance, aX, aY);
-		const b = this.getInstanceCollisionInfo(bInstance, bX, bY);
-
-		const rectCol = (
+	collisionRectangleOnRectangle(a, b) {
+		return (
 			a.x1 <= b.x2
 			&& b.x1 <= a.x2
 			&& a.y1 <= b.y2
 			&& b.y1 <= a.y2
 		);
+	}
 
-		if (!rectCol) return false;
+	// Check if two instances, with precise shape, are colliding.
+	collisionInstancePreciseOnInstancePrecise(aInstance, bInstance, aX, aY, bX, bY) {
+		const a = this.getInstanceCollisionInfo(aInstance, aX, aY);
+		const b = this.getInstanceCollisionInfo(bInstance, bX, bY);
+
+		if (!this.collisionRectangleOnRectangle(a, b)) return false;
 
 		const aData = this.loadedProject.imageDataCache.get(a.image);
 		const bData = this.loadedProject.imageDataCache.get(b.image);
@@ -1445,17 +1427,45 @@ export default class Game {
 		return false;
 	}
 
+	// Check if two instances, one with precise shape, another with rectangular shape, are colliding.
+	collisionInstancePreciseOnInstanceRectangle(precInstance, rectInstance, aX, aY, bX, bY) {
+		const prec = this.getInstanceCollisionInfo(precInstance, aX, aY);
+		const rect = this.getInstanceCollisionInfo(rectInstance, bX, bY);
+
+		if (!this.collisionRectangleOnRectangle(prec, rect)) return false;
+
+		const precData = this.loadedProject.imageDataCache.get(prec.image);
+
+		// Get the 'global' (in relation to room) rect in the intersection between the two rects.
+		const gX1 = Math.max(prec.x1, rect.x1);
+		const gY1 = Math.max(prec.y1, rect.y1);
+		const gX2 = Math.min(prec.x2, rect.x2);
+		const gY2 = Math.min(prec.y2, rect.y2);
+
+		// Loop through all pixels in that rect.
+		for (let gX = gX1; gX < gX2; ++gX)
+		for (let gY = gY1; gY < gY2; ++gY) {
+			// Here we undo all transformations made to the sprite.
+			// It's rounded down to the nearest pixel.
+			const precDataX = Math.floor(gX - prec.x1);
+			const precDataY = Math.floor(gY - prec.y1);
+			// TODO this may be out of bounds.
+			const precCol = (precData.data[(precDataY * precData.width + precDataX) * 4 + 3]) >= (255-precInstance.sprite.alphaTolerance);
+			if (!precCol) continue;
+
+			// Rect always collides there.
+			return true;
+		}
+
+		return false;
+	}
+
 	// Check if two instances, with rectangular shape, are colliding.
 	collisionInstanceRectangleOnInstanceRectangle(aInstance, bInstance, aX, aY, bX, bY) {
 		const a = this.getInstanceCollisionInfo(aInstance, aX, aY);
 		const b = this.getInstanceCollisionInfo(bInstance, bX, bY);
 
-		return (
-			a.x1 <= b.x2
-			&& b.x1 <= a.x2
-			&& a.y1 <= b.y2
-			&& b.y1 <= a.y2
-		);
+		return this.collisionRectangleOnRectangle(a, b);
 	}
 
 	// Check if an instance, with rectangular shape, and a point are colliding.
@@ -1470,6 +1480,36 @@ export default class Game {
 			&& point.y >= instanceY
 			&& point.y < instanceY + instanceImage.image.height
 		);
+	}
+
+	// Check if instance is colliding with point.
+	collisionInstanceOnPoint(instance, point) {
+		if (instance.sprite == null || instance.sprite.images.length == 0) return false;
+
+		const collisions = [
+			{shape: "precise", func: this.collisionInstanceRectangleOnPoint},
+			{shape: "rectangle", func: this.collisionInstanceRectangleOnPoint},
+			// {shape: 'disk', func: this.collisionInstanceRectangleOnPoint},
+			// {shape: 'diamond', func: this.collisionInstanceRectangleOnPoint},
+		];
+
+		for (const collision of collisions) {
+			if (instance.sprite.shape == collision.shape) {
+				return collision.func(instance, point);
+			}
+		}
+
+		return false;
+	}
+
+	// Check if any of instances is colliding with point.
+	collisionInstancesOnPoint(instances, point) {
+		for (const instance of instances) {
+			if (!instance.exists) continue;
+			const c = this.collisionInstanceOnPoint(instance, point);
+			if (c) return true;
+		}
+		return false;
 	}
 
 	// Draw a sprite with the image index at x and y.

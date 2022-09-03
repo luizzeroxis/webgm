@@ -660,14 +660,14 @@ export default class BuiltInFunctions {
 		// return 0;
 	}
 
-	static position_empty([_]) {
-		throw new EngineException("Function position_empty is not implemented");
-		// return 0;
+	static position_empty([x, y]) {
+		return !this.game.collisionInstancesOnPoint(this.game.instances, {x: x, y: y}) ? 1 : 0;
 	}
 
-	static position_meeting([_]) {
-		throw new EngineException("Function position_meeting is not implemented");
-		// return 0;
+	static position_meeting([x, y, obj]) {
+		const instances = this.objectReferenceToInstances(obj);
+		if (!Array.isArray(instances)) { return 0; }
+		return this.game.collisionInstancesOnPoint(instances, {x: x, y: y}) ? 1 : 0;
 	}
 
 	// ## Paths

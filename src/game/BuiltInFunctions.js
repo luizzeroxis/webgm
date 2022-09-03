@@ -1060,74 +1060,96 @@ export default class BuiltInFunctions {
 		return 0;
 	}
 
-	static variable_global_exists([_]) {
-		throw new EngineException("Function variable_global_exists is not implemented");
-		// return 0;
+	static variable_global_exists([name]) {
+		return (this.game.globalVars.exists(name) || this.game.globalObjectVars.exists(name)) ? 1 : 0;
 	}
 
-	static variable_local_exists([_]) {
-		throw new EngineException("Function variable_local_exists is not implemented");
-		// return 0;
+	static variable_local_exists([name]) {
+		return this.currentInstance.vars.exists(name) ? 1 : 0;
 	}
 
-	static variable_global_get([_]) {
-		throw new EngineException("Function variable_global_get is not implemented");
-		// return 0;
+	static variable_global_get([name]) {
+		if (this.game.globalVars.exists(name))
+			return this.game.globalVars.get(name);
+		if (this.game.globalObjectVars.exists(name))
+			return this.game.globalObjectVars.get(name);
+		return 0;
 	}
 
-	static variable_global_array_get([_]) {
-		throw new EngineException("Function variable_global_array_get is not implemented");
-		// return 0;
+	static variable_global_array_get([name, ind]) {
+		if (this.game.globalVars.exists(name))
+			return this.game.globalVars.get(name, [ind]);
+		if (this.game.globalObjectVars.exists(name))
+			return this.game.globalObjectVars.get(name, [ind]);
+		return 0;
 	}
 
-	static variable_global_array2_get([_]) {
-		throw new EngineException("Function variable_global_array2_get is not implemented");
-		// return 0;
+	static variable_global_array2_get([name, ind1, ind2]) {
+		if (this.game.globalVars.exists(name))
+			return this.game.globalVars.get(name, [ind1, ind2]);
+		if (this.game.globalObjectVars.exists(name))
+			return this.game.globalObjectVars.get(name, [ind1, ind2]);
+		return 0;
 	}
 
-	static variable_local_get([_]) {
-		throw new EngineException("Function variable_local_get is not implemented");
-		// return 0;
+	static variable_local_get([name]) {
+		if (this.currentInstance.vars.exists(name))
+			return this.currentInstance.vars.get(name);
+		return 0;
 	}
 
-	static variable_local_array_get([_]) {
-		throw new EngineException("Function variable_local_array_get is not implemented");
-		// return 0;
+	static variable_local_array_get([name, ind]) {
+		if (this.currentInstance.vars.exists(name))
+			return this.currentInstance.vars.get(name, [ind]);
+		return 0;
 	}
 
-	static variable_local_array2_get([_]) {
-		throw new EngineException("Function variable_local_array2_get is not implemented");
-		// return 0;
+	static variable_local_array2_get([name, ind1, ind2]) {
+		if (this.currentInstance.vars.exists(name))
+			return this.currentInstance.vars.get(name, [ind1, ind2]);
+		return 0;
 	}
 
-	static variable_global_set([_]) {
-		throw new EngineException("Function variable_global_set is not implemented");
-		// return 0;
+	static variable_global_set([name, value]) {
+		if (this.game.globalVars.exists(name)) {
+			this.game.globalVars.set(name, value);
+		} else {
+			this.game.globalObjectVars.set(name, value);
+		}
+		return 0;
 	}
 
-	static variable_global_array_set([_]) {
-		throw new EngineException("Function variable_global_array_set is not implemented");
-		// return 0;
+	static variable_global_array_set([name, ind, value]) {
+		if (this.game.globalVars.exists(name)) {
+			this.game.globalVars.set(name, value, [ind]);
+		} else {
+			this.game.globalObjectVars.set(name, value, [ind]);
+		}
+		return 0;
 	}
 
-	static variable_global_array2_set([_]) {
-		throw new EngineException("Function variable_global_array2_set is not implemented");
-		// return 0;
+	static variable_global_array2_set([name, ind1, ind2, value]) {
+		if (this.game.globalVars.exists(name)) {
+			this.game.globalVars.set(name, value, [ind1, ind2]);
+		} else {
+			this.game.globalObjectVars.set(name, value, [ind1, ind2]);
+		}
+		return 0;
 	}
 
-	static variable_local_set([_]) {
-		throw new EngineException("Function variable_local_set is not implemented");
-		// return 0;
+	static variable_local_set([name, value]) {
+		this.currentInstance.vars.set(name, value);
+		return 0;
 	}
 
-	static variable_local_array_set([_]) {
-		throw new EngineException("Function variable_local_array_set is not implemented");
-		// return 0;
+	static variable_local_array_set([name, ind, value]) {
+		this.currentInstance.vars.set(name, value, [ind]);
+		return 0;
 	}
 
-	static variable_local_array2_set([_]) {
-		throw new EngineException("Function variable_local_array2_set is not implemented");
-		// return 0;
+	static variable_local_array2_set([name, ind1, ind2, value]) {
+		this.currentInstance.vars.set(name, value, [ind1, ind2]);
+		return 0;
 	}
 
 	static set_program_priority([_]) {

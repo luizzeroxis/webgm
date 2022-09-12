@@ -64,9 +64,6 @@ export default class Game {
 		this.room = null;
 		this.instances = [];
 
-		// Audio
-		this.audioContext = null;
-
 		// Cursor
 		this.cursorSprite = null;
 		this.cursorImageIndex = 0;
@@ -105,7 +102,7 @@ export default class Game {
 			this.startCanvas();
 			this.input.start();
 			this.startEngine();
-			this.startAudio();
+			this.audio.start();
 
 			await this.loadedProject.loadProject();
 			await this.loadFirstRoom();
@@ -176,7 +173,7 @@ export default class Game {
 		this.input.end();
 
 		// audio
-		this.stopAllSounds();
+		this.audio.end();
 
 		this.dispatcher.speak("close", e);
 	}
@@ -207,16 +204,6 @@ export default class Game {
 		});
 
 		this.lastId = this.project.lastId;
-	}
-
-	startAudio() {
-		if (!this.audioContext) {
-			this.audioContext = new AudioContext();
-		} else {
-			if (this.audioContext.state == "suspended") {
-				this.audioContext.resume();
-			}
-		}
 	}
 
 	// // Game running
@@ -1268,38 +1255,6 @@ export default class Game {
 			};
 		}
 		return this.room.views[index];
-	}
-
-	// Play a sound, on loop or not.
-	playSound(sound, loop) {
-		this.startAudio();
-		const audioNode = this.audioContext.createMediaElementSource(new Audio(sound.sound.src));
-		audioNode.connect(this.audioContext.destination);
-		audioNode.mediaElement.volume = this.loadedProject.sounds.get(sound).volume;
-		audioNode.mediaElement.loop = loop;
-		audioNode.mediaElement.play();
-
-		this.loadedProject.sounds.get(sound).audioNodes.push(audioNode);
-	}
-
-	// Stop all playing sounds from a sound resource.
-	stopSound(sound) {
-		for (const audioNode of this.loadedProject.sounds.get(sound).audioNodes) {
-			audioNode.mediaElement.pause();
-			audioNode.disconnect();
-		}
-		this.loadedProject.sounds.get(sound).audioNodes = [];
-	}
-
-	// Stop all sounds being played.
-	stopAllSounds() {
-		for (const value of this.loadedProject.sounds.values()) {
-			for (const audioNode of value.audioNodes) {
-				audioNode.mediaElement.pause();
-				audioNode.disconnect();
-			}
-			value.audioNodes = [];
-		}
 	}
 
 	// Set the fullscreen status.

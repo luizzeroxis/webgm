@@ -2513,7 +2513,7 @@ export default class BuiltInFunctions {
 			}, "Sound does not exist. (" + index.toString() +")");
 		}
 
-		this.game.playSound(sound, false);
+		this.game.audio.playSound(sound, false);
 		return 0;
 	}
 
@@ -2526,7 +2526,7 @@ export default class BuiltInFunctions {
 			}, "Sound does not exist. (" + index.toString() +")");
 		}
 
-		this.game.playSound(sound, true);
+		this.game.audio.playSound(sound, true);
 		return 0;
 	}
 
@@ -2539,11 +2539,11 @@ export default class BuiltInFunctions {
 			}, "Sound does not exist. (" + index.toString() +")");
 		}
 
-		this.game.stopSound(sound);
+		this.game.audio.stopSound(sound);
 	}
 
 	static sound_stop_all([]) {
-		this.game.stopAllSounds();
+		this.game.audio.stopAllSounds();
 		return 0;
 	}
 

@@ -6,223 +6,25 @@ import VariableHolder from "../common/VariableHolder.js";
 
 import BuiltInConstants from "./BuiltInConstants.js";
 import BuiltInGlobals from "./BuiltInGlobals.js";
+import GameInput from "./GameInput.js";
 import GML from "./GML.js";
 import Instance from "./Instance.js";
 import ProjectLoader from "./ProjectLoader.js";
 
 export default class Game {
-	static codeToWhichMap = {
-		"": -1,
-		"Unidentified": -1,
-
-		"Backspace": 8,
-		"Tab": 9,
-		"Enter": 13,
-		"NumpadEnter": 13,
-		"ShiftLeft": 16,
-		"ShiftRight": 16,
-		"ControlLeft": 17,
-		"ControlRight": 17,
-		"AltLeft": 18,
-		"AltRight": 18,
-		"Pause": 19,
-		"CapsLock": 20,
-		"Escape": 27,
-		"Space": 32,
-		"PageUp": 33,
-		"PageDown": 34,
-		"End": 35,
-		"Home": 36,
-		"ArrowLeft": 37,
-		"ArrowUp": 38,
-		"ArrowRight": 39,
-		"ArrowDown": 40,
-		"PrintScreen": 44,
-		"Insert": 45,
-		"Delete": 46,
-		"Digit0": 48,
-		"Digit1": 49,
-		"Digit2": 50,
-		"Digit3": 51,
-		"Digit4": 52,
-		"Digit5": 53,
-		"Digit6": 54,
-		"Digit7": 55,
-		"Digit8": 56,
-		"Digit9": 57,
-		"KeyA": 65,
-		"KeyB": 66,
-		"KeyC": 67,
-		"KeyD": 68,
-		"KeyE": 69,
-		"KeyF": 70,
-		"KeyG": 71,
-		"KeyH": 72,
-		"KeyI": 73,
-		"KeyJ": 74,
-		"KeyK": 75,
-		"KeyL": 76,
-		"KeyM": 77,
-		"KeyN": 78,
-		"KeyO": 79,
-		"KeyP": 80,
-		"KeyQ": 81,
-		"KeyR": 82,
-		"KeyS": 83,
-		"KeyT": 84,
-		"KeyU": 85,
-		"KeyV": 86,
-		"KeyW": 87,
-		"KeyX": 88,
-		"KeyY": 89,
-		"KeyZ": 90,
-		"MetaLeft": 91,
-		"OSLeft": 91,
-		"MetaRight": 92,
-		"OSRight": 92,
-		"ContextMenu": 93,
-		"Numpad0": 96,
-		"Numpad1": 97,
-		"Numpad2": 98,
-		"Numpad3": 99,
-		"Numpad4": 100,
-		"Numpad5": 101,
-		"Numpad6": 102,
-		"Numpad7": 103,
-		"Numpad8": 104,
-		"Numpad9": 105,
-		"NumpadMultiply": 106,
-		"NumpadAdd": 107,
-		"NumpadSubtract": 109,
-		"NumpadDecimal": 110,
-		"NumpadDivide": 111,
-		"F1": 112,
-		"F2": 113,
-		"F3": 114,
-		"F4": 115,
-		"F5": 116,
-		"F6": 117,
-		"F7": 118,
-		"F8": 119,
-		"F9": 120,
-		"F10": 121,
-		"F11": 122,
-		"F12": 123,
-		"NumLock": 144,
-		"ScrollLock": 145,
-		// vk_lshift: 160,
-		// vk_rshift: 161,
-		// vk_lcontrol: 162,
-		// vk_rcontrol: 163,
-		// vk_lalt: 164,
-		// vk_ralt: 165,
-		"Semicolon": 186,
-		"Equal": 187,
-		"Comma": 188,
-		"Minus": 189,
-		"Period": 190,
-		"Slash": 191,
-		"Backquote": 192,
-		"NumpadComma": 194,
-		"BracketLeft": 219,
-		"Backslash": 220,
-		"BracketRight": 221,
-		"Quote": 222,
-		"IntlBackslash": 226,
-
-		"AudioVolumeDown": -1,
-		"AudioVolumeMute": -1,
-		"AudioVolumeUp": -1,
-		"BrowserBack": -1,
-		"BrowserFavorites": -1,
-		"BrowserForward": -1,
-		"BrowserHome": -1,
-		"BrowserRefresh": -1,
-		"BrowserSearch": -1,
-		"BrowserStop": -1,
-		"Convert": -1,
-		"Copy": -1,
-		"Cut": -1,
-		"Eject": -1,
-		"F13": -1,
-		"F14": -1,
-		"F15": -1,
-		"F16": -1,
-		"F17": -1,
-		"F18": -1,
-		"F19": -1,
-		"F20": -1,
-		"F21": -1,
-		"F22": -1,
-		"F23": -1,
-		"F24": -1,
-		"IntlRo": -1,
-		"IntlYen": -1,
-		"KanaMode": -1,
-		"Lang1": -1,
-		"Lang2": -1,
-		"Lang3": -1,
-		"Lang4": -1,
-		"LaunchApp1": -1,
-		"LaunchApp2": -1,
-		"LaunchMail": -1,
-		"MediaPlayPause": -1,
-		"MediaSelect": -1,
-		"MediaStop": -1,
-		"MediaTrackNext": -1,
-		"MediaTrackPrevious": -1,
-		"NonConvert": -1,
-		"NumpadEqual": -1,
-		"Paste": -1,
-		"Power": -1,
-		"Sleep": -1,
-		"Undo": -1,
-		"VolumeDown": -1,
-		"VolumeUp": -1,
-		"WakeUp": -1,
-	};
-
 	constructor(options) {
 		this.project = new Project(options.project);
 		this.canvas = options.canvas;
-		this.input = options.input;
+		// this.input = options.input;
 		this.menuManager = options.menuManager;
 
 		this.dispatcher = new Dispatcher();
 
+		//
+		this.input = new GameInput(this, options.input);
+
 		// Canvas
 		this.ctx = null;
-
-		// Input
-		this.keyDownHandler = null;
-		this.keyUpHandler = null;
-		this.mouseDownHandler = null;
-		this.mouseUpHandler = null;
-		this.mouseMoveHandler = null;
-		this.wheelHandler = null;
-		this.contextMenuHandler = null;
-
-		this.key = {};
-		this.keyPressed = {};
-		this.keyReleased = {};
-
-		this.currentKey = 0;
-		this.lastKey = 0;
-		this.lastKeyChar = "\0";
-		this.keyboardString = "";
-
-		this.mouse = {};
-		this.mousePressed = {};
-		this.mouseReleased = {};
-		this.mouseX = 0;
-		this.mouseY = 0;
-		this.mouseWheel = 0;
-
-		this.currentMouse = 0;
-		this.lastMouse = 0;
-
-		this.mouseDisplayX = 0;
-		this.mouseDisplayY = 0;
 
 		// Project
 		this.loadedProject = new ProjectLoader(this, this.project);
@@ -301,7 +103,7 @@ export default class Game {
 	async start() {
 		try {
 			this.startCanvas();
-			this.startInput();
+			this.input.start();
 			this.startEngine();
 			this.startAudio();
 
@@ -371,13 +173,7 @@ export default class Game {
 		this.canvas.classList.remove("no-cursor");
 
 		// input
-		this.input.removeEventListener("keydown", this.keyDownHandler);
-		this.input.removeEventListener("keyup", this.keyUpHandler);
-		this.input.removeEventListener("mousedown", this.mouseDownHandler);
-		this.input.removeEventListener("mouseup", this.mouseUpHandler);
-		this.input.removeEventListener("mousemove", this.mouseMoveHandler);
-		this.input.removeEventListener("wheel", this.wheelHandler);
-		this.input.removeEventListener("contextmenu", this.contextMenuHandler);
+		this.input.end();
 
 		// audio
 		this.stopAllSounds();
@@ -393,97 +189,6 @@ export default class Game {
 		if (!this.project.globalGameSettings.displayCursor) {
 			this.canvas.classList.add("no-cursor");
 		}
-	}
-
-	// Called by start, inits the input system.
-	startInput() {
-		// Keyboard
-
-		this.keyDownHandler = (e) => {
-			e.preventDefault();
-
-			const key = Game.codeToWhichMap[e.code];
-
-			this.key[key] = true;
-			this.keyPressed[key] = true;
-
-			this.currentKey = key;
-			this.lastKey = key;
-
-			if (e.key.length == 1) {
-				this.lastKeyChar = e.key;
-				this.keyboardString = (this.keyboardString + e.key).slice(-1024);
-			} else if (e.key == "Backspace") {
-				this.lastKeyChar = "\b";
-				this.keyboardString = this.keyboardString.slice(0, -1);
-			}
-		};
-		this.input.addEventListener("keydown", this.keyDownHandler);
-
-		this.keyUpHandler = (e) => {
-			e.preventDefault();
-
-			const key = Game.codeToWhichMap[e.code];
-
-			this.key[key] = false;
-			this.keyReleased[key] = true;
-
-			this.currentKey = 0;
-		};
-		this.input.addEventListener("keyup", this.keyUpHandler);
-
-		// Mouse
-
-		function toEngineButton(button) {
-			return button == 1 ? 3 // middle button
-				: button == 2 ? 2 // right button
-				: button + 1; // every other button
-		}
-
-		this.mouseDownHandler = (e) => {
-			e.preventDefault();
-
-			this.canvas.focus({preventScroll: true});
-
-			const button = toEngineButton(e.button);
-			this.mouse[button] = true;
-			this.mousePressed[button] = true;
-
-			this.currentMouse = button;
-			this.lastMouse = button;
-		};
-		this.input.addEventListener("mousedown", this.mouseDownHandler);
-
-		this.mouseUpHandler = (e) => {
-			e.preventDefault();
-
-			const button = toEngineButton(e.button);
-			this.mouse[button] = false;
-			this.mouseReleased[button] = true;
-
-			this.currentMouse = 0;
-		};
-		this.input.addEventListener("mouseup", this.mouseUpHandler);
-
-		this.mouseMoveHandler = (e) => {
-			const rect = this.input.getBoundingClientRect();
-			this.mouseDisplayX = e.clientX + document.documentElement.scrollLeft;
-			this.mouseDisplayY = e.clientY + document.documentElement.scrollTop;
-			this.mouseX = Math.floor(Math.max(0, Math.min(e.clientX - rect.left, this.room.width || 0)));
-			this.mouseY = Math.floor(Math.max(0, Math.min(e.clientY - rect.top, this.room.height || 0)));
-		};
-		this.input.addEventListener("mousemove", this.mouseMoveHandler);
-
-		this.wheelHandler = (e) => {
-			e.preventDefault();
-			this.mouseWheel += e.deltaY;
-		};
-		this.input.addEventListener("wheel", this.wheelHandler);
-
-		this.contextMenuHandler = (e) => {
-			e.preventDefault();
-		};
-		this.input.addEventListener("contextmenu", this.contextMenuHandler);
 	}
 
 	// Called by start, inits general engine stuff.
@@ -638,7 +343,7 @@ export default class Game {
 		for (const [subtype, list] of this.getEventsOfType("keyboard")) {
 			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
-				if (this.getKey(subtype, this.key)) {
+				if (this.input.getKey(subtype, this.input.key)) {
 					await this.doEvent(event, instance);
 				}
 			}
@@ -647,7 +352,7 @@ export default class Game {
 		for (const [subtype, list] of this.getEventsOfType("keypress")) {
 			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
-				if (this.getKey(subtype, this.keyPressed)) {
+				if (this.input.getKey(subtype, this.input.keyPressed)) {
 					await this.doEvent(event, instance);
 				}
 			}
@@ -656,7 +361,7 @@ export default class Game {
 		for (const [subtype, list] of this.getEventsOfType("keyrelease")) {
 			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
-				if (this.getKey(subtype, this.keyReleased)) {
+				if (this.input.getKey(subtype, this.input.keyReleased)) {
 					await this.doEvent(event, instance);
 				}
 			}
@@ -681,7 +386,7 @@ export default class Game {
 						"mouseReleased": this.mouseReleased,
 					}[eventInfo.when]; // wacky
 
-					execute = this.getMouse(eventInfo.button, dict);
+					execute = this.input.getMouse(eventInfo.button, dict);
 
 					if (execute && !eventInfo.global) {
 						// check if mouse is hovering over instance
@@ -832,46 +537,42 @@ export default class Game {
 
 		// Check global game settings default keys
 		if (this.project.globalGameSettings.keyEscEndsGame) {
-			if (this.getKey(27, this.keyPressed)) {
+			if (this.input.getKey(27, this.input.keyPressed)) {
 				this.stepStopAction = async () => {
 					await this.end();
 				};
 			}
 		}
 		// if (this.project.globalGameSettings.keyF1ShowsGameInformation) {
-		// 	if (this.getKey(112, this.keyPressed)) {
+		// 	if (this.input.getKey(112, this.input.keyPressed)) {
 		// 		// this.showGameInformation();
 		// 		// console.log('f1 pressed');
 		// 	}
 		// }
 		if (this.project.globalGameSettings.keyF4SwitchesFullscreen) {
-			if (this.getKey(115, this.keyPressed)) {
+			if (this.input.getKey(115, this.input.keyPressed)) {
 				this.setFullscreen(!this.getFullscreen());
 			}
 		}
 		// if (this.project.globalGameSettings.keyF5SavesF6Loads) {
-		// 	if (this.getKey(116, this.keyPressed)) {
+		// 	if (this.input.getKey(116, this.input.keyPressed)) {
 		// 		// this.saveGame();
 		// 		// console.log('f5 pressed');
 		// 	}
-		// 	if (this.getKey(117, this.keyPressed)) {
+		// 	if (this.input.getKey(117, this.input.keyPressed)) {
 		// 		// this.loadGame();
 		// 		// console.log('f6 pressed');
 		// 	}
 		// }
 		// if (this.project.globalGameSettings.keyF9Screenshots) {
-		// 	if (this.getKey(120, this.keyPressed)) {
+		// 	if (this.input.getKey(120, this.input.keyPressed)) {
 		// 		// this.screenshotGame();
 		// 		// console.log('f9 pressed');
 		// 	}
 		// }
 
 		// Reset keyboard/mouse states
-		this.keyPressed = {};
-		this.keyReleased = {};
-		this.mousePressed = {};
-		this.mouseReleased = {};
-		this.mouseWheel = 0;
+		this.input.clearStep();
 
 		// Delete instances
 		this.instances = this.instances.filter(instance => instance.exists);
@@ -1265,7 +966,7 @@ export default class Game {
 		this.canvas.width = room.width;
 		this.canvas.height = room.height;
 
-		this.clearIO();
+		this.input.clear();
 
 		// TODO Check if room is persistent
 
@@ -1647,41 +1348,6 @@ export default class Game {
 				await this.doEventOfInstance("other", OTHER_NO_MORE_HEALTH, instance);
 			}
 		}
-	}
-
-	// Get state of a key. dict should be key, keyPressed or keyReleased.
-	getKey(key, dict) {
-		if (key == 0) { // vk_nokey
-			return Object.values(dict).every(value => !value);
-		}
-		if (key == 1) { // vk_anykey
-			return Object.values(dict).some(value => value);
-		}
-		return dict[key];
-	}
-
-	// Get state of a mouse button. dict should be mouse, mousePressed or mouseReleased.
-	getMouse(numb, dict) {
-		if (numb == -1) { // mb_any
-			return Object.values(dict).some(value => value);
-		}
-		if (numb == 0) { // mb_none
-			return Object.values(dict).every(value => !value);
-		}
-		return dict[numb];
-	}
-
-	// Clears the state of per step input variables.
-	clearIO() {
-		this.key = {};
-		this.keyPressed = {};
-		this.keyReleased = {};
-		this.currentKey = 0;
-		this.mouse = {};
-		this.mousePressed = {};
-		this.mouseReleased = {};
-		this.mouseWheel = 0;
-		this.currentMouse = 0;
 	}
 
 	// Compile and execute a GML string.

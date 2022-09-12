@@ -1182,15 +1182,15 @@ export default class BuiltInFunctions {
 	}
 
 	static keyboard_check([key]) {
-		return this.game.getKey(key, this.game.key) ? 1 : 0;
+		return this.game.input.getKey(key, this.game.input.key) ? 1 : 0;
 	}
 
 	static keyboard_check_pressed([key]) {
-		return this.game.getKey(key, this.game.keyPressed) ? 1 : 0;
+		return this.game.input.getKey(key, this.game.input.keyPressed) ? 1 : 0;
 	}
 
 	static keyboard_check_released([key]) {
-		return this.game.getKey(key, this.game.keyReleased) ? 1 : 0;
+		return this.game.input.getKey(key, this.game.input.keyReleased) ? 1 : 0;
 	}
 
 	static keyboard_check_direct([_]) {
@@ -1241,23 +1241,23 @@ export default class BuiltInFunctions {
 	// ## The mouse
 
 	static mouse_check_button([numb]) {
-		return this.game.getMouse(numb, this.game.mouse) ? 1 : 0;
+		return this.game.input.getMouse(numb, this.game.input.mouse) ? 1 : 0;
 	}
 
 	static mouse_check_button_pressed([numb]) {
-		return this.game.getMouse(numb, this.game.mousePressed) ? 1 : 0;
+		return this.game.input.getMouse(numb, this.game.input.mousePressed) ? 1 : 0;
 	}
 
 	static mouse_check_button_released([numb]) {
-		return this.game.getMouse(numb, this.game.mouseReleased) ? 1 : 0;
+		return this.game.input.getMouse(numb, this.game.input.mouseReleased) ? 1 : 0;
 	}
 
 	static mouse_wheel_up([]) {
-		return (this.game.mouseWheel < 0);
+		return (this.game.input.mouseWheel < 0);
 	}
 
 	static mouse_wheel_down([]) {
-		return (this.game.mouseWheel > 0);
+		return (this.game.input.mouseWheel > 0);
 	}
 
 	static mouse_clear([_]) {
@@ -2252,11 +2252,11 @@ export default class BuiltInFunctions {
 	}
 
 	static display_mouse_get_x([]) {
-		return this.game.mouseDisplayX;
+		return this.game.input.mouseDisplayX;
 	}
 
 	static display_mouse_get_y([]) {
-		return this.game.mouseDisplayY;
+		return this.game.input.mouseDisplayY;
 	}
 
 	static display_mouse_set([_]) {
@@ -2873,7 +2873,7 @@ export default class BuiltInFunctions {
 	static show_message([str]) {
 		str = asString(str);
 		str = parseNewLineHash(str);
-		this.game.clearIO();
+		this.game.input.clear();
 		alert(str);
 
 		return 0;
@@ -2885,7 +2885,7 @@ export default class BuiltInFunctions {
 	}
 
 	static show_question([str]) {
-		this.game.clearIO();
+		this.game.input.clear();
 		return confirm(str) ? 1 : 0;
 	}
 
@@ -2968,8 +2968,8 @@ export default class BuiltInFunctions {
 	}
 
 	static async show_menu([str, def]) {
-		const x = this.game.mouseDisplayX;
-		const y = this.game.mouseDisplayY;
+		const x = this.game.input.mouseDisplayX;
+		const y = this.game.input.mouseDisplayY;
 
 		return await BuiltInFunctions.show_menu_pos.call(this, [x, y, str, def]);
 	}

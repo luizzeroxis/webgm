@@ -247,43 +247,43 @@ export default class BuiltInGlobals {
 	// User Interaction / The Keyboard
 
 	static keyboard_lastkey = {type: "integer",
-		get() { return this.lastKey; },
-		set(value) { this.lastKey = value; },
+		get() { return this.input.lastKey; },
+		set(value) { this.input.lastKey = value; },
 	};
 
 	static keyboard_key = {type: "integer",
-		get() { return this.currentKey; },
-		set(value) { this.currentKey = value; },
+		get() { return this.input.currentKey; },
+		set(value) { this.input.currentKey = value; },
 	};
 
 	static keyboard_lastchar = {type: "char",
-		get() { return this.lastKeyChar; },
-		set(value) { this.lastKeyChar = value; },
+		get() { return this.input.lastKeyChar; },
+		set(value) { this.input.lastKeyChar = value; },
 	};
 
 	static keyboard_string = {type: "string",
-		get() { return this.keyboardString; },
-		set(value) { this.keyboardString = value; },
+		get() { return this.input.keyboardString; },
+		set(value) { this.input.keyboardString = value; },
 	};
 
 	// User Interaction / The Mouse
 
 	static mouse_x = {readOnly: true,
-		get() { return this.mouseX; },
+		get() { return this.input.mouseX; },
 	};
 
 	static mouse_y = {readOnly: true,
-		get() { return this.mouseY; },
+		get() { return this.input.mouseY; },
 	};
 
 	static mouse_button = {type: "integer",
-		get() { return this.currentMouse; },
-		set(value) { this.currentMouse = value; }, // TODO I think this is an enum, should check bounds or something
+		get() { return this.input.currentMouse; },
+		set(value) { this.input.currentMouse = value; }, // TODO I think this is an enum, should check bounds or something
 	};
 
 	static mouse_lastbutton = {type: "integer",
-		get() { return this.lastMouse; },
-		set(value) { this.lastMouse = value; },
+		get() { return this.input.lastMouse; },
+		set(value) { this.input.lastMouse = value; },
 	};
 
 	static cursor_sprite = {type: "integer",

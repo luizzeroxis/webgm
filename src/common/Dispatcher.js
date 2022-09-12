@@ -24,10 +24,12 @@ export default class Dispatcher {
 	}
 
 	speak(subject, ...words) {
+		const responses = [];
 		if (this.listeners[subject]) {
 			for (const listener in this.listeners[subject]) {
-				this.listeners[subject][listener](...words);
+				responses.push(this.listeners[subject][listener](...words));
 			}
 		}
+		return responses;
 	}
 }

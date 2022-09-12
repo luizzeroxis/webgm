@@ -102,7 +102,6 @@ GameMakerLanguage {
 	AssignmentDivide
 		= Variable "/=" Expression
 
-	// TODO add objects and arrays HERE
 	Variable
 		= Object? name ArrayIndexes?
 	Object

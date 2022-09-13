@@ -113,17 +113,17 @@ canvas {
 .editor > .horizontal {
 	display: flex;
 	flex-direction: row;
-	flex-wrap: wrap;
 	gap: 4px;
 }
 
 .editor > .horizontal > .resources-area {
-	flex: 0 1 auto;
+	flex: 0 0 auto;
 	width: 300px;
 }
 
 .editor > .horizontal > .windows-area {
 	flex: 1;
+	min-width: 300px;
 }
 
 .menu-area, .resources-area, .windows-area {

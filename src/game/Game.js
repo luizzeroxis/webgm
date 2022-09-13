@@ -6,6 +6,7 @@ import VariableHolder from "../common/VariableHolder.js";
 
 import BuiltInConstants from "./BuiltInConstants.js";
 import BuiltInGlobals from "./BuiltInGlobals.js";
+import GameAudio from "./GameAudio.js";
 import GameInput from "./GameInput.js";
 import GML from "./GML.js";
 import Instance from "./Instance.js";
@@ -22,6 +23,7 @@ export default class Game {
 
 		//
 		this.input = new GameInput(this, options.input);
+		this.audio = new GameAudio(this);
 
 		// Canvas
 		this.ctx = null;
@@ -674,7 +676,7 @@ export default class Game {
 		const image = background.image;
 		if (!image) return false;
 
-		// TODO blend, alpha
+		// TODO blend
 
 		let xStart = roomBackground.x;
 		let yStart = roomBackground.y;
@@ -691,7 +693,10 @@ export default class Game {
 
 		for (let x = xStart; x < this.room.width; x += width) {
 			for (let y = yStart; y < this.room.height; y += height) {
+				const previousGlobalAlpha = this.ctx.globalAlpha;
+				this.ctx.globalAlpha = roomBackground.alpha;
 				this.ctx.drawImage(image.image, x, y, width, height);
+				this.ctx.globalAlpha = previousGlobalAlpha;
 
 				if (!roomBackground.tileVertically) {
 					break;
@@ -924,7 +929,7 @@ export default class Game {
 					xScale: xScale,
 					yScale: yScale,
 					blend: 16777215, // TODO
-					alpha: 1, // TODO
+					alpha: 1,
 				};
 			}),
 

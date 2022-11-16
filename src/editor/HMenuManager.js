@@ -1,4 +1,4 @@
-import {parent, endparent, add, remove, HElement} from "../common/H.js";
+import {parent, endparent, add, remove, HElement, HButton} from "../common/H.js";
 
 export default class HMenuManager extends HElement {
 	constructor() {
@@ -7,7 +7,9 @@ export default class HMenuManager extends HElement {
 		this.selectedIndex = null;
 	}
 
-	openMenu(items, options) {
+	// items: [{text, onClick}]
+	// options: {x, y, fromElement}
+	openMenu(items, options={}) {
 		return new Promise(resolve => {
 			let x = options.x;
 			let y = options.y;
@@ -34,7 +36,7 @@ export default class HMenuManager extends HElement {
 					if (focusedBefore && focusedBefore.isConnected) {
 						focusedBefore.focus({preventScroll: true});
 					} else {
-						menu.html.blur(); // This calls the event below
+						menu.html.blur();
 					}
 				};
 
@@ -108,6 +110,59 @@ export default class HMenuManager extends HElement {
 					}
 					endparent();
 
+				endparent();
+		});
+	}
+
+	// options: {x, y, centerElement}
+	openDialog(text, options={}) {
+		return new Promise(resolve => {
+			parent(this);
+				const dialog = parent( add( new HElement("div", {class: "dialog"}) ) );
+					add( new HElement("div", {class: "text"}, text) );
+					parent( add( new HElement("div", {class: "buttons"}) ) );
+						const okButton = add( new HButton("OK", () => {
+							close();
+						}) );
+						endparent();
+					endparent();
+
+				dialog.html.tabIndex = -1;
+
+				const focusedBefore = document.activeElement;
+				okButton.html.focus();
+
+				function close() {
+					remove(dialog);
+					if (focusedBefore && focusedBefore.isConnected) {
+						focusedBefore.focus({preventScroll: true});
+					}
+					resolve();
+				}
+
+				dialog.html.addEventListener("keydown", e => {
+					if (e.code == "Escape") {
+						close();
+					}
+				});
+
+				let x = options.x;
+				let y = options.y;
+
+				if (x == null || y == null) {
+					const dialogRect = dialog.html.getBoundingClientRect();
+					const centerRect = options.centerElement.getBoundingClientRect();
+
+					if (x == null) {
+						x = centerRect.left + document.documentElement.scrollLeft + centerRect.width / 2 - dialogRect.width / 2;
+					}
+					if (y == null) {
+						y = centerRect.top + document.documentElement.scrollTop + centerRect.height / 2 - dialogRect.height / 2;
+					}
+				}
+
+				dialog.html.style.left = x.toString() + "px";
+				dialog.html.style.top = y.toString() + "px";
 				endparent();
 		});
 	}

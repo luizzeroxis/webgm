@@ -93,6 +93,16 @@ export default class Game {
 		this.captionLives = "Lives: ";
 		this.captionScore = "Score: ";
 
+		// Data structures
+		this.structures = {
+			stacks: [],
+			queues: [],
+			lists: [],
+			maps: [],
+			priorityQueues: [],
+			grids: [],
+		};
+
 		// Errors
 		this.errorOccurred = false;
 		this.errorLast = "";

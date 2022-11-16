@@ -1,5 +1,5 @@
 import {EngineException} from "../common/Exceptions.js";
-import {decimalToHSV, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger, parseNewLineHash} from "../common/tools.js";
+import {shuffle, sortByType, decimalToHSV, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger, parseNewLineHash} from "../common/tools.js";
 
 export default class BuiltInFunctions {
 	// this = GML
@@ -2870,11 +2870,13 @@ export default class BuiltInFunctions {
 
 	// ## Pop-up messages and questions
 
-	static show_message([str]) {
+	static async show_message([str]) {
 		str = asString(str);
 		str = parseNewLineHash(str);
 		this.game.input.clear();
-		alert(str);
+		// alert(str);
+
+		await this.game.menuManager.openDialog(str, {centerElement: this.game.canvas});
 
 		return 0;
 	}
@@ -3089,54 +3091,48 @@ export default class BuiltInFunctions {
 		return sprite ? 1 : 0;
 	}
 
-	static sprite_get_name([_]) {
-		throw new EngineException("Function sprite_get_name is not implemented");
-		// return 0;
+	static sprite_get_name([ind]) {
+		return this.game.project.getResourceById("ProjectSprite", ind)?.name ?? "<undefined>";
 	}
 
-	static sprite_get_number([_]) {
-		throw new EngineException("Function sprite_get_number is not implemented");
-		// return 0;
+	static sprite_get_number([ind]) {
+		return this.game.project.getResourceById("ProjectSprite", ind)?.images.length ?? -1;
 	}
 
-	static sprite_get_width([_]) {
-		throw new EngineException("Function sprite_get_width is not implemented");
-		// return 0;
+	static sprite_get_width([ind]) {
+		const sprite = this.game.project.getResourceById("ProjectSprite", ind);
+		if (!sprite) return -1;
+		return sprite.images[0]?.image.width ?? 1;
 	}
 
-	static sprite_get_height([_]) {
-		throw new EngineException("Function sprite_get_height is not implemented");
-		// return 0;
+	static sprite_get_height([ind]) {
+		const sprite = this.game.project.getResourceById("ProjectSprite", ind);
+		if (!sprite) return -1;
+		return sprite.images[0]?.image.height ?? 1;
 	}
 
-	static sprite_get_xoffset([_]) {
-		throw new EngineException("Function sprite_get_xoffset is not implemented");
-		// return 0;
+	static sprite_get_xoffset([ind]) {
+		return this.game.project.getResourceById("ProjectSprite", ind)?.originx ?? -1;
 	}
 
-	static sprite_get_yoffset([_]) {
-		throw new EngineException("Function sprite_get_yoffset is not implemented");
-		// return 0;
+	static sprite_get_yoffset([ind]) {
+		return this.game.project.getResourceById("ProjectSprite", ind)?.originy ?? -1;
 	}
 
-	static sprite_get_bbox_left([_]) {
-		throw new EngineException("Function sprite_get_bbox_left is not implemented");
-		// return 0;
+	static sprite_get_bbox_left([ind]) {
+		return this.game.project.getResourceById("ProjectSprite", ind)?.bbLeft ?? -1;
 	}
 
-	static sprite_get_bbox_right([_]) {
-		throw new EngineException("Function sprite_get_bbox_right is not implemented");
-		// return 0;
+	static sprite_get_bbox_right([ind]) {
+		return this.game.project.getResourceById("ProjectSprite", ind)?.bbRight ?? -1;
 	}
 
-	static sprite_get_bbox_top([_]) {
-		throw new EngineException("Function sprite_get_bbox_top is not implemented");
-		// return 0;
+	static sprite_get_bbox_top([ind]) {
+		return this.game.project.getResourceById("ProjectSprite", ind)?.bbTop ?? -1;
 	}
 
-	static sprite_get_bbox_bottom([_]) {
-		throw new EngineException("Function sprite_get_bbox_bottom is not implemented");
-		// return 0;
+	static sprite_get_bbox_bottom([ind]) {
+		return this.game.project.getResourceById("ProjectSprite", ind)?.bbBottom ?? -1;
 	}
 
 	static sprite_save([_]) {
@@ -3156,9 +3152,8 @@ export default class BuiltInFunctions {
 		return sound ? 1 : 0;
 	}
 
-	static sound_get_name([_]) {
-		throw new EngineException("Function sound_get_name is not implemented");
-		// return 0;
+	static sound_get_name([ind]) {
+		return this.game.project.getResourceById("ProjectSound", ind)?.name;
 	}
 
 	static sound_get_kind([_]) {
@@ -4355,74 +4350,73 @@ export default class BuiltInFunctions {
 
 	// ## Lists
 
-	static ds_list_create([_]) {
-		throw new EngineException("Function ds_list_create is not implemented");
-		// return 0;
+	static ds_list_create([]) {
+		let id = this.game.structures.lists.findIndex(x => x == null);
+		if (id == -1) id = this.game.structures.lists.length;
+
+		this.game.structures.lists[id] = [];
+		return id;
 	}
 
-	static ds_list_destroy([_]) {
-		throw new EngineException("Function ds_list_destroy is not implemented");
-		// return 0;
+	static ds_list_destroy([id]) {
+		this.game.structures.lists[id] = null;
+		return 0;
 	}
 
-	static ds_list_clear([_]) {
-		throw new EngineException("Function ds_list_clear is not implemented");
-		// return 0;
+	static ds_list_clear([id]) {
+		this.game.structures.lists[id] = [];
+		return 0;
 	}
 
-	static ds_list_copy([_]) {
-		throw new EngineException("Function ds_list_copy is not implemented");
-		// return 0;
+	static ds_list_copy([id, source]) {
+		this.game.structures.lists[id] = this.game.structures.lists[source].map(item => item);
+		return 0;
 	}
 
-	static ds_list_size([_]) {
-		throw new EngineException("Function ds_list_size is not implemented");
-		// return 0;
+	static ds_list_size([id]) {
+		return this.game.structures.lists[id].length;
 	}
 
-	static ds_list_empty([_]) {
-		throw new EngineException("Function ds_list_empty is not implemented");
-		// return 0;
+	static ds_list_empty([id]) {
+		return this.game.structures.lists[id].length == 0;
 	}
 
-	static ds_list_add([_]) {
-		throw new EngineException("Function ds_list_add is not implemented");
-		// return 0;
+	static ds_list_add([id, val]) {
+		this.game.structures.lists[id].push(val);
+		return 0;
 	}
 
-	static ds_list_insert([_]) {
-		throw new EngineException("Function ds_list_insert is not implemented");
-		// return 0;
+	static ds_list_insert([id, pos, val]) {
+		this.game.structures.lists[id].splice(pos, 0, val);
+		return 0;
 	}
 
-	static ds_list_replace([_]) {
-		throw new EngineException("Function ds_list_replace is not implemented");
-		// return 0;
+	static ds_list_replace([id, pos, val]) {
+		this.game.structures.lists[id][pos] = val;
+		return 0;
 	}
 
-	static ds_list_delete([_]) {
-		throw new EngineException("Function ds_list_delete is not implemented");
-		// return 0;
+	static ds_list_delete([id, pos]) {
+		this.game.structures.lists[id].splice(pos, 1);
+		return 0;
 	}
 
-	static ds_list_find_index([_]) {
-		throw new EngineException("Function ds_list_find_index is not implemented");
-		// return 0;
+	static ds_list_find_index([id, val]) {
+		return this.game.structures.lists[id].indexOf(val);
 	}
 
-	static ds_list_find_value([_]) {
-		throw new EngineException("Function ds_list_find_value is not implemented");
-		// return 0;
+	static ds_list_find_value([id, pos]) {
+		return this.game.structures.lists[id][pos];
 	}
 
-	static ds_list_sort([_]) {
-		throw new EngineException("Function ds_list_sort is not implemented");
-		// return 0;
+	static ds_list_sort([id, ascend]) {
+		sortByType(this.game.structures.lists[id], ascend);
+		return 0;
 	}
 
-	static ds_list_shuffle([_]) {
-		throw new EngineException("Function ds_list_shuffle is not implemented");
-		// return 0;
+	static ds_list_shuffle([id]) {
+		shuffle(this.game.structures.lists[id]);
+		return 0;
 	}
 
 	static ds_list_write([_]) {

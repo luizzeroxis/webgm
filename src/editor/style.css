@@ -351,7 +351,7 @@ canvas {
 	cursor: none;
 }
 
-.menu {
+.h-menu-manager > .menu {
 	position: absolute;
 	color: var(--menu-text);
 	background-color: var(--menu-background);
@@ -360,7 +360,7 @@ canvas {
 	padding-bottom: 2px;
 }
 
-.menu-item {
+.h-menu-manager > .menu > .menu-item {
 	display: flex;
 	align-items: center;
 	height: 24px;
@@ -368,6 +368,24 @@ canvas {
 	padding-right: 56px;
 }
 
-.menu-item.selected {
+.h-menu-manager > .menu > .menu-item.selected {
 	background-color: var(--menu-item-selected-background);
+}
+
+.h-menu-manager > .dialog {
+	position: absolute;
+	color: var(--menu-text);
+	background-color: var(--menu-background);
+	border: 1px solid var(--menu-border);
+	width: 320px;
+}
+
+.h-menu-manager > .dialog > .text {
+	margin: 16px;
+}
+
+.h-menu-manager > .dialog > .buttons {
+	margin: 16px;
+	display: flex;
+	justify-content: space-evenly;
 }

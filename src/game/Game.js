@@ -201,7 +201,7 @@ export default class Game {
 		// TODO Add user defined constants
 
 		// Add resource names as constants
-		Project.getTypes().forEach(type => {
+		Project.resourceTypes.forEach(type => {
 			this.project.resources[type.getClassName()].forEach(x => { this.constants[x.name] = x.id; });
 		});
 

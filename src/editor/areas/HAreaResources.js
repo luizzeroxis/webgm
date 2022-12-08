@@ -17,7 +17,7 @@ export default class HAreaResources extends HElement {
 		parent(this);
 			parent( add( new HElement("ul") ) );
 
-				Project.getTypes().forEach(type => {
+				Project.resourceTypes.forEach(type => {
 					this.resourceItemsByType.set(type.name, []);
 
 					parent( add( new HElement("li") ) );
@@ -136,7 +136,7 @@ export default class HAreaResources extends HElement {
 			this.resourceItemsByType.set(typeName, []);
 		}
 
-		Project.getTypes().forEach(type => {
+		Project.resourceTypes.forEach(type => {
 			this.editor.project.resources[type.getClassName()].forEach(resource => {
 				this.add(resource);
 			});

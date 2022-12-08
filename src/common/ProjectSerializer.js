@@ -120,7 +120,7 @@ export default class ProjectSerializer {
 					throw new UnserializeException("Failed parsing \"project.json\" file.");
 				}
 
-				Project.getTypes().forEach(x => {
+				Project.resourceTypes.forEach(x => {
 					if (project.resources[x.getClassName()] == undefined)
 						project.resources[x.getClassName()] = [];
 					if (project.counter[x.getClassName()] == undefined)
@@ -209,7 +209,7 @@ export default class ProjectSerializer {
 		if (!jsonObject.resources) return null;
 
 		//convert objects into types
-		Project.getTypes().forEach(type => {
+		Project.resourceTypes.forEach(type => {
 			if (!jsonObject.resources[type.getClassName()]) {
 				jsonObject.resources[type.getClassName()] = [];
 				return;

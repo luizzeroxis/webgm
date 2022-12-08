@@ -67,7 +67,7 @@ export default class HAreaMenu extends HElement {
 
 			add( new HElement("div", {class: "separator"}) );
 
-			Project.getTypes().forEach(type => {
+			Project.resourceTypes.forEach(type => {
 				const button = add( new HButton(null, () => {
 					this.editor.createResource(type);
 				}) );

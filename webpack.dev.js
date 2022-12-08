@@ -14,12 +14,6 @@ module.exports = mergeWithRules({
 
 })(common, {
 	mode: "development",
-	devtool: "inline-source-map",
-	devServer: {
-		static: "./dist",
-		hot: false,
-		liveReload: false,
-	},
 	module: {
 		rules: [
 			{
@@ -30,4 +24,10 @@ module.exports = mergeWithRules({
 			},
 		],
 	},
+	devServer: {
+		static: "./dist",
+		hot: false,
+		liveReload: false,
+	},
+	devtool: "inline-source-map",
 });

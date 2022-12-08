@@ -35,15 +35,6 @@ module.exports = {
 			},
 		],
 	},
-	plugins: [
-		new HtmlWebpackPlugin({
-			title: "webgm",
-		}),
-		new MiniCssExtractPlugin(),
-		new ESLintPlugin({
-			files: path.resolve(__dirname, "."),
-		}),
-	],
 	optimization: {
 		runtimeChunk: "single",
 		splitChunks: {
@@ -56,4 +47,13 @@ module.exports = {
 			},
 		},
 	},
+	plugins: [
+		new HtmlWebpackPlugin({
+			title: "webgm",
+		}),
+		new MiniCssExtractPlugin(),
+		new ESLintPlugin({
+			files: path.resolve(__dirname, "."),
+		}),
+	],
 };

@@ -24,6 +24,12 @@ import "./style.css";
 
 export default class Editor {
 	constructor() {
+		if ("serviceWorker" in navigator) {
+			window.addEventListener("load", () => {
+				navigator.serviceWorker.register("service-worker.js");
+			});
+		}
+
 		this.project = new Project();
 		this.game = null;
 		this.projectName = "game";

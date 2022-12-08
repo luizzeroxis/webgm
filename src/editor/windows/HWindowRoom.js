@@ -219,8 +219,6 @@ export default class HWindowRoom extends HWindow {
 					this.ctx = this.canvasPreview.html.getContext("2d", {alpha: false});
 					this.ctx.imageSmoothingEnabled = false;
 
-					// TODO: account for sprite size when moving and deleting
-
 					this.canvasPreview.html.onmousedown = (e) => {
 						this.mouseIsDown = true;
 						const pos = this.getMousePosition(e);

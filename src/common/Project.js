@@ -17,14 +17,8 @@ export class Project {
 
 	constructor(object) {
 		if (!object) {
-			this.resources = {};
-			this.counter = {};
-
-			Project.resourceTypes.forEach(type => {
-				const typeName = type.getClassName();
-				this.resources[typeName] = [];
-				this.counter[typeName] = 0;
-			});
+			this.resources = new ProjectResources();
+			this.counter = new ProjectCounters();
 
 			this.gameInformation = new ProjectGameInformation();
 			this.globalGameSettings = new ProjectGlobalGameSettings();
@@ -34,18 +28,13 @@ export class Project {
 
 			this.lastId = 100000;
 		} else {
-			this.resources = {};
-			this.counter = {};
-
-			Project.resourceTypes.forEach(type => {
-				const typeName = type.getClassName();
-				this.resources[typeName] = object.resources[typeName].map(resource => new type(resource));
-				this.counter[typeName] = object.counter[typeName];
-			});
+			this.resources = new ProjectResources(object.resources);
+			this.counter = new ProjectCounters(object.counter);
 
 			this.gameInformation = new ProjectGameInformation(object.gameInformation);
 			this.globalGameSettings = new ProjectGlobalGameSettings(object.globalGameSettings);
 			this.extensionPackages = new ProjectExtensionPackages(object.extensionPackages);
+
 			this.lastId = object.lastId;
 		}
 	}
@@ -82,6 +71,42 @@ export class Project {
 			type = type.getClassName();
 		}
 		return this.resources[type].find(x => x.id == id);
+	}
+}
+
+export class ProjectResources {
+	// static {
+	// 	this._properties = Project.resourceTypes.map(type => {
+	// 		return {name: type.getClassName(), type: {kind: 'array', arrayType: type}};
+	// 	});
+	// }
+
+	constructor(object) {
+		if (!(object instanceof ProjectResources)) {
+			Project.resourceTypes.forEach(type => {
+				this[type.getClassName()] = [];
+			});
+		} else {
+			Project.resourceTypes.forEach(type => {
+				const typeName = type.getClassName();
+				this[typeName] = object[typeName].map(resource => new type(resource));
+			});
+		}
+	}
+}
+
+export class ProjectCounters {
+	constructor(object) {
+		if (!(object instanceof ProjectCounters)) {
+			Project.resourceTypes.forEach(type => {
+				this[type.getClassName()] = 0;
+			});
+		} else {
+			Project.resourceTypes.forEach(type => {
+				const typeName = type.getClassName();
+				this[typeName] = object[typeName];
+			});
+		}
 	}
 }
 

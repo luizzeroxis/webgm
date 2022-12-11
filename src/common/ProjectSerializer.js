@@ -3,49 +3,14 @@ import JSZip from "jszip";
 import AbstractAudio from "./AbstractAudio.js";
 import AbstractImage from "./AbstractImage.js";
 import {UnserializeException} from "./Exceptions.js";
-import {
-	Project,
-	ProjectSprite,
-	ProjectSound,
-	ProjectBackground,
-	ProjectPath,
-	ProjectPathPoint,
-	ProjectScript,
-	ProjectFont,
-	ProjectTimeline,
-	ProjectTimelineMoment,
-	ProjectObject,
-	ProjectEvent,
-	ProjectAction,
-	ProjectActionArg,
-	ProjectRoom,
-	ProjectInstance,
-	ProjectRoomTile,
-	ProjectRoomBackground,
-	ProjectRoomView,
-	ProjectGameInformation,
-	ProjectGlobalGameSettings,
-	ProjectExtensionPackages,
-} from "./Project.js";
-import {base64ToBlob} from "./tools.js";
+import Serializer from "./Serializer.js";
 
 export default class ProjectSerializer {
 	static serializeZIP(project) {
 		const zip = new JSZip();
 		zip.file("version", "2");
 
-		ProjectSerializer.initClasses();
-
-		const json = JSON.stringify(project, (key, value) => {
-			if (value != null) {
-				const name = Object.keys(ProjectSerializer.classes).find(x => ProjectSerializer.classes[x] == value.constructor);
-				if (name) {
-					value = {...value, $class: name};
-				}
-			}
-
-			return value;
-		}, "\t");
+		const json = Serializer.serializeToJSON(project);
 
 		zip.file("project.json", json);
 
@@ -89,7 +54,7 @@ export default class ProjectSerializer {
 		.then(versionString => {
 			version = parseInt(versionString);
 			console.log("ZIP version:", version);
-			if (version < 1 || version > 2) throw new UnserializeException("Unsupported "+version.toString()+" version.");
+			if (version < 2) throw new UnserializeException("Unsupported "+version.toString()+" version.");
 		})
 		.then(() => {
 			const file = zip.file("project.json");
@@ -97,35 +62,10 @@ export default class ProjectSerializer {
 			return file.async("string");
 		})
 		.then(json => {
-			if (version == 1) {
-				return ProjectSerializer.unserializeV1(json);
-			} else
 			if (version == 2) {
-				let project;
 				const promises = [];
 
-				ProjectSerializer.initClasses();
-
-				try {
-					project = JSON.parse(json, (key, value) => {
-						if (value != null && value.$class) {
-							let obj = new (ProjectSerializer.classes[value.$class])();
-							obj = Object.assign(obj, value);
-							delete obj.$class;
-							return obj;
-						}
-						return value;
-					});
-				} catch (e) {
-					throw new UnserializeException("Failed parsing \"project.json\" file.");
-				}
-
-				Project.resourceTypes.forEach(x => {
-					if (project.resources[x.getClassName()] == undefined)
-						project.resources[x.getClassName()] = [];
-					if (project.counter[x.getClassName()] == undefined)
-						project.counter[x.getClassName()] = 0;
-				});
+				const project = Serializer.unserializeFromJSON(json);
 
 				project.resources.ProjectSprite.forEach(sprite => {
 					sprite.images.forEach((image, index) => {
@@ -166,90 +106,5 @@ export default class ProjectSerializer {
 
 			throw new UnserializeException("Unsupported "+version.toString()+" version.");
 		});
-	}
-
-	static initClasses() {
-		if (ProjectSerializer.classes != undefined) return;
-
-		ProjectSerializer.classes = {
-			"Project": Project,
-			"ProjectSprite": ProjectSprite,
-			"ProjectSound": ProjectSound,
-			"ProjectBackground": ProjectBackground,
-			"ProjectPath": ProjectPath,
-			"ProjectPathPoint": ProjectPathPoint,
-			"ProjectScript": ProjectScript,
-			"ProjectFont": ProjectFont,
-			"ProjectTimeline": ProjectTimeline,
-			"ProjectTimelineMoment": ProjectTimelineMoment,
-			"ProjectObject": ProjectObject,
-			"ProjectEvent": ProjectEvent,
-			"ProjectAction": ProjectAction,
-			"ProjectActionArg": ProjectActionArg,
-			"ProjectRoom": ProjectRoom,
-			"ProjectInstance": ProjectInstance,
-			"ProjectRoomTile": ProjectRoomTile,
-			"ProjectRoomBackground": ProjectRoomBackground,
-			"ProjectRoomView": ProjectRoomView,
-			"ProjectGameInformation": ProjectGameInformation,
-			"ProjectGlobalGameSettings": ProjectGlobalGameSettings,
-			"ProjectExtensionPackages": ProjectExtensionPackages,
-		};
-	}
-
-	static unserializeV1(json) {
-		let jsonObject;
-
-		try {
-			jsonObject = JSON.parse(json);
-		} catch (e) {
-			throw new UnserializeException("Failed parsing JSON file.");
-		}
-
-		if (!jsonObject.resources) return null;
-
-		//convert objects into types
-		Project.resourceTypes.forEach(type => {
-			if (!jsonObject.resources[type.getClassName()]) {
-				jsonObject.resources[type.getClassName()] = [];
-				return;
-			}
-
-			jsonObject.resources[type.getClassName()] = jsonObject.resources[type.getClassName()].map(resource => {
-				delete resource.classname;
-
-				//convert sprites from base64 to blobs
-				if (type == ProjectSprite) {
-					resource.images = resource.images.map(image => {
-						return new AbstractImage( base64ToBlob(image, "image/png") );
-					});
-				}
-
-				if (type == ProjectObject) {
-					resource.events = resource.events.map(event => {
-						event.actions = event.actions.map(action => {
-							//convert action ids to action type objects???
-							delete action.classname;
-							return Object.assign(new ProjectAction(), action);
-						});
-						delete event.classname;
-						return Object.assign(new ProjectEvent(), event);
-					});
-				}
-
-				if (type == ProjectRoom) {
-					resource.instances = resource.instances.map(instance => {
-						delete instance.classname;
-						return Object.assign(new ProjectInstance(), instance);
-					});
-				}
-
-				return Object.assign(new type(), resource);
-			});
-		});
-
-		const project = Object.assign(new Project(), jsonObject);
-
-		return Promise.resolve(project);
 	}
 }

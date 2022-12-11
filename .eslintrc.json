@@ -118,7 +118,7 @@
         "implicit-arrow-linebreak": "warn",
         "jsx-quotes": "warn",
         "keyword-spacing": "warn",
-        "linebreak-style": ["warn", "windows"],
+        "linebreak-style": ["warn", "unix"],
         "lines-between-class-members": ["warn", "always", {"exceptAfterSingleLine": true}],
         "new-parens": "warn",
         "no-extra-parens": ["warn", "functions"],

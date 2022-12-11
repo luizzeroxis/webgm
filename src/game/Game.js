@@ -370,26 +370,26 @@ export default class Game {
 
 				if (eventInfo.kind == "button") {
 					const dict = {
-						"mouse": this.mouse,
-						"mousePressed": this.mousePressed,
-						"mouseReleased": this.mouseReleased,
+						"mouse": this.input.mouse,
+						"mousePressed": this.input.mousePressed,
+						"mouseReleased": this.input.mouseReleased,
 					}[eventInfo.when]; // wacky
 
 					execute = this.input.getMouse(eventInfo.button, dict);
 
 					if (execute && !eventInfo.global) {
 						// check if mouse is hovering over instance
-						execute = this.collisionInstanceOnPoint(instance, {x: this.mouseX, y: this.mouseY});
+						execute = this.collisionInstanceOnPoint(instance, {x: this.input.mouseX, y: this.input.mouseY});
 					}
 				} else
 				if (eventInfo.kind == "enter-release") {
 					// TODO not implemented
 				} else
 				if (eventInfo.kind == "wheel-up") {
-					execute = (this.mouseWheel < 0);
+					execute = (this.input.mouseWheel < 0);
 				} else
 				if (eventInfo.kind == "wheel-down") {
-					execute = (this.mouseWheel > 0);
+					execute = (this.input.mouseWheel > 0);
 				}
 
 				if (execute) {

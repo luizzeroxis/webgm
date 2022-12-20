@@ -1,37 +1,28 @@
-//
+import AbstractAudio from "./AbstractAudio.js";
+import AbstractImage from "./AbstractImage.js";
+import Serializer from "./Serializer.js";
+
 export class ProjectSprite {
-	constructor(object) {
-		if (!object) {
-			this.id = null;
-			this.name = null;
-			this.images = []; //AbstractImage
-			this.originx = 0;
-			this.originy = 0;
+	static {
+		Serializer.setupClass(this, "ProjectSprite", {
+			id: null,
+			name: null,
+			images: {array: AbstractImage}, // this should not be serialized, however look at ProjectSerializer
+			originx: 0,
+			originy: 0,
+			separateCollisionMasks: false,
+			alphaTolerance: 0,
+			boundingBox: "automatic",
+			bbLeft: 0,
+			bbTop: 0,
+			bbRight: 0,
+			bbBottom: 0,
+			shape: "precise",
+		});
+	}
 
-			this.separateCollisionMasks = false;
-			this.alphaTolerance = 0;
-			this.boundingBox = "automatic";
-			this.bbLeft = 0;
-			this.bbTop = 0;
-			this.bbRight = 0;
-			this.bbBottom = 0;
-			this.shape = "precise";
-		} else {
-			this.id = object.id;
-			this.name = object.name;
-			this.images = [...object.images]; // No need to copy AbstractImage, it should never be modified
-			this.originx = object.originx;
-			this.originy = object.originy;
-
-			this.separateCollisionMasks = object.separateCollisionMasks;
-			this.alphaTolerance = object.alphaTolerance;
-			this.boundingBox = object.boundingBox;
-			this.bbLeft = object.bbLeft;
-			this.bbTop = object.bbTop;
-			this.bbRight = object.bbRight;
-			this.bbBottom = object.bbBottom;
-			this.shape = object.shape;
-		}
+	constructor(...args) {
+		Serializer.initProperties(this, args);
 	}
 
 	static getName() { return "sprite"; }
@@ -41,18 +32,17 @@ export class ProjectSprite {
 }
 
 export class ProjectSound {
-	constructor(object) {
-		if (!object) {
-			this.id = null;
-			this.name = null;
-			this.sound = null; // AbstractAudio
-			this.volume = 1;
-		} else {
-			this.id = object.id;
-			this.name = object.name;
-			this.sound = object.sound; // No need to copy AbstractAudio, it should never be modified
-			this.volume = object.volume;
-		}
+	static {
+		Serializer.setupClass(this, "ProjectSound", {
+			id: null,
+			name: null,
+			sound: {object: AbstractAudio, value: null},
+			volume: 1,
+		});
+	}
+
+	constructor(...args) {
+		Serializer.initProperties(this, args);
 	}
 
 	static getName() { return "sound"; }
@@ -62,32 +52,24 @@ export class ProjectSound {
 }
 
 export class ProjectBackground {
-	constructor(object) {
-		if (!object) {
-			this.id = null;
-			this.name = null;
-			this.image = null; // AbstractImage
+	static {
+		Serializer.setupClass(this, "ProjectBackground", {
+			id: null,
+			name: null,
+			image: {object: AbstractImage, value: null},
 
-			this.useAsTileSet = false;
-			this.tileWidth = 16;
-			this.tileHeight = 16;
-			this.horizontalOffset = 0;
-			this.verticalOffset = 0;
-			this.horizontalSep = 0;
-			this.verticalSep = 0;
-		} else {
-			this.id = object.id;
-			this.name = object.name;
-			this.image = object.image; // No need to copy AbstractImage, it should never be modified
+			useAsTileSet: false,
+			tileWidth: 16,
+			tileHeight: 16,
+			horizontalOffset: 0,
+			verticalOffset: 0,
+			horizontalSep: 0,
+			verticalSep: 0,
+		});
+	}
 
-			this.useAsTileSet = object.useAsTileSet;
-			this.tileWidth = object.tileWidth;
-			this.tileHeight = object.tileHeight;
-			this.horizontalOffset = object.horizontalOffset;
-			this.verticalOffset = object.verticalOffset;
-			this.horizontalSep = object.horizontalSep;
-			this.verticalSep = object.verticalSep;
-		}
+	constructor(...args) {
+		Serializer.initProperties(this, args);
 	}
 
 	static getName() { return "background"; }
@@ -96,25 +78,35 @@ export class ProjectBackground {
 	static getClassName() { return "ProjectBackground"; }
 }
 
+export class ProjectPathPoint {
+	static {
+		Serializer.setupClass(this, "ProjectPathPoint", {
+			x: 0,
+			y: 0,
+			sp: 100,
+		});
+	}
+
+	constructor(...args) {
+		Serializer.initProperties(this, args);
+	}
+}
+
 export class ProjectPath {
-	constructor(object) {
-		if (!object) {
-			this.id = null;
-			this.name = null;
-			this.points = []; // ProjectPathPoint
-			this.backgroundRoomIndex = -1;
-			this.connectionKind = "lines";
-			this.closed = true;
-			this.precision = 4;
-		} else {
-			this.id = object.id;
-			this.name = object.name;
-			this.points = object.points.map(point => new ProjectPathPoint(point));
-			this.backgroundRoomIndex = object.backgroundRoomIndex;
-			this.connectionKind = object.connectionKind;
-			this.closed = object.closed;
-			this.precision = object.precision;
-		}
+	static {
+		Serializer.setupClass(this, "ProjectPath", {
+			id: null,
+			name: null,
+			points: {array: ProjectPathPoint},
+			backgroundRoomIndex: -1,
+			connectionKind: "lines",
+			closed: true,
+			precision: 4,
+		});
+	}
+
+	constructor(...args) {
+		Serializer.initProperties(this, args);
 	}
 
 	static getName() { return "path"; }
@@ -123,31 +115,17 @@ export class ProjectPath {
 	static getClassName() { return "ProjectPath"; }
 }
 
-	export class ProjectPathPoint {
-		constructor(object) {
-			if (!object) {
-				this.x = 0;
-				this.y = 0;
-				this.sp = 100;
-			} else {
-				this.x = object.x;
-				this.y = object.y;
-				this.sp = object.sp;
-			}
-		}
+export class ProjectScript {
+	static {
+		Serializer.setupClass(this, "ProjectScript", {
+			id: null,
+			name: null,
+			code: "",
+		});
 	}
 
-export class ProjectScript {
-	constructor(object) {
-		if (!object) {
-			this.id = null;
-			this.name = null;
-			this.code = "";
-		} else {
-			this.id = object.id;
-			this.name = object.name;
-			this.code = object.code;
-		}
+	constructor(...args) {
+		Serializer.initProperties(this, args);
 	}
 
 	static getName() { return "script"; }
@@ -157,22 +135,19 @@ export class ProjectScript {
 }
 
 export class ProjectFont {
-	constructor(object) {
-		if (!object) {
-			this.id = null;
-			this.name = null;
-			this.font = "Arial";
-			this.size = 12;
-			this.bold = false;
-			this.italic = false;
-		} else {
-			this.id = object.id;
-			this.name = object.name;
-			this.font = object.font;
-			this.size = object.size;
-			this.bold = object.bold;
-			this.italic = object.italic;
-		}
+	static {
+		Serializer.setupClass(this, "ProjectFont", {
+			id: null,
+			name: null,
+			font: "Arial",
+			size: 12,
+			bold: false,
+			italic: false,
+		});
+	}
+
+	constructor(...args) {
+		Serializer.initProperties(this, args);
 	}
 
 	static getName() { return "font"; }
@@ -181,17 +156,67 @@ export class ProjectFont {
 	static getClassName() { return "ProjectFont"; }
 }
 
+export class ProjectActionArg {
+	static {
+		Serializer.setupClass(this, "ProjectActionArg", {
+			kind: null, // expression, string, both, boolean, menu, color, sprite, sound, background, path, script, object, room, font, timeline
+			value: null,
+		});
+	}
+
+	constructor(...args) {
+		Serializer.initProperties(this, args);
+	}
+}
+
+export class ProjectAction {
+	static {
+		Serializer.setupClass(this, "ProjectAction", {
+			typeLibrary: null,
+			typeId: null,
+			typeKind: null, // normal, begin group, end group, else, exit, repeat, variable, code
+			typeExecution: null, // nothing, function, code
+			typeExecutionFunction: null,
+			typeExecutionCode: null,
+			typeIsQuestion: null,
+
+			args: {array: ProjectActionArg}, // ProjectActionArg
+
+			appliesTo: -1, // -1 = self, -2 = other, 0>= = object index
+			relative: false,
+			not: false,
+		});
+	}
+
+	constructor(...args) {
+		Serializer.initProperties(this, args);
+	}
+}
+
+export class ProjectTimelineMoment {
+	static {
+		Serializer.setupClass(this, "ProjectTimelineMoment", {
+			step: null,
+			actions: {array: ProjectAction},
+		});
+	}
+
+	constructor(...args) {
+		Serializer.initProperties(this, args);
+	}
+}
+
 export class ProjectTimeline {
-	constructor(object) {
-		if (!object) {
-			this.id = null;
-			this.name = null;
-			this.moments = []; // ProjectTimelineMoment
-		} else {
-			this.id = object.id;
-			this.name = object.name;
-			this.moments = object.moments.map(moment => new ProjectTimelineMoment(moment));
-		}
+	static {
+		Serializer.setupClass(this, "ProjectTimeline", {
+			id: null,
+			name: null,
+			moments: {array: ProjectTimelineMoment},
+		});
+	}
+
+	constructor(...args) {
+		Serializer.initProperties(this, args);
 	}
 
 	static getName() { return "timeline"; }
@@ -200,43 +225,46 @@ export class ProjectTimeline {
 	static getClassName() { return "ProjectTimeline"; }
 }
 
-	export class ProjectTimelineMoment {
-		constructor(object) {
-			if (!object) {
-				this.step = null;
-				this.actions = []; // ProjectAction
-			} else {
-				this.step = object.step;
-				this.actions = object.actions.map(action => new ProjectAction(action));
-			}
-		}
+export class ProjectEvent {
+	static {
+		Serializer.setupClass(this, "ProjectEvent", {
+			type: null,
+			subtype: null,
+			actions: {array: ProjectAction},
+		});
 	}
 
+	constructor(...args) {
+		Serializer.initProperties(this, args);
+	}
+
+	getNameId() {
+		return JSON.stringify({type: this.type, subtype: this.subtype});
+	}
+
+	getName() {
+		return this.type + " " + this.subtype;
+	}
+}
+
 export class ProjectObject {
-	constructor(object) {
-		if (!object) {
-			this.id = null;
-			this.name = null;
-			this.sprite_index = -1;
-			this.visible = true;
-			this.solid = false;
-			this.depth = 0;
-			this.persistent = false;
-			this.parent_index = -1;
-			this.mask_index = -1;
-			this.events = [];
-		} else {
-			this.id = object.id;
-			this.name = object.name;
-			this.sprite_index = object.sprite_index;
-			this.visible = object.visible;
-			this.solid = object.solid;
-			this.depth = object.depth;
-			this.persistent = object.persistent;
-			this.parent_index = object.parent_index;
-			this.mask_index = object.mask_index;
-			this.events = object.events.map(event => new ProjectEvent(event));
-		}
+	static {
+		Serializer.setupClass(this, "ProjectObject", {
+			id: null,
+			name: null,
+			sprite_index: -1,
+			visible: true,
+			solid: false,
+			depth: 0,
+			persistent: false,
+			parent_index: -1,
+			mask_index: -1,
+			events: {array: ProjectEvent},
+		});
+	}
+
+	constructor(...args) {
+		Serializer.initProperties(this, args);
 	}
 
 	static getName() { return "object"; }
@@ -245,119 +273,115 @@ export class ProjectObject {
 	static getClassName() { return "ProjectObject"; }
 }
 
-	export class ProjectEvent {
-		constructor(object) {
-			if (!object) {
-				this.type = null;
-				this.subtype = null;
-				this.actions = [];
-			} else {
-				this.type = object.type;
-				this.subtype = object.subtype;
-				this.actions = object.actions.map(action => new ProjectAction(action));
-			}
-		}
-
-		getNameId() {
-			return JSON.stringify({type: this.type, subtype: this.subtype});
-		}
-
-		getName() {
-			return this.type + " " + this.subtype;
-		}
+export class ProjectInstance {
+	static {
+		Serializer.setupClass(this, "ProjectInstance", {
+			id: null,
+			x: null,
+			y: null,
+			object_index: null,
+			creationCode: "",
+		});
 	}
 
-export class ProjectAction {
-	constructor(object) {
-		if (!object) {
-			this.typeLibrary = null;
-			this.typeId = null;
-			this.typeKind = null; // normal, begin group, end group, else, exit, repeat, variable, code
-			this.typeExecution = null; // nothing, function, code
-			this.typeExecutionFunction = null;
-			this.typeExecutionCode = null;
-			this.typeIsQuestion = null;
-
-			this.args = []; // ProjectActionArg
-
-			this.appliesTo = -1; // -1 = self, -2 = other, 0>= = object index
-			this.relative = false;
-			this.not = false;
-		} else {
-			this.typeLibrary = object.typeLibrary;
-			this.typeId = object.typeId;
-			this.typeKind = object.typeKind;
-			this.typeExecution = object.typeExecution;
-			this.typeExecutionFunction = object.typeExecutionFunction;
-			this.typeExecutionCode = object.typeExecutionCode;
-			this.typeIsQuestion = object.typeIsQuestion;
-
-			this.args = object.args.map(arg => new ProjectActionArg(arg));
-
-			this.appliesTo = object.appliesTo;
-			this.relative = object.relative;
-			this.not = object.not;
-		}
+	constructor(...args) {
+		Serializer.initProperties(this, args);
 	}
 }
 
-	export class ProjectActionArg {
-		constructor(object) {
-			if (!object) {
-				this.kind = null; // expression, string, both, boolean, menu, color, sprite, sound, background, path, script, object, room, font, timeline
-				this.value = null;
-			} else {
-				this.kind = object.kind;
-				this.value = object.value;
-			}
-		}
+export class ProjectRoomTile {
+	static {
+		Serializer.setupClass(this, "ProjectRoomTile", {
+			backgroundIndex: null,
+			x: null,
+			y: null,
+			backgroundX: null,
+			backgroundY: null,
+			backgroundW: null,
+			backgroundH: null,
+			depth: null,
+		});
 	}
 
+	constructor(...args) {
+		Serializer.initProperties(this, args);
+	}
+}
+
+export class ProjectRoomBackground {
+	static {
+		Serializer.setupClass(this, "ProjectRoomBackground", {
+			visibleAtStart: false,
+			isForeground: false,
+			backgroundIndex: -1,
+			tileHorizontally: true,
+			tileVertically: true,
+			x: 0,
+			y: 0,
+			stretch: false,
+			horizontalSpeed: 0,
+			verticalSpeed: 0,
+		});
+	}
+
+	constructor(...args) {
+		Serializer.initProperties(this, args);
+	}
+}
+
+export class ProjectRoomView {
+	static {
+		Serializer.setupClass(this, "ProjectRoomBackground", {
+			visibleAtStart: false,
+			viewX: 0,
+			viewY: 0,
+			viewW: 640,
+			viewH: 480,
+			portX: 0,
+			portY: 0,
+			portW: 640,
+			portH: 480,
+			objectFollowIndex: -1,
+			objectFollowHorizontalBorder: 32,
+			objectFollowVerticalBorder: 32,
+			objectFollowHorizontalSpeed: -1,
+			objectFollowVerticalSpeed: -1,
+		});
+	}
+
+	constructor(...args) {
+		Serializer.initProperties(this, args);
+	}
+}
+
 export class ProjectRoom {
-	constructor(object) {
-		if (!object) {
-			this.id = null;
-			this.name = null;
+	static {
+		Serializer.setupClass(this, "ProjectRoom", {
+			id: null,
+			name: null,
 
-			this.instances = []; // ProjectInstance
+			instances: {array: ProjectInstance},
 
-			this.caption = "";
-			this.width = 640;
-			this.height = 480;
-			this.speed = 30;
-			this.persistent = false;
-			this.creationCode = "";
+			caption: "",
+			width: 640,
+			height: 480,
+			speed: 30,
+			persistent: false,
+			creationCode: "",
 
-			this.tiles = []; // ProjectRoomTile
+			tiles: {array: ProjectRoomTile},
 
-			this.drawBackgroundColor = true;
-			this.backgroundColor = "#c0c0c0";
-			this.backgrounds = []; // ProjectRoomBackground
+			drawBackgroundColor: true,
+			backgroundColor: "#c0c0c0",
+			backgrounds: {array: ProjectRoomBackground},
 
-			this.enableViews = false;
-			this.views = []; // ProjectRoomView
-		} else {
-			this.id = object.id;
-			this.name = object.name;
+			enableViews: false,
+			views: {array: ProjectRoomView},
+		});
+	}
 
-			this.instances = object.instances.map(instance => new ProjectInstance(instance));
-
-			this.caption = object.caption;
-			this.width = object.width;
-			this.height = object.height;
-			this.speed = object.speed;
-			this.persistent = object.persistent;
-			this.creationCode = object.creationCode;
-
-			this.tiles = object.tiles.map(tile => new ProjectRoomTile(tile));
-
-			this.drawBackgroundColor = object.drawBackgroundColor;
-			this.backgroundColor = object.backgroundColor;
-			this.backgrounds = object.backgrounds.map(background => new ProjectRoomBackground(background));
-
-			this.enableViews = object.enableViews;
-			this.views = object.views.map(view => new ProjectRoomView(view));
-		}
+	constructor(...args) {
+		Serializer.initProperties(this, args);
 	}
 
 	static getName() { return "room"; }
@@ -366,202 +390,72 @@ export class ProjectRoom {
 	static getClassName() { return "ProjectRoom"; }
 }
 
-	export class ProjectInstance {
-		constructor(object) {
-			if (!object) {
-				this.id = null;
-				this.x = null;
-				this.y = null;
-				this.object_index = null;
-				this.creationCode = "";
-			} else {
-				this.id = object.id;
-				this.x = object.x;
-				this.y = object.y;
-				this.object_index = object.object_index;
-				this.creationCode = object.creationCode;
-			}
-		}
-	}
-
-	export class ProjectRoomTile {
-		constructor(object) {
-			if (!object) {
-				this.backgroundIndex = null;
-				this.x = null;
-				this.y = null;
-				this.backgroundX = null;
-				this.backgroundY = null;
-				this.backgroundW = null;
-				this.backgroundH = null;
-				this.depth = null;
-			} else {
-				this.backgroundIndex = object.backgroundIndex;
-				this.x = object.x;
-				this.y = object.y;
-				this.backgroundX = object.backgroundX;
-				this.backgroundY = object.backgroundY;
-				this.backgroundW = object.backgroundW;
-				this.backgroundH = object.backgroundH;
-				this.depth = object.depth;
-			}
-		}
-	}
-
-	export class ProjectRoomBackground {
-		constructor(object) {
-			if (!object) {
-				this.visibleAtStart = false;
-				this.isForeground = false;
-				this.backgroundIndex = -1;
-				this.tileHorizontally = true;
-				this.tileVertically = true;
-				this.x = 0;
-				this.y = 0;
-				this.stretch = false;
-				this.horizontalSpeed = 0;
-				this.verticalSpeed = 0;
-			} else {
-				this.visibleAtStart = object.visibleAtStart;
-				this.isForeground = object.isForeground;
-				this.backgroundIndex = object.backgroundIndex;
-				this.tileHorizontally = object.tileHorizontally;
-				this.tileVertically = object.tileVertically;
-				this.x = object.x;
-				this.y = object.y;
-				this.stretch = object.stretch;
-				this.horizontalSpeed = object.horizontalSpeed;
-				this.verticalSpeed = object.verticalSpeed;
-			}
-		}
-	}
-
-	export class ProjectRoomView {
-		constructor(object) {
-			if (!object) {
-				this.visibleAtStart = false;
-				this.viewX = 0;
-				this.viewY = 0;
-				this.viewW = 640;
-				this.viewH = 480;
-				this.portX = 0;
-				this.portY = 0;
-				this.portW = 640;
-				this.portH = 480;
-				this.objectFollowIndex = -1;
-				this.objectFollowHorizontalBorder = 32;
-				this.objectFollowVerticalBorder = 32;
-				this.objectFollowHorizontalSpeed = -1;
-				this.objectFollowVerticalSpeed = -1;
-			} else {
-				this.visibleAtStart = object.visibleAtStart;
-				this.viewX = object.viewX;
-				this.viewY = object.viewY;
-				this.viewW = object.viewW;
-				this.viewH = object.viewH;
-				this.portX = object.portX;
-				this.portY = object.portY;
-				this.portW = object.portW;
-				this.portH = object.portH;
-				this.objectFollowIndex = object.objectFollowIndex;
-				this.objectFollowHorizontalBorder = object.objectFollowHorizontalBorder;
-				this.objectFollowVerticalBorder = object.objectFollowVerticalBorder;
-				this.objectFollowHorizontalSpeed = object.objectFollowHorizontalSpeed;
-				this.objectFollowVerticalSpeed = object.objectFollowVerticalSpeed;
-			}
-		}
-	}
-
 export class ProjectGameInformation {
-	constructor(object) {
-		if (!object) {
-			this.text = "";
-			this.separateWindow = false;
-			this.windowCaption = "Game Information";
-			this.left = -1;
-			this.right = -1;
-			this.width = 600;
-			this.height = 400;
-			this.showBorderAndCaption = true;
-			this.allowResize = true;
-			this.alwaysOnTop = false;
-			this.stopGame = true;
-		} else {
-			this.text = object.text;
-			this.separateWindow = object.separateWindow;
-			this.windowCaption = object.windowCaption;
-			this.left = object.left;
-			this.right = object.right;
-			this.width = object.width;
-			this.height = object.height;
-			this.showBorderAndCaption = object.showBorderAndCaption;
-			this.allowResize = object.allowResize;
-			this.alwaysOnTop = object.alwaysOnTop;
-			this.stopGame = object.stopGame;
-		}
+	static {
+		Serializer.setupClass(this, "ProjectGameInformation", {
+			text: "",
+			separateWindow: false,
+			windowCaption: "Game Information",
+			left: -1,
+			right: -1,
+			width: 600,
+			height: 400,
+			showBorderAndCaption: true,
+			allowResize: true,
+			alwaysOnTop: false,
+			stopGame: true,
+		});
+	}
+
+	constructor(...args) {
+		Serializer.initProperties(this, args);
 	}
 }
 
 export class ProjectGlobalGameSettings {
-	constructor(object) {
-		if (!object) {
-			this.startInFullScreen = false;
-			this.colorOutsideRoom = "#000000";
-			this.displayCursor = true;
+	static {
+		Serializer.setupClass(this, "ProjectGameInformation", {
+			startInFullScreen: false,
+			colorOutsideRoom: "#000000",
+			displayCursor: true,
 
-			this.keyEscEndsGame = true;
-			this.keyF1ShowsGameInformation = true;
-			this.keyF4SwitchesFullscreen = true;
-			this.keyF5SavesF6Loads = true;
-			this.keyF9Screenshots = true;
-			this.versionMajor = 1;
-			this.versionMinor = 0;
-			this.versionRelease = 0;
-			this.versionBuild = 0;
-			this.company = "";
-			this.product = "";
-			this.copyright = "";
-			this.description = "";
+			keyEscEndsGame: true,
+			keyF1ShowsGameInformation: true,
+			keyF4SwitchesFullscreen: true,
+			keyF5SavesF6Loads: true,
+			keyF9Screenshots: true,
+			versionMajor: 1,
+			versionMinor: 0,
+			versionRelease: 0,
+			versionBuild: 0,
+			company: "",
+			product: "",
+			copyright: "",
+			description: "",
 
-			this.displayErrors = true;
-			this.abortOnError = false;
-			this.unitializedVarsAre0 = false;
+			displayErrors: true,
+			abortOnError: false,
+			unitializedVarsAre0: false,
 
-			this.author = "";
-			this.version = "100";
-			this.information = "";
-		} else {
-			this.startInFullScreen = object.startInFullScreen;
-			this.colorOutsideRoom = object.colorOutsideRoom;
-			this.displayCursor = object.displayCursor;
+			author: "",
+			version: "100",
+			information: "",
+		});
+	}
 
-			this.keyEscEndsGame = object.keyEscEndsGame;
-			this.keyF1ShowsGameInformation = object.keyF1ShowsGameInformation;
-			this.keyF4SwitchesFullscreen = object.keyF4SwitchesFullscreen;
-			this.keyF5SavesF6Loads = object.keyF5SavesF6Loads;
-			this.keyF9Screenshots = object.keyF9Screenshots;
-			this.versionMajor = object.versionMajor;
-			this.versionMinor = object.versionMinor;
-			this.versionRelease = object.versionRelease;
-			this.versionBuild = object.versionBuild;
-			this.company = object.company;
-			this.product = object.product;
-			this.copyright = object.copyright;
-			this.description = object.description;
-
-			this.displayErrors = object.displayErrors;
-			this.abortOnError = object.abortOnError;
-			this.unitializedVarsAre0 = object.unitializedVarsAre0;
-
-			this.author = object.author;
-			this.version = object.version;
-			this.information = object.information;
-		}
+	constructor(...args) {
+		Serializer.initProperties(this, args);
 	}
 }
 
 export class ProjectExtensionPackages {
-	// constructor() {
+	static {
+		Serializer.setupClass(this, "ProjectExtensionPackages", {
 
-	// }
+		});
+	}
+
+	constructor(...args) {
+		Serializer.initProperties(this, args);
+	}
 }

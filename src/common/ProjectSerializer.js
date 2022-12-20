@@ -3,6 +3,7 @@ import JSZip from "jszip";
 import AbstractAudio from "./AbstractAudio.js";
 import AbstractImage from "./AbstractImage.js";
 import {UnserializeException} from "./Exceptions.js";
+import {Project} from "./Project.js";
 import Serializer from "./Serializer.js";
 
 export default class ProjectSerializer {
@@ -65,7 +66,8 @@ export default class ProjectSerializer {
 			if (version == 2) {
 				const promises = [];
 
-				const project = Serializer.unserializeFromJSON(json);
+				// const project = Serializer.unserializeFromJSON(json);
+				const project = Serializer.unserializeFromJSON(json, {kind: "object", objectType: Project});
 
 				project.resources.ProjectSprite.forEach(sprite => {
 					sprite.images.forEach((image, index) => {

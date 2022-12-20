@@ -18,6 +18,10 @@ export default class AbstractAudio {
 		}
 	}
 
+	static copy(object) {
+		return object;
+	}
+
 	load() {
 		if (this.promise == null) {
 			this.promise = new Promise((resolve, reject) => {

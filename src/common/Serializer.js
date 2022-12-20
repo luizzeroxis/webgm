@@ -1,158 +1,240 @@
-import {
-	Project,
-	ProjectResources,
-	ProjectCounters,
-	ProjectSprite,
-	ProjectSound,
-	ProjectBackground,
-	ProjectPath,
-	ProjectPathPoint,
-	ProjectScript,
-	ProjectFont,
-	ProjectTimeline,
-	ProjectTimelineMoment,
-	ProjectObject,
-	ProjectEvent,
-	ProjectAction,
-	ProjectActionArg,
-	ProjectRoom,
-	ProjectInstance,
-	ProjectRoomTile,
-	ProjectRoomBackground,
-	ProjectRoomView,
-	ProjectGameInformation,
-	ProjectGlobalGameSettings,
-	ProjectExtensionPackages,
-} from "./Project.js";
-
 export default class Serializer {
-	// TODO this is temporary, classes should register themselves
-	static classes = [
-		{class: Project, name: "Project"},
-		{class: ProjectResources, name: "ProjectResources"},
-		{class: ProjectCounters, name: "ProjectConters"},
-		{class: ProjectSprite, name: "ProjectSprite"},
-		{class: ProjectSound, name: "ProjectSound"},
-		{class: ProjectBackground, name: "ProjectBackground"},
-		{class: ProjectPath, name: "ProjectPath"},
-		{class: ProjectPathPoint, name: "ProjectPathPoint"},
-		{class: ProjectScript, name: "ProjectScript"},
-		{class: ProjectFont, name: "ProjectFont"},
-		{class: ProjectTimeline, name: "ProjectTimeline"},
-		{class: ProjectTimelineMoment, name: "ProjectTimelineMoment"},
-		{class: ProjectObject, name: "ProjectObject"},
-		{class: ProjectEvent, name: "ProjectEvent"},
-		{class: ProjectAction, name: "ProjectAction"},
-		{class: ProjectActionArg, name: "ProjectActionArg"},
-		{class: ProjectRoom, name: "ProjectRoom"},
-		{class: ProjectInstance, name: "ProjectInstance"},
-		{class: ProjectRoomTile, name: "ProjectRoomTile"},
-		{class: ProjectRoomBackground, name: "ProjectRoomBackground"},
-		{class: ProjectRoomView, name: "ProjectRoomView"},
-		{class: ProjectGameInformation, name: "ProjectGameInformation"},
-		{class: ProjectGlobalGameSettings, name: "ProjectGlobalGameSettings"},
-		{class: ProjectExtensionPackages, name: "ProjectExtensionPackages"},
-	];
+	static classes = [];
 
-	static register(_class, name) {
+	// Run this in a static block of serializable classes
+	static setupClass(_class, name, properties) {
 		this.classes.push({name: name, class: _class});
+
+		if (properties == null) return;
+
+		const classProperties = [];
+
+		for (const [name, value] of Object.entries(properties)) {
+			const p = {
+				name: name,
+				...this.parseProperty(value),
+			};
+
+			if (value?.constructor == Object) {
+				if (value.serialize) p.serialize = value.serialize;
+			}
+
+			classProperties.push(p);
+		}
+
+		_class._properties = classProperties;
+
+		// console.log(_class.name, _class._properties);
+	}
+
+	static parseProperty(value) {
+		if (value == null || this.isPrimitive(value)) {
+			return {
+				type: {kind: "primitive"},
+				value: value,
+			};
+		} else if (value.constructor == Object) {
+			if (value.array) {
+				return {
+					type: {kind: "array", arrayType: this.parseProperty(value.array).type},
+					value: value.value ?? (() => []),
+				};
+			}
+			if (value.object) {
+				return {
+					type: {kind: "object", objectType: value.object},
+					value: value.value,
+				};
+			}
+		} else {
+			return {
+				type: {kind: "object", objectType: value},
+				value: () => new value(),
+			};
+		}
+		throw new Error("impossible type");
+	}
+
+
+	// Run this in the contructor of serializable classes
+	static initProperties(_this, args) {
+		const [object] = args;
+
+		if (!(object instanceof _this.constructor)) {
+			_this.constructor._properties.forEach(p => {
+				if (typeof p.value == "function") {
+					_this[p.name] = p.value(_this);
+				} else {
+					_this[p.name] = p.value;
+				}
+			});
+		} else {
+			_this.constructor._properties.forEach(p => {
+				_this[p.name] = this.copyProperty(object[p.name]);
+			});
+		}
+	}
+
+	static copyProperty(value) {
+		// TODO maybe should check p.type
+
+		if (typeof value == "undefined" || typeof value == "boolean" || typeof value == "number" || typeof value == "string") {
+			return value;
+		} else if (Array.isArray(value)) {
+			return value.map(x => this.copyProperty(x));
+		} else if (typeof value == "object") {
+			if (value == null) return null;
+			if (typeof value.constructor.copy == "function") {
+				return value.constructor.copy(value);
+			}
+			return new value.constructor(value);
+		} else {
+			throw new Error("uncopiable property");
+		}
 	}
 
 	static serializeToJSON(classObj) {
-		const jsonObj = this.serializeValue(classObj);
+		const jsonObj = this.serializeValue(classObj, {kind: "object", objectType: classObj.constructor});
 
 		return JSON.stringify(jsonObj, null, "\t");
 	}
 
-	static serializeValue(value) {
-		if (typeof value == "undefined" || typeof value == "boolean" ||typeof value == "number" || typeof value == "string") {
+	static serializeValue(value, pType) {
+		// TODO compare detected types to types in _properties and see if they match
+		if (!pType) {
+			pType = this.detectType(value);
+		}
+
+		if (pType.kind == "primitive") {
 			return value;
-		} else
-
-		if (Array.isArray(value)) {
-			return value.map(x => this.serializeValue(x));
-		} else
-
-		if (typeof value == "object") {
+		} else if (pType.kind == "array") {
+			return value.map(x => this.serializeValue(x, pType.arrayType));
+		} else if (pType.kind == "object") {
 			if (value == null) return null;
-
 			if (value.toJSON) return value.toJSON();
 
-			const jsonObj = {};
-
-			const className = this.classes.find(x => x.class == value.constructor)?.name;
-
-			if (className) {
-				jsonObj.$class = className;
-
-				this.getProperties(value.constructor).forEach(p => {
-					jsonObj[p.name] = this.serializeValue(value[p.name]);
-				});
+			if (pType.objectType) {
+				return this.serializeObject(value);
 			} else {
-				// throw new Error("class not registered in serializer");
-				// TODO Remove this code after adding all _properties, so there won't be plain objects anymore.
-				for (const property in value) {
-					jsonObj[property] = this.serializeValue(value[property]);
+				const className = this.classes.find(x => x.class == value.constructor)?.name;
+
+				if (className) {
+					return this.serializeObject(value, className);
+				} else {
+					throw new Error("class not registered in serializer");
+					// Only use this to allow serializing as plain objects
+					// return this.serializePlainObject(value);
 				}
 			}
-
-			return jsonObj;
 		} else {
 			throw new Error("error serializing value");
 		}
 	}
 
-	static unserializeFromJSON(json) {
-		const jsonObj = JSON.parse(json);
+	static serializeObject(value, className) {
+		const object = {};
 
-		return this.unserializeValue(jsonObj);
+		if (className) {
+			object.$class = className;
+		}
+
+		this.getProperties(value.constructor).forEach(p => {
+			if (p.serialize == false) return;
+			if (!p.type) {
+				console.warn(`Serializer: property ${p.name} in class ${value.constructor.name} does not have a type`);
+			}
+			object[p.name] = this.serializeValue(value[p.name], p.type);
+		});
+
+		return object;
 	}
 
-	static unserializeValue(value) {
-		if (typeof value == "undefined" || typeof value == "boolean" ||typeof value == "number" || typeof value == "string") {
+	static unserializeFromJSON(json, pType) {
+		const jsonObj = JSON.parse(json);
+
+		return this.unserializeValue(jsonObj, pType);
+	}
+
+	static unserializeValue(value, pType) {
+		if (!pType) {
+			pType = this.detectType(value);
+		} else {
+			// TODO be sure them type really are them types
+		}
+
+		if (pType.kind == "primitive") {
 			return value;
-		} else
-
-		if (Array.isArray(value)) {
-			return value.map(x => this.unserializeValue(x));
-		} else
-
-		if (typeof value == "object") {
+		} else if (pType.kind == "array") {
+			return value.map(x => this.unserializeValue(x, pType.arrayType));
+		} else if (pType.kind == "object") {
 			if (value == null) return null;
 
-			let classObj;
-
-			if (value.$class) {
-				const _class = this.classes.find(x => x.name == value.$class)?.class;
-
-				if (!_class) {
-					throw new Error("class not registered in serializer");
-				}
-
-				classObj = new _class();
-
-				this.getProperties(_class).forEach(p => {
-					classObj[p.name] = this.unserializeValue(value[p.name]);
-				});
+			if (pType.objectType) {
+				return this.unserializeObject(value, pType.objectType);
 			} else {
-				// throw new Error("no $class");
-				// TODO Remove this code after adding all _properties, so there won't be plain objects anymore.
-				classObj = {};
-				for (const property in value) {
-					if (property != "$class") {
-						classObj[property] = this.unserializeValue(value[property]);
+				if (value.$class) {
+					const _class = this.classes.find(x => x.name == value.$class)?.class;
+
+					if (!_class) {
+						throw new Error(`class ${value.$class} not registered in serializer`);
 					}
+
+					return this.unserializeObject(value, _class);
+				} else {
+					throw new Error("no $class");
+					// Only use this to allow unserializing as plain objects
+					// return this.unserializePlainObject(value);
 				}
 			}
-
-			return classObj;
 		} else {
-			throw new Error("error unserializing value");
+			throw new Error("unknown kind");
+		}
+	}
+
+	static unserializeObject(value, _class) {
+		const object = new _class();
+
+		this.getProperties(_class).forEach(p => {
+			if (p.serialize == false) return;
+			if (!p.type) {
+				console.warn(`Serializer: property ${p.name} in class ${_class.name} does not have a type`);
+			}
+			object[p.name] = this.unserializeValue(value[p.name], p.type);
+		});
+
+		return object;
+	}
+
+	static unserializePlainObject(value) {
+		const object = {};
+
+		for (const property in value) {
+			object[property] = this.unserializeValue(value[property]);
+		}
+
+		return object;
+	}
+
+	static isPrimitive(value) {
+		return (typeof value == "undefined" || typeof value == "boolean" || typeof value == "number" || typeof value == "string");
+	}
+
+	static detectType(value) {
+		if (this.isPrimitive(value)) {
+			return {kind: "primitive"};
+		} else if (Array.isArray(value)) {
+			return {kind: "array"}; // no arrayType, can be detected afterwards
+		} else if (typeof value == "object") {
+			return {kind: "object"}; // lol what
+		} else {
+			throw new Error("undetectable type");
 		}
 	}
 
 	static getProperties(_class) {
 		if (_class._properties) return _class._properties;
+
+		console.warn(`Serializer: class ${_class.name} does not have _properties`);
 
 		const properties = [];
 		const obj = new _class();

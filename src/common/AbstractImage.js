@@ -18,6 +18,10 @@ export default class AbstractImage {
 		}
 	}
 
+	static copy(object) {
+		return object;
+	}
+
 	load() {
 		if (this.promise == null) {
 			this.promise = new Promise((resolve, reject) => {
@@ -34,6 +38,6 @@ export default class AbstractImage {
 	}
 
 	toJSON() {
-		return undefined;
+		return null;
 	}
 }

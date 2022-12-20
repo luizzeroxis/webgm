@@ -1,42 +1,27 @@
-import {ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectFont, ProjectTimeline, ProjectObject, ProjectRoom, ProjectGameInformation, ProjectGlobalGameSettings, ProjectExtensionPackages} from "./ProjectProperties.js";
+import {ProjectGameInformation, ProjectGlobalGameSettings, ProjectExtensionPackages} from "./ProjectProperties.js";
+import {ProjectResources, ProjectCounters} from "./ProjectResourcesAndCounters.js";
+import Serializer from "./Serializer.js";
 
 export * from "./ProjectProperties.js";
 
 export class Project {
-	static resourceTypes = [
-		ProjectSprite,
-		ProjectSound,
-		ProjectBackground,
-		ProjectPath,
-		ProjectScript,
-		ProjectFont,
-		ProjectTimeline,
-		ProjectObject,
-		ProjectRoom,
-	];
+	static resourceTypes = ProjectResources.types;
 
-	constructor(object) {
-		if (!object) {
-			this.resources = new ProjectResources();
-			this.counter = new ProjectCounters();
+	static {
+		Serializer.setupClass(this, "Project", {
+			resources: ProjectResources,
+			counter: ProjectCounters,
 
-			this.gameInformation = new ProjectGameInformation();
-			this.globalGameSettings = new ProjectGlobalGameSettings();
-			this.extensionPackages = new ProjectExtensionPackages();
+			gameInformation: ProjectGameInformation,
+			globalGameSettings: ProjectGlobalGameSettings,
+			extensionPackages: ProjectExtensionPackages,
 
-			// this.constants = [];
+			lastId: 100000,
+		});
+	}
 
-			this.lastId = 100000;
-		} else {
-			this.resources = new ProjectResources(object.resources);
-			this.counter = new ProjectCounters(object.counter);
-
-			this.gameInformation = new ProjectGameInformation(object.gameInformation);
-			this.globalGameSettings = new ProjectGlobalGameSettings(object.globalGameSettings);
-			this.extensionPackages = new ProjectExtensionPackages(object.extensionPackages);
-
-			this.lastId = object.lastId;
-		}
+	constructor(...args) {
+		Serializer.initProperties(this, args);
 	}
 
 	createResource(type) {
@@ -71,42 +56,6 @@ export class Project {
 			type = type.getClassName();
 		}
 		return this.resources[type].find(x => x.id == id);
-	}
-}
-
-export class ProjectResources {
-	// static {
-	// 	this._properties = Project.resourceTypes.map(type => {
-	// 		return {name: type.getClassName(), type: {kind: 'array', arrayType: type}};
-	// 	});
-	// }
-
-	constructor(object) {
-		if (!(object instanceof ProjectResources)) {
-			Project.resourceTypes.forEach(type => {
-				this[type.getClassName()] = [];
-			});
-		} else {
-			Project.resourceTypes.forEach(type => {
-				const typeName = type.getClassName();
-				this[typeName] = object[typeName].map(resource => new type(resource));
-			});
-		}
-	}
-}
-
-export class ProjectCounters {
-	constructor(object) {
-		if (!(object instanceof ProjectCounters)) {
-			Project.resourceTypes.forEach(type => {
-				this[type.getClassName()] = 0;
-			});
-		} else {
-			Project.resourceTypes.forEach(type => {
-				const typeName = type.getClassName();
-				this[typeName] = object[typeName];
-			});
-		}
 	}
 }
 

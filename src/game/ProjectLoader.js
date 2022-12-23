@@ -52,7 +52,10 @@ export default class ProjectLoader {
 							offscreen.width = image.image.width;
 							offscreen.height = image.image.height;
 						}
+
+						offscreenCtx.clearRect(0, 0, image.image.width, image.image.height);
 						offscreenCtx.drawImage(image.image, 0, 0);
+
 						const data = offscreenCtx.getImageData(0, 0, image.image.width, image.image.height);
 						this.imageDataCache.set(image, data);
 					})

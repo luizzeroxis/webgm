@@ -83,6 +83,7 @@ export default class HWindowSprite extends HWindow {
 						add( new HElement("legend", {}, "Collision Checking") );
 
 						const inputPreciseCollisionChecking = add( new HCheckBoxInput("Precise collision checking", (sprite.shape == "precise")) );
+						const inputSeparateCollisionMasks = add( new HCheckBoxInput("Separate collision masks", sprite.separateCollisionMasks) );
 
 						endparent();
 					endparent();
@@ -102,6 +103,7 @@ export default class HWindowSprite extends HWindow {
 					this.editor.changeSpriteOrigin(sprite, parseInt(inputOriginX.getValue()), parseInt(inputOriginY.getValue()));
 
 					sprite.shape = inputPreciseCollisionChecking.getChecked() ? "precise" : "rectangle";
+					sprite.separateCollisionMasks = inputSeparateCollisionMasks.getChecked();
 				},
 				() => this.close(),
 			);

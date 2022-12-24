@@ -1091,8 +1091,8 @@ export default class Game {
 
 		if (!this.collisionRectangleOnRectangle(a, b)) return false;
 
-		const aData = this.loadedProject.imageDataCache.get(a.image);
-		const bData = this.loadedProject.imageDataCache.get(b.image);
+		const aCol = this.loadedProject.collisionMasks.get(a.image);
+		const bCol = this.loadedProject.collisionMasks.get(b.image);
 
 		// Get the 'global' (in relation to room) rect in the intersection between the two rects.
 		const gX1 = Math.max(a.x1, b.x1);
@@ -1107,14 +1107,14 @@ export default class Game {
 			// It's rounded down to the nearest pixel.
 			const aDataX = Math.floor(gX - a.x1);
 			const aDataY = Math.floor(gY - a.y1);
+
 			// TODO this may be out of bounds.
-			const aCol = (aData.data[(aDataY * aData.width + aDataX) * 4 + 3]) >= (255-aInstance.sprite.alphaTolerance);
-			if (!aCol) continue;
+			if (!aCol[aDataX][aDataY]) continue;
 
 			const bDataX = Math.floor(gX - b.x1);
 			const bDataY = Math.floor(gY - b.y1);
-			const bCol = (bData.data[(bDataY * bData.width + bDataX) * 4 + 3]) >= (255-bInstance.sprite.alphaTolerance);
-			if (bCol) return true;
+
+			if (bCol[bDataX][bDataY]) return true;
 		}
 
 		return false;
@@ -1127,7 +1127,7 @@ export default class Game {
 
 		if (!this.collisionRectangleOnRectangle(prec, rect)) return false;
 
-		const precData = this.loadedProject.imageDataCache.get(prec.image);
+		const precCol = this.loadedProject.collisionMasks.get(prec.image);
 
 		// Get the 'global' (in relation to room) rect in the intersection between the two rects.
 		const gX1 = Math.max(prec.x1, rect.x1);
@@ -1142,9 +1142,9 @@ export default class Game {
 			// It's rounded down to the nearest pixel.
 			const precDataX = Math.floor(gX - prec.x1);
 			const precDataY = Math.floor(gY - prec.y1);
+
 			// TODO this may be out of bounds.
-			const precCol = (precData.data[(precDataY * precData.width + precDataX) * 4 + 3]) >= (255-precInstance.sprite.alphaTolerance);
-			if (!precCol) continue;
+			if (!precCol[precDataX][precDataY]) continue;
 
 			// Rect always collides there.
 			return true;

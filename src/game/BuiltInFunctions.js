@@ -887,14 +887,14 @@ export default class BuiltInFunctions {
 	static place_free = {
 		args: null,
 		func: function([x, y]) {
-			return !this.game.collisionInstanceOnInstances(this.currentInstance, this.game.instances, x, y, true) ? 1 : 0;
+			return !this.game.collision.instanceOnInstances(this.currentInstance, this.game.instances, x, y, true) ? 1 : 0;
 		},
 	};
 
 	static place_empty = {
 		args: null,
 		func: function([x, y]) {
-			return !this.game.collisionInstanceOnInstances(this.currentInstance, this.game.instances, x, y, false) ? 1 : 0;
+			return !this.game.collision.instanceOnInstances(this.currentInstance, this.game.instances, x, y, false) ? 1 : 0;
 		},
 	};
 
@@ -903,7 +903,7 @@ export default class BuiltInFunctions {
 		func: function([x, y, obj]) {
 			const instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) { return 0; }
-			return this.game.collisionInstanceOnInstances(this.currentInstance, instances, x, y, false) ? 1 : 0;
+			return this.game.collision.instanceOnInstances(this.currentInstance, instances, x, y, false) ? 1 : 0;
 		},
 	};
 
@@ -927,7 +927,7 @@ export default class BuiltInFunctions {
 				x = Math.floor((Math.random() * this.game.room.width) / hsnap) * hsnap;
 				y = Math.floor((Math.random() * this.game.room.height) / vsnap) * vsnap;
 
-				if (!this.game.collisionInstanceOnInstances(this.currentInstance, this.game.instances, x, y, true)) {
+				if (!this.game.collision.instanceOnInstances(this.currentInstance, this.game.instances, x, y, true)) {
 					this.currentInstance.x = x;
 					this.currentInstance.y = y;
 					break;
@@ -1050,7 +1050,7 @@ export default class BuiltInFunctions {
 	static position_empty = {
 		args: null,
 		func: function([x, y]) {
-			return !this.game.collisionInstancesOnPoint(this.game.instances, {x: x, y: y}) ? 1 : 0;
+			return !this.game.collision.instancesOnPoint(this.game.instances, {x: x, y: y}) ? 1 : 0;
 		},
 	};
 
@@ -1059,7 +1059,7 @@ export default class BuiltInFunctions {
 		func: function([x, y, obj]) {
 			const instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) { return 0; }
-			return this.game.collisionInstancesOnPoint(instances, {x: x, y: y}) ? 1 : 0;
+			return this.game.collision.instancesOnPoint(instances, {x: x, y: y}) ? 1 : 0;
 		},
 	};
 

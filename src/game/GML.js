@@ -562,7 +562,14 @@ export default class GML {
 			this.currentOther = other;
 
 			// TODO Non fatal errors should be caught here.
-			const result = await func.call(this, args, relative);
+
+			let result;
+
+			if (typeof func != "function") {
+				result = await func.func.call(this, this.typeCheckArgs(args, func.args), relative);
+			} else {
+				result = await func.call(this, args, relative);
+			}
 
 			this.currentInstance = previousInstance;
 			this.currentOther = previousOther;
@@ -576,6 +583,44 @@ export default class GML {
 				"Unknown function or script: "+name,
 			);
 		}
+	}
+
+	typeCheckArgs(args, funcArgs) {
+		if (funcArgs == null) return args;
+		const properArgs = [];
+
+		let i = 0;
+		for (const funcArg of funcArgs) {
+			// let loop = true;
+			while (true) {
+				if (i >= args.length) {
+					if (funcArg.infinite) {
+						break;
+					} else {
+						throw new Error("too few arguments"); // TODO
+					}
+				}
+
+				if (funcArg.type == "any") {
+					properArgs[i] = args[i];
+				// } else if (funcArg.type == "string") {
+				// 	properArgs[i] = forceString(args[i]);
+				// } else if (funcArg.type == "real") {
+				// 	properArgs[i] = forceReal(args[i]);
+				}
+				++i;
+
+				if (!funcArg.infinite) {
+					break;
+				}
+			}
+		}
+
+		if (i < args.length) {
+			throw new Error("too many arguments"); // TODO
+		}
+
+		return properArgs;
 	}
 
 	varGet(varInfo, node) {

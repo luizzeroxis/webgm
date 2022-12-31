@@ -382,8 +382,16 @@ export default class Game {
 						execute = this.collisionInstanceOnPoint(instance, {x: this.input.mouseX, y: this.input.mouseY});
 					}
 				} else
-				if (eventInfo.kind == "enter-release") {
-					// TODO not implemented
+				if (eventInfo.kind == "enter-leave") {
+					// TODO check when this check is done
+					if (instance.mouseInChanged == null) {
+						const mouseIn = this.collisionInstanceOnPoint(instance, {x: this.input.mouseX, y: this.input.mouseY});
+
+						instance.mouseInChanged = (instance.mouseIn != mouseIn);
+						instance.mouseIn = mouseIn;
+					}
+
+					execute = (instance.mouseInChanged == true && instance.mouseIn == eventInfo.isEnter);
 				} else
 				if (eventInfo.kind == "wheel-up") {
 					execute = (this.input.mouseWheel < 0);
@@ -522,6 +530,8 @@ export default class Game {
 				i -= imageNumber;
 			}
 			instance.imageIndex = i;
+
+			instance.mouseInChanged = null;
 		}
 
 		// Check global game settings default keys

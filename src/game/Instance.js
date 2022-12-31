@@ -27,6 +27,9 @@ export default class Instance {
 		this.vars = new VariableHolder(this, BuiltInLocals);
 		this.sprite = this.game.project.getResourceById("ProjectSprite", this.spriteIndex);
 
+		this.mouseIn = false;
+		this.mouseInChanged = null;
+
 		// Variables
 		this.xPrevious = x;
 		this.yPrevious = y;

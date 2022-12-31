@@ -655,7 +655,7 @@ export default class Game {
 				} else {
 					// No draw event, draw sprite if it has one.
 					if (instance.sprite) {
-						this.drawSprite(instance.sprite, instance.getImageIndex(), instance.x, instance.y);
+						this.drawSpriteExt(instance.sprite, instance.getImageIndex(), instance.x, instance.y, instance.imageXScale, instance.imageYScale, instance.imageAngle, instance.imageBlend, instance.imageAlpha);
 					}
 				}
 			}
@@ -703,10 +703,9 @@ export default class Game {
 
 		for (let x = xStart; x < this.room.width; x += width) {
 			for (let y = yStart; y < this.room.height; y += height) {
-				const previousGlobalAlpha = this.ctx.globalAlpha;
 				this.ctx.globalAlpha = roomBackground.alpha;
 				this.ctx.drawImage(image.image, x, y, width, height);
-				this.ctx.globalAlpha = previousGlobalAlpha;
+				this.ctx.globalAlpha = 1;
 
 				if (!roomBackground.tileVertically) {
 					break;
@@ -1217,12 +1216,30 @@ export default class Game {
 
 	// Draw a sprite with the image index at x and y.
 	drawSprite(sprite, imageIndex, x, y) {
-		const image = sprite.images[Math.floor(imageIndex) % sprite.images.length];
-		if (image == null) return false;
+		const image = sprite?.images[Math.floor(Math.floor(imageIndex) % sprite.images.length)]?.image;
+		if (!image) return;
 
-		this.ctx.drawImage(image.image, x - sprite.originx, y - sprite.originy);
+		this.ctx.drawImage(image, x - sprite.originx, y - sprite.originy);
+	}
 
-		return true;
+	// Draw a sprite with extra options.
+	drawSpriteExt(sprite, imageIndex, x, y, xScale, yScale, angle, blend, alpha) {
+		// TODO blend
+
+		const image = sprite?.images[Math.floor(Math.floor(imageIndex) % sprite.images.length)]?.image;
+		if (!image) return;
+
+		this.ctx.save();
+
+		this.ctx.translate(x, y);
+		this.ctx.rotate(angle * Math.PI/180);
+		this.ctx.scale(xScale, yScale);
+
+		this.ctx.globalAlpha = alpha;
+		this.ctx.drawImage(image, -sprite.originx, -sprite.originy);
+		this.ctx.globalAlpha = 1;
+
+		this.ctx.restore();
 	}
 
 	// Get a room background. If it doesn't exist, create one with default parameters.

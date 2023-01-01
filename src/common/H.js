@@ -253,7 +253,9 @@ export class HLabelAndInput extends HElement {
 	constructor(type, label, value, _class) {
 		parent( super("div", {class: classToAttr(classToArray(_class).concat(["h-label-and-input"]))}) );
 			const id = "_id_" + uniqueID();
-			this.label = add( new HElement("label", {for: id}, label) );
+			if (label) {
+				this.label = add( new HElement("label", {for: id}, label) );
+			}
 			this.input = add( new HElement("input", {id: id, type: type, value: value}) );
 			endparent();
 	}
@@ -281,7 +283,9 @@ export class HMultilineTextInput extends HElement {
 	constructor(label, value, _class) {
 		parent( super("div", {class: classToAttr(classToArray(_class).concat(["h-multiline-text-input"]))}) );
 			const id = "_id_" + uniqueID();
-			this.label = add( new HElement("label", {for: id}, label) );
+			if (label) {
+				this.label = add( new HElement("label", {for: id}, label) );
+			}
 			this.textarea = add( new HElement("textarea", {id: id}) );
 			this.textarea.html.value = value;
 			endparent();
@@ -336,7 +340,9 @@ export class HCheckBoxInput extends HElement {
 				id: id, type: "checkbox",
 				...(checked ? {checked: "checked"} : null),
 			}) );
-			this.label = add( new HElement("label", {for: id}, label) );
+			if (label) {
+				this.label = add( new HElement("label", {for: id}, label) );
+			}
 			endparent();
 	}
 
@@ -361,7 +367,9 @@ export class HRadioInput extends HElement {
 				id: id, type: "radio", name: group,
 				...(checked ? {checked: "checked"} : null),
 			}) );
-			this.label = add( new HElement("label", {for: id}, label) );
+			if (label) {
+				this.label = add( new HElement("label", {for: id}, label) );
+			}
 			endparent();
 	}
 

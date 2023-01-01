@@ -95,6 +95,7 @@ canvas {
 .code {
 	width: 100%;
 	height: 256px;
+	tab-size: 4;
 }
 
 .warning {

@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement} from "../../common/H.js";
+import {parent, endparent, add, HMultilineTextInput} from "../../common/H.js";
 import HWindow from "../HWindow.js";
 
 export default class HWindowGameInformation extends HWindow {
@@ -11,11 +11,11 @@ export default class HWindowGameInformation extends HWindow {
 
 		parent(this.client);
 
-			this.textareaText = add( new HElement("textarea", {class: "code"}, gameInformation.text) );
+			this.inputText = add( new HMultilineTextInput(null, gameInformation.text, "code") );
 
 			this.makeApplyOkButtons(
 				() => {
-					gameInformation.text = this.textareaText.html.value;
+					gameInformation.text = this.inputText.getValue();
 					// changes here
 				},
 				() => this.close(),

@@ -61,8 +61,8 @@ export default class GameCollision {
 		const image = instance.sprite.images[instance.getImageIndex()];
 		const x1 = x - instance.sprite.originx;
 		const y1 = y - instance.sprite.originy;
-		const x2 = x1 + image.image.width;
-		const y2 = y1 + image.image.height;
+		const x2 = x1 + image.width;
+		const y2 = y1 + image.height;
 		return {x, y, image, x1, y1, x2, y2};
 	}
 
@@ -159,13 +159,13 @@ export default class GameCollision {
 	instanceRectangleOnPoint(instance, point) {
 		const instanceX = instance.x - instance.sprite.originx;
 		const instanceY = instance.y - instance.sprite.originy;
-		const instanceImage = instance.sprite.images[instance.getImageIndex()];
+		const instanceImage = instance.getImage();
 
 		return (
 			point.x >= instanceX
-			&& point.x < instanceX + instanceImage.image.width
+			&& point.x < instanceX + instanceImage.width
 			&& point.y >= instanceY
-			&& point.y < instanceY + instanceImage.image.height
+			&& point.y < instanceY + instanceImage.height
 		);
 	}
 

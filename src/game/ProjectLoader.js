@@ -51,15 +51,15 @@ export default class ProjectLoader {
 				image.load();
 				promises.push(image.promise
 					.then(() => {
-						if (image.image.width > offscreen.width || image.image.height > offscreen.height) {
-							offscreen.width = image.image.width;
-							offscreen.height = image.image.height;
+						if (image.width > offscreen.width || image.height > offscreen.height) {
+							offscreen.width = image.width;
+							offscreen.height = image.height;
 						}
 
-						offscreenCtx.clearRect(0, 0, image.image.width, image.image.height);
+						offscreenCtx.clearRect(0, 0, image.width, image.height);
 						offscreenCtx.drawImage(image.image, 0, 0);
 
-						const data = offscreenCtx.getImageData(0, 0, image.image.width, image.image.height);
+						const data = offscreenCtx.getImageData(0, 0, image.width, image.height);
 						// this.imageDataCache.set(image, data);
 
 						let mask = prevMask;

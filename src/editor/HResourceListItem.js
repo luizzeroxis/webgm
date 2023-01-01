@@ -110,7 +110,7 @@ export default class HResourceListItem extends HElement {
 
 		if (this.resource.constructor == ProjectSprite) {
 			if (this.resource.images.length > 0) {
-				src = this.resource.images[0].image.src;
+				src = this.resource.images[0].src;
 			}
 		} else
 		if (this.resource.constructor == ProjectSound) {
@@ -118,7 +118,7 @@ export default class HResourceListItem extends HElement {
 		} else
 		if (this.resource.constructor == ProjectBackground) {
 			if (this.resource.image) {
-				src = this.resource.image.image.src;
+				src = this.resource.image.src;
 			}
 		} else
 		if (this.resource.constructor == ProjectObject) {
@@ -126,7 +126,7 @@ export default class HResourceListItem extends HElement {
 				const sprite = this.editor.project.getResourceById("ProjectSprite", this.resource.sprite_index);
 				if (sprite) {
 					if (sprite.images.length > 0) {
-						src = sprite.images[0].image.src;
+						src = sprite.images[0].src;
 					}
 				}
 			}

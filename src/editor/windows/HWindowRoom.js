@@ -450,14 +450,14 @@ export default class HWindowRoom extends HWindow {
 			ox = sprite.originx;
 			oy = sprite.originy;
 			if (sprite.images.length > 0) {
-				w = sprite.images[0].image.width;
-				h = sprite.images[0].image.height;
+				w = sprite.images[0].width;
+				h = sprite.images[0].height;
 			} else {
 				// On GM, if there's no images, it just defaults to 32x32. A possible improvement would be to either simply show the default image anyway, or use the grid size. Right now I'll just use 32x32 anyway.
 			}
 		} else {
-			w = this.defaultInstanceImage.image.width;
-			h = this.defaultInstanceImage.image.height;
+			w = this.defaultInstanceImage.width;
+			h = this.defaultInstanceImage.height;
 		}
 
 		const x1 = instance.x - ox;
@@ -543,8 +543,8 @@ export default class HWindowRoom extends HWindow {
 		let xStart = roomBackground.x;
 		let yStart = roomBackground.y;
 
-		const width = roomBackground.stretch ? this.canvasPreview.html.width : background.image.image.width;
-		const height = roomBackground.stretch ? this.canvasPreview.html.height : background.image.image.height;
+		const width = roomBackground.stretch ? this.canvasPreview.html.width : background.image.width;
+		const height = roomBackground.stretch ? this.canvasPreview.html.height : background.image.height;
 
 		if (roomBackground.tileHorizontally) {
 			xStart = (roomBackground.x % width) - width;

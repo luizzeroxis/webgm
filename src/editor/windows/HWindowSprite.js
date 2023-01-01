@@ -67,8 +67,8 @@ export default class HWindowSprite extends HWindow {
 						add( new HButton("Center", () => {
 							let w=16, h=16;
 							if (this.paramImages.length > 0) {
-								w = Math.floor(this.paramImages[0].image.width / 2);
-								h = Math.floor(this.paramImages[0].image.height / 2);
+								w = Math.floor(this.paramImages[0].width / 2);
+								h = Math.floor(this.paramImages[0].height / 2);
 							}
 							inputOriginX.setValue(w);
 							inputOriginY.setValue(h);
@@ -142,8 +142,8 @@ export default class HWindowSprite extends HWindow {
 
 		if (this.paramImages.length > 0) {
 			this.paramImages[0].promise.then(() => {
-				this.divWidth.html.textContent = this.paramImages[0].image.width;
-				this.divHeight.html.textContent = this.paramImages[0].image.height;
+				this.divWidth.html.textContent = this.paramImages[0].width;
+				this.divHeight.html.textContent = this.paramImages[0].height;
 			});
 		} else {
 			this.imgSprite.setSrc(null);
@@ -158,7 +158,7 @@ export default class HWindowSprite extends HWindow {
 
 	updateShow() {
 		if (this.paramImages.length > 0) {
-			this.imgSprite.setSrc(this.paramImages[this.showSubimage].image.src);
+			this.imgSprite.setSrc(this.paramImages[this.showSubimage].src);
 		}
 
 		this.divShowSubimage.html.textContent = this.showSubimage.toString();

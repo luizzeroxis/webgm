@@ -339,7 +339,7 @@ export default class BuiltInGlobals {
 		length() { return 8; },
 		get(index) {
 			const background = this.project.getResourceById("ProjectBackground", this.getRoomBackground(index));
-			return background?.image.image.width ?? 0;
+			return background?.image.width ?? 0;
 		},
 	};
 
@@ -347,7 +347,7 @@ export default class BuiltInGlobals {
 		length() { return 8; },
 		get(index) {
 			const background = this.project.getResourceById("ProjectBackground", this.getRoomBackground(index));
-			return background?.image.image.height ?? 0;
+			return background?.image.height ?? 0;
 		},
 	};
 

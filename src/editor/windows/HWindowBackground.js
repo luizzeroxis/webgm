@@ -76,10 +76,10 @@ export default class HWindowBackground extends HWindow {
 
 	updateImageInfo() {
 		if (this.paramImage != null) {
-			this.imgBackground.setSrc(this.paramImage.image.src);
+			this.imgBackground.setSrc(this.paramImage.src);
 			this.paramImage.promise.then(() => {
-				this.divWidth.html.textContent = this.paramImage.image.width;
-				this.divHeight.html.textContent = this.paramImage.image.height;
+				this.divWidth.html.textContent = this.paramImage.width;
+				this.divHeight.html.textContent = this.paramImage.height;
 			});
 		} else {
 			this.imgBackground.setSrc(null);

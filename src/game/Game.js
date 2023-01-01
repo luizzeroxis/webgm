@@ -693,8 +693,8 @@ export default class Game {
 		let xStart = roomBackground.x;
 		let yStart = roomBackground.y;
 
-		const width = background.image.image.width * roomBackground.xScale;
-		const height = background.image.image.height * roomBackground.yScale;
+		const width = background.image.width * roomBackground.xScale;
+		const height = background.image.height * roomBackground.yScale;
 
 		if (roomBackground.tileHorizontally) {
 			xStart = (roomBackground.x % width) - width;
@@ -922,8 +922,8 @@ export default class Game {
 				if (roomBackground.stretch) {
 					const backgroundImage = this.project.getResourceById("ProjectBackground", roomBackground.backgroundIndex)?.image;
 					if (backgroundImage) {
-						xScale = room.width / backgroundImage.image.width;
-						yScale = room.height / backgroundImage.image.height;
+						xScale = room.width / backgroundImage.width;
+						yScale = room.height / backgroundImage.height;
 					}
 				}
 				return {

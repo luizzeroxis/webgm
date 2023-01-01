@@ -71,7 +71,7 @@ export default class Instance {
 	}
 
 	getImage() {
-		return this.sprite?.images[Math.floor(Math.floor(this.imageIndex) % this.sprite.images.length)]?.image;
+		return this.sprite?.images[Math.floor(Math.floor(this.imageIndex) % this.sprite.images.length)];
 	}
 
 	getImageIndex() {

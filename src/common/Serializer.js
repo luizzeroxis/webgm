@@ -199,7 +199,15 @@ export default class Serializer {
 			if (!p.type) {
 				console.warn(`Serializer: property ${p.name} in class ${_class.name} does not have a type`);
 			}
-			object[p.name] = this.unserializeValue(value[p.name], p.type);
+			if (value[p.name] === undefined) {
+				if (typeof p.value == "function") {
+					object[p.name] = p.value(object);
+				} else {
+					object[p.name] = p.value;
+				}
+			} else {
+				object[p.name] = this.unserializeValue(value[p.name], p.type);
+			}
 		});
 
 		return object;

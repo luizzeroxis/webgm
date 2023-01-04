@@ -15,6 +15,9 @@
         "ecmaVersion": 2022,
         "sourceType": "module"
     },
+    "globals": {
+        "CONSTANTS": "readonly"
+    },
     "rules": {
         "import/order": ["warn", {"newlines-between": "always", "alphabetize": {"order": "asc", "caseInsensitive": true}}],
 

@@ -25,7 +25,7 @@ module.exports = mergeWithRules({
 		],
 	},
 	devServer: {
-		static: "./dist",
+		static: false,
 		hot: false,
 		liveReload: false,
 	},

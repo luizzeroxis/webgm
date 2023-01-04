@@ -2,9 +2,13 @@
 
 const path = require("path");
 
+const webpack = require('webpack');
 const ESLintPlugin = require("eslint-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const {GitRevisionPlugin} = require("git-revision-webpack-plugin");
+
+const gitRevisionPlugin = new GitRevisionPlugin();
 
 module.exports = {
 	entry: "./src/index.js",
@@ -48,6 +52,12 @@ module.exports = {
 		},
 	},
 	plugins: [
+		new webpack.DefinePlugin({
+			"CONSTANTS": {
+				"COMMITHASH": JSON.stringify(gitRevisionPlugin.commithash()),
+				"LASTCOMMITDATETIME": JSON.stringify(gitRevisionPlugin.lastcommitdatetime()),
+			}
+		}),
 		new HtmlWebpackPlugin({
 			title: "webgm",
 		}),

@@ -89,6 +89,17 @@ export default class HAreaMenu extends HElement {
 				this.editor.windowsArea.openGlobalGameSettings();
 			}) );
 
+			add( new HElement("div", {class: "separator"}) );
+
+			add( new HButton("About", () => {
+				alert("WebGM"
+					+ "\nVersion: 0.0.0"
+					+ "\nCommit hash: " + CONSTANTS.COMMITHASH
+					+ "\nCommit time: " + CONSTANTS.LASTCOMMITDATETIME
+					+ "\nGitHub: https://github.com/luizeldorado/webgm",
+				);
+			}) );
+
 			endparent();
 	}
 }

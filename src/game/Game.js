@@ -223,6 +223,11 @@ export default class Game {
 
 	// Run a step and set timeout for next step. With error catching.
 	async mainLoopForTimeout() {
+		this.timeout = setTimeout(async () => {
+			await this.mainLoopPromise;
+			this.mainLoopForTimeout();
+		}, 1000 / this.room.speed);
+
 		const timeoutStepStart = performance.now();
 
 		// If one second has passed since last fps update, update it
@@ -233,29 +238,10 @@ export default class Game {
 		}
 
 		try {
-			await this.mainLoop();
+			this.mainLoopPromise = this.mainLoop();
+			await this.mainLoopPromise;
 
 			++this.fpsFrameCount;
-
-			// Run main loop again, after a frame of time has passed.
-			// This means the game will slow down if a loop takes too much time.
-
-			const timeoutStepMinTime = 1000 / this.room.speed;
-
-			const timeoutStepEnd = performance.now();
-
-			const timeoutStepTime = (timeoutStepEnd - timeoutStepStart);
-			const timeoutWaitTime = timeoutStepMinTime - timeoutStepTime;
-
-			this.timeout = setTimeout(() => this.mainLoopForTimeout(), timeoutWaitTime);
-
-			// const timeoutTotalStepTime = timeoutStepTime + timeoutWaitTime;
-			// console.log("------");
-			// console.log("StepTime", timeoutStepTime);
-			// console.log("StepMinTime", timeoutStepMinTime);
-			// console.log("WaitTime", timeoutWaitTime);
-			// console.log("TotalStepTime", timeoutTotalStepTime);
-			// console.log(1/timeoutTotalStepTime, "fps");
 		} catch (e) {
 			await this.catch(e);
 		}

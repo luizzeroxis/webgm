@@ -3,6 +3,35 @@ export default class GameCollision {
 		this.game = game;
 	}
 
+	pointOnRectangle(point, rect) {
+		return (
+			point.x >= rect.x1
+			&& point.x < rect.x2
+			&& point.y >= rect.y1
+			&& point.y < rect.y2
+		);
+	}
+
+	rectangleOnRectangle(a, b) {
+		return (
+			a.x1 <= b.x2
+			&& b.x1 <= a.x2
+			&& a.y1 <= b.y2
+			&& b.y1 <= a.y2
+		);
+	}
+
+	getInstanceCollisionInfo(instance, x, y) {
+		x = x ?? Math.floor(instance.x);
+		y = y ?? Math.floor(instance.y);
+		const image = instance.sprite.images[instance.getImageIndex()];
+		const x1 = x - instance.sprite.originx;
+		const y1 = y - instance.sprite.originy;
+		const x2 = x1 + image.width;
+		const y2 = y1 + image.height;
+		return {x, y, image, x1, y1, x2, y2};
+	}
+
 	// Check if two instances are colliding.
 	instanceOnInstance(instanceA, instanceB, x, y) {
 		// Don't allow collision with self
@@ -55,25 +84,8 @@ export default class GameCollision {
 		return false;
 	}
 
-	getInstanceCollisionInfo(instance, x, y) {
-		x = x ?? Math.floor(instance.x);
-		y = y ?? Math.floor(instance.y);
-		const image = instance.sprite.images[instance.getImageIndex()];
-		const x1 = x - instance.sprite.originx;
-		const y1 = y - instance.sprite.originy;
-		const x2 = x1 + image.width;
-		const y2 = y1 + image.height;
-		return {x, y, image, x1, y1, x2, y2};
-	}
 
-	rectangleOnRectangle(a, b) {
-		return (
-			a.x1 <= b.x2
-			&& b.x1 <= a.x2
-			&& a.y1 <= b.y2
-			&& b.y1 <= a.y2
-		);
-	}
+		
 
 
 	// Check if two instances, with precise shape, are colliding.
@@ -169,12 +181,46 @@ export default class GameCollision {
 		);
 	}
 
+	roomPointToInstanceImagePoint(point, instance) {
+		let {x, y} = point;
+
+		[x, y] = [x - instance.x, y - instance.y];
+
+		const a = -instance.imageAngle * Math.PI/180;
+		const cos = Math.cos(a);
+		const sin = Math.sin(a);
+		[x, y] = [cos*x - sin*y, sin*x + cos*y];
+
+		[x, y] = [x / instance.imageXScale, y / instance.imageYScale];
+		[x, y] = [x + instance.sprite.originx, y + instance.sprite.originy];
+		[x, y] = [Math.floor(x), Math.floor(y)];
+
+		return {x, y};
+	}
+
+	instancePreciseOnPoint(instance, point) {
+		const {x, y} = this.roomPointToInstanceImagePoint(point);
+
+		const instanceImage = instance.getImage();
+
+		if (!this.pointOnRectangle({x, y}, {
+			x1: 0, x2: instanceImage.width,
+			y1: 0, y2: instanceImage.height,
+		})) {
+			return false;
+		}
+
+		const col = this.game.loadedProject.collisionMasks.get(instanceImage);
+
+		return col[x][y] == true;
+	}
+
 	// Check if instance is colliding with point.
 	instanceOnPoint(instance, point) {
 		if (instance.sprite == null || instance.sprite.images.length == 0) return false;
 
 		const collisions = [
-			{shape: "precise", func: this.instanceRectangleOnPoint},
+			{shape: "precise", func: this.instancePreciseOnPoint},
 			{shape: "rectangle", func: this.instanceRectangleOnPoint},
 			// {shape: 'disk', func: this.instanceRectangleOnPoint},
 			// {shape: 'diamond', func: this.instanceRectangleOnPoint},
@@ -182,7 +228,7 @@ export default class GameCollision {
 
 		for (const collision of collisions) {
 			if (instance.sprite.shape == collision.shape) {
-				return collision.func(instance, point);
+				return collision.func.call(this, instance, point);
 			}
 		}
 

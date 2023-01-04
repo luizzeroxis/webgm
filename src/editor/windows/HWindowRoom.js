@@ -477,6 +477,8 @@ export default class HWindowRoom extends HWindow {
 		this.canvasPreview.html.width = this.inputWidth.getValue();
 		this.canvasPreview.html.height = this.inputHeight.getValue();
 
+		this.ctx.imageSmoothingEnabled = false;
+
 		if (this.inputDrawBackgroundColor.getChecked()) {
 			this.ctx.fillStyle = this.inputBackgroundColor.getValue();
 			this.ctx.fillRect(0, 0, this.canvasPreview.html.width, this.canvasPreview.html.height);

@@ -185,11 +185,15 @@ export default class Game {
 	// Called by start, inits the canvas.
 	startCanvas() {
 		this.ctx = this.canvas.getContext("2d", {alpha: false});
-		this.ctx.imageSmoothingEnabled = false;
+		this.setCanvasProperties();
 
 		if (!this.project.globalGameSettings.displayCursor) {
 			this.canvas.classList.add("no-cursor");
 		}
+	}
+
+	setCanvasProperties() {
+		this.ctx.imageSmoothingEnabled = false;
 	}
 
 	// Called by start, inits general engine stuff.
@@ -968,6 +972,8 @@ export default class Game {
 
 		this.canvas.width = room.width;
 		this.canvas.height = room.height;
+
+		this.setCanvasProperties();
 
 		this.input.clear();
 

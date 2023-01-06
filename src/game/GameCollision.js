@@ -199,7 +199,7 @@ export default class GameCollision {
 	}
 
 	instancePreciseOnPoint(instance, point) {
-		const {x, y} = this.roomPointToInstanceImagePoint(point);
+		const {x, y} = this.roomPointToInstanceImagePoint(point, instance);
 
 		const instanceImage = instance.getImage();
 

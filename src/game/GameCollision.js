@@ -21,15 +21,13 @@ export default class GameCollision {
 		);
 	}
 
-	getInstanceCollisionInfo(instance, x, y) {
-		x = x ?? Math.floor(instance.x);
-		y = y ?? Math.floor(instance.y);
-		const image = instance.sprite.images[instance.getImageIndex()];
-		const x1 = x - instance.sprite.originx;
-		const y1 = y - instance.sprite.originy;
-		const x2 = x1 + image.width;
-		const y2 = y1 + image.height;
-		return {x, y, image, x1, y1, x2, y2};
+	rectangleOnRectangleIntersection(a, b) {
+		return {
+			x1: Math.max(a.x1, b.x1),
+			y1: Math.max(a.y1, b.y1),
+			x2: Math.min(a.x2, b.x2),
+			y2: Math.min(a.y2, b.y2),
+		};
 	}
 
 	// Check if two instances are colliding.
@@ -38,14 +36,13 @@ export default class GameCollision {
 		if (instanceA == instanceB) return false;
 
 		// TODO masks
-		// TODO solid
 
 		if (instanceA.sprite == null || instanceA.sprite.images.length == 0) return false;
 		if (instanceB.sprite == null || instanceB.sprite.images.length == 0) return false;
 
-		// TODO collision masks, will assume rectangle now
+		// TODO collision masks
 		// spriteA.boundingBox == 'fullimage';
-		// spriteA.shape = 'rectangle';
+		// spriteA.shape = 'rectangle' || 'precise';
 
 		const collisions = [
 			{shape1: "precise", shape2: "precise", func: this.instancePreciseOnInstancePrecise},
@@ -62,10 +59,10 @@ export default class GameCollision {
 
 		for (const collision of collisions) {
 			if (instanceA.sprite.shape == collision.shape1 && instanceB.sprite.shape == collision.shape2) {
-				return collision.func.call(this, instanceA, instanceB, x, y);
+				return collision.func.call(this, instanceA, instanceB, x, y, null, null);
 			} else
 			if (instanceA.sprite.shape == collision.shape2 && instanceB.sprite.shape == collision.shape1) {
-				return collision.func.call(this, instanceB, instanceA, x, y);
+				return collision.func.call(this, instanceB, instanceA, null, null, x, y);
 			}
 		}
 
@@ -84,74 +81,90 @@ export default class GameCollision {
 		return false;
 	}
 
-
-		
-
-
 	// Check if two instances, with precise shape, are colliding.
 	instancePreciseOnInstancePrecise(aInstance, bInstance, aX, aY, bX, bY) {
-		const a = this.getInstanceCollisionInfo(aInstance, aX, aY);
-		const b = this.getInstanceCollisionInfo(bInstance, bX, bY);
+		const aRect = aInstance.getBoundingBox(aX, aY);
+		const bRect = bInstance.getBoundingBox(bX, bY);
 
-		if (!this.rectangleOnRectangle(a, b)) return false;
+		if (!this.rectangleOnRectangle(aRect, bRect)) {
+			return false;
+		}
 
-		const aCol = this.game.loadedProject.collisionMasks.get(a.image);
-		const bCol = this.game.loadedProject.collisionMasks.get(b.image);
+		const iRect = this.rectangleOnRectangleIntersection(aRect, bRect);
 
-		// Get the 'global' (in relation to room) rect in the intersection between the two rects.
-		const gX1 = Math.max(a.x1, b.x1);
-		const gY1 = Math.max(a.y1, b.y1);
-		const gX2 = Math.min(a.x2, b.x2);
-		const gY2 = Math.min(a.y2, b.y2);
+		const aImage = aInstance.getImage();
+		const bImage = bInstance.getImage();
 
-		// Loop through all pixels in that rect.
-		for (let gX = gX1; gX < gX2; ++gX)
-		for (let gY = gY1; gY < gY2; ++gY) {
-			// Here we undo all transformations made to the sprite.
-			// It's rounded down to the nearest pixel.
-			const aDataX = Math.floor(gX - a.x1);
-			const aDataY = Math.floor(gY - a.y1);
+		const aImageRect = {x1: 0, x2: aImage.width, y1: 0, y2: aImage.height};
+		const bImageRect = {x1: 0, x2: bImage.width, y1: 0, y2: bImage.height};
 
-			// TODO this may be out of bounds.
-			if (!aCol[aDataX][aDataY]) continue;
+		const aCol = this.game.loadedProject.collisionMasks.get(aImage);
+		const bCol = this.game.loadedProject.collisionMasks.get(bImage);
 
-			const bDataX = Math.floor(gX - b.x1);
-			const bDataY = Math.floor(gY - b.y1);
+		// TODO possibly optimize this?
+		for (let x = Math.floor(iRect.x1); x < iRect.x2; ++x)
+		for (let y = Math.floor(iRect.y1); y < iRect.y2; ++y) {
+			const aPoint = aInstance.roomPointToInstanceImagePoint({x, y}, aX, aY);
 
-			if (bCol[bDataX][bDataY]) return true;
+			if (!this.pointOnRectangle(aPoint, aImageRect)) {
+				continue;
+			}
+			if (!(aCol[aPoint.x][aPoint.y] === true)) {
+				continue;
+			}
+
+			const bPoint = bInstance.roomPointToInstanceImagePoint({x, y}, bX, bY);
+
+			if (!this.pointOnRectangle(bPoint, bImageRect)) {
+				continue;
+			}
+			if (!(bCol[bPoint.x][bPoint.y] === true)) {
+				continue;
+			}
+
+			return true;
 		}
 
 		return false;
 	}
 
-
 	// Check if two instances, one with precise shape, another with rectangular shape, are colliding.
 	instancePreciseOnInstanceRectangle(precInstance, rectInstance, aX, aY, bX, bY) {
-		const prec = this.getInstanceCollisionInfo(precInstance, aX, aY);
-		const rect = this.getInstanceCollisionInfo(rectInstance, bX, bY);
+		const precRect = precInstance.getBoundingBox(aX, aY);
+		const rectRect = rectInstance.getBoundingBox(bX, bY);
 
-		if (!this.rectangleOnRectangle(prec, rect)) return false;
+		if (!this.rectangleOnRectangle(precRect, rectRect)) {
+			return false;
+		}
 
-		const precCol = this.game.loadedProject.collisionMasks.get(prec.image);
+		const iRect = this.rectangleOnRectangleIntersection(precRect, rectRect);
 
-		// Get the 'global' (in relation to room) rect in the intersection between the two rects.
-		const gX1 = Math.max(prec.x1, rect.x1);
-		const gY1 = Math.max(prec.y1, rect.y1);
-		const gX2 = Math.min(prec.x2, rect.x2);
-		const gY2 = Math.min(prec.y2, rect.y2);
+		const precImage = precInstance.getImage();
+		const rectImage = rectInstance.getImage();
 
-		// Loop through all pixels in that rect.
-		for (let gX = gX1; gX < gX2; ++gX)
-		for (let gY = gY1; gY < gY2; ++gY) {
-			// Here we undo all transformations made to the sprite.
-			// It's rounded down to the nearest pixel.
-			const precDataX = Math.floor(gX - prec.x1);
-			const precDataY = Math.floor(gY - prec.y1);
+		const precImageRect = {x1: 0, x2: precImage.width, y1: 0, y2: precImage.height};
+		const rectImageRect = {x1: 0, x2: rectImage.width, y1: 0, y2: rectImage.height};
 
-			// TODO this may be out of bounds.
-			if (!precCol[precDataX][precDataY]) continue;
+		const precCol = this.game.loadedProject.collisionMasks.get(precImage);
 
-			// Rect always collides there.
+		// TODO possibly optimize this?
+		for (let x = Math.floor(iRect.x1); x < iRect.x2; ++x)
+		for (let y = Math.floor(iRect.y1); y < iRect.y2; ++y) {
+			const rectPoint = rectInstance.roomPointToInstanceImagePoint({x, y}, bX, bY);
+
+			if (!this.pointOnRectangle(rectPoint, rectImageRect)) {
+				continue;
+			}
+
+			const precPoint = precInstance.roomPointToInstanceImagePoint({x, y}, aX, aY);
+
+			if (!this.pointOnRectangle(precPoint, precImageRect)) {
+				continue;
+			}
+			if (!(precCol[precPoint.x][precPoint.y] === true)) {
+				continue;
+			}
+
 			return true;
 		}
 
@@ -160,59 +173,69 @@ export default class GameCollision {
 
 	// Check if two instances, with rectangular shape, are colliding.
 	instanceRectangleOnInstanceRectangle(aInstance, bInstance, aX, aY, bX, bY) {
-		const a = this.getInstanceCollisionInfo(aInstance, aX, aY);
-		const b = this.getInstanceCollisionInfo(bInstance, bX, bY);
+		const aRect = aInstance.getBoundingBox(aX, aY);
+		const bRect = bInstance.getBoundingBox(bX, bY);
 
-		return this.rectangleOnRectangle(a, b);
+		if (!this.rectangleOnRectangle(aRect, bRect)) {
+			return false;
+		}
+
+		const iRect = this.rectangleOnRectangleIntersection(aRect, bRect);
+
+		const aImage = aInstance.getImage();
+		const bImage = bInstance.getImage();
+
+		const aImageRect = {x1: 0, x2: aImage.width, y1: 0, y2: aImage.height};
+		const bImageRect = {x1: 0, x2: bImage.width, y1: 0, y2: bImage.height};
+
+		// TODO possibly optimize this?
+		for (let x = Math.floor(iRect.x1); x < iRect.x2; ++x)
+		for (let y = Math.floor(iRect.y1); y < iRect.y2; ++y) {
+			const aPoint = aInstance.roomPointToInstanceImagePoint({x, y}, aX, aY);
+
+			if (!this.pointOnRectangle(aPoint, aImageRect)) {
+				continue;
+			}
+
+			const bPoint = bInstance.roomPointToInstanceImagePoint({x, y}, bX, bY);
+
+			if (!this.pointOnRectangle(bPoint, bImageRect)) {
+				continue;
+			}
+
+			return true;
+		}
+
+		return false;
 	}
-
 
 	// Check if an instance, with rectangular shape, and a point are colliding.
 	instanceRectangleOnPoint(instance, point) {
-		const instanceX = instance.x - instance.sprite.originx;
-		const instanceY = instance.y - instance.sprite.originy;
+		const imagePoint = instance.roomPointToInstanceImagePoint(point);
+
 		const instanceImage = instance.getImage();
 
-		return (
-			point.x >= instanceX
-			&& point.x < instanceX + instanceImage.width
-			&& point.y >= instanceY
-			&& point.y < instanceY + instanceImage.height
-		);
+		// TODO bounding box check
+		if (!this.pointOnRectangle(imagePoint, {x1: 0, x2: instanceImage.width, y1: 0, y2: instanceImage.height})) {
+			return false;
+		}
+
+		return true;
 	}
 
-	roomPointToInstanceImagePoint(point, instance) {
-		let {x, y} = point;
-
-		[x, y] = [x - instance.x, y - instance.y];
-
-		const a = -instance.imageAngle * Math.PI/180;
-		const cos = Math.cos(a);
-		const sin = Math.sin(a);
-		[x, y] = [cos*x - sin*y, sin*x + cos*y];
-
-		[x, y] = [x / instance.imageXScale, y / instance.imageYScale];
-		[x, y] = [x + instance.sprite.originx, y + instance.sprite.originy];
-		[x, y] = [Math.floor(x), Math.floor(y)];
-
-		return {x, y};
-	}
-
+	// Check if an instance, with precise shape, and a point are colliding.
 	instancePreciseOnPoint(instance, point) {
-		const {x, y} = this.roomPointToInstanceImagePoint(point, instance);
+		const imagePoint = instance.roomPointToInstanceImagePoint(point);
 
 		const instanceImage = instance.getImage();
 
-		if (!this.pointOnRectangle({x, y}, {
-			x1: 0, x2: instanceImage.width,
-			y1: 0, y2: instanceImage.height,
-		})) {
+		// TODO bounding box check
+		if (!this.pointOnRectangle(imagePoint, {x1: 0, x2: instanceImage.width, y1: 0, y2: instanceImage.height})) {
 			return false;
 		}
 
 		const col = this.game.loadedProject.collisionMasks.get(instanceImage);
-
-		return col[x][y] == true;
+		return col[imagePoint.x][imagePoint.y] === true;
 	}
 
 	// Check if instance is colliding with point.

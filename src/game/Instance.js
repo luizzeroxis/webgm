@@ -79,6 +79,76 @@ export default class Instance {
 		return Math.floor(Math.floor(this.imageIndex) % this.sprite.images.length);
 	}
 
+
+	instanceImagePointToRoomPoint(point, instanceX, instanceY) {
+		instanceX ??= this.x;
+		instanceY ??= this.y;
+
+		let {x, y} = point;
+
+		[x, y] = [x - this.sprite.originx, y - this.sprite.originy];
+
+		[x, y] = [x * this.imageXScale, y * this.imageYScale];
+
+		const a = this.imageAngle * Math.PI/180;
+		const cos = Math.cos(a);
+		const sin = Math.sin(a);
+		[x, y] = [cos*x - sin*y, sin*x + cos*y];
+
+		[x, y] = [x + instanceX, y + instanceY];
+
+		return {x, y};
+	}
+
+	roomPointToInstanceImagePoint(point, instanceX, instanceY) {
+		instanceX ??= this.x;
+		instanceY ??= this.y;
+
+		let {x, y} = point;
+
+		[x, y] = [x - instanceX, y - instanceY];
+
+		const a = -this.imageAngle * Math.PI/180;
+		const cos = Math.cos(a);
+		const sin = Math.sin(a);
+		[x, y] = [cos*x - sin*y, sin*x + cos*y];
+
+		[x, y] = [x / this.imageXScale, y / this.imageYScale];
+
+		[x, y] = [x + this.sprite.originx, y + this.sprite.originy];
+
+		[x, y] = [Math.floor(x), Math.floor(y)];
+
+		return {x, y};
+	}
+
+	getBoundingBox(instanceX, instanceY) {
+		instanceX ??= this.x;
+		instanceY ??= this.y;
+
+		const image = this.getImage();
+		if (!image) return {x1: instanceX, y1: instanceY, x2: instanceX, y2: instanceY};
+
+		// TODO optimize this lol
+		// TODO use sprite.boundingBox instead of entire image
+		const points = [
+			this.instanceImagePointToRoomPoint({x: 0, y: 0}, instanceX, instanceY),
+			this.instanceImagePointToRoomPoint({x: image.width, y: 0}, instanceX, instanceY),
+			this.instanceImagePointToRoomPoint({x: 0, y: image.height}, instanceX, instanceY),
+			this.instanceImagePointToRoomPoint({x: image.width, y: image.height}, instanceX, instanceY),
+		];
+
+		const xs = points.map(point => point.x);
+		const ys = points.map(point => point.y);
+
+		const x1 = Math.min(...xs);
+		const y1 = Math.min(...ys);
+		const x2 = Math.max(...xs);
+		const y2 = Math.max(...ys);
+
+		return {x1, y1, x2, y2};
+	}
+
 	setHspeedAndVspeed(hspeed, vspeed) {
 		this.hSpeed = hspeed;
 		this.vSpeed = vspeed;

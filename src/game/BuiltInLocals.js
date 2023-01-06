@@ -256,30 +256,22 @@ export default class BuiltInLocals {
 
 	static bbox_left = {readOnly: true, get() {
 		if (this.sprite == null) return -100000;
-
-		const image = this.getImage();
-		return this.x + (image ? -this.sprite.originx : 0);
+		return (this.getBoundingBox().x1);
 	}};
 
 	static bbox_right = {readOnly: true, get() {
 		if (this.sprite == null) return -100000;
-
-		const image = this.getImage();
-		return this.x + (image ? (-this.sprite.originx + image.width) : 0);
+		return (this.getBoundingBox().x2);
 	}};
 
 	static bbox_top = {readOnly: true, get() {
 		if (this.sprite == null) return -100000;
-
-		const image = this.getImage();
-		return this.y + (image ? -this.sprite.originy : 0);
+		return (this.getBoundingBox().y1);
 	}};
 
 	static bbox_bottom = {readOnly: true, get() {
 		if (this.sprite == null) return -100000;
-
-		const image = this.getImage();
-		return this.y + (image ? (-this.sprite.originy + image.height) : 0);
+		return (this.getBoundingBox().y2);
 	}};
 
 	// Unknown

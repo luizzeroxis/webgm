@@ -1500,14 +1500,14 @@ export default class BuiltInFunctions {
 	static room_goto_previous = {
 		args: null,
 		func: function([]) {
-			return BuiltInFunctions.room_goto.call(this, [BuiltInFunctions.room_previous.call(this, [this.game.room.resource.id])]);
+			return BuiltInFunctions.room_goto.func.call(this, [BuiltInFunctions.room_previous.func.call(this, [this.game.room.resource.id])]);
 		},
 	};
 
 	static room_goto_next = {
 		args: null,
 		func: function([]) {
-			return BuiltInFunctions.room_goto.call(this, [BuiltInFunctions.room_next.call(this, [this.game.room.resource.id])]);
+			return BuiltInFunctions.room_goto.func.call(this, [BuiltInFunctions.room_next.func.call(this, [this.game.room.resource.id])]);
 		},
 	};
 
@@ -1536,7 +1536,7 @@ export default class BuiltInFunctions {
 	static room_restart = {
 		args: null,
 		func: function([]) {
-			return BuiltInFunctions.room_goto.call(this, [this.game.room.resource.id]);
+			return BuiltInFunctions.room_goto.func.call(this, [this.game.room.resource.id]);
 		},
 	};
 
@@ -2314,7 +2314,7 @@ export default class BuiltInFunctions {
 		args: null,
 		func: function([x1, y1, x2, y2, w]) {
 			this.game.ctx.lineWidth = w;
-			BuiltInFunctions.draw_line.call(this, [x1, y1, x2, y2]);
+			BuiltInFunctions.draw_line.func.call(this, [x1, y1, x2, y2]);
 			this.game.ctx.lineWidth = 1;
 			return 0;
 		},
@@ -4562,7 +4562,7 @@ export default class BuiltInFunctions {
 			const x = this.game.input.mouseDisplayX;
 			const y = this.game.input.mouseDisplayY;
 
-			return await BuiltInFunctions.show_menu_pos.call(this, [x, y, str, def]);
+			return await BuiltInFunctions.show_menu_pos.func.call(this, [x, y, str, def]);
 		},
 	};
 
@@ -9028,9 +9028,9 @@ export default class BuiltInFunctions {
 		args: null,
 		func: function([direction, speed], relative) {
 			if (!relative) {
-				BuiltInFunctions.motion_set.call(this, [direction, speed]);
+				BuiltInFunctions.motion_set.func.call(this, [direction, speed]);
 			} else {
-				BuiltInFunctions.motion_add.call(this, [direction, speed]);
+				BuiltInFunctions.motion_add.func.call(this, [direction, speed]);
 			}
 			return 0;
 		},
@@ -9130,7 +9130,7 @@ export default class BuiltInFunctions {
 	static action_move_random = {
 		args: null,
 		func: function([snapHor, snapVert]) {
-			BuiltInFunctions.move_random.call(this, [snapHor, snapVert]);
+			BuiltInFunctions.move_random.func.call(this, [snapHor, snapVert]);
 			return 0;
 		},
 	};
@@ -9138,7 +9138,7 @@ export default class BuiltInFunctions {
 	static action_snap = {
 		args: null,
 		func: function([snapHor, snapVert]) {
-			BuiltInFunctions.move_snap.call(this, [snapHor, snapVert]);
+			BuiltInFunctions.move_snap.func.call(this, [snapHor, snapVert]);
 			return 0;
 		},
 	};
@@ -9189,9 +9189,9 @@ export default class BuiltInFunctions {
 		args: null,
 		func: function([precise, against]) {
 			if (against == 0) {
-				BuiltInFunctions.move_bounce_solid.call(this, [precise]);
+				BuiltInFunctions.move_bounce_solid.func.call(this, [precise]);
 			} else if (against == 1) {
-				BuiltInFunctions.move_bounce_all.call(this, [precise]);
+				BuiltInFunctions.move_bounce_all.func.call(this, [precise]);
 			}
 			return 0;
 		},
@@ -9259,7 +9259,7 @@ export default class BuiltInFunctions {
 			x = (!relative ? x : this.currentInstance.x + x);
 			y = (!relative ? y : this.currentInstance.y + y);
 
-			await BuiltInFunctions.instance_create.call(this, [x, y, object]);
+			await BuiltInFunctions.instance_create.func.call(this, [x, y, object]);
 
 			return 0;
 		},
@@ -9307,7 +9307,7 @@ export default class BuiltInFunctions {
 	static action_kill_object = {
 		args: null,
 		func: async function([]) {
-			await BuiltInFunctions.instance_destroy.call(this, []);
+			await BuiltInFunctions.instance_destroy.func.call(this, []);
 			return 0;
 		},
 	};
@@ -9357,9 +9357,9 @@ export default class BuiltInFunctions {
 		args: null,
 		func: function([sound, loop]) {
 			if (loop == 0) {
-				BuiltInFunctions.sound_play.call(this, [sound]);
+				BuiltInFunctions.sound_play.func.call(this, [sound]);
 			} else if (loop == 1) {
-				BuiltInFunctions.sound_loop.call(this, [sound]);
+				BuiltInFunctions.sound_loop.func.call(this, [sound]);
 			}
 			return 0;
 		},
@@ -9368,7 +9368,7 @@ export default class BuiltInFunctions {
 	static action_end_sound = {
 		args: null,
 		func: function([sound]) {
-			BuiltInFunctions.sound_stop.call(this, [sound]);
+			BuiltInFunctions.sound_stop.func.call(this, [sound]);
 			return 0;
 		},
 	};
@@ -9376,7 +9376,7 @@ export default class BuiltInFunctions {
 	static action_if_sound = {
 		args: null,
 		func: function([sound]) {
-			return BuiltInFunctions.sound_isplaying.call(this, [sound]);
+			return BuiltInFunctions.sound_isplaying.func.call(this, [sound]);
 		},
 	};
 
@@ -9386,7 +9386,7 @@ export default class BuiltInFunctions {
 		args: null,
 		func: function([transition]) { // eslint-disable-line no-unused-vars
 		// TODO transition
-			BuiltInFunctions.room_goto_previous.call(this, []);
+			BuiltInFunctions.room_goto_previous.func.call(this, []);
 			return 0;
 		},
 	};
@@ -9395,7 +9395,7 @@ export default class BuiltInFunctions {
 		args: null,
 		func: function([transition]) { // eslint-disable-line no-unused-vars
 		// TODO transition
-			BuiltInFunctions.room_goto_next.call(this, []);
+			BuiltInFunctions.room_goto_next.func.call(this, []);
 			return 0;
 		},
 	};
@@ -9404,7 +9404,7 @@ export default class BuiltInFunctions {
 		args: null,
 		func: function([transition]) { // eslint-disable-line no-unused-vars
 		// TODO transition
-			BuiltInFunctions.room_restart.call(this, []);
+			BuiltInFunctions.room_restart.func.call(this, []);
 			return 0;
 		},
 	};
@@ -9413,7 +9413,7 @@ export default class BuiltInFunctions {
 		args: null,
 		func: function([newRoom, transition]) { // eslint-disable-line no-unused-vars
 		// TODO transition
-			BuiltInFunctions.room_goto.call(this, [newRoom]);
+			BuiltInFunctions.room_goto.func.call(this, [newRoom]);
 			return 0;
 		},
 	};
@@ -9421,14 +9421,14 @@ export default class BuiltInFunctions {
 	static action_if_previous_room = {
 		args: null,
 		func: function([]) {
-			return (BuiltInFunctions.room_previous.call(this, [this.game.room.resource.id]) != -1) ? 1 : 0;
+			return (BuiltInFunctions.room_previous.func.call(this, [this.game.room.resource.id]) != -1) ? 1 : 0;
 		},
 	};
 
 	static action_if_next_room = {
 		args: null,
 		func: function([]) {
-			return (BuiltInFunctions.room_next.call(this, [this.game.room.resource.id]) != -1) ? 1 : 0;
+			return (BuiltInFunctions.room_next.func.call(this, [this.game.room.resource.id]) != -1) ? 1 : 0;
 		},
 	};
 
@@ -9453,7 +9453,7 @@ export default class BuiltInFunctions {
 			if (redraw) {
 			//
 			}
-			await BuiltInFunctions.sleep.call(this, [milliseconds]);
+			await BuiltInFunctions.sleep.func.call(this, [milliseconds]);
 			return 0;
 		},
 	};
@@ -9519,7 +9519,7 @@ export default class BuiltInFunctions {
 	static action_message = {
 		args: null,
 		func: function([message]) {
-			BuiltInFunctions.show_message.call(this, [message]);
+			BuiltInFunctions.show_message.func.call(this, [message]);
 			return 0;
 		},
 	};
@@ -9585,7 +9585,7 @@ export default class BuiltInFunctions {
 	static action_restart_game = {
 		args: null,
 		func: function([]) {
-			BuiltInFunctions.game_restart.call(this, []);
+			BuiltInFunctions.game_restart.func.call(this, []);
 			return 0;
 		},
 	};
@@ -9593,7 +9593,7 @@ export default class BuiltInFunctions {
 	static action_end_game = {
 		args: null,
 		func: function([]) {
-			BuiltInFunctions.game_end.call(this, []);
+			BuiltInFunctions.game_end.func.call(this, []);
 			return 0;
 		},
 	};
@@ -9650,9 +9650,9 @@ export default class BuiltInFunctions {
 			x = (!relative ? x : this.currentInstance.x + x);
 			y = (!relative ? y : this.currentInstance.y + y);
 			if (objects == 0) { // Only solid
-				return BuiltInFunctions.place_free.call(this, [x, y]);
+				return BuiltInFunctions.place_free.func.call(this, [x, y]);
 			} else if (objects == 1) { // All
-				return BuiltInFunctions.place_empty.call(this, [x, y]);
+				return BuiltInFunctions.place_empty.func.call(this, [x, y]);
 			}
 			return 0;
 		},
@@ -9664,9 +9664,9 @@ export default class BuiltInFunctions {
 			x = (!relative ? x : this.currentInstance.x + x);
 			y = (!relative ? y : this.currentInstance.y + y);
 			if (objects == 0) { // Only solid
-				return !(BuiltInFunctions.place_free.call(this, [x, y]));
+				return !(BuiltInFunctions.place_free.func.call(this, [x, y]));
 			} else if (objects == 1) { // All
-				return !(BuiltInFunctions.place_empty.call(this, [x, y]));
+				return !(BuiltInFunctions.place_empty.func.call(this, [x, y]));
 			}
 			return 0;
 		},
@@ -9677,14 +9677,14 @@ export default class BuiltInFunctions {
 		func: function([object, x, y], relative) {
 			x = (!relative ? x : this.currentInstance.x + x);
 			y = (!relative ? y : this.currentInstance.y + y);
-			return BuiltInFunctions.place_meeting.call(this, [x, y, object]);
+			return BuiltInFunctions.place_meeting.func.call(this, [x, y, object]);
 		},
 	};
 
 	static action_if_number = {
 		args: null,
 		func: function([object, number, operation]) {
-			const result = BuiltInFunctions.instance_number.call(this, [object]);
+			const result = BuiltInFunctions.instance_number.func.call(this, [object]);
 			if (operation == 0) { // Equal to
 				return (result === number) ? 1 : 0;
 			} else if (operation == 1) { // Smaller than
@@ -9706,7 +9706,7 @@ export default class BuiltInFunctions {
 	static action_if_question = {
 		args: null,
 		func: function([question]) {
-			return BuiltInFunctions.show_question.call(this, [question]);
+			return BuiltInFunctions.show_question.func.call(this, [question]);
 		},
 	};
 
@@ -9720,14 +9720,14 @@ export default class BuiltInFunctions {
 	static action_if_mouse = {
 		args: null,
 		func: function([button]) {
-			return BuiltInFunctions.mouse_check_button.call(this, [button]);
+			return BuiltInFunctions.mouse_check_button.func.call(this, [button]);
 		},
 	};
 
 	static action_if_aligned = {
 		args: null,
 		func: function([snapHor, snapVert]) {
-			return BuiltInFunctions.place_snapped.call(this, [snapHor, snapVert]);
+			return BuiltInFunctions.place_snapped.func.call(this, [snapHor, snapVert]);
 		},
 	};
 
@@ -9787,7 +9787,7 @@ export default class BuiltInFunctions {
 		func: function([variable, x, y], relative) {
 			x = (!relative ? x : this.currentInstance.x + x);
 			y = (!relative ? y : this.currentInstance.y + y);
-			BuiltInFunctions.draw_text.call(this, [x, y, variable]);
+			BuiltInFunctions.draw_text.func.call(this, [x, y, variable]);
 			return 0;
 		},
 	};
@@ -10120,7 +10120,7 @@ export default class BuiltInFunctions {
 			x = (!relative ? x : this.currentInstance.x + x);
 			y = (!relative ? y : this.currentInstance.y + y);
 			subimage = (subimage != -1) ? subimage : this.currentInstance.imageIndex;
-			BuiltInFunctions.draw_sprite.call(this, [sprite, subimage, x, y]);
+			BuiltInFunctions.draw_sprite.func.call(this, [sprite, subimage, x, y]);
 			return 0;
 		},
 	};
@@ -10138,7 +10138,7 @@ export default class BuiltInFunctions {
 		func: function([text, x, y], relative) {
 			x = (!relative ? x : this.currentInstance.x + x);
 			y = (!relative ? y : this.currentInstance.y + y);
-			BuiltInFunctions.draw_text.call(this, [x, y, text]);
+			BuiltInFunctions.draw_text.func.call(this, [x, y, text]);
 			return 0;
 		},
 	};
@@ -10158,7 +10158,7 @@ export default class BuiltInFunctions {
 			y1 = (!relative ? y1 : this.currentInstance.y + y1);
 			x2 = (!relative ? x2 : this.currentInstance.x + x2);
 			y2 = (!relative ? y2 : this.currentInstance.y + y2);
-			BuiltInFunctions.draw_rectangle.call(this, [x1, y1, x2, y2, filled]); // 0=filled, 1=outline
+			BuiltInFunctions.draw_rectangle.func.call(this, [x1, y1, x2, y2, filled]); // 0=filled, 1=outline
 			return 0;
 		},
 	};
@@ -10186,7 +10186,7 @@ export default class BuiltInFunctions {
 			y1 = (!relative ? y1 : this.currentInstance.y + y1);
 			x2 = (!relative ? x2 : this.currentInstance.x + x2);
 			y2 = (!relative ? y2 : this.currentInstance.y + y2);
-			BuiltInFunctions.draw_ellipse.call(this, [x1, y1, x2, y2, filled]); // 0=filled, 1=outline
+			BuiltInFunctions.draw_ellipse.func.call(this, [x1, y1, x2, y2, filled]); // 0=filled, 1=outline
 			return 0;
 		},
 	};
@@ -10206,7 +10206,7 @@ export default class BuiltInFunctions {
 			y1 = (!relative ? y1 : this.currentInstance.y + y1);
 			x2 = (!relative ? x2 : this.currentInstance.x + x2);
 			y2 = (!relative ? y2 : this.currentInstance.y + y2);
-			BuiltInFunctions.draw_line.call(this, [x1, y1, x2, y2]);
+			BuiltInFunctions.draw_line.func.call(this, [x1, y1, x2, y2]);
 			return 0;
 		},
 	};
@@ -10224,7 +10224,7 @@ export default class BuiltInFunctions {
 	static action_color = {
 		args: null,
 		func: function([color]) {
-			BuiltInFunctions.draw_set_color.call(this, [color]);
+			BuiltInFunctions.draw_set_color.func.call(this, [color]);
 			return 0;
 		},
 	};
@@ -10232,8 +10232,8 @@ export default class BuiltInFunctions {
 	static action_font = {
 		args: null,
 		func: function([font, align]) {
-			BuiltInFunctions.draw_set_font.call(this, [font]);
-			BuiltInFunctions.draw_set_halign.call(this, [align]); // 0=left, 1=center, 2=right
+			BuiltInFunctions.draw_set_font.func.call(this, [font]);
+			BuiltInFunctions.draw_set_halign.func.call(this, [align]); // 0=left, 1=center, 2=right
 			return 0;
 		},
 	};
@@ -10714,10 +10714,23 @@ export default class BuiltInFunctions {
 	};
 	*/
 
-	static debugger = {
+	static __WEBGM_debugger = {
 		args: null,
-		func: function() {
+		func: function([]) {
 			debugger; // eslint-disable-line no-debugger
+			return 0;
+		},
+	};
+
+	static __WEBGM_javascript = {
+		args: null,
+		func: async function([f, ...args]) {
+			const AsyncFunction = async function() {}.constructor; // eslint-disable-line func-names
+			const result = await (new AsyncFunction(f).call(this, ...args));
+			if (typeof result == "number" || typeof result == "string") {
+				return result;
+			}
+			return 0;
 		},
 	};
 }

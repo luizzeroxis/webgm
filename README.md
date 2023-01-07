@@ -16,4 +16,4 @@ Clone it, install [Node.js](https://nodejs.org), run `npm install` on the folder
 
 ## Licensing
 
-This project is licensed under GPL 3.0 or later. It uses code and/or binaries from software listed in 'packages.json', under their respective licenses, compatible with GPL 3.0 or later.
+This project is licensed under GPL 3.0 or later. It uses code and/or binaries from software listed in 'packages.json', under their respective licenses, compatible with GPL 3.0 or later. Action type icons from LateralGM (https://github.com/IsmAvatar/LateralGM).

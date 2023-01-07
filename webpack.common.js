@@ -48,6 +48,17 @@ module.exports = {
 					name: "vendors",
 					chunks: "all",
 				},
+				image: {
+					test(module) {
+						const path = require('path');
+						return (
+							module.resource &&
+							module.resource.endsWith('.png')
+						);
+					},
+					name: "images",
+					chunks: "all",
+				}
 			},
 		},
 	},

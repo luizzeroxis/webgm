@@ -46,7 +46,7 @@ export default class Editor {
 		this.gameWindow = null;
 
 		// Libraries
-		this.libraries = BuiltInLibraries.getList();
+		this.libraries = BuiltInLibraries.list;
 
 		// WIP warning
 		add( new HElement("div", {class: "warning"},

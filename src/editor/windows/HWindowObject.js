@@ -332,6 +332,7 @@ export default class HWindowObject extends HWindow {
 										actionTypeButton.html.title = actionType.description;
 
 										if (actionType.image) {
+											actionTypeButton.html.classList.add("image-button");
 											parent(actionTypeButton);
 												add( new HImage(actionType.image) );
 												endparent();

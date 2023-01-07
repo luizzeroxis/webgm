@@ -316,6 +316,7 @@ canvas {
 
 .windows-area > .window > .client > .window-object > .libraries .action-types img {
 	display: block;
+	margin: auto;
 }
 
 .windows-area > .window > .client > .window-action .arrow-interface {

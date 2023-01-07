@@ -282,7 +282,7 @@ canvas {
 
 .windows-area > .window > .client > .window-object > .events .events-list select,
 .windows-area > .window > .client > .window-object > .actions .actions-list select {
-	height: calc(12*16px);
+	height: calc(16*16px);
 	resize: vertical;
 }
 
@@ -293,7 +293,15 @@ canvas {
 
 .windows-area > .window > .client > .window-object > .libraries {
 	flex: 0 1 auto;
-	width: 250px;
+}
+
+.windows-area > .window > .client > .window-object > .libraries > .libraries-tabs {
+	display: flex;
+	flex-direction: row-reverse;
+}
+
+.windows-area > .window > .client > .window-object > .libraries > .libraries-tabs .tab-buttons {
+	writing-mode: vertical-rl;
 }
 
 .windows-area > .window > .client > .window-object > .libraries .action-types {

@@ -1,8 +1,8 @@
 import {parent, endparent, add, remove, HElement, HRadioInput, uniqueID} from "../common/H.js";
 
 export default class HTabControl extends HElement {
-	constructor() {
-		parent( super("div") );
+	constructor(_class) {
+		parent( super("div", {class: _class}) );
 			this.tabButtonsDiv = add( new HElement("div", {class: "tab-buttons"}) );
 			this.currentTabContent = null;
 			endparent();

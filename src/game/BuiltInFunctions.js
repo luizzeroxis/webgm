@@ -9355,9 +9355,17 @@ export default class BuiltInFunctions {
 
 	static action_sprite_transform = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_sprite_transform is not implemented");
-			// return 0;
+		func: function([xscale, yscale, angle, mirror]) {
+			const mirrorX = (mirror == 1 || mirror == 3);
+			const mirrorY = (mirror == 2 || mirror == 3);
+			if (mirrorX) xscale = -xscale;
+			if (mirrorY) yscale = -yscale;
+
+			this.currentInstance.imageXScale = xscale;
+			this.currentInstance.imageYScale = yscale;
+			this.currentInstance.imageAngle = angle;
+
+			return 0;
 		},
 	};
 

@@ -761,29 +761,45 @@ export default class BuiltInLibraries {
 						},
 					],
 				},
-				/*
 				{
-					id: 999,
+					id: 542,
 					description: "Transform Sprite",
-					listText: [""],
-					hintText: [""],
+					listText: ["Transform the sprite"],
+					hintText: [w, "scale the sprite with ", a[0], " in the xdir, ", a[1], " in the ydir, rotate over ", a[2], ", and ", a[3]],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_sprite_transform",
 
 					interfaceKind: "normal",
 					isQuestion: false,
-					hasApplyTo: false,
+					hasApplyTo: true,
 					hasRelative: false,
 
 					args: [
 						{
-							name: "",
-							kind: "",
-							default: "",
+							name: "xscale:",
+							kind: "expression",
+							default: "1",
+						},
+						{
+							name: "yscale:",
+							kind: "expression",
+							default: "1",
+						},
+						{
+							name: "angle:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "mirror:",
+							kind: "menu",
+							menu: ["no mirroring", "mirror horizontally", "flip vertically", "mirror and flip"],
+							default: 0,
 						},
 					],
 				},
+				/*
 				{
 					id: 999,
 					description: "Color Sprite",

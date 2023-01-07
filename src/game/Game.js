@@ -1015,6 +1015,12 @@ export default class Game {
 		return instance;
 	}
 
+	// Destroy an instance in the room.
+	async instanceDestroy(instance) {
+		await this.doEventOfInstance("destroy", null, instance);
+		instance.exists = false;
+	}
+
 	// Draw a sprite with the image index at x and y.
 	drawSprite(sprite, imageIndex, x, y) {
 		const image = sprite?.images[Math.floor(Math.floor(imageIndex) % sprite.images.length)]?.image;

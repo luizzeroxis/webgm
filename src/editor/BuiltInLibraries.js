@@ -611,29 +611,54 @@ export default class BuiltInLibraries {
 						},
 					],
 				},
-				/*
 				{
-					id: 999,
+					id: 207,
 					description: "Create Random",
-					listText: [""],
-					hintText: [""],
+					listText: ["Create instance of random object"],
+					hintText: [w, "create instance of object ", a[0], ", ", a[1], ", ", a[2], ", or ", a[3], " at ", r, "position (", a[4], ",", a[5], ")"],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_create_object_random",
 
 					interfaceKind: "normal",
 					isQuestion: false,
-					hasApplyTo: false,
-					hasRelative: false,
+					hasApplyTo: true,
+					hasRelative: true,
 
 					args: [
 						{
-							name: "",
-							kind: "",
-							default: "",
+							name: "object 1:",
+							kind: "object",
+							default: -100,
+						},
+						{
+							name: "object 2:",
+							kind: "object",
+							default: -100,
+						},
+						{
+							name: "object 3:",
+							kind: "object",
+							default: -100,
+						},
+						{
+							name: "object 4:",
+							kind: "object",
+							default: -100,
+						},
+						{
+							name: "x:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "y:",
+							kind: "expression",
+							default: "0",
 						},
 					],
 				},
+				/*
 				{
 					id: 999,
 					description: "Change Instance",
@@ -673,30 +698,33 @@ export default class BuiltInLibraries {
 
 					args: [],
 				},
-				/*
 				{
-					id: 999,
+					id: 204,
 					description: "Destroy at Position",
-					listText: [""],
-					hintText: [""],
+					listText: ["Destroy instances at a position"],
+					hintText: ["kill all instances at ", r, "position (", a[0], ",", a[1], ")"],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_kill_position",
 
 					interfaceKind: "normal",
 					isQuestion: false,
-					hasApplyTo: false,
-					hasRelative: false,
+					hasApplyTo: true,
+					hasRelative: true,
 
 					args: [
 						{
-							name: "",
-							kind: "",
-							default: "",
+							name: "x:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "y:",
+							kind: "expression",
+							default: "0",
 						},
 					],
 				},
-				*/
 				{
 					name: "Sprite",
 					kind: "label",

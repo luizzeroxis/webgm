@@ -1385,8 +1385,7 @@ export default class BuiltInFunctions {
 	static instance_destroy = {
 		args: null,
 		func: async function([]) {
-			await this.game.doEventOfInstance("destroy", null, this.currentInstance);
-			this.currentInstance.exists = false;
+			await this.game.instanceDestroy(this.currentInstance);
 			return 0;
 		},
 	};
@@ -1401,9 +1400,16 @@ export default class BuiltInFunctions {
 
 	static position_destroy = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function position_destroy is not implemented");
-			// return 0;
+		func: async function([x, y]) {
+			for (const instance of this.game.instances) {
+				if (!instance.exists) continue;
+				const c = this.game.collision.instanceOnPoint(instance, {x, y});
+				if (c) {
+					await this.game.instanceDestroy(instance);
+				}
+			}
+
+			return 0;
 		},
 	};
 
@@ -9290,9 +9296,18 @@ export default class BuiltInFunctions {
 
 	static action_create_object_random = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_create_object_random is not implemented");
-			// return 0;
+		func: async function([object1, object2, object3, object4, x, y], relative) {
+			x = (!relative ? x : this.currentInstance.x + x);
+			y = (!relative ? y : this.currentInstance.y + y);
+
+			const objects = [object1, object2, object3, object4].filter(x => x >= 0);
+
+			if (objects.length > 0) {
+				const object = objects[Math.floor(Math.random() * objects.length)];
+				await BuiltInFunctions.instance_create.func.call(this, [x, y, object]);
+			}
+
+			return 0;
 		},
 	};
 
@@ -9314,9 +9329,12 @@ export default class BuiltInFunctions {
 
 	static action_kill_position = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_kill_position is not implemented");
-			// return 0;
+		func: async function([x, y], relative) {
+			x = (!relative ? x : this.currentInstance.x + x);
+			y = (!relative ? y : this.currentInstance.y + y);
+
+			await BuiltInFunctions.position_destroy.func.call(this, [x, y]);
+			return 0;
 		},
 	};
 

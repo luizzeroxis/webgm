@@ -1,5 +1,5 @@
 import {parent, endparent, add, HElement, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, uniqueID} from "../../common/H.js";
-import {ProjectObject} from "../../common/Project.js";
+import {ProjectObject, ProjectActionArg} from "../../common/Project.js";
 import {parseArrowString, stringifyArrowValues, decimalToHex, hexToDecimal} from "../../common/tools.js";
 import HResourceSelect from "../HResourceSelect.js";
 import HWindow from "../HWindow.js";
@@ -186,7 +186,10 @@ export default class HWindowAction extends HWindow {
 
 	apply() {
 		for (let i = 0; i < this.action.args.length; i++) {
-			this.action.args[i] = {kind: this.actionTypeArgs[i].kind, value: this.argsInterfaces[i].getValue()};
+			const actionArg = new ProjectActionArg();
+			actionArg.kind = this.actionTypeArgs[i].kind;
+			actionArg.value = this.argsInterfaces[i].getValue();
+			this.action.args[i] = actionArg;
 		}
 
 		if (this.actionTypeHasApplyTo) {

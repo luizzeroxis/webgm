@@ -29,7 +29,8 @@ export default class HWindowObject extends HWindow {
 
 		this.object = object;
 
-		this.title.html.textContent = "Edit Object "+object.name;
+		this.updateTitle();
+
 		this.htmlActionWindows = [];
 
 		// Create paramEvents as copy
@@ -380,6 +381,8 @@ export default class HWindowObject extends HWindow {
 
 					// Make sure that paramEvents is a copy
 					this.copyProperties();
+
+					this.updateTitle();
 				},
 				() => {
 					this.close();
@@ -399,6 +402,10 @@ export default class HWindowObject extends HWindow {
 
 	onRemove() {
 		this.editor.dispatcher.stopListening(this.listeners);
+	}
+
+	updateTitle() {
+		this.title.html.textContent = "Edit Object "+this.object.name;
 	}
 
 	// Make a copy of every property of the resource so we can change it at will without changing the original resource.

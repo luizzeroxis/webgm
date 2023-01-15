@@ -7,7 +7,7 @@ export default class HWindowTimeline extends HWindow {
 
 		this.timeline = timeline;
 
-		this.title.html.textContent = "Edit Time Line "+timeline.name;
+		this.updateTitle();
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-timeline"}) ) );
@@ -21,9 +21,15 @@ export default class HWindowTimeline extends HWindow {
 			this.makeApplyOkButtons(
 				() => {
 					this.editor.changeResourceName(timeline, inputName.getValue());
+
+					this.updateTitle();
 				},
 				() => this.close(),
 			);
 			endparent();
+	}
+
+	updateTitle() {
+		this.title.html.textContent = "Edit Time Line "+this.timeline.name;
 	}
 }

@@ -9,7 +9,7 @@ export default class HWindowBackground extends HWindow {
 
 		this.background = background;
 
-		this.title.html.textContent = "Edit Background "+background.name;
+		this.updateTitle();
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "horizontal window-background"}) ) );
@@ -46,6 +46,8 @@ export default class HWindowBackground extends HWindow {
 				() => {
 					this.editor.changeResourceName(background, inputName.getValue());
 					this.editor.changeBackgroundImage(background, this.paramImage);
+
+					this.updateTitle();
 				},
 				() => this.close(),
 			);
@@ -53,6 +55,10 @@ export default class HWindowBackground extends HWindow {
 
 		// Open file if dropped in the window body
 		setOnFileDrop(this.html, file => this.loadBackgroundFromFile(file));
+	}
+
+	updateTitle() {
+		this.title.html.textContent = "Edit Background "+this.background.name;
 	}
 
 	loadBackgroundFromFile(file) {

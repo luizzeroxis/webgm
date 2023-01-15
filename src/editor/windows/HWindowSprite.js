@@ -9,7 +9,7 @@ export default class HWindowSprite extends HWindow {
 
 		this.sprite = sprite;
 
-		this.title.html.textContent = "Edit Sprite "+sprite.name;
+		this.updateTitle();
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "horizontal window-sprite"}) ) );
@@ -104,6 +104,8 @@ export default class HWindowSprite extends HWindow {
 
 					sprite.shape = inputPreciseCollisionChecking.getChecked() ? "precise" : "rectangle";
 					sprite.separateCollisionMasks = inputSeparateCollisionMasks.getChecked();
+
+					this.updateTitle();
 				},
 				() => this.close(),
 			);
@@ -112,6 +114,10 @@ export default class HWindowSprite extends HWindow {
 
 		// Open file if dropped in the window body
 		setOnFileDrop(this.html, files => this.loadSpriteFromFiles(files), true);
+	}
+
+	updateTitle() {
+		this.title.html.textContent = "Edit Sprite "+this.sprite.name;
 	}
 
 	loadSpriteFromFiles(files) {

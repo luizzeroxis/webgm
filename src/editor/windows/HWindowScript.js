@@ -8,7 +8,7 @@ export default class HWindowScript extends HWindow {
 
 		this.script = script;
 
-		this.title.html.textContent = "Edit Script "+script.name;
+		this.updateTitle();
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-script"}) ) );
@@ -25,6 +25,8 @@ export default class HWindowScript extends HWindow {
 				() => {
 					this.editor.changeResourceName(script, inputName.getValue());
 					script.code = this.codeEditor.getValue();
+
+					this.updateTitle();
 				},
 				() => {
 					this.close();
@@ -34,5 +36,9 @@ export default class HWindowScript extends HWindow {
 			this.codeEditor.setNextElem(this.applyButton);
 
 			endparent();
+	}
+
+	updateTitle() {
+		this.title.html.textContent = "Edit Script "+this.script.name;
 	}
 }

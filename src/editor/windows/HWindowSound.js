@@ -9,7 +9,7 @@ export default class HWindowSound extends HWindow {
 
 		this.sound = sound;
 
-		this.title.html.textContent = "Edit Sound "+sound.name;
+		this.updateTitle();
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-sound"}) ) );
@@ -44,11 +44,16 @@ export default class HWindowSound extends HWindow {
 					this.editor.changeResourceName(sound, inputName.getValue());
 					sound.sound = this.paramSound;
 					sound.volume = parseFloat(inputVolume.getValue());
-					//
+
+					this.updateTitle();
 				},
 				() => this.close(),
 			);
 			endparent();
+	}
+
+	updateTitle() {
+		this.title.html.textContent = "Edit Sound "+this.sound.name;
 	}
 
 	loadSoundFromFile(file) {

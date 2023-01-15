@@ -7,7 +7,7 @@ export default class HWindowFont extends HWindow {
 
 		this.font = font;
 
-		this.title.html.textContent = "Edit Font "+font.name;
+		this.updateTitle();
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-font"}) ) );
@@ -37,11 +37,16 @@ export default class HWindowFont extends HWindow {
 					font.size = parseInt(this.inputSize.getValue());
 					font.bold = this.inputBold.getChecked();
 					font.italic = this.inputItalic.getChecked();
-					// changes here
+
+					this.updateTitle();
 				},
 				() => this.close(),
 			);
 			endparent();
+	}
+
+	updateTitle() {
+		this.title.html.textContent = "Edit Font "+this.font.name;
 	}
 
 	updatePreview() {

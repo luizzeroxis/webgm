@@ -7,7 +7,7 @@ export default class HWindowPath extends HWindow {
 
 		this.path = path;
 
-		this.title.html.textContent = "Edit Path "+path.name;
+		this.updateTitle();
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-path"}) ) );
@@ -21,9 +21,15 @@ export default class HWindowPath extends HWindow {
 			this.makeApplyOkButtons(
 				() => {
 					this.editor.changeResourceName(path, inputName.getValue());
+
+					this.updateTitle();
 				},
 				() => this.close(),
 			);
 			endparent();
+	}
+
+	updateTitle() {
+		this.title.html.textContent = "Edit Path "+this.path.name;
 	}
 }

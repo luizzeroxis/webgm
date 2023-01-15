@@ -12,7 +12,7 @@ export default class HWindowRoom extends HWindow {
 
 		this.room = room;
 
-		this.title.html.textContent = "Edit Room "+room.name;
+		this.updateTitle();
 
 		// Create paramInstances and paramBackgrounds as copies
 		this.copyProperties();
@@ -333,6 +333,8 @@ export default class HWindowRoom extends HWindow {
 
 					// Make sure that paramInstances and paramBackgrounds are copies
 					this.copyProperties();
+
+					this.updateTitle();
 				},
 				() => {
 					this.close();
@@ -372,6 +374,10 @@ export default class HWindowRoom extends HWindow {
 		document.removeEventListener("mouseup", this.mouseUpHandler);
 
 		this.editor.dispatcher.stopListening(this.listeners);
+	}
+
+	updateTitle() {
+		this.title.html.textContent = "Edit Room "+this.room.name;
 	}
 
 	// Make a copy of every property of the resource so we can change it at will without changing the original resource.

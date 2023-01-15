@@ -1,7 +1,7 @@
 import ohm, {extras as ohmExtras} from "ohm-js";
 
 import {ExitException, ReturnException, BreakException, ContinueException, VariableException} from "../common/Exceptions.js";
-import {toInteger} from "../common/tools.js";
+import {toInteger, forceReal, asString, forceBool} from "../common/tools.js";
 import VariableHolder from "../common/VariableHolder.js";
 
 import BuiltInFunctions from "./BuiltInFunctions.js";
@@ -591,22 +591,24 @@ export default class GML {
 
 		let i = 0;
 		for (const funcArg of funcArgs) {
-			// let loop = true;
 			while (true) {
 				if (i >= args.length) {
 					if (funcArg.infinite) {
 						break;
 					} else {
-						throw new Error("too few arguments"); // TODO
+						// TODO wrong
+						throw this.game.makeFatalError({}, "Wrong number of arguments to function or script. (too few arguments)");
 					}
 				}
 
 				if (funcArg.type == "any") {
 					properArgs[i] = args[i];
-				// } else if (funcArg.type == "string") {
-				// 	properArgs[i] = forceString(args[i]);
-				// } else if (funcArg.type == "real") {
-				// 	properArgs[i] = forceReal(args[i]);
+				} else if (funcArg.type == "real") {
+					properArgs[i] = forceReal(args[i]);
+				} else if (funcArg.type == "as_string") {
+					properArgs[i] = asString(args[i]);
+				} else if (funcArg.type == "bool") {
+					properArgs[i] = forceBool(args[i]);
 				}
 				++i;
 
@@ -617,7 +619,8 @@ export default class GML {
 		}
 
 		if (i < args.length) {
-			throw new Error("too many arguments"); // TODO
+			// TODO wrong
+			throw this.game.makeFatalError({}, "Wrong number of arguments to function or script. (too many arguments)");
 		}
 
 		return properArgs;

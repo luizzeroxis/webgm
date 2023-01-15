@@ -11,14 +11,14 @@ export default class BuiltInFunctions {
 	// ## Real-valued functions
 
 	static random = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.random() * x;
 		},
 	};
 
 	static random_range = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([x1, x2]) {
 			return (Math.random() * (x2-x1)) + x1;
 		},
@@ -1238,10 +1238,21 @@ export default class BuiltInFunctions {
 	// ## Collision checking
 
 	static collision_point = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function collision_point is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}, {type: "bool"}],
+		func: function([x, y, obj, prec, notme]) {
+			let instances = this.objectReferenceToInstances(obj);
+			if (!Array.isArray(instances)) return -4;
+
+			if (notme) {
+				instances = instances.filter(x => x != this.currentInstance);
+			}
+
+			const instance = this.game.collision.getFirstInstanceOnPoint(instances, {x, y}, prec);
+			if (instance) {
+				return instance.id;
+			}
+
+			return -4;
 		},
 	};
 
@@ -1401,12 +1412,9 @@ export default class BuiltInFunctions {
 	static position_destroy = {
 		args: null,
 		func: async function([x, y]) {
-			for (const instance of this.game.instances) {
-				if (!instance.exists) continue;
-				const c = this.game.collision.instanceOnPoint(instance, {x, y});
-				if (c) {
-					await this.game.instanceDestroy(instance);
-				}
+			const instances = this.game.collision.getAllInstancesOnPoint(this.game.instances, {x, y});
+			for (const instance of instances) {
+				await this.game.instanceDestroy(instance);
 			}
 
 			return 0;
@@ -2607,15 +2615,9 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_text = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "as_string"}],
 		func: function([x, y, string]) {
-		// TODO do this for EVERY function?
-			x = forceReal(x);
-			y = forceReal(y);
-			string = asString(string);
-
 			this.game.ctx.fillStyle = this.game.drawColorAlpha;
-
 			this.game.ctx.font = this.game.loadedProject.cssFontsCache[this.game.drawFont];
 
 			// holy shit now this is epic

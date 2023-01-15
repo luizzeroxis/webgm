@@ -209,38 +209,13 @@ export default class GameCollision {
 		return false;
 	}
 
-	// Check if an instance, with rectangular shape, and a point are colliding.
-	instanceRectangleOnPoint(instance, point) {
-		const imagePoint = instance.roomPointToInstanceImagePoint(point);
-
-		const instanceImage = instance.getImage();
-
-		// TODO bounding box check
-		if (!this.pointOnRectangle(imagePoint, {x1: 0, x2: instanceImage.width, y1: 0, y2: instanceImage.height})) {
-			return false;
-		}
-
-		return true;
-	}
-
-	// Check if an instance, with precise shape, and a point are colliding.
-	instancePreciseOnPoint(instance, point) {
-		const imagePoint = instance.roomPointToInstanceImagePoint(point);
-
-		const instanceImage = instance.getImage();
-
-		// TODO bounding box check
-		if (!this.pointOnRectangle(imagePoint, {x1: 0, x2: instanceImage.width, y1: 0, y2: instanceImage.height})) {
-			return false;
-		}
-
-		const col = this.game.loadedProject.collisionMasks.get(instanceImage);
-		return col[imagePoint.x][imagePoint.y] === true;
-	}
-
 	// Check if instance is colliding with point.
-	instanceOnPoint(instance, point) {
+	instanceOnPoint(instance, point, precise=true) {
 		if (instance.sprite == null || instance.sprite.images.length == 0) return false;
+
+		if (!precise) {
+			return this.pointOnRectangle(point, instance.getBoundingBox());
+		}
 
 		const collisions = [
 			{shape: "precise", func: this.instancePreciseOnPoint},
@@ -260,11 +235,54 @@ export default class GameCollision {
 
 	// Check if any of instances is colliding with point.
 	instancesOnPoint(instances, point) {
+		return (this.getInstanceOnPoint(instances, point) != null);
+	}
+
+	// Return the first instance that is colliding with point.
+	getFirstInstanceOnPoint(instances, point, precise=true) {
 		for (const instance of instances) {
 			if (!instance.exists) continue;
-			const c = this.instanceOnPoint(instance, point);
-			if (c) return true;
+			if (this.instanceOnPoint(instance, point, precise)) {
+				return instance;
+			}
 		}
-		return false;
+		return null;
+	}
+
+	// Return all the instances that are colliding with point.
+	getAllInstancesOnPoint(instances, point) {
+		return instances.filter(instance => {
+			if (!instance.exists) return false;
+			return this.instanceOnPoint(instance, point);
+		});
+	}
+
+	// Check if an instance, with precise shape, and a point are colliding.
+	instancePreciseOnPoint(instance, point) {
+		const imagePoint = instance.roomPointToInstanceImagePoint(point);
+
+		const instanceImage = instance.getImage();
+
+		// TODO bounding box check
+		if (!this.pointOnRectangle(imagePoint, {x1: 0, x2: instanceImage.width, y1: 0, y2: instanceImage.height})) {
+			return false;
+		}
+
+		const col = this.game.loadedProject.collisionMasks.get(instanceImage);
+		return col[imagePoint.x][imagePoint.y] === true;
+	}
+
+	// Check if an instance, with rectangular shape, and a point are colliding.
+	instanceRectangleOnPoint(instance, point) {
+		const imagePoint = instance.roomPointToInstanceImagePoint(point);
+
+		const instanceImage = instance.getImage();
+
+		// TODO bounding box check
+		if (!this.pointOnRectangle(imagePoint, {x1: 0, x2: instanceImage.width, y1: 0, y2: instanceImage.height})) {
+			return false;
+		}
+
+		return true;
 	}
 }

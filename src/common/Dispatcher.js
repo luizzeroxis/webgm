@@ -13,9 +13,15 @@ export default class Dispatcher {
 
 	stopListening(listeners) {
 		for (const subject in listeners) {
+			if (!this.listeners[subject]) {
+				console.warn("Dispatcher subject doesn't exist", subject);
+				continue;
+			}
 			const index = this.listeners[subject].findIndex(x => x == listeners[subject]);
 			if (index >= 0) {
 				this.listeners[subject].splice(index, 1);
+			} else {
+				console.warn("Dispatcher func doesn't exist", listeners[subject]);
 			}
 			if (this.listeners[subject].length == 0) {
 				delete this.listeners[subject];

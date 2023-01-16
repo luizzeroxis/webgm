@@ -92,7 +92,10 @@ export default class Editor {
 	newProject() {
 		if (!confirm("Game may have been changed. Continue?")) return;
 
-		this.project = new Project();
+		const project = new Project();
+		project.dispatcher = this.project.dispatcher;
+		this.project = project;
+
 		this.projectFileHandle = null;
 		this.updateProjectName(null);
 
@@ -139,12 +142,15 @@ export default class Editor {
 	// Called from HAreaMenu
 	async openProjectFromFile(file) {
 		try {
+			let project;
 			if (file.type == "application/json") {
 				const json = readFileAsText(file);
-				this.project = await ProjectSerializer.unserializeV1(json);
+				project = await ProjectSerializer.unserializeV1(json);
 			} else {
-				this.project = await ProjectSerializer.unserializeZIP(file);
+				project = await ProjectSerializer.unserializeZIP(file);
 			}
+			project.dispatcher = this.project.dispatcher;
+			this.project = project;
 		} catch (e) {
 			if (e instanceof UnserializeException) {
 				alert("Error: " + e.message);

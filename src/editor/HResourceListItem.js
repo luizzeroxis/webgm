@@ -58,7 +58,7 @@ export default class HResourceListItem extends HElement {
 	}
 
 	onAdd() {
-		this.listeners = this.editor.dispatcher.listen({
+		this.listeners = this.editor.project.dispatcher.listen({
 			changeResourceName: i => {
 				if (i !== this.resource) return;
 				this.name.html.textContent = i.name;
@@ -66,7 +66,7 @@ export default class HResourceListItem extends HElement {
 		});
 
 		if (this.resource.constructor == ProjectSprite || this.resource.constructor == ProjectObject) {
-			this.listeners = {...this.listeners, ...this.editor.dispatcher.listen({
+			this.listeners = {...this.listeners, ...this.editor.project.dispatcher.listen({
 				changeSpriteImages: i => {
 					if (this.resource.constructor == ProjectObject) {
 						if (i.id != this.resource.sprite_index) return;
@@ -79,7 +79,7 @@ export default class HResourceListItem extends HElement {
 		}
 
 		if (this.resource.constructor == ProjectBackground) {
-			this.listeners = {...this.listeners, ...this.editor.dispatcher.listen({
+			this.listeners = {...this.listeners, ...this.editor.project.dispatcher.listen({
 				changeBackgroundImage: i => {
 					if (i != this.resource) return;
 					this.updateIcon();
@@ -88,7 +88,7 @@ export default class HResourceListItem extends HElement {
 		}
 
 		if (this.resource.constructor == ProjectObject) {
-			this.listeners = {...this.listeners, ...this.editor.dispatcher.listen({
+			this.listeners = {...this.listeners, ...this.editor.project.dispatcher.listen({
 				changeObjectSprite: i => {
 					if (i != this.resource) return;
 					this.updateIcon();
@@ -102,7 +102,7 @@ export default class HResourceListItem extends HElement {
 	}
 
 	onRemove() {
-		this.editor.dispatcher.stopListening(this.listeners);
+		this.editor.project.dispatcher.stopListening(this.listeners);
 	}
 
 	updateIcon() {
@@ -141,7 +141,7 @@ export default class HResourceListItem extends HElement {
 		const list = this.editor.project.resources[this.resource.constructor.getClassName()];
 		const fromIndex = list.indexOf(this.resource);
 		if (fromIndex > 0) {
-			this.editor.moveResource(this.resource, fromIndex - 1);
+			this.editor.project.moveResource(this.resource, fromIndex - 1);
 		}
 	}
 
@@ -149,16 +149,18 @@ export default class HResourceListItem extends HElement {
 		const list = this.editor.project.resources[this.resource.constructor.getClassName()];
 		const fromIndex = list.indexOf(this.resource);
 		if (fromIndex < list.length - 1) {
-			this.editor.moveResource(this.resource, fromIndex + 1);
+			this.editor.project.moveResource(this.resource, fromIndex + 1);
 		}
 	}
 
 	duplicate() {
-		this.editor.duplicateResource(this.resource);
+		this.editor.project.duplicateResource(this.resource);
 	}
 
 	delete() {
-		this.editor.deleteResource(this.resource);
+		if (confirm("You are about to delete "+this.resource.name+". This will be permanent. Continue?")) {
+			this.editor.project.deleteResource(this.resource);
+		}
 	}
 
 	properties() {

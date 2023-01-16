@@ -98,9 +98,9 @@ export default class HWindowSprite extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(sprite, inputName.getValue());
-					this.editor.changeSpriteImages(sprite, this.paramImages);
-					this.editor.changeSpriteOrigin(sprite, parseInt(inputOriginX.getValue()), parseInt(inputOriginY.getValue()));
+					this.editor.project.changeResourceName(sprite, inputName.getValue());
+					this.editor.project.changeSpriteImages(sprite, this.paramImages);
+					this.editor.project.changeSpriteOrigin(sprite, parseInt(inputOriginX.getValue()), parseInt(inputOriginY.getValue()));
 
 					sprite.shape = inputPreciseCollisionChecking.getChecked() ? "precise" : "rectangle";
 					sprite.separateCollisionMasks = inputSeparateCollisionMasks.getChecked();

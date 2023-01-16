@@ -41,7 +41,7 @@ export default class HWindowSound extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(sound, inputName.getValue());
+					this.editor.project.changeResourceName(sound, inputName.getValue());
 					sound.sound = this.paramSound;
 					sound.volume = parseFloat(inputVolume.getValue());
 

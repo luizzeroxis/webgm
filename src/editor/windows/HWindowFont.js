@@ -32,7 +32,7 @@ export default class HWindowFont extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(font, this.inputName.getValue());
+					this.editor.project.changeResourceName(font, this.inputName.getValue());
 					font.font = this.inputFont.getValue();
 					font.size = parseInt(this.inputSize.getValue());
 					font.bold = this.inputBold.getChecked();

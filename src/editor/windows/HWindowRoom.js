@@ -309,7 +309,7 @@ export default class HWindowRoom extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(room, this.inputName.getValue());
+					this.editor.project.changeResourceName(room, this.inputName.getValue());
 
 					room.width = parseInt(this.inputWidth.getValue());
 					room.height = parseInt(this.inputHeight.getValue());
@@ -357,7 +357,7 @@ export default class HWindowRoom extends HWindow {
 		};
 		document.addEventListener("mouseup", this.mouseUpHandler);
 
-		this.listeners = this.editor.dispatcher.listen({
+		this.listeners = this.editor.project.dispatcher.listen({
 			changeObjectSprite: () => {
 				this.updateCanvasPreview();
 			},
@@ -373,7 +373,7 @@ export default class HWindowRoom extends HWindow {
 	onRemove() {
 		document.removeEventListener("mouseup", this.mouseUpHandler);
 
-		this.editor.dispatcher.stopListening(this.listeners);
+		this.editor.project.dispatcher.stopListening(this.listeners);
 	}
 
 	updateTitle() {

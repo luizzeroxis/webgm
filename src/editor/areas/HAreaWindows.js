@@ -32,7 +32,7 @@ export default class HAreaWindows extends HElement {
 	}
 
 	onAdd() {
-		this.listeners = this.editor.dispatcher.listen({
+		this.listeners = this.editor.project.dispatcher.listen({
 			createResource: i => {
 				this.openResource(i);
 			},
@@ -43,7 +43,7 @@ export default class HAreaWindows extends HElement {
 	}
 
 	// onRemove() {
-	// 	this.editor.dispatcher.stopListening(this.listeners);
+	// 	this.editor.project.dispatcher.stopListening(this.listeners);
 	// }
 
 	// Open a new window or focus on a existing one. windowClass is class that extends HWindow. It will send id, the editor and ...clientArgs as arguments. If a window with the same id is opened, it will focus on it, and return null. Otherwise it returns the newly created instance.

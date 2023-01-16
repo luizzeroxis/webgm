@@ -88,62 +88,6 @@ export default class Editor {
 		add(this.div);
 	}
 
-	// Resource management
-
-	createResource(type) {
-		const resource = this.project.createResource(type);
-		this.dispatcher.speak("createResource", resource);
-		return resource;
-	}
-
-	moveResource(resource, toIndex) {
-		const list = this.project.resources[resource.constructor.getClassName()];
-		const fromIndex = list.indexOf(resource);
-		if (fromIndex == -1) throw new Error("Resource doesn't exist.");
-		list.splice(toIndex, 0, ...list.splice(fromIndex, 1));
-		this.dispatcher.speak("moveResource", resource, toIndex);
-		// this.resourcesArea.refresh();
-	}
-
-	duplicateResource(oldResource) {
-		const resource = this.project.duplicateResource(oldResource);
-		this.dispatcher.speak("createResource", resource);
-		return resource;
-	}
-
-	deleteResource(resource) {
-		if (confirm("You are about to delete "+resource.name+". This will be permanent. Continue?")) {
-			this.project.deleteResource(resource);
-			this.dispatcher.speak("deleteResource", resource);
-		}
-	}
-
-	changeResourceName(resource, name) {
-		resource.name = name;
-		this.dispatcher.speak("changeResourceName", resource);
-	}
-
-	changeSpriteImages(sprite, images) {
-		sprite.images = images;
-		this.dispatcher.speak("changeSpriteImages", sprite);
-	}
-
-	changeSpriteOrigin(sprite, originx, originy) {
-		sprite.originx = originx;
-		sprite.originy = originy;
-		this.dispatcher.speak("changeSpriteOrigin", sprite);
-	}
-
-	changeBackgroundImage(background, image) {
-		background.image = image;
-		this.dispatcher.speak("changeBackgroundImage", background);
-	}
-
-	changeObjectSprite(object, sprite) {
-		object.sprite_index = sprite;
-		this.dispatcher.speak("changeObjectSprite", object);
-	}
-
 	// Called from HAreaMenu
 	newProject() {
 		if (!confirm("Game may have been changed. Continue?")) return;

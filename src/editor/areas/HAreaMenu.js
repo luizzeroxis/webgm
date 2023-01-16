@@ -69,7 +69,7 @@ export default class HAreaMenu extends HElement {
 
 			Project.resourceTypes.forEach(type => {
 				const button = add( new HButton(null, () => {
-					this.editor.createResource(type);
+					this.editor.project.createResource(type);
 				}) );
 
 				parent(button);

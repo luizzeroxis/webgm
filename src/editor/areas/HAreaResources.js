@@ -29,7 +29,7 @@ export default class HAreaResources extends HElement {
 
 							const menuButton = add( new HButton("▼", () => {
 								this.editor.menuManager.openMenu([
-									{text: "Create " + type.getScreenName(), onClick: () => this.editor.createResource(type)},
+									{text: "Create " + type.getScreenName(), onClick: () => this.editor.project.createResource(type)},
 								], {fromElement: menuButton});
 							}) );
 
@@ -74,7 +74,7 @@ export default class HAreaResources extends HElement {
 	}
 
 	onAdd() {
-		this.listeners = this.editor.dispatcher.listen({
+		this.listeners = this.editor.project.dispatcher.listen({
 			createResource: resource => {
 				this.add(resource);
 			},
@@ -88,7 +88,7 @@ export default class HAreaResources extends HElement {
 	}
 
 	// onRemove() {
-	// 	this.editor.dispatcher.stopListening(this.listeners);
+	// 	this.editor.project.dispatcher.stopListening(this.listeners);
 	// }
 
 	// Add resource to resources tree in the proper type.

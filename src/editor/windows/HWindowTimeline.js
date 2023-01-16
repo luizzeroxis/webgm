@@ -20,7 +20,7 @@ export default class HWindowTimeline extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(timeline, inputName.getValue());
+					this.editor.project.changeResourceName(timeline, inputName.getValue());
 
 					this.updateTitle();
 				},

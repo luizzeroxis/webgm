@@ -20,7 +20,7 @@ export default class HWindowPath extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(path, inputName.getValue());
+					this.editor.project.changeResourceName(path, inputName.getValue());
 
 					this.updateTitle();
 				},

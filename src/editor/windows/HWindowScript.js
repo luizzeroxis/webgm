@@ -23,7 +23,7 @@ export default class HWindowScript extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(script, inputName.getValue());
+					this.editor.project.changeResourceName(script, inputName.getValue());
 					script.code = this.codeEditor.getValue();
 
 					this.updateTitle();

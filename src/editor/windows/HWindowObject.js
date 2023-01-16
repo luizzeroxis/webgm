@@ -367,8 +367,8 @@ export default class HWindowObject extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(object, inputName.getValue());
-					this.editor.changeObjectSprite(object, this.selectSprite.getValue());
+					this.editor.project.changeResourceName(object, inputName.getValue());
+					this.editor.project.changeObjectSprite(object, this.selectSprite.getValue());
 					object.visible = inputVisible.getChecked();
 					object.solid = inputSolid.getChecked();
 					object.depth = parseInt(inputDepth.getValue());
@@ -392,7 +392,7 @@ export default class HWindowObject extends HWindow {
 	}
 
 	onAdd() {
-		this.listeners = this.editor.dispatcher.listen({
+		this.listeners = this.editor.project.dispatcher.listen({
 			changeResourceName: () => {
 				this.updateSelectEvents();
 				this.updateSelectActions();
@@ -401,7 +401,7 @@ export default class HWindowObject extends HWindow {
 	}
 
 	onRemove() {
-		this.editor.dispatcher.stopListening(this.listeners);
+		this.editor.project.dispatcher.stopListening(this.listeners);
 	}
 
 	updateTitle() {

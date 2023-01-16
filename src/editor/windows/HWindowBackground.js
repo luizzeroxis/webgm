@@ -44,8 +44,8 @@ export default class HWindowBackground extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					this.editor.changeResourceName(background, inputName.getValue());
-					this.editor.changeBackgroundImage(background, this.paramImage);
+					this.editor.project.changeResourceName(background, inputName.getValue());
+					this.editor.project.changeBackgroundImage(background, this.paramImage);
 
 					this.updateTitle();
 				},

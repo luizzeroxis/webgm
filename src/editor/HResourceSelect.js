@@ -16,7 +16,7 @@ export default class HResourceSelect extends HSelect {
 	onAdd() {
 		this.updateOptions();
 
-		this.listeners = this.editor.dispatcher.listen({
+		this.listeners = this.editor.project.dispatcher.listen({
 			createResource: i => {
 				if (i.constructor != this.resourceType) return;
 				parent(this.select);
@@ -37,7 +37,7 @@ export default class HResourceSelect extends HSelect {
 	}
 
 	onRemove() {
-		this.editor.dispatcher.stopListening(this.listeners);
+		this.editor.project.dispatcher.stopListening(this.listeners);
 	}
 
 	updateOptions() {

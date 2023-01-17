@@ -2,11 +2,11 @@
 
 const path = require("path");
 
-const webpack = require('webpack');
 const ESLintPlugin = require("eslint-webpack-plugin");
+const {GitRevisionPlugin} = require("git-revision-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const {GitRevisionPlugin} = require("git-revision-webpack-plugin");
+const webpack = require("webpack");
 
 const gitRevisionPlugin = new GitRevisionPlugin();
 
@@ -50,15 +50,14 @@ module.exports = {
 				},
 				image: {
 					test(module) {
-						const path = require('path');
 						return (
-							module.resource &&
-							module.resource.endsWith('.png')
+							module.resource
+							&& module.resource.endsWith(".png")
 						);
 					},
 					name: "images",
 					chunks: "all",
-				}
+				},
 			},
 		},
 	},
@@ -67,7 +66,7 @@ module.exports = {
 			"CONSTANTS": {
 				"COMMITHASH": JSON.stringify(gitRevisionPlugin.commithash()),
 				"LASTCOMMITDATETIME": JSON.stringify(gitRevisionPlugin.lastcommitdatetime()),
-			}
+			},
 		}),
 		new HtmlWebpackPlugin({
 			title: "webgm",

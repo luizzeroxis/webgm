@@ -21,7 +21,7 @@ export default class HMenuManager extends HElement {
 			this.selectedIndex = null;
 
 			parent(this);
-				const menu = add( new HElement("div", {class: "menu"}) );
+				const menu = add( new HElement("div", {class: "h-menu"}) );
 				menu.html.tabIndex = 0;
 				menu.html.style.left = x.toString() + "px";
 				menu.html.style.top = y.toString() + "px";
@@ -85,7 +85,7 @@ export default class HMenuManager extends HElement {
 
 				parent(menu);
 					for (const [index, item] of items.entries()) {
-						const menuItem = add( new HElement("div", {class: "menu-item"}, item.text) );
+						const menuItem = add( new HElement("div", {class: "h-menu-item"}, item.text) );
 
 						menuItem.html.addEventListener("click", () => {
 							item.onClick?.();

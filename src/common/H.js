@@ -1,6 +1,4 @@
-// H.js
-
-//// HTML generation parent system
+import "./H.css";
 
 export class HElement {
 	constructor(...args) {
@@ -269,7 +267,7 @@ export class HLabelAndInput extends HElement {
 	}
 
 	setOnChange(onChange) {
-		this.input.html.addEventListener("change", onChange);
+		this.input.html.addEventListener("change", e => onChange.apply(this, [this, e]));
 	}
 }
 

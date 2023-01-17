@@ -1,5 +1,5 @@
-import AbstractAudio from "./AbstractAudio.js";
-import AbstractImage from "./AbstractImage.js";
+import AudioWrapper from "./AudioWrapper.js";
+import ImageWrapper from "./ImageWrapper.js";
 import Serializer from "./Serializer.js";
 
 export class ProjectSprite {
@@ -7,17 +7,17 @@ export class ProjectSprite {
 		Serializer.setupClass(this, "ProjectSprite", {
 			id: null,
 			name: null,
-			images: {array: AbstractImage}, // this should not be serialized, however look at ProjectSerializer
+			images: {array: ImageWrapper}, // this should not be serialized, however look at ProjectSerializer
 			originx: 0,
 			originy: 0,
 			separateCollisionMasks: false,
 			alphaTolerance: 0,
-			boundingBox: "automatic",
+			boundingBox: "automatic", // automatic, fullimage, manual
 			bbLeft: 0,
 			bbTop: 0,
 			bbRight: 0,
 			bbBottom: 0,
-			shape: "precise",
+			shape: "precise", // precise, rectangle, disk, diamond
 		});
 	}
 
@@ -36,7 +36,7 @@ export class ProjectSound {
 		Serializer.setupClass(this, "ProjectSound", {
 			id: null,
 			name: null,
-			sound: {object: AbstractAudio, value: null},
+			sound: {object: AudioWrapper, value: null},
 			volume: 1,
 		});
 	}
@@ -56,7 +56,7 @@ export class ProjectBackground {
 		Serializer.setupClass(this, "ProjectBackground", {
 			id: null,
 			name: null,
-			image: {object: AbstractImage, value: null},
+			image: {object: ImageWrapper, value: null},
 
 			useAsTileSet: false,
 			tileWidth: 16,
@@ -99,7 +99,7 @@ export class ProjectPath {
 			name: null,
 			points: {array: ProjectPathPoint},
 			backgroundRoomIndex: -1,
-			connectionKind: "lines",
+			connectionKind: "lines", // lines, curve
 			closed: true,
 			precision: 4,
 		});
@@ -228,7 +228,7 @@ export class ProjectTimeline {
 export class ProjectEvent {
 	static {
 		Serializer.setupClass(this, "ProjectEvent", {
-			type: null,
+			type: null, // refer to Events.js
 			subtype: null,
 			actions: {array: ProjectAction},
 		});

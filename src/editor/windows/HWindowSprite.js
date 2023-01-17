@@ -1,5 +1,5 @@
-import AbstractImage from "../../common/AbstractImage.js";
 import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HImage, HCheckBoxInput, setOnFileDrop} from "../../common/H.js";
+import ImageWrapper from "../../common/ImageWrapper.js";
 import {openFile} from "../../common/tools.js";
 import HWindow from "../HWindow.js";
 
@@ -126,7 +126,7 @@ export default class HWindowSprite extends HWindow {
 		const images = [];
 
 		for (const file of files) {
-			images.push(new AbstractImage(file));
+			images.push(new ImageWrapper(file));
 		}
 
 		Promise.all(images.map(x => x.promise))

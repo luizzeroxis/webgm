@@ -1,5 +1,5 @@
-import AbstractImage from "../../common/AbstractImage.js";
 import {parent, endparent, add, HElement, HButton, HTextInput, HImage, setOnFileDrop} from "../../common/H.js";
+import ImageWrapper from "../../common/ImageWrapper.js";
 import {openFile} from "../../common/tools.js";
 import HWindow from "../HWindow.js";
 
@@ -64,7 +64,7 @@ export default class HWindowBackground extends HWindow {
 	loadBackgroundFromFile(file) {
 		this.buttonLoadBackground.setDisabled(true);
 
-		const image = new AbstractImage(file);
+		const image = new ImageWrapper(file);
 
 		image.promise
 		.then(() => {

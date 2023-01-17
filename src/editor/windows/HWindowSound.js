@@ -1,4 +1,4 @@
-import AbstractAudio from "../../common/AbstractAudio.js";
+import AudioWrapper from "../../common/AudioWrapper.js";
 import {parent, endparent, add, HElement, HButton, HTextInput, HRangeInput} from "../../common/H.js";
 import {openFile} from "../../common/tools.js";
 import HWindow from "../HWindow.js";
@@ -59,7 +59,7 @@ export default class HWindowSound extends HWindow {
 	loadSoundFromFile(file) {
 		this.buttonLoadSound.setDisabled(true);
 
-		const sound = new AbstractAudio(file);
+		const sound = new AudioWrapper(file);
 
 		sound.promise
 		.then(() => {

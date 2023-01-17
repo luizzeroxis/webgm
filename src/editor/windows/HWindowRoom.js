@@ -1,5 +1,5 @@
-import AbstractImage from "../../common/AbstractImage.js";
 import {parent, endparent, add, HElement, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from "../../common/H.js";
+import ImageWrapper from "../../common/ImageWrapper.js";
 import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground} from "../../common/Project.js";
 import HResourceSelect from "../HResourceSelect.js";
 import HTabControl from "../HTabControl.js";
@@ -304,7 +304,7 @@ export default class HWindowRoom extends HWindow {
 					endparent();
 				endparent();
 
-				this.defaultInstanceImage = new AbstractImage(DefaultInstanceIcon);
+				this.defaultInstanceImage = new ImageWrapper(DefaultInstanceIcon);
 				this.updateCanvasPreview();
 
 			this.makeApplyOkButtons(

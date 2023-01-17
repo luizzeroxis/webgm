@@ -1,0 +1,70 @@
+/* H */
+
+.h-label-and-input, .h-select {
+	display: flex;
+	gap: 4px;
+	align-items: baseline;
+	flex-wrap: wrap;
+}
+
+.h-label-and-input > input, .h-select > select {
+	flex: 1;
+	width: 100%;
+}
+
+.h-multiline-text-input {
+	display: flex;
+	gap: 4px;
+	align-items: baseline;
+	flex-wrap: wrap;
+}
+
+.h-multiline-text-input > label {
+	width: 100%;
+}
+
+.h-multiline-text-input > textarea {
+	width: 100%;
+	height: 256px;
+	font: inherit;
+}
+
+/* HMenuManager */
+
+.h-menu-manager {
+	position: absolute;
+	width: 100%;
+	top: 0;
+	left: 0;
+}
+
+.h-menu {
+	position: absolute;
+	color: black;
+	background-color: white;
+	border: 1px solid black;
+}
+
+@media (prefers-color-scheme: dark) {
+	.h-menu {
+		color: white;
+		background-color: black;
+		border: 1px solid white;
+	}
+}
+
+.h-menu-item {
+	display: flex;
+	align-items: center;
+}
+
+/* HTabControl */
+
+.h-tab-buttons {
+	display: flex;
+}
+
+.h-tab-button {
+	display: flex;
+	align-items: baseline;
+}

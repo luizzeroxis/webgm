@@ -28,40 +28,27 @@
 	color-scheme: light;
 }
 
-.h-label-and-input, .h-select {
-	display: flex;
-	gap: 4px;
-	align-items: baseline;
-	flex-wrap: wrap;
+.h-menu {
+	padding-top: 2px;
+	padding-bottom: 2px;
+	color: var(--menu-text);
+	background-color: var(--menu-background);
+	border: 1px solid var(--menu-border);
 }
 
-.h-label-and-input > input, .h-select > select {
-	flex: 1;
-	width: 100%;
+.h-menu-item {
+	height: 24px;
+	padding-left: 32px;
+	padding-right: 56px;
 }
 
-.h-multiline-text-input {
-	display: flex;
-	gap: 4px;
-	align-items: baseline;
-	flex-wrap: wrap;
+.h-menu-item.selected {
+	background-color: var(--menu-item-selected-background);
 }
 
-.h-multiline-text-input > label {
-	width: 100%;
-}
-
-.h-multiline-text-input > textarea {
-	width: 100%;
-	height: 256px;
-	font: inherit;
-}
-
-.h-menu-manager {
-	position: absolute;
-	width: 100%;
-	top: 0;
-	left: 0;
+.h-tab-content {
+	border: 1px solid var(--window-client-horizontal-border);
+	padding: 8px;
 }
 
 body {
@@ -75,21 +62,6 @@ body, button, input, select {
 
 canvas {
 	image-rendering: pixelated;
-}
-
-.bold {
-	font-weight: bold;
-}
-.italic {
-	font-style: italic;
-}
-
-.tab-button {
-	display: inline-block;
-}
-.tab-content {
-	border: 1px solid var(--window-client-horizontal-border);
-	padding: 8px;
 }
 
 .code {
@@ -291,6 +263,13 @@ canvas {
 	min-width: 200px;
 }
 
+.bold {
+	font-weight: bold;
+}
+.italic {
+	font-style: italic;
+}
+
 .windows-area > .window > .client > .window-object > .libraries {
 	flex: 0 1 auto;
 }
@@ -300,7 +279,7 @@ canvas {
 	flex-direction: row-reverse;
 }
 
-.windows-area > .window > .client > .window-object > .libraries > .libraries-tabs .tab-buttons {
+.windows-area > .window > .client > .window-object > .libraries > .libraries-tabs .h-tab-buttons {
 	writing-mode: vertical-rl;
 }
 
@@ -359,25 +338,4 @@ canvas {
 
 .windows-area > .window > .client > .window-game canvas.no-cursor {
 	cursor: none;
-}
-
-.menu {
-	position: absolute;
-	color: var(--menu-text);
-	background-color: var(--menu-background);
-	border: 1px solid var(--menu-border);
-	padding-top: 2px;
-	padding-bottom: 2px;
-}
-
-.menu-item {
-	display: flex;
-	align-items: center;
-	height: 24px;
-	padding-left: 32px;
-	padding-right: 56px;
-}
-
-.menu-item.selected {
-	background-color: var(--menu-item-selected-background);
 }

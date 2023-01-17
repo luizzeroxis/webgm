@@ -20,7 +20,7 @@ import PreferencesManager from "./PreferencesManager.js";
 import ThemeManager from "./ThemeManager.js";
 import HWindowGame from "./windows/HWindowGame.js";
 
-import "./style.css";
+import "./Editor.css";
 
 export default class Editor {
 	constructor() {

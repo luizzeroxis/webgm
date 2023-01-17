@@ -1,6 +1,6 @@
 import {WebGMException} from "./Exceptions.js";
 
-export default class AbstractImage {
+export default class ImageWrapper {
 	constructor(res, load=true) {
 		this.image = new Image();
 		this.width = null;

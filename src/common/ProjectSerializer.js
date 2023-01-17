@@ -1,8 +1,8 @@
 import JSZip from "jszip";
 
-import AbstractAudio from "./AbstractAudio.js";
-import AbstractImage from "./AbstractImage.js";
+import AudioWrapper from "./AudioWrapper.js";
 import {UnserializeException} from "./Exceptions.js";
+import ImageWrapper from "./ImageWrapper.js";
 import {Project} from "./Project.js";
 import Serializer from "./Serializer.js";
 
@@ -76,7 +76,7 @@ export default class ProjectSerializer {
 
 						promises.push(file.async("blob")
 						.then(blob => {
-							sprite.images[index] = new AbstractImage(blob);
+							sprite.images[index] = new ImageWrapper(blob);
 						}));
 					});
 				});
@@ -87,7 +87,7 @@ export default class ProjectSerializer {
 
 					promises.push(file.async("blob")
 						.then(blob => {
-							sound.sound = new AbstractAudio(blob);
+							sound.sound = new AudioWrapper(blob);
 						}));
 				});
 
@@ -97,7 +97,7 @@ export default class ProjectSerializer {
 
 					promises.push(file.async("blob")
 						.then(blob => {
-							background.image = new AbstractImage(blob);
+							background.image = new ImageWrapper(blob);
 						}));
 				});
 

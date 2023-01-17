@@ -51,6 +51,12 @@
 	padding: 8px;
 }
 
+html, body {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
 body {
 	margin: 0;
 }
@@ -77,31 +83,40 @@ canvas {
 }
 
 .editor {
-	padding: 8px;
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	flex: 1;
+	min-height: 0;
+}
+
+.editor > .titlebar {
+	height: 24px;
+	display: flex;
+	align-items: center;
 }
 
 .editor > .horizontal {
 	display: flex;
 	flex-direction: row;
 	gap: 4px;
+	padding: 4px;
+	flex: 1;
+	min-height: 0;
 }
 
 .editor > .horizontal > .resources-area {
 	flex: 0 0 auto;
 	width: 300px;
+	overflow-y: scroll;
+	border: 1px solid var(--area-border);
+	padding: 4px;
 }
 
 .editor > .horizontal > .windows-area {
 	flex: 1;
 	min-width: 300px;
-}
-
-.menu-area, .resources-area, .windows-area {
+	overflow-y: scroll;
 	border: 1px solid var(--area-border);
-	padding: 8px;
 }
 
 .menu-area {

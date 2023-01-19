@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from "../../common/H.js";
+import {parent, endparent, add, HElement, HButton, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from "../../common/H.js";
 import ImageWrapper from "../../common/ImageWrapper.js";
 import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground} from "../../common/Project.js";
 import HResourceSelect from "../HResourceSelect.js";
@@ -22,6 +22,12 @@ export default class HWindowRoom extends HWindow {
 				parent( add( new HElement("div", {class: "properties"}) ) );
 
 					// left area
+
+					this.buttonClear = add( new HButton("Clear all", () => {
+						if (!confirm("Are you sure you want to delete all object instances?")) return;
+						this.paramInstances = [];
+						this.updateCanvasPreview();
+					}) );
 
 					this.inputSnapX = add( new HNumberInput("Snap X:", 16, 1, 1) );
 					this.inputSnapY = add( new HNumberInput("Snap Y:", 16, 1, 1) );

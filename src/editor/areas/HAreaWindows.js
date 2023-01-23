@@ -1,10 +1,12 @@
 import {parent, endparent, add, remove, HElement} from "../../common/H.js";
 import HWindowBackground from "../windows/HWindowBackground.js";
 import HWindowFont from "../windows/HWindowFont.js";
+import HWindowGame from "../windows/HWindowGame.js";
 import HWindowGameInformation from "../windows/HWindowGameInformation.js";
 import HWindowGlobalGameSettings from "../windows/HWindowGlobalGameSettings.js";
 import HWindowObject from "../windows/HWindowObject.js";
 import HWindowPath from "../windows/HWindowPath.js";
+import HWindowPreferences from "../windows/HWindowPreferences.js";
 import HWindowRoom from "../windows/HWindowRoom.js";
 import HWindowScript from "../windows/HWindowScript.js";
 import HWindowSound from "../windows/HWindowSound.js";
@@ -88,6 +90,7 @@ export default class HAreaWindows extends HElement {
 		if (index>=0) {
 			remove(this.windows[index]);
 			this.windows.splice(index, 1);
+			this.organize();
 			return true;
 		}
 		return false;
@@ -99,6 +102,7 @@ export default class HAreaWindows extends HElement {
 		if (index>=0) {
 			remove(this.windows[index]);
 			this.windows.splice(index, 1);
+			this.organize();
 			return true;
 		}
 		return false;
@@ -110,6 +114,15 @@ export default class HAreaWindows extends HElement {
 			remove(w);
 		}
 		this.windows = [];
+	}
+
+	// Remove all windows related to the project (that is, not of the global editor).
+	clearProject() {
+		this.windows = this.windows.filter(w => {
+			const isProject = !([HWindowGame, HWindowPreferences].includes(w.constructor));
+			if (isProject) { remove(w); }
+			return !isProject;
+		});
 	}
 
 	// Move window with id to the top of the screen.
@@ -125,7 +138,7 @@ export default class HAreaWindows extends HElement {
 	// Visually orders windows in the order of the array.
 	organize() {
 		this.windows.forEach((w, i) => {
-			w.html.style.order = i;
+			w.html.style.zIndex = this.windows.length - i;
 		});
 	}
 }

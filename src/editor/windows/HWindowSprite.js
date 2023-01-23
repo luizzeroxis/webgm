@@ -12,7 +12,7 @@ export default class HWindowSprite extends HWindow {
 		this.updateTitle();
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "horizontal window-sprite"}) ) );
+			parent( add( new HElement("div", {class: "panel-container window-sprite"}) ) );
 				parent( add( new HElement("div", {class: "properties"}) ) );
 
 					const paramName = sprite.name;

@@ -31,7 +31,7 @@ export default class PreferencesManager {
 			loadedValues = JSON.parse(window.localStorage.getItem("preferences"));
 		} catch (e) {
 			// SyntaxError
-			console.log("Could not load preferences, clearing them", loadedValues);
+			console.warn("Could not load preferences, clearing them", loadedValues);
 			window.localStorage.clear();
 			return;
 		}
@@ -49,7 +49,7 @@ export default class PreferencesManager {
 			window.localStorage.setItem("preferences", valuesString);
 		} catch (e) {
 			// SecurityError
-			console.log("Could not save preferences", this.values);
+			console.warn("Could not save preferences", this.values);
 		}
 	}
 }

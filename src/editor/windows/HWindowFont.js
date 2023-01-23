@@ -11,23 +11,21 @@ export default class HWindowFont extends HWindow {
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-font"}) ) );
-				parent( add( new HElement("div") ) );
 
-					this.inputName = add( new HTextInput("Name:", font.name) );
-					this.inputFont = add( new HTextInput("Font:", font.font) );
-					this.inputSize = add( new HNumberInput("Size", font.size, 1, 1) );
-					this.inputBold = add( new HCheckBoxInput("Bold", font.bold) );
-					this.inputItalic = add( new HCheckBoxInput("Italic", font.italic) );
+				this.inputName = add( new HTextInput("Name:", font.name) );
+				this.inputFont = add( new HTextInput("Font:", font.font) );
+				this.inputSize = add( new HNumberInput("Size", font.size, 1, 1) );
+				this.inputBold = add( new HCheckBoxInput("Bold", font.bold) );
+				this.inputItalic = add( new HCheckBoxInput("Italic", font.italic) );
 
-					this.divPreview = add( new HElement("div", {class: "preview"}, "AaBbCcDd") );
-					this.inputFont.input.html.oninput = () => this.updatePreview();
-					this.inputSize.input.html.oninput = () => this.updatePreview();
-					this.inputBold.input.html.oninput = () => this.updatePreview();
-					this.inputItalic.input.html.oninput = () => this.updatePreview();
+				this.divPreview = add( new HElement("div", {class: "preview"}, "AaBbCcDd") );
+				this.inputFont.input.html.oninput = () => this.updatePreview();
+				this.inputSize.input.html.oninput = () => this.updatePreview();
+				this.inputBold.input.html.oninput = () => this.updatePreview();
+				this.inputItalic.input.html.oninput = () => this.updatePreview();
 
-					this.updatePreview();
+				this.updatePreview();
 
-					endparent();
 				endparent();
 
 			this.makeApplyOkButtons(

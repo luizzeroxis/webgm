@@ -1,4 +1,4 @@
-import "./H.css";
+import "./H.scss";
 
 export class HElement {
 	constructor(...args) {
@@ -249,7 +249,7 @@ export class HCanvas extends HElement {
 
 export class HLabelAndInput extends HElement {
 	constructor(type, label, value, _class) {
-		parent( super("div", {class: classToAttr(classToArray(_class).concat(["h-label-and-input"]))}) );
+		parent( super("div", {class: classToAttr([...classToArray(_class), "h-label-and-input"])}) );
 			const id = "_id_" + uniqueID();
 			if (label) {
 				this.label = add( new HElement("label", {for: id}, label) );
@@ -279,7 +279,7 @@ export class HTextInput extends HLabelAndInput {
 
 export class HMultilineTextInput extends HElement {
 	constructor(label, value, _class) {
-		parent( super("div", {class: classToAttr(classToArray(_class).concat(["h-multiline-text-input"]))}) );
+		parent( super("div", {class: classToAttr([...classToArray(_class), "h-multiline-text-input"])}) );
 			const id = "_id_" + uniqueID();
 			if (label) {
 				this.label = add( new HElement("label", {for: id}, label) );
@@ -297,9 +297,9 @@ export class HMultilineTextInput extends HElement {
 export class HNumberInput extends HLabelAndInput {
 	constructor(label, value, step, min, max, _class) {
 		super("number", label, value, _class);
-		this.input.html.step = step;
-		this.input.html.min = min;
-		this.input.html.max = max;
+		if (this.input.html.step != null) this.input.html.step = step;
+		if (this.input.html.min != null) this.input.html.min = min;
+		if (this.input.html.max != null) this.input.html.max = max;
 	}
 
 	getIntValue(def=0) {
@@ -326,7 +326,7 @@ export class HRangeInput extends HLabelAndInput {
 
 export class HColorInput extends HLabelAndInput {
 	constructor(label, value, _class) {
-		super("color", label, value, _class);
+		super("color", label, value, [...classToArray(_class), "h-color-input"]);
 	}
 }
 
@@ -382,7 +382,7 @@ export class HRadioInput extends HElement {
 
 export class HSelect extends HElement {
 	constructor(label, _class) {
-		parent( super("div", {class: classToAttr(classToArray(_class).concat(["h-select"]))}) );
+		parent( super("div", {class: classToAttr([...classToArray(_class), "h-select"])}) );
 			const id = "_id_" + uniqueID();
 			if (label) {
 				this.label = add( new HElement("label", {for: id}, label) );

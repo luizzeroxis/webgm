@@ -7,8 +7,7 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"lint": "eslint --ignore-path .gitignore .",
 		"start": "webpack serve --open --config webpack.dev.js",
-		"build": "webpack --config webpack.prod.js",
-		"deploy": "git stash --include-untracked && webpack --config webpack.prod.js && gh-pages -d dist && git stash pop"
+		"build": "webpack --config webpack.prod.js"
 	},
 	"dependencies": {
 		"jszip": "^3.10.1",
@@ -19,10 +18,11 @@
 		"eslint": "^8.32.0",
 		"eslint-plugin-import": "^2.27.5",
 		"eslint-webpack-plugin": "^3.2.0",
-		"gh-pages": "^4.0.0",
 		"git-revision-webpack-plugin": "^5.0.0",
 		"html-webpack-plugin": "^5.5.0",
 		"mini-css-extract-plugin": "^2.7.2",
+		"sass": "^1.57.1",
+		"sass-loader": "^13.2.0",
 		"style-loader": "^3.3.1",
 		"url-loader": "^4.1.1",
 		"webpack": "^5.75.0",

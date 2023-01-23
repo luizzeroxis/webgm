@@ -54,7 +54,6 @@ export default class ProjectSerializer {
 		})
 		.then(versionString => {
 			version = parseInt(versionString);
-			console.log("ZIP version:", version);
 			if (version < 2) throw new UnserializeException("Unsupported "+version.toString()+" version.");
 		})
 		.then(() => {

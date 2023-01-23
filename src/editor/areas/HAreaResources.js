@@ -23,7 +23,7 @@ export default class HAreaResources extends HElement {
 					parent( add( new HElement("li") ) );
 
 						parent( add( new HElement("div", {class: "item"}) ) );
-							// add( new HElement("div", {class: "expander"}, "") );
+							add( new HElement("div", {class: "expander"}, "–") );
 							add( new HImage(FolderIcon, "icon") );
 							add( new HElement("div", {class: "name"}, type.getScreenGroupName()) );
 
@@ -42,7 +42,7 @@ export default class HAreaResources extends HElement {
 				parent( add( new HElement("li") ) );
 
 					parent( add( new HElement("div", {class: "item"}) ) );
-						// add( new HElement("div", {class: "expander"}, "") );
+						add( new HElement("div", {class: "expander"}, "–") );
 						add( new HImage(GameInformationIcon, "icon") );
 						const gameInformationName = add( new HElement("div", {class: "name"}, "Game Information") );
 						gameInformationName.html.addEventListener("click", () => this.editor.windowsArea.openGameInformation());
@@ -52,7 +52,7 @@ export default class HAreaResources extends HElement {
 
 				parent( add( new HElement("li") ) );
 					parent( add( new HElement("div", {class: "item"}) ) );
-						// add( new HElement("div", {class: "expander"}, "") );
+						add( new HElement("div", {class: "expander"}, "–") );
 						add( new HImage(GameSettingsIcon, "icon") );
 						const globalGameSettingsName = add( new HElement("div", {class: "name"}, "Global Game Settings") );
 						globalGameSettingsName.html.addEventListener("click", () => this.editor.windowsArea.openGlobalGameSettings());
@@ -62,7 +62,7 @@ export default class HAreaResources extends HElement {
 
 				// parent( add( new HElement('li') ) );
 				// 	parent( add( new HElement('div', {class: 'item'}) ) )
-				// 		// add( new HElement("div", {class: "expander"}, "") );
+				// 		// add( new HElement("div", {class: "expander"}, "–") );
 				// 		add( new HImage(ExtensionPackagesIcon, 'icon') );
 				// 		const extensionPackagesName = add( new HElement('div', {class: 'name'}, 'Extension packages') )
 				// 		extensionPackagesName.html.addEventListener("click", () => this.editor.windowsArea.openExtensionPackages());

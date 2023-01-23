@@ -12,7 +12,7 @@ export default class HWindowBackground extends HWindow {
 		this.updateTitle();
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "horizontal window-background"}) ) );
+			parent( add( new HElement("div", {class: "panel-container window-background"}) ) );
 				parent( add( new HElement("div", {class: "properties"}) ) );
 
 					this.paramImage = background.image;

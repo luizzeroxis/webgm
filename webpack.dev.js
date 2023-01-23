@@ -17,7 +17,7 @@ module.exports = mergeWithRules({
 	module: {
 		rules: [
 			{
-				test: /\.css$/,
+				test: /\.[s]css$/,
 				use: [
 					"style-loader",
 				],

@@ -23,8 +23,6 @@ export default class Serializer {
 		}
 
 		_class._properties = classProperties;
-
-		// console.log(_class.name, _class._properties);
 	}
 
 	static parseProperty(value) {

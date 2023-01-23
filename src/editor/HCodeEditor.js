@@ -2,13 +2,13 @@ import {parent, endparent, add, HElement} from "../common/H.js";
 
 export default class HCodeEditor extends HElement {
 	constructor(code) {
-		super("div");
+		super("div", {class: "h-code-editor"});
 
 		this.nextElem = null;
 
 		parent(this);
 
-			this.textareaCode = add( new HElement("textarea", {class: "code"}, code) );
+			this.textareaCode = add( new HElement("textarea", {class: "h-code"}, code) );
 			this.textareaCode.html.title = "Press Esc to continue keyboard navigation!";
 			this.textareaCode.html.addEventListener("keydown", e => {
 				if (e.code == "Tab" && e.shiftKey == false) {

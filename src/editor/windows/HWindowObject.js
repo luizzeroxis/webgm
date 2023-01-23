@@ -37,7 +37,7 @@ export default class HWindowObject extends HWindow {
 		this.copyProperties();
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "horizontal window-object"}) ) );
+			parent( add( new HElement("div", {class: "panel-container window-object"}) ) );
 
 				parent( add( new HElement("div", {class: "properties"}) ) );
 
@@ -65,96 +65,100 @@ export default class HWindowObject extends HWindow {
 						this.updateActionsMenu();
 					});
 
-					// Event type select
+					parent( add( new HElement("div") ) );
 
-					this.selectEventType = add( new HSelectWithOptions("Event type:", Events.listEventTypes) );
+						// Event type select
 
-					this.selectEventType.setOnChange(() => {
-						this.updateDivEventSubtype();
-					});
+						this.selectEventType = add( new HSelectWithOptions("Event type:", Events.listEventTypes) );
 
-					// Event subtype div
-
-					this.selectCollisionObject = null;
-					this.divEventSubtype = add( new HElement("div") );
-
-					// Add event button
-					this.buttonEventAdd = add( new HButton("Add Event", () => {
-						const eventType = this.selectEventType.getValue();
-						let eventSubtype = 0;
-
-						if (this.subtypeValueFunction) {
-							eventSubtype = this.subtypeValueFunction();
-						}
-
-						// Don't continue if there's an event with the exact same type and subtype
-						if (this.paramEvents.find(x => x.type == eventType && x.subtype == eventSubtype))
-							return;
-
-						const event = new ProjectEvent();
-						event.type = eventType;
-						event.subtype = eventSubtype;
-						this.paramEvents.push(event);
-
-						this.sortEvents();
-
-						this.updateSelectEvents();
-						this.selectEvents.setValue(event.getNameId());
-						this.updateEventsMenu();
-						this.updateSelectActions();
-						this.updateActionsMenu();
-					}) );
-
-					// Delete event button
-					this.buttonEventDelete = add( new HButton("Delete", () => {
-						const index = this.paramEvents.findIndex(event => this.selectEvents.getValue() == event.getNameId());
-						if (index < 0) return;
-
-						if (this.paramEvents[index].actions.length > 0)
-						if (!confirm("Are you sure you want to remove the event with all its actions?"))
-							return;
-
-						// Close action windows related to event
-						this.paramEvents[index].actions.forEach(action => {
-							this.deleteActionWindow(action);
+						this.selectEventType.setOnChange(() => {
+							this.updateDivEventSubtype();
 						});
 
-						this.paramEvents.splice(index, 1);
+						// Event subtype div
 
-						this.updateSelectEvents();
-						this.updateEventsMenu();
-						this.updateSelectActions();
-						this.updateActionsMenu();
-					}) );
+						this.selectCollisionObject = null;
+						this.divEventSubtype = add( new HElement("div") );
 
-					// Change event button
+						// Add event button
+						this.buttonEventAdd = add( new HButton("Add Event", () => {
+							const eventType = this.selectEventType.getValue();
+							let eventSubtype = 0;
 
-					this.buttonEventChange = add( new HButton("Change", () => {
-						const event = this.getSelectedEvent();
-						if (!event) return;
+							if (this.subtypeValueFunction) {
+								eventSubtype = this.subtypeValueFunction();
+							}
 
-						const eventType = this.selectEventType.getValue();
-						let eventSubtype = 0;
+							// Don't continue if there's an event with the exact same type and subtype
+							if (this.paramEvents.find(x => x.type == eventType && x.subtype == eventSubtype))
+								return;
 
-						if (this.subtypeValueFunction) {
-							eventSubtype = this.subtypeValueFunction();
-						}
+							const event = new ProjectEvent();
+							event.type = eventType;
+							event.subtype = eventSubtype;
+							this.paramEvents.push(event);
 
-						// Don't continue if there's an event with the exact same type and subtype
-						if (this.paramEvents.find(x => x.type == eventType && x.subtype == eventSubtype))
-							return;
+							this.sortEvents();
 
-						event.type = eventType;
-						event.subtype = eventSubtype;
+							this.updateSelectEvents();
+							this.selectEvents.setValue(event.getNameId());
+							this.updateEventsMenu();
+							this.updateSelectActions();
+							this.updateActionsMenu();
+						}) );
 
-						this.sortEvents();
+						// Delete event button
+						this.buttonEventDelete = add( new HButton("Delete", () => {
+							const index = this.paramEvents.findIndex(event => this.selectEvents.getValue() == event.getNameId());
+							if (index < 0) return;
 
-						this.updateSelectEvents();
-						this.selectEvents.setValue(event.getNameId());
-						// this.updateEventsMenu();
-						// this.updateSelectActions();
-						// this.updateActionsMenu();
-					}) );
+							if (this.paramEvents[index].actions.length > 0)
+							if (!confirm("Are you sure you want to remove the event with all its actions?"))
+								return;
+
+							// Close action windows related to event
+							this.paramEvents[index].actions.forEach(action => {
+								this.deleteActionWindow(action);
+							});
+
+							this.paramEvents.splice(index, 1);
+
+							this.updateSelectEvents();
+							this.updateEventsMenu();
+							this.updateSelectActions();
+							this.updateActionsMenu();
+						}) );
+
+						// Change event button
+
+						this.buttonEventChange = add( new HButton("Change", () => {
+							const event = this.getSelectedEvent();
+							if (!event) return;
+
+							const eventType = this.selectEventType.getValue();
+							let eventSubtype = 0;
+
+							if (this.subtypeValueFunction) {
+								eventSubtype = this.subtypeValueFunction();
+							}
+
+							// Don't continue if there's an event with the exact same type and subtype
+							if (this.paramEvents.find(x => x.type == eventType && x.subtype == eventSubtype))
+								return;
+
+							event.type = eventType;
+							event.subtype = eventSubtype;
+
+							this.sortEvents();
+
+							this.updateSelectEvents();
+							this.selectEvents.setValue(event.getNameId());
+							// this.updateEventsMenu();
+							// this.updateSelectActions();
+							// this.updateActionsMenu();
+						}) );
+
+						endparent();
 
 					endparent();
 
@@ -170,91 +174,95 @@ export default class HWindowObject extends HWindow {
 						this.updateActionsMenu();
 					});
 
-					this.buttonActionEdit = add( new HButton("Edit action", () => {
-						const event = this.getSelectedEvent();
-						if (!event) return;
+					parent( add( new HElement("div") ) );
 
-						const actionIndex = this.selectActions.getSelectedIndex();
-						if (actionIndex < 0) return;
+						this.buttonActionEdit = add( new HButton("Edit action", () => {
+							const event = this.getSelectedEvent();
+							if (!event) return;
 
-						const action = event.actions[actionIndex];
-						if (!action) return;
+							const actionIndex = this.selectActions.getSelectedIndex();
+							if (actionIndex < 0) return;
 
-						this.openActionWindow(action);
-					}) );
+							const action = event.actions[actionIndex];
+							if (!action) return;
 
-					this.buttonActionCopy = add( new HButton("Copy", () => {
-						const event = this.getSelectedEvent();
-						if (!event) return;
+							this.openActionWindow(action);
+						}) );
 
-						const actionIndexes = this.selectActions.getSelectedIndexes();
-						if (actionIndexes.length == 0) return;
-
-						this.editor.clipboard.actions = actionIndexes.map(index => new ProjectAction(event.actions[index]));
-					}) );
-
-					this.buttonActionPaste = add( new HButton("Paste", () => {
-						if (this.editor.clipboard.actions) {
+						this.buttonActionCopy = add( new HButton("Copy", () => {
 							const event = this.getSelectedEvent();
 							if (!event) return;
 
 							const actionIndexes = this.selectActions.getSelectedIndexes();
-							const insertIndex = (actionIndexes.length == 0) ? event.actions.length : actionIndexes[actionIndexes.length-1]+1;
+							if (actionIndexes.length == 0) return;
 
-							const actions = this.editor.clipboard.actions.map(action => new ProjectAction(action));
-							event.actions.splice(insertIndex, 0, ...actions);
+							this.editor.clipboard.actions = actionIndexes.map(index => new ProjectAction(event.actions[index]));
+						}) );
 
-							const pastedActionIndexes = Array.from({length: actions.length}, (x, i) => i+insertIndex);
+						this.buttonActionPaste = add( new HButton("Paste", () => {
+							if (this.editor.clipboard.actions) {
+								const event = this.getSelectedEvent();
+								if (!event) return;
+
+								const actionIndexes = this.selectActions.getSelectedIndexes();
+								const insertIndex = (actionIndexes.length == 0) ? event.actions.length : actionIndexes[actionIndexes.length-1]+1;
+
+								const actions = this.editor.clipboard.actions.map(action => new ProjectAction(action));
+								event.actions.splice(insertIndex, 0, ...actions);
+
+								const pastedActionIndexes = Array.from({length: actions.length}, (x, i) => i+insertIndex);
+
+								this.updateSelectActions();
+								this.selectActions.setSelectedIndexes(pastedActionIndexes);
+								this.updateActionsMenu();
+							}
+						}) );
+
+						this.buttonActionDelete = add( new HButton("Delete", () => {
+							const event = this.getSelectedEvent();
+							if (!event) return;
+
+							const actionIndexes = this.selectActions.getSelectedIndexes();
+
+							for (const index of actionIndexes) {
+								this.deleteActionWindow(event.actions[index]);
+							}
+
+							event.actions = event.actions.filter((action, index) => !actionIndexes.includes(index));
 
 							this.updateSelectActions();
-							this.selectActions.setSelectedIndexes(pastedActionIndexes);
 							this.updateActionsMenu();
-						}
-					}) );
+						}) );
 
-					this.buttonActionDelete = add( new HButton("Delete", () => {
-						const event = this.getSelectedEvent();
-						if (!event) return;
+						this.buttonActionUp = add( new HButton("↑", () => {
+							const event = this.getSelectedEvent();
+							if (!event) return;
 
-						const actionIndexes = this.selectActions.getSelectedIndexes();
+							const actionIndex = this.selectActions.getSelectedIndex();
+							if (actionIndex < 0 || actionIndex == 0) return;
 
-						for (const index of actionIndexes) {
-							this.deleteActionWindow(event.actions[index]);
-						}
+							event.actions.splice(actionIndex-1, 0, event.actions.splice(actionIndex, 1)[0]);
 
-						event.actions = event.actions.filter((action, index) => !actionIndexes.includes(index));
+							this.updateSelectActions();
+							this.selectActions.setSelectedIndex(actionIndex-1);
+							this.updateActionsMenu();
+						}) );
 
-						this.updateSelectActions();
-						this.updateActionsMenu();
-					}) );
+						this.buttonActionDown = add( new HButton("↓", () => {
+							const event = this.getSelectedEvent();
+							if (!event) return;
 
-					this.buttonActionUp = add( new HButton("↑", () => {
-						const event = this.getSelectedEvent();
-						if (!event) return;
+							const actionIndex = this.selectActions.getSelectedIndex();
+							if (actionIndex < 0 || actionIndex == event.actions.length-1) return;
 
-						const actionIndex = this.selectActions.getSelectedIndex();
-						if (actionIndex < 0 || actionIndex == 0) return;
+							event.actions.splice(actionIndex+1, 0, event.actions.splice(actionIndex, 1)[0]);
 
-						event.actions.splice(actionIndex-1, 0, event.actions.splice(actionIndex, 1)[0]);
+							this.updateSelectActions();
+							this.selectActions.setSelectedIndex(actionIndex+1);
+							this.updateActionsMenu();
+						}) );
 
-						this.updateSelectActions();
-						this.selectActions.setSelectedIndex(actionIndex-1);
-						this.updateActionsMenu();
-					}) );
-
-					this.buttonActionDown = add( new HButton("↓", () => {
-						const event = this.getSelectedEvent();
-						if (!event) return;
-
-						const actionIndex = this.selectActions.getSelectedIndex();
-						if (actionIndex < 0 || actionIndex == event.actions.length-1) return;
-
-						event.actions.splice(actionIndex+1, 0, event.actions.splice(actionIndex, 1)[0]);
-
-						this.updateSelectActions();
-						this.selectActions.setSelectedIndex(actionIndex+1);
-						this.updateActionsMenu();
-					}) );
+						endparent();
 
 					endparent();
 
@@ -392,6 +400,8 @@ export default class HWindowObject extends HWindow {
 	}
 
 	onAdd() {
+		super.onAdd();
+
 		this.listeners = this.editor.project.dispatcher.listen({
 			changeResourceName: () => {
 				this.updateSelectEvents();

@@ -18,7 +18,7 @@ export default class HWindowRoom extends HWindow {
 		this.copyProperties();
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "horizontal window-room"}) ) );
+			parent( add( new HElement("div", {class: "panel-container window-room"}) ) );
 				parent( add( new HElement("div", {class: "properties"}) ) );
 
 					// left area
@@ -33,7 +33,7 @@ export default class HWindowRoom extends HWindow {
 					this.inputSnapY = add( new HNumberInput("Snap Y:", 16, 1, 1) );
 					this.inputShowGrid = add( new HCheckBoxInput("Show grid", true) );
 
-					this.tabControl = add( new HTabControl() );
+					this.tabControl = add( new HTabControl("properties-tabs") );
 
 					parent( this.tabControl.addTab("Instances") );
 
@@ -192,19 +192,6 @@ export default class HWindowRoom extends HWindow {
 
 						endparent();
 
-					parent( add( new HElement("div", {}, "X: ") ) );
-						this.spanX = add( new HElement("span", {}, "0") );
-						endparent();
-					parent( add( new HElement("div", {}, "Y: ") ) );
-						this.spanY = add( new HElement("span", {}, "0") );
-						endparent();
-					parent( add( new HElement("div", {}, "Object: ") ) );
-						this.spanObject = add( new HElement("span") );
-						endparent();
-					parent( add( new HElement("div", {}, "ID: ") ) );
-						this.spanId = add( new HElement("span") );
-						endparent();
-
 					// updates
 					this.inputSnapX.setOnChange(() => this.updateCanvasPreview());
 					this.inputSnapY.setOnChange(() => this.updateCanvasPreview());
@@ -217,65 +204,37 @@ export default class HWindowRoom extends HWindow {
 					this.inputBackgroundColor.setOnChange(() => this.updateCanvasPreview());
 
 					endparent();
-				parent( add( new HElement("div", {class: "preview"}) ) );
 
-					// actual room area
+				parent( add( new HElement("div", {class: "room"}) ) );
 
-					this.canvasPreview = add( new HCanvas(room.width, room.height) );
-					this.ctx = this.canvasPreview.html.getContext("2d", {alpha: false});
-					this.ctx.imageSmoothingEnabled = false;
+					parent( add( new HElement("div", {class: "preview"}) ) );
 
-					this.canvasPreview.html.onmousedown = (e) => {
-						this.mouseIsDown = true;
-						const pos = this.getMousePosition(e);
-						const snappedPos = this.snapMousePosition(pos);
+						// actual room area
 
-						this.currentPos = snappedPos;
+						this.canvasPreview = add( new HCanvas(room.width, room.height) );
+						this.ctx = this.canvasPreview.html.getContext("2d", {alpha: false});
+						this.ctx.imageSmoothingEnabled = false;
 
-						if (this.radioAdd.getChecked()) {
-							this.movingInstance = this.addInstance();
-						} else
+						this.canvasPreview.html.onmousedown = (e) => {
+							this.mouseIsDown = true;
+							const pos = this.getMousePosition(e);
+							const snappedPos = this.snapMousePosition(pos);
 
-						if (this.radioMultiple.getChecked()) {
-							this.movingInstance = this.addInstance();
-							this.deleteUnderlying();
-						} else
+							this.currentPos = snappedPos;
 
-						if (this.radioMove.getChecked()) {
-							const hover = this.getInstanceAtPosition(pos);
-							if (hover) {
-								this.movingInstance = hover;
-							}
-						} else
-
-						if (this.radioDelete.getChecked()) {
-							const hover = this.getInstanceAtPosition(pos);
-							if (hover) {
-								this.paramInstances = this.paramInstances.filter(i => i != hover);
-							}
-						}
-
-						this.updateCanvasPreview();
-					};
-
-					this.canvasPreview.html.onmousemove = (e) => {
-						const pos = this.getMousePosition(e);
-						const snappedPos = this.snapMousePosition(pos);
-
-						if (this.mouseIsDown) {
-							if (this.radioAdd.getChecked() || this.radioMove.getChecked()) {
-								if (this.movingInstance) {
-									this.movingInstance.x = snappedPos.x;
-									this.movingInstance.y = snappedPos.y;
-								}
+							if (this.radioAdd.getChecked()) {
+								this.movingInstance = this.addInstance();
 							} else
 
 							if (this.radioMultiple.getChecked()) {
+								this.movingInstance = this.addInstance();
+								this.deleteUnderlying();
+							} else
+
+							if (this.radioMove.getChecked()) {
 								const hover = this.getInstanceAtPosition(pos);
-								if (hover != this.movingInstance) {
-									this.currentPos = snappedPos;
-									this.movingInstance = this.addInstance();
-									this.deleteUnderlying();
+								if (hover) {
+									this.movingInstance = hover;
 								}
 							} else
 
@@ -287,25 +246,75 @@ export default class HWindowRoom extends HWindow {
 							}
 
 							this.updateCanvasPreview();
-						}
+						};
 
-						this.spanX.html.textContent = snappedPos.x;
-						this.spanY.html.textContent = snappedPos.y;
-						this.spanObject.html.textContent = "";
-						this.spanId.html.textContent = "";
+						this.canvasPreview.html.onmousemove = (e) => {
+							const pos = this.getMousePosition(e);
+							const snappedPos = this.snapMousePosition(pos);
 
-						{
-							const hover = this.getInstanceAtPosition(pos);
-							if (hover) {
-								this.spanObject.html.textContent = this.editor.project.getResourceById("ProjectObject", hover.object_index).name;
-								if (hover.id != null) {
-									this.spanId.html.textContent = hover.id;
-								} else {
-									this.spanId.html.textContent = "(not applied)";
+							if (this.mouseIsDown) {
+								if (this.radioAdd.getChecked() || this.radioMove.getChecked()) {
+									if (this.movingInstance) {
+										this.movingInstance.x = snappedPos.x;
+										this.movingInstance.y = snappedPos.y;
+									}
+								} else
+
+								if (this.radioMultiple.getChecked()) {
+									const hover = this.getInstanceAtPosition(pos);
+									if (hover != this.movingInstance) {
+										this.currentPos = snappedPos;
+										this.movingInstance = this.addInstance();
+										this.deleteUnderlying();
+									}
+								} else
+
+								if (this.radioDelete.getChecked()) {
+									const hover = this.getInstanceAtPosition(pos);
+									if (hover) {
+										this.paramInstances = this.paramInstances.filter(i => i != hover);
+									}
+								}
+
+								this.updateCanvasPreview();
+							}
+
+							this.spanX.html.textContent = snappedPos.x;
+							this.spanY.html.textContent = snappedPos.y;
+							this.spanObject.html.textContent = "";
+							this.spanId.html.textContent = "";
+
+							{
+								const hover = this.getInstanceAtPosition(pos);
+								if (hover) {
+									this.spanObject.html.textContent = this.editor.project.getResourceById("ProjectObject", hover.object_index).name;
+									if (hover.id != null) {
+										this.spanId.html.textContent = hover.id;
+									} else {
+										this.spanId.html.textContent = "(not applied)";
+									}
 								}
 							}
-						}
-					};
+						};
+
+						endparent();
+
+					parent( add( new HElement("div", {class: "status-bar"}) ) );
+
+						parent( add( new HElement("div", {class: "x"}, "x: ") ) );
+							this.spanX = add( new HElement("span", {}, "0") );
+							endparent();
+						parent( add( new HElement("div", {class: "y"}, "y: ") ) );
+							this.spanY = add( new HElement("span", {}, "0") );
+							endparent();
+						parent( add( new HElement("div", {class: "object"}, "object: ") ) );
+							this.spanObject = add( new HElement("span") );
+							endparent();
+						parent( add( new HElement("div", {class: "id"}, "id: ") ) );
+							this.spanId = add( new HElement("span") );
+							endparent();
+
+						endparent();
 
 					endparent();
 				endparent();
@@ -350,6 +359,8 @@ export default class HWindowRoom extends HWindow {
 	}
 
 	onAdd() {
+		super.onAdd();
+
 		this.mouseUpHandler = () => {
 			this.mouseIsDown = false;
 

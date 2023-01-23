@@ -12,13 +12,11 @@ export default class HWindowScript extends HWindow {
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-script"}) ) );
-				parent( add( new HElement("div") ) );
 
-					const inputName = add( new HTextInput("Name:", script.name) );
+				const inputName = add( new HTextInput("Name:", script.name) );
 
-					this.codeEditor = add( new HCodeEditor(script.code) );
+				this.codeEditor = add( new HCodeEditor(script.code) );
 
-					endparent();
 				endparent();
 
 			this.makeApplyOkButtons(

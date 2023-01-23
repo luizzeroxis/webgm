@@ -20,7 +20,7 @@ import PreferencesManager from "./PreferencesManager.js";
 import ThemeManager from "./ThemeManager.js";
 import HWindowGame from "./windows/HWindowGame.js";
 
-import "./Editor.css";
+import "./Editor.scss";
 
 export default class Editor {
 	constructor() {
@@ -100,7 +100,7 @@ export default class Editor {
 		this.updateProjectName(null);
 
 		this.resourcesArea.refresh();
-		this.windowsArea.clear();
+		this.windowsArea.clearProject();
 	}
 
 	// Called from HAreaMenu
@@ -160,7 +160,7 @@ export default class Editor {
 		}
 
 		this.resourcesArea.refresh();
-		this.windowsArea.clear();
+		this.windowsArea.clearProject();
 
 		this.updateProjectName(file.name);
 	}

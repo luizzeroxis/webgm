@@ -1,4 +1,4 @@
-import {parent, endparent, add, HMultilineTextInput} from "../../common/H.js";
+import {parent, endparent, add, HElement, HMultilineTextInput} from "../../common/H.js";
 import HWindow from "../HWindow.js";
 
 export default class HWindowGameInformation extends HWindow {
@@ -10,8 +10,9 @@ export default class HWindowGameInformation extends HWindow {
 		this.title.html.textContent = "Game Information";
 
 		parent(this.client);
-
-			this.inputText = add( new HMultilineTextInput(null, gameInformation.text, "code") );
+			parent( add( new HElement("div", {class: "window-game-information"}) ) );
+				this.inputText = add( new HMultilineTextInput(null, gameInformation.text) );
+				endparent();
 
 			this.makeApplyOkButtons(
 				() => {

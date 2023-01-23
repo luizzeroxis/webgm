@@ -1102,7 +1102,7 @@ export default class Game {
 			try {
 				await this.canvas.requestFullscreen();
 			} catch (e) {
-				console.log("window_set_fullscreen failed");
+				console.warn("window_set_fullscreen failed");
 			}
 		} else {
 			if (document.fullscreenElement) {

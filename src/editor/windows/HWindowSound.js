@@ -13,30 +13,27 @@ export default class HWindowSound extends HWindow {
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-sound"}) ) );
-				parent( add( new HElement("div") ) );
+				this.paramSound = sound.sound;
 
-					this.paramSound = sound.sound;
+				const inputName = add( new HTextInput("Name:", sound.name) );
 
-					const inputName = add( new HTextInput("Name:", sound.name) );
+				this.buttonLoadSound = add( new HButton("Load Sound", async () => {
+					const file = await openFile("audio/*");
+					this.loadSoundFromFile(file);
+				}) );
 
-					this.buttonLoadSound = add( new HButton("Load Sound", async () => {
-						const file = await openFile("audio/*");
-						this.loadSoundFromFile(file);
-					}) );
+				parent( add( new HElement("div", {class: "preview"}) ) );
 
-					parent( add( new HElement("div", {class: "preview"}) ) );
-
-						this.audioPreview = add( new HElement("audio") );
-						this.audioPreview.html.controls = true;
-						this.audioPreview.html.loop = true;
-						if (this.paramSound) {
-							this.audioPreview.html.src = this.paramSound.src;
-						}
-						endparent();
-
-					const inputVolume = add( new HRangeInput("Volume:", sound.volume, 1/70, 0, 1) );
-
+					this.audioPreview = add( new HElement("audio") );
+					this.audioPreview.html.controls = true;
+					this.audioPreview.html.loop = true;
+					if (this.paramSound) {
+						this.audioPreview.html.src = this.paramSound.src;
+					}
 					endparent();
+
+				const inputVolume = add( new HRangeInput("Volume:", sound.volume, 1/70, 0, 1) );
+
 				endparent();
 
 			this.makeApplyOkButtons(

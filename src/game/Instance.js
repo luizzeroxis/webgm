@@ -26,6 +26,7 @@ export default class Instance {
 		this.exists = true;
 		this.vars = new VariableHolder(this, BuiltInLocals);
 		this.sprite = this.game.project.getResourceById("ProjectSprite", this.spriteIndex);
+		this.mask = this.game.project.getResourceById("ProjectSprite", this.maskIndex);
 
 		this.mouseIn = false;
 		this.mouseInChanged = null;
@@ -79,6 +80,14 @@ export default class Instance {
 		return Math.floor(Math.floor(this.imageIndex) % this.sprite.images.length);
 	}
 
+	getMask() {
+		return this.mask ?? this.sprite;
+	}
+
+	getMaskImage() {
+		const mask = this.mask ?? this.sprite;
+		return mask?.images[Math.floor(Math.floor(this.imageIndex) % mask.images.length)];
+	}
 
 	instanceImagePointToRoomPoint(point, instanceX, instanceY) {
 		instanceX ??= this.x;
@@ -86,7 +95,7 @@ export default class Instance {
 
 		let {x, y} = point;
 
-		[x, y] = [x - this.sprite.originx, y - this.sprite.originy];
+		[x, y] = [x - this.getMask().originx, y - this.getMask().originy];
 
 		[x, y] = [x * this.imageXScale, y * this.imageYScale];
 
@@ -115,7 +124,7 @@ export default class Instance {
 
 		[x, y] = [x / this.imageXScale, y / this.imageYScale];
 
-		[x, y] = [x + this.sprite.originx, y + this.sprite.originy];
+		[x, y] = [x + this.getMask().originx, y + this.getMask().originy];
 
 		[x, y] = [Math.floor(x), Math.floor(y)];
 
@@ -126,7 +135,7 @@ export default class Instance {
 		instanceX ??= this.x;
 		instanceY ??= this.y;
 
-		const image = this.getImage();
+		const image = this.getMaskImage();
 		if (!image) return {x1: instanceX, y1: instanceY, x2: instanceX, y2: instanceY};
 
 		// TODO optimize this lol

@@ -36,9 +36,7 @@ export default class GameCollision {
 		if (instanceA == instanceB) return false;
 
 		// TODO masks
-
-		if (instanceA.sprite == null || instanceA.sprite.images.length == 0) return false;
-		if (instanceB.sprite == null || instanceB.sprite.images.length == 0) return false;
+		if (instanceA.getMaskImage() == null || instanceB.getMaskImage() == null) return false;
 
 		// TODO collision masks
 		// spriteA.boundingBox == 'fullimage';
@@ -58,10 +56,10 @@ export default class GameCollision {
 		];
 
 		for (const collision of collisions) {
-			if (instanceA.sprite.shape == collision.shape1 && instanceB.sprite.shape == collision.shape2) {
+			if (instanceA.getMask().shape == collision.shape1 && instanceB.getMask().shape == collision.shape2) {
 				return collision.func.call(this, instanceA, instanceB, x, y, null, null);
 			} else
-			if (instanceA.sprite.shape == collision.shape2 && instanceB.sprite.shape == collision.shape1) {
+			if (instanceA.getMask().shape == collision.shape2 && instanceB.getMask().shape == collision.shape1) {
 				return collision.func.call(this, instanceB, instanceA, null, null, x, y);
 			}
 		}
@@ -92,8 +90,8 @@ export default class GameCollision {
 
 		const iRect = this.rectangleOnRectangleIntersection(aRect, bRect);
 
-		const aImage = aInstance.getImage();
-		const bImage = bInstance.getImage();
+		const aImage = aInstance.getMaskImage();
+		const bImage = bInstance.getMaskImage();
 
 		const aImageRect = {x1: 0, x2: aImage.width, y1: 0, y2: aImage.height};
 		const bImageRect = {x1: 0, x2: bImage.width, y1: 0, y2: bImage.height};
@@ -139,8 +137,8 @@ export default class GameCollision {
 
 		const iRect = this.rectangleOnRectangleIntersection(precRect, rectRect);
 
-		const precImage = precInstance.getImage();
-		const rectImage = rectInstance.getImage();
+		const precImage = precInstance.getMaskImage();
+		const rectImage = rectInstance.getMaskImage();
 
 		const precImageRect = {x1: 0, x2: precImage.width, y1: 0, y2: precImage.height};
 		const rectImageRect = {x1: 0, x2: rectImage.width, y1: 0, y2: rectImage.height};
@@ -182,8 +180,8 @@ export default class GameCollision {
 
 		const iRect = this.rectangleOnRectangleIntersection(aRect, bRect);
 
-		const aImage = aInstance.getImage();
-		const bImage = bInstance.getImage();
+		const aImage = aInstance.getMaskImage();
+		const bImage = bInstance.getMaskImage();
 
 		const aImageRect = {x1: 0, x2: aImage.width, y1: 0, y2: aImage.height};
 		const bImageRect = {x1: 0, x2: bImage.width, y1: 0, y2: bImage.height};
@@ -211,7 +209,7 @@ export default class GameCollision {
 
 	// Check if instance is colliding with point.
 	instanceOnPoint(instance, point, precise=true) {
-		if (instance.sprite == null || instance.sprite.images.length == 0) return false;
+		if (instance.getMaskImage() == null) return false;
 
 		if (!precise) {
 			return this.pointOnRectangle(point, instance.getBoundingBox());
@@ -225,7 +223,7 @@ export default class GameCollision {
 		];
 
 		for (const collision of collisions) {
-			if (instance.sprite.shape == collision.shape) {
+			if (instance.getMask().shape == collision.shape) {
 				return collision.func.call(this, instance, point);
 			}
 		}
@@ -261,7 +259,7 @@ export default class GameCollision {
 	instancePreciseOnPoint(instance, point) {
 		const imagePoint = instance.roomPointToInstanceImagePoint(point);
 
-		const instanceImage = instance.getImage();
+		const instanceImage = instance.getMaskImage();
 
 		// TODO bounding box check
 		if (!this.pointOnRectangle(imagePoint, {x1: 0, x2: instanceImage.width, y1: 0, y2: instanceImage.height})) {
@@ -276,7 +274,7 @@ export default class GameCollision {
 	instanceRectangleOnPoint(instance, point) {
 		const imagePoint = instance.roomPointToInstanceImagePoint(point);
 
-		const instanceImage = instance.getImage();
+		const instanceImage = instance.getMaskImage();
 
 		// TODO bounding box check
 		if (!this.pointOnRectangle(imagePoint, {x1: 0, x2: instanceImage.width, y1: 0, y2: instanceImage.height})) {

@@ -9157,7 +9157,7 @@ export default class BuiltInFunctions {
 			const horizontal = (direction == 0 || direction == 2);
 			const vertical = (direction == 1 || direction == 2);
 
-			const image = this.currentInstance.getImage();
+			const image = this.currentInstance.getMaskImage();
 			const spriteW = image?.width ?? 0;
 			const spriteH = image?.height ?? 0;
 

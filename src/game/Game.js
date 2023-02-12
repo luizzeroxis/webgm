@@ -420,18 +420,12 @@ export default class Game {
 		for (const {event, instance} of this.getEventsOfTypeAndSubtype("other", OTHER_OUTSIDE)) {
 			if (!instance.exists) continue;
 
-			const image = instance.getImage();
+			const boundingBox = instance.getBoundingBox();
 
-			// TODO use sprite bounding box (probably should use this in a lot of places)
-			const offsetLeft = image ? -instance.sprite.originx : 0;
-			const offsetRight = image ? -instance.sprite.originx + image.width : 0;
-			const offsetTop = image ? -instance.sprite.originy : 0;
-			const offsetBottom = image ? -instance.sprite.originy + image.height : 0;
-
-			if (instance.x + offsetRight < 0
-				|| instance.x + offsetLeft >= this.room.width
-				|| instance.y + offsetBottom < 0
-				|| instance.y + offsetTop >= this.room.height) {
+			if (boundingBox.x1 >= this.room.width
+				|| boundingBox.x2 < 0
+				|| boundingBox.y1 >= this.room.height
+				|| boundingBox.y2 < 0) {
 				await this.doEvent(event, instance);
 			}
 		}
@@ -440,18 +434,12 @@ export default class Game {
 		for (const {event, instance} of this.getEventsOfTypeAndSubtype("other", OTHER_BOUNDARY)) {
 			if (!instance.exists) continue;
 
-			const image = instance.getImage();
+			const boundingBox = instance.getBoundingBox();
 
-			// TODO use sprite bounding box (probably should use this in a lot of places)
-			const offsetLeft = image ? -instance.sprite.originx : 0;
-			const offsetRight = image ? -instance.sprite.originx + image.width : 0;
-			const offsetTop = image ? -instance.sprite.originy : 0;
-			const offsetBottom = image ? -instance.sprite.originy + image.height : 0;
-
-			if (instance.x + offsetLeft < 0
-				|| instance.x + offsetRight >= this.room.width
-				|| instance.y + offsetTop < 0
-				|| instance.y + offsetBottom >= this.room.height) {
+			if (boundingBox.x1 < 0
+				|| boundingBox.x2 >= this.room.width
+				|| boundingBox.y1 < 0
+				|| boundingBox.y2 >= this.room.height) {
 				await this.doEvent(event, instance);
 			}
 		}

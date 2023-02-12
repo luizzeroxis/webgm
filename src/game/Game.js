@@ -1027,7 +1027,7 @@ export default class Game {
 		this.ctx.save();
 
 		this.ctx.translate(x, y);
-		this.ctx.rotate(angle * Math.PI/180);
+		this.ctx.rotate(-angle * Math.PI/180);
 		this.ctx.scale(xScale, yScale);
 
 		this.ctx.globalAlpha = alpha;

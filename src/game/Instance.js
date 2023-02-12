@@ -101,7 +101,7 @@ export default class Instance {
 
 		const a = this.imageAngle * Math.PI/180;
 		const cos = Math.cos(a);
-		const sin = Math.sin(a);
+		const sin = -Math.sin(a);
 		[x, y] = [cos*x - sin*y, sin*x + cos*y];
 
 		[x, y] = [x + instanceX, y + instanceY];
@@ -119,7 +119,7 @@ export default class Instance {
 
 		const a = -this.imageAngle * Math.PI/180;
 		const cos = Math.cos(a);
-		const sin = Math.sin(a);
+		const sin = -Math.sin(a);
 		[x, y] = [cos*x - sin*y, sin*x + cos*y];
 
 		[x, y] = [x / this.imageXScale, y / this.imageYScale];

@@ -32,8 +32,8 @@ export default class Dispatcher {
 	speak(subject, ...words) {
 		const responses = [];
 		if (this.listeners[subject]) {
-			for (const listener in this.listeners[subject]) {
-				responses.push(this.listeners[subject][listener](...words));
+			for (const listener of [...this.listeners[subject]]) {
+				responses.push(listener(...words));
 			}
 		}
 		return responses;

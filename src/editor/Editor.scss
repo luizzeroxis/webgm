@@ -2,8 +2,10 @@
 	color-scheme: light dark;
 	--area-border: #444;
 	--menu-background: #fff;
+	--menu-bar-button-selected: #eee;
 	--menu-border: #ddd;
 	--menu-item-selected-background: #eee;
+	--menu-text-disabled: #666;
 	--menu-text: #222;
 	--titlebar-background: #aaa;
 	--warning-background: #fb0;
@@ -16,8 +18,10 @@
 	color-scheme: dark;
 	--area-border: #bbb;
 	--menu-background: #222;
+	--menu-bar-button-selected: #444;
 	--menu-border: #444;
 	--menu-item-selected-background: #444;
+	--menu-text-disabled: #888;
 	--menu-text: #eee;
 	--titlebar-background: #555;
 	--warning-background: #740;
@@ -46,6 +50,10 @@
 			&.selected {
 				background-color: var(--menu-item-selected-background);
 			}
+
+			&.disabled {
+				color: var(--menu-text-disabled);
+			}
 		}
 	}
 }
@@ -53,6 +61,14 @@
 .h-tab-content {
 	border: 1px solid var(--window-client-horizontal-border);
 	padding: 8px;
+}
+
+.h-menu-bar {
+	> .h-menu-bar-button {
+		&:hover, &:focus {
+			background-color: var(--menu-bar-button-selected);
+		}
+	}
 }
 
 html, body {

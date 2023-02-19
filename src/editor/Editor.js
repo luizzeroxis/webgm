@@ -12,6 +12,7 @@ import {openFile, saveFile, readFileAsText} from "../common/tools.js";
 import Game from "../game/Game.js";
 
 import HAreaMenu from "./areas/HAreaMenu.js";
+import HAreaMenuBar from "./areas/HAreaMenuBar.js";
 import HAreaResources from "./areas/HAreaResources.js";
 import HAreaWindows from "./areas/HAreaWindows.js";
 import BuiltInLibraries from "./BuiltInLibraries.js";
@@ -56,6 +57,8 @@ export default class Editor {
 		this.div = parent( new HElement("div", {class: "editor"}) );
 
 			this.titlebar = add( new HElement("div", {class: "titlebar"}, "<new game> - webgm") );
+
+			this.menuBarArea = add( new HAreaMenuBar(this) );
 
 			this.menuArea = add( new HAreaMenu(this) );
 

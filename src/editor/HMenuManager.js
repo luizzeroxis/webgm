@@ -40,7 +40,11 @@ export default class HMenuManager extends HElement {
 
 				menu.html.addEventListener("blur", () => {
 					remove(menu);
-					resolve(this.selectedIndex);
+					if (this.selectedIndex != null && items[this.selectedIndex].enabled !== false) {
+						resolve(this.selectedIndex);
+					} else {
+						resolve(null);
+					}
 				});
 
 				menu.html.addEventListener("keydown", e => {
@@ -49,7 +53,9 @@ export default class HMenuManager extends HElement {
 					} else if (e.code == "Enter") {
 						e.preventDefault();
 						if (this.selectedIndex != null) {
-							items[this.selectedIndex].onClick?.();
+							if (items[this.selectedIndex].enabled !== false) {
+								items[this.selectedIndex].onClick?.();
+							}
 							close(this.selectedIndex);
 						} else {
 							close(null);
@@ -87,8 +93,14 @@ export default class HMenuManager extends HElement {
 					for (const [index, item] of items.entries()) {
 						const menuItem = add( new HElement("div", {class: "h-menu-item"}, item.text) );
 
+						if (item.enabled === false) {
+							menuItem.html.classList.add("disabled");
+						}
+
 						menuItem.html.addEventListener("click", () => {
-							item.onClick?.();
+							if (item.enabled !== false) {
+								item.onClick?.();
+							}
 							close(index);
 						});
 

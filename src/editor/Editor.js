@@ -249,8 +249,8 @@ export default class Editor {
 	}
 
 	// Called from HAreaMenu
-	runGame() {
-		this.stopGame();
+	async runGame() {
+		await this.stopGame();
 
 		if (this.project.resources.ProjectRoom.length <= 0) {
 			alert("A game must have at least one room to run.");
@@ -309,8 +309,31 @@ export default class Editor {
 	// Called from HAreaMenu and runGame
 	stopGame() {
 		if (this.game) {
-			this.game.stepStopAction = async () => await this.game.end();
+			this.menuArea.stopButton.setDisabled(true);
+
+			return new Promise((resolve) => {
+				const gameListeners = this.game.dispatcher.listen({
+					close: () => {
+						if (this.game) {
+							this.game.dispatcher.stopListening(gameListeners);
+						}
+
+						resolve();
+					},
+				});
+				this.game.stepStopAction = async () => await this.game.end();
+			});
 		}
+		return Promise.resolve();
+	}
+
+	showAbout() {
+		alert("WebGM"
+			+ "\nVersion: 0.0.0"
+			+ "\nCommit hash: " + CONSTANTS.COMMITHASH
+			+ "\nCommit time: " + CONSTANTS.LASTCOMMITDATETIME
+			+ "\nGitHub: https://github.com/luizeldorado/webgm",
+		);
 	}
 
 	// getActionType(action)

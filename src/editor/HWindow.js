@@ -7,6 +7,9 @@ export default class HWindow extends HElement {
 		this.editor = editor;
 		this.id = id;
 
+		this.x = 0;
+		this.y = 0;
+
 		this.html.addEventListener("focusin", () => {
 			this.editor.windowsArea.focus(this.id);
 		});
@@ -43,8 +46,7 @@ export default class HWindow extends HElement {
 					if (x < 0) { x = 0; }
 					if (y < 0) { y = 0; }
 
-					this.html.style.left = (x - this.offX).toString() + "px";
-					this.html.style.top = (y - this.offY).toString() + "px";
+					this.setPosition(x - this.offX, y - this.offY);
 				};
 
 				document.addEventListener("mousemove", this.mouseMoveHandler);
@@ -111,6 +113,9 @@ export default class HWindow extends HElement {
 	}
 
 	setPosition(x, y) {
+		this.x = x;
+		this.y = y;
+
 		this.html.style.left = x.toString() + "px";
 		this.html.style.top = y.toString() + "px";
 	}
@@ -121,7 +126,21 @@ export default class HWindow extends HElement {
 	}
 
 	setPositionToDefault() {
-		this.setPosition(0, 0);
+		let x = 0;
+		let y = 0;
+
+		while (true) {
+			const positionTaken = this.editor.windowsArea.windows.some(w => (w.x == x && w.y == y)); // eslint-disable-line no-loop-func
+
+			if (positionTaken) {
+				x += 24;
+				y += 24;
+			} else {
+				break;
+			}
+		}
+
+		this.setPosition(x, y);
 	}
 
 	setSizeToDefault() {

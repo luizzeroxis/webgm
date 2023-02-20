@@ -55,8 +55,6 @@ export default class Editor {
 
 			this.wipWarning = add( new HWIPWarning(this) );
 
-			this.titlebar = add( new HElement("div", {class: "titlebar"}, "<new game> - webgm") );
-
 			this.menuBarArea = add( new HAreaMenuBar(this) );
 
 			this.menuArea = add( new HAreaMenu(this) );
@@ -175,12 +173,11 @@ export default class Editor {
 			} else {
 				this.projectName = filename;
 			}
-			this.titlebar.html.textContent = filename + " - webgm";
+			document.querySelector("title").textContent = filename + " - webgm";
 		} else {
 			this.projectName = "game";
-			this.titlebar.html.textContent = "<new game> - webgm";
+			document.querySelector("title").textContent = "<new game> - webgm";
 		}
-		document.querySelector("title").textContent = this.titlebar.html.textContent;
 	}
 
 	// Called from HAreaMenu

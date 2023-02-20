@@ -98,13 +98,6 @@ body, button, input, select {
 	flex: 1;
 	min-height: 0;
 
-	> .titlebar {
-		align-items: center;
-		display: flex;
-		height: 24px;
-	}
-
-
 	> .horizontal {
 		display: flex;
 		flex-direction: row;

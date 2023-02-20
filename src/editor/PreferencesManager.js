@@ -9,6 +9,7 @@ export default class PreferencesManager {
 			focusCanvasOnRun: true,
 			clearCanvasOnStop: true,
 			hintTextInAction: false,
+			showWIPWarning: true,
 		};
 
 		this.dispatcher = new Dispatcher();

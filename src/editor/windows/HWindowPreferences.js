@@ -23,6 +23,8 @@ export default class HWindowPreferences extends HWindow {
 			const inputFocusCanvasOnRun = add( new HCheckBoxInput("Focus game canvas on run", this.editor.preferences.get("focusCanvasOnRun")) );
 			const inputClearCanvasOnStop = add( new HCheckBoxInput("Clear game canvas on stop", this.editor.preferences.get("clearCanvasOnStop")) );
 
+			const inputShowWIPWarning = add( new HCheckBoxInput("Show \"Work In Progress\" warning", this.editor.preferences.get("showWIPWarning")) );
+
 			this.makeApplyOkButtons(
 				() => {
 					this.editor.preferences.setAll({
@@ -32,6 +34,7 @@ export default class HWindowPreferences extends HWindow {
 						scrollToGameOnRun: inputScrollToGameOnRun.getChecked(),
 						focusCanvasOnRun: inputFocusCanvasOnRun.getChecked(),
 						clearCanvasOnStop: inputClearCanvasOnStop.getChecked(),
+						showWIPWarning: inputShowWIPWarning.getChecked(),
 					});
 					this.editor.preferences.save();
 				},

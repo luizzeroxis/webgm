@@ -17,6 +17,7 @@ import HAreaResources from "./areas/HAreaResources.js";
 import HAreaWindows from "./areas/HAreaWindows.js";
 import BuiltInLibraries from "./BuiltInLibraries.js";
 import HMenuManager from "./HMenuManager.js";
+import HWIPWarning from "./HWIPWarning.js";
 import PreferencesManager from "./PreferencesManager.js";
 import ThemeManager from "./ThemeManager.js";
 import HWindowGame from "./windows/HWindowGame.js";
@@ -49,12 +50,10 @@ export default class Editor {
 		// Libraries
 		this.libraries = BuiltInLibraries.list;
 
-		// WIP warning
-		add( new HElement("div", {class: "warning"},
-				"Work In Progress: Some features may not work as expected, or at all. Work may be lost, use it at your own discretion!") );
-
 		// Areas
 		this.div = parent( new HElement("div", {class: "editor"}) );
+
+			this.wipWarning = add( new HWIPWarning(this) );
 
 			this.titlebar = add( new HElement("div", {class: "titlebar"}, "<new game> - webgm") );
 

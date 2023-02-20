@@ -1,33 +1,39 @@
 :root {
 	color-scheme: light dark;
 	--area-border: #444;
+	--background: #ddd;
 	--menu-background: #fff;
 	--menu-bar-button-selected: #eee;
 	--menu-border: #ddd;
 	--menu-item-selected-background: #eee;
 	--menu-text-disabled: #666;
 	--menu-text: #222;
+	--resources-area-background: #fff;
 	--titlebar-background: #aaa;
 	--warning-background: #fb0;
 	--window-border: #aaa;
 	--window-client-background: #fff;
 	--window-client-horizontal-border: #ccc;
+	--windows-area-background: #eee;
 }
 
 :root.dark {
 	color-scheme: dark;
 	--area-border: #bbb;
+	--background: #111;
 	--menu-background: #222;
 	--menu-bar-button-selected: #444;
 	--menu-border: #444;
 	--menu-item-selected-background: #444;
 	--menu-text-disabled: #888;
 	--menu-text: #eee;
+	--resources-area-background: #000;
 	--titlebar-background: #555;
 	--warning-background: #740;
 	--window-border: #555;
 	--window-client-background: #000;
 	--window-client-horizontal-border: #333;
+	--windows-area-background: #000;
 }
 
 :root.light {
@@ -99,6 +105,7 @@ body, button, input, select {
 	min-height: 0;
 
 	> .horizontal {
+		background-color: var(--background);
 		display: flex;
 		flex-direction: row;
 		flex: 1;
@@ -109,8 +116,12 @@ body, button, input, select {
 }
 
 .menu-area {
+	background-color: var(--background);
 	display: flex;
 	flex-wrap: wrap;
+	padding-left: 4px;
+	padding-right: 4px;
+	padding-top: 4px;
 
 	.separator {
 		width: 8px;
@@ -118,6 +129,7 @@ body, button, input, select {
 }
 
 .resources-area {
+	background-color: var(--resources-area-background);
 	border: 1px solid var(--area-border);
 	flex: none;
 	overflow-y: scroll;
@@ -174,6 +186,7 @@ body, button, input, select {
 }
 
 .windows-area {
+	background-color: var(--windows-area-background);
 	border: 1px solid var(--area-border);
 	display: flex;
 	flex-direction: column;

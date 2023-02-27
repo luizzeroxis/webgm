@@ -9,7 +9,6 @@ import ScriptIcon from "../img/script-icon.png";
 import SoundIcon from "../img/sound-icon.png";
 import SpriteIcon from "../img/sprite-icon.png";
 import TimelineIcon from "../img/timeline-icon.png";
-import HWindowPreferences from "../windows/HWindowPreferences.js";
 
 export default class HAreaMenu extends HElement {
 	static resourceTypeIcons = {
@@ -41,17 +40,6 @@ export default class HAreaMenu extends HElement {
 
 			add( new HButton("Save", () => {
 				this.editor.saveProject();
-			}) );
-
-			// Only show when File System Access API is avaliable
-			if ("showOpenFilePicker" in window) {
-				add( new HButton("Save as", () => {
-					this.editor.saveProjectAs();
-				}) );
-			}
-
-			add( new HButton("Preferences", () => {
-				this.editor.windowsArea.open(HWindowPreferences, "preferences");
 			}) );
 
 			add( new HElement("div", {class: "separator"}) );
@@ -87,12 +75,6 @@ export default class HAreaMenu extends HElement {
 
 			add( new HButton("Change Global Game Settings", () => {
 				this.editor.windowsArea.openGlobalGameSettings();
-			}) );
-
-			add( new HElement("div", {class: "separator"}) );
-
-			add( new HButton("About", () => {
-				this.editor.showAbout();
 			}) );
 
 			endparent();

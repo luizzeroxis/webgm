@@ -19,7 +19,7 @@ export default class HAreaMenuBar extends HElement {
 				{text: "Exit", onClick: () => window.close()},
 			]},
 			{text: "Edit", items: [
-				{text: "Find resource", onClick: () => { alert(1); }},
+				{text: "Find resource", onClick: () => {}, enabled: false},
 			]},
 			{text: "Resources", items: [
 
@@ -32,7 +32,7 @@ export default class HAreaMenuBar extends HElement {
 
 			]},
 			{text: "Script", items: [
-				{text: "Import Scripts...", onClick: () => { throw new Error("NOT IMPLEMENT"); }, enabled: false},
+				{text: "Import Scripts...", onClick: () => {}, enabled: false},
 			]},
 			{text: "Run", items: [
 				{text: "Run normally", onClick: () => this.editor.runGame()},

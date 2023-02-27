@@ -10,7 +10,7 @@ import SoundIcon from "../img/sound-icon.png";
 import SpriteIcon from "../img/sprite-icon.png";
 import TimelineIcon from "../img/timeline-icon.png";
 
-export default class HAreaMenu extends HElement {
+export default class HAreaToolBar extends HElement {
 	static resourceTypeIcons = {
 		"ProjectSprite": SpriteIcon,
 		"ProjectSound": SoundIcon,
@@ -24,7 +24,7 @@ export default class HAreaMenu extends HElement {
 	};
 
 	constructor(editor) {
-		super("div", {class: "menu-area"});
+		super("div", {class: "tool-bar-area"});
 
 		this.editor = editor;
 
@@ -61,7 +61,7 @@ export default class HAreaMenu extends HElement {
 				}) );
 
 				parent(button);
-					add( new HImage(HAreaMenu.resourceTypeIcons[type.getClassName()]) );
+					add( new HImage(HAreaToolBar.resourceTypeIcons[type.getClassName()]) );
 					endparent();
 
 				button.html.title = "Create " + type.getScreenName();

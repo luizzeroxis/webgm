@@ -45,10 +45,6 @@ export default class HAreaMenuBar extends HElement {
 			]},
 		];
 
-		this.menuBar = add( new HMenuBar(null, menus) );
-	}
-
-	onAdd() {
-		this.menuBar.menuManager = this.editor.menuManager;
+		this.menuBar = add( new HMenuBar(this.editor.menuManager, menus) );
 	}
 }

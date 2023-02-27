@@ -11,9 +11,9 @@ import ProjectSerializer from "../common/ProjectSerializer.js";
 import {openFile, saveFile, readFileAsText} from "../common/tools.js";
 import Game from "../game/Game.js";
 
-import HAreaMenu from "./areas/HAreaMenu.js";
 import HAreaMenuBar from "./areas/HAreaMenuBar.js";
 import HAreaResources from "./areas/HAreaResources.js";
+import HAreaToolBar from "./areas/HAreaToolBar.js";
 import HAreaWindows from "./areas/HAreaWindows.js";
 import BuiltInLibraries from "./BuiltInLibraries.js";
 import HMenuManager from "./HMenuManager.js";
@@ -50,6 +50,8 @@ export default class Editor {
 		// Libraries
 		this.libraries = BuiltInLibraries.list;
 
+		this.menuManager = new HMenuManager();
+
 		// Areas
 		this.div = parent( new HElement("div", {class: "editor"}) );
 
@@ -57,14 +59,14 @@ export default class Editor {
 
 			this.menuBarArea = add( new HAreaMenuBar(this) );
 
-			this.menuArea = add( new HAreaMenu(this) );
+			this.toolBarArea = add( new HAreaToolBar(this) );
 
 			parent( add( new HElement("div", {class: "horizontal"}) ) );
 				this.resourcesArea = add( new HAreaResources(this) );
 				this.windowsArea = add( new HAreaWindows(this) );
 				endparent();
 
-			this.menuManager = add( new HMenuManager() );
+			add( this.menuManager );
 
 			endparent();
 
@@ -88,7 +90,6 @@ export default class Editor {
 		add(this.div);
 	}
 
-	// Called from HAreaMenu
 	newProject() {
 		if (!confirm("Game may have been changed. Continue?")) return;
 
@@ -103,7 +104,6 @@ export default class Editor {
 		this.windowsArea.clearProject();
 	}
 
-	// Called from HAreaMenu
 	async openProject() {
 		let file;
 		if ("showOpenFilePicker" in window) {
@@ -139,7 +139,6 @@ export default class Editor {
 		this.openProjectFromFile(file);
 	}
 
-	// Called from HAreaMenu
 	async openProjectFromFile(file) {
 		try {
 			let project;
@@ -180,7 +179,6 @@ export default class Editor {
 		}
 	}
 
-	// Called from HAreaMenu
 	async saveProject() {
 		if ("showOpenFilePicker" in window) {
 			if (!this.projectFileHandle) {
@@ -194,7 +192,6 @@ export default class Editor {
 		}
 	}
 
-	// Called from HAreaMenu
 	async saveProjectAs() {
 		if ("showOpenFilePicker" in window) {
 			try {
@@ -247,7 +244,6 @@ export default class Editor {
 		}
 	}
 
-	// Called from HAreaMenu
 	async runGame() {
 		await this.stopGame();
 
@@ -258,8 +254,8 @@ export default class Editor {
 
 		this.gameWindow = this.windowsArea.open(HWindowGame, "game");
 
-		this.menuArea.runButton.setDisabled(true);
-		this.menuArea.stopButton.setDisabled(false);
+		this.toolBarArea.runButton.setDisabled(true);
+		this.toolBarArea.stopButton.setDisabled(false);
 
 		if (this.preferences.get("scrollToGameOnRun")) {
 			this.gameWindow.html.scrollIntoView();
@@ -281,8 +277,8 @@ export default class Editor {
 					alert("An error has ocurred when trying to run the game:\n" + e.message);
 				}
 
-				this.menuArea.runButton.setDisabled(false);
-				this.menuArea.stopButton.setDisabled(true);
+				this.toolBarArea.runButton.setDisabled(false);
+				this.toolBarArea.stopButton.setDisabled(true);
 
 				if (this.preferences.get("clearCanvasOnStop")) {
 					this.gameWindow.canvas.clear();
@@ -305,10 +301,9 @@ export default class Editor {
 		this.game.start();
 	}
 
-	// Called from HAreaMenu and runGame
 	stopGame() {
 		if (this.game) {
-			this.menuArea.stopButton.setDisabled(true);
+			this.toolBarArea.stopButton.setDisabled(true);
 
 			return new Promise((resolve) => {
 				const gameListeners = this.game.dispatcher.listen({

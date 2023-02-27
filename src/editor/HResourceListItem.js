@@ -34,12 +34,10 @@ export default class HResourceListItem extends HElement {
 
 				add( new HElement("div", {class: "expander"}, "–") );
 				this.icon = add( new HImage(null, "icon") );
-				this.icon.html.width = 16;
-				this.icon.html.height = 16;
 
 				this.updateIcon();
 
-				this.name = add( new HElement("div", {class: "name"}) );
+				this.name = add( new HElement("div", {class: "name"}, this.resource.name) );
 				this.name.html.tabIndex = 0;
 				this.name.html.addEventListener("click", () => this.properties());
 				this.name.html.addEventListener("keypress", e => {
@@ -47,7 +45,6 @@ export default class HResourceListItem extends HElement {
 						this.properties();
 					}
 				});
-				this.name.html.textContent = this.resource.name;
 
 				this.menuButton = add( new HButton("▼", () => {
 					this.editor.menuManager.openMenu([

@@ -6,6 +6,37 @@ import GameInformationIcon from "../img/game-information-icon.png";
 import GameSettingsIcon from "../img/global-game-settings-icon.png";
 // import ExtensionPackagesIcon from './img/extension-packages-icon.png';
 
+class HTreeItem extends HElement {
+	constructor(icon, name, onOpen, menuManager, menuItems) {
+		parent( super("li", {class: "h-tree-item"}) );
+			parent( add( new HElement("div", {class: "item"}) ) );
+				add( new HElement("div", {class: "expander"}, "–") );
+				add( new HImage(icon, "icon") );
+
+				this.nameDiv = add( new HElement("div", {class: "name"}, name) );
+				this.nameDiv.html.tabIndex = 0;
+
+				if (onOpen) {
+					this.nameDiv.setEvent("click", onOpen);
+					this.nameDiv.setEvent("keypress", (e) => {
+						if (e.code == "Space" || e.code == "Enter") {
+							onOpen();
+						}
+					});
+				}
+
+				if (menuItems) {
+					this.menuButton = add( new HButton("▼", () => {
+						menuManager.openMenu(menuItems, {fromElement: this.menuButton});
+					}) );
+				}
+				endparent();
+
+			this.childrenDiv = add( new HElement("ul", {class: "children"}) );
+			endparent();
+	}
+}
+
 export default class HAreaResources extends HElement {
 	constructor(editor) {
 		super("div", {class: "resources-area"});
@@ -20,53 +51,19 @@ export default class HAreaResources extends HElement {
 				Project.resourceTypes.forEach(type => {
 					this.resourceItemsByType.set(type.name, []);
 
-					parent( add( new HElement("li") ) );
-
-						parent( add( new HElement("div", {class: "item"}) ) );
-							add( new HElement("div", {class: "expander"}, "–") );
-							add( new HImage(FolderIcon, "icon") );
-							add( new HElement("div", {class: "name"}, type.getScreenGroupName()) );
-
-							const menuButton = add( new HButton("▼", () => {
-								this.editor.menuManager.openMenu([
-									{text: "Create " + type.getScreenName(), onClick: () => this.editor.project.createResource(type)},
-								], {fromElement: menuButton});
-							}) );
-
-							endparent();
-
-						this.resourceTypes[type.name] = add( new HElement("ul", {class: "resource"}) );
-						endparent();
+					this.resourceTypes[type.name] = add( new HTreeItem(FolderIcon, type.getScreenGroupName(), null, this.editor.menuManager, [
+						{text: "Create " + type.getScreenName(), onClick: () => this.editor.project.createResource(type)},
+					]) );
 				});
 
-				parent( add( new HElement("li") ) );
+				add( new HTreeItem(GameInformationIcon, "Game Information",
+					() => this.editor.windowsArea.openGameInformation()) );
 
-					parent( add( new HElement("div", {class: "item"}) ) );
-						add( new HElement("div", {class: "expander"}, "–") );
-						add( new HImage(GameInformationIcon, "icon") );
-						const gameInformationName = add( new HElement("div", {class: "name"}, "Game Information") );
-						gameInformationName.html.addEventListener("click", () => this.editor.windowsArea.openGameInformation());
-						endparent();
+				add( new HTreeItem(GameSettingsIcon, "Global Game Settings",
+					() => this.editor.windowsArea.openGlobalGameSettings()) );
 
-					endparent();
-
-				parent( add( new HElement("li") ) );
-					parent( add( new HElement("div", {class: "item"}) ) );
-						add( new HElement("div", {class: "expander"}, "–") );
-						add( new HImage(GameSettingsIcon, "icon") );
-						const globalGameSettingsName = add( new HElement("div", {class: "name"}, "Global Game Settings") );
-						globalGameSettingsName.html.addEventListener("click", () => this.editor.windowsArea.openGlobalGameSettings());
-						endparent();
-
-					endparent();
-
-				// parent( add( new HElement('li') ) );
-				// 	parent( add( new HElement('div', {class: 'item'}) ) )
-				// 		// add( new HElement("div", {class: "expander"}, "–") );
-				// 		add( new HImage(ExtensionPackagesIcon, 'icon') );
-				// 		const extensionPackagesName = add( new HElement('div', {class: 'name'}, 'Extension packages') )
-				// 		extensionPackagesName.html.addEventListener("click", () => this.editor.windowsArea.openExtensionPackages());
-				// 		endparent();
+				// add( new HTreeItem(ExtensionPackagesIcon, "Extension packages",
+				// 	() => this.editor.windowsArea.openExtensionPackages()) );
 
 				endparent();
 
@@ -93,7 +90,7 @@ export default class HAreaResources extends HElement {
 
 	// Add resource to resources tree in the proper type.
 	add(resource) {
-		parent(this.resourceTypes[resource.constructor.name]);
+		parent(this.resourceTypes[resource.constructor.name].childrenDiv);
 			const r = add( new HResourceListItem(resource, this.editor) );
 			this.resourceItemsByType.get(resource.constructor.name).push(r);
 			endparent();
@@ -110,7 +107,7 @@ export default class HAreaResources extends HElement {
 			const elementBeforeIndex = (toIndex > fromIndex ? toIndex + 1 : toIndex);
 			moveBefore(list[elementBeforeIndex], list[fromIndex]);
 		} else {
-			parent(this.resourceTypes[resource.constructor.name]);
+			parent(this.resourceTypes[resource.constructor.name].childrenDiv);
 				moveAdd(list[fromIndex]);
 				endparent();
 		}

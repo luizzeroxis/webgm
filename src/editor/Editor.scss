@@ -11,12 +11,12 @@
 	--menu-text: #222;
 	--resources-area-background: #fff;
 	--text: #000;
-	--titlebar-background: #aaa;
+	--titlebar-background: #fff;
 	--warning-background: #fb0;
-	--window-border: #aaa;
-	--window-client-background: #fff;
+	--window-border: #000;
+	--window-client-background: #eee;
 	--window-client-horizontal-border: #ccc;
-	--windows-area-background: #eee;
+	--windows-area-background: #ddd;
 }
 
 :root.dark {
@@ -34,7 +34,7 @@
 	--text: #fff;
 	--titlebar-background: #555;
 	--warning-background: #740;
-	--window-border: #555;
+	--window-border: #aaa;
 	--window-client-background: #000;
 	--window-client-horizontal-border: #333;
 	--windows-area-background: #000;
@@ -105,7 +105,7 @@ body, button, input, select {
 	flex: 1;
 	min-height: 0;
 
-	> .warning {
+	div > .warning {
 		background-color: var(--warning-background);
 		padding: 2px;
 		text-align: center;
@@ -205,13 +205,14 @@ body, button, input, select {
 }
 
 .window {
-	border: 2px solid var(--window-border);
+	border: 1px solid var(--window-border);
 	position: absolute;
 
 	> .titlebar {
 		align-items: center;
 		background-color: var(--titlebar-background);
 		display: flex;
+		padding: 2px;
 		user-select: none;
 
 		> .title {

@@ -4579,7 +4579,7 @@ export default class BuiltInFunctions {
 		func: async function([x, y, str, def]) {
 			const items = str.split("|").map(text => ( { text: text } ));
 
-			const result = await this.game.menuManager.openMenu(items, {x: x, y: y});
+			const result = await this.game.menuManager.openMenu(items, {x: x, y: y}).promise;
 
 			if (result == null) return def;
 			return result;

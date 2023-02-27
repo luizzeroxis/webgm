@@ -1,39 +1,11 @@
-import {HElement, add, parent, endparent} from "../../common/H.js";
+import {HElement, add} from "../../common/H.js";
 import {Project} from "../../common/Project.js";
+import HMenuBar from "../HMenuBar.js";
 import HWindowPreferences from "../windows/HWindowPreferences.js";
-
-class HMenuBarButton extends HElement {
-	constructor(editor, text, items) {
-		super("div", {class: "h-menu-bar-button"}, text);
-
-		this.editor = editor;
-		this.items = items;
-
-		this.html.tabIndex = 0;
-
-		this.setEvent("click", () => {
-			this.open();
-		});
-
-		this.setEvent("keydown", (e) => {
-			if (e.code == "Enter") {
-				this.open();
-			}
-		});
-	}
-
-	open() {
-		this.editor.menuManager.openMenu(this.items, {fromElement: this});
-	}
-
-	updateItems(items) {
-		this.items = items;
-	}
-}
 
 export default class HAreaMenuBar extends HElement {
 	constructor(editor) {
-		super("div", {class: "h-menu-bar"});
+		super("div", {class: "menu-bar-area"});
 
 		this.editor = editor;
 
@@ -73,13 +45,10 @@ export default class HAreaMenuBar extends HElement {
 			]},
 		];
 
-		parent(this);
+		this.menuBar = add( new HMenuBar(null, menus) );
+	}
 
-			this.menuButtons = [];
-			for (const menu of menus) {
-				this.menuButtons.push( add( new HMenuBarButton(editor, menu.text, menu.items) ) );
-			}
-
-			endparent();
+	onAdd() {
+		this.menuBar.menuManager = this.editor.menuManager;
 	}
 }

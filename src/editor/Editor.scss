@@ -71,7 +71,7 @@
 
 .h-menu-bar {
 	> .h-menu-bar-button {
-		&:hover, &:focus {
+		&:hover, &:focus, &.selected {
 			background-color: var(--menu-bar-button-selected);
 		}
 	}

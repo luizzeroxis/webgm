@@ -3,12 +3,14 @@
 	--area-border: #444;
 	--background: #ddd;
 	--menu-background: #fff;
+	--menu-bar-background: #fff;
 	--menu-bar-button-selected: #eee;
 	--menu-border: #ddd;
 	--menu-item-selected-background: #eee;
 	--menu-text-disabled: #666;
 	--menu-text: #222;
 	--resources-area-background: #fff;
+	--text: #000;
 	--titlebar-background: #aaa;
 	--warning-background: #fb0;
 	--window-border: #aaa;
@@ -22,12 +24,14 @@
 	--area-border: #bbb;
 	--background: #111;
 	--menu-background: #222;
+	--menu-bar-background: #111;
 	--menu-bar-button-selected: #444;
 	--menu-border: #444;
 	--menu-item-selected-background: #444;
 	--menu-text-disabled: #888;
 	--menu-text: #eee;
 	--resources-area-background: #000;
+	--text: #fff;
 	--titlebar-background: #555;
 	--warning-background: #740;
 	--window-border: #555;
@@ -70,6 +74,8 @@
 }
 
 .h-menu-bar {
+	background-color: var(--menu-bar-background);
+
 	> .h-menu-bar-button {
 		&:hover, &:focus, &.selected {
 			background-color: var(--menu-bar-button-selected);
@@ -92,17 +98,18 @@ body, button, input, select {
 	font-size: 9pt;
 }
 
-.warning {
-	background-color: var(--warning-background);
-	padding: 2px;
-	text-align: center;
-}
-
 .editor {
+	color: var(--text);
 	display: flex;
 	flex-direction: column;
 	flex: 1;
 	min-height: 0;
+
+	> .warning {
+		background-color: var(--warning-background);
+		padding: 2px;
+		text-align: center;
+	}
 
 	> .horizontal {
 		background-color: var(--background);

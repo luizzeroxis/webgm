@@ -31,6 +31,8 @@ export default class HAreaWindows extends HElement {
 
 		this.editor = editor;
 		this.windows = [];
+
+		this.cascadeDiff = 24;
 	}
 
 	onAdd() {
@@ -140,5 +142,16 @@ export default class HAreaWindows extends HElement {
 		this.windows.forEach((w, i) => {
 			w.html.style.zIndex = this.windows.length - i;
 		});
+	}
+
+	cascade() {
+		let x = 0;
+		let y = 0;
+
+		for (const w of [...this.windows].reverse()) {
+			w.setPosition(x, y);
+			x += this.cascadeDiff;
+			y += this.cascadeDiff;
+		}
 	}
 }

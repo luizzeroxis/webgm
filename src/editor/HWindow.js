@@ -133,8 +133,8 @@ export default class HWindow extends HElement {
 			const positionTaken = this.editor.windowsArea.windows.some(w => (w.x == x && w.y == y)); // eslint-disable-line no-loop-func
 
 			if (positionTaken) {
-				x += 24;
-				y += 24;
+				x += this.editor.windowsArea.cascadeDiff;
+				y += this.editor.windowsArea.cascadeDiff;
 			} else {
 				break;
 			}

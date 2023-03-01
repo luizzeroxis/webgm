@@ -244,6 +244,20 @@ export default class Editor {
 		}
 	}
 
+	findResource() {
+		const name = prompt("Resource name:");
+		if (name) {
+			for (const type of Project.resourceTypes) {
+				const resource = this.project.resources[type.getClassName()].find(resource => resource.name == name);
+				if (resource) {
+					this.windowsArea.openResource(resource);
+					return;
+				}
+			}
+			alert("Cannot find resource");
+		}
+	}
+
 	async runGame() {
 		await this.stopGame();
 

@@ -19,7 +19,7 @@ export default class HAreaMenuBar extends HElement {
 				{text: "Exit", onClick: () => window.close()},
 			]},
 			{text: "Edit", items: [
-				{text: "Find resource", onClick: () => {}, enabled: false},
+				{text: "Find resource", onClick: () => this.editor.findResource()},
 			]},
 			{text: "Resources", items: [
 

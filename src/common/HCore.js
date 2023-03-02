@@ -1,5 +1,3 @@
-import "./H.scss";
-
 export class HElement {
 	constructor(...args) {
 		if (args.length == 1) {

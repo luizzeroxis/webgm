@@ -1,5 +1,7 @@
 import {HElement, parent, endparent, add, classToAttr, classToArray, uniqueID, removeChildren} from "./HCore.js";
 
+import "./HComponents.scss";
+
 export class HButton extends HElement {
 	constructor(text, onClick, _class) {
 		super("button", {class: classToAttr(_class)}, text);

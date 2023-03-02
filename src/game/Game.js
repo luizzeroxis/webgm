@@ -187,6 +187,10 @@ export default class Game {
 		this.ctx = this.canvas.getContext("2d", {alpha: false});
 		this.setCanvasProperties();
 
+		if (this.project.globalGameSettings.startInFullScreen) {
+			this.setFullscreen(true);
+		}
+
 		if (!this.project.globalGameSettings.displayCursor) {
 			this.canvas.classList.add("no-cursor");
 		}

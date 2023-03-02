@@ -18,6 +18,7 @@ export default class HWindowGlobalGameSettings extends HWindow {
 
 				parent( this.tabControl.addTab("Graphics") );
 
+					this.inputFullScreen = add( new HCheckBoxInput("Start in full-screen mode", globalGameSettings.startInFullScreen) );
 					this.inputColor = add( new HColorInput("Color outside the room region:", globalGameSettings.colorOutsideRoom) );
 					this.inputDisplayCursor = add( new HCheckBoxInput("Display the cursor", globalGameSettings.displayCursor) );
 
@@ -51,6 +52,7 @@ export default class HWindowGlobalGameSettings extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
+					globalGameSettings.startInFullScreen = this.inputFullScreen.getChecked();
 					globalGameSettings.colorOutsideRoom = this.inputColor.getValue();
 					globalGameSettings.displayCursor = this.inputDisplayCursor.getChecked();
 					globalGameSettings.keyEscEndsGame = this.inputKeyEscEndsGame.getChecked();

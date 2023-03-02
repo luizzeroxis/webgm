@@ -2,7 +2,7 @@
 
 import Dispatcher from "../common/Dispatcher.js";
 import {WebGMException, UnserializeException} from "../common/Exceptions.js";
-import {parent, endparent, add, HElement, setOnFileDrop, setOnFileDropAsFileHandle} from "../common/H.js";
+import {HElement, parent, endparent, add, setOnFileDrop, setOnFileDropAsFileHandle} from "../common/H.js";
 import {
 	Project,
 	ProjectAction,
@@ -20,7 +20,6 @@ import HMenuManager from "./HMenuManager.js";
 import HWIPWarning from "./HWIPWarning.js";
 import PreferencesManager from "./PreferencesManager.js";
 import ThemeManager from "./ThemeManager.js";
-import HWindowGame from "./windows/HWindowGame.js";
 
 import "./Editor.scss";
 
@@ -266,7 +265,7 @@ export default class Editor {
 			return;
 		}
 
-		this.gameWindow = this.windowsArea.open(HWindowGame, "game");
+		this.gameWindow = this.windowsArea.openGame();
 
 		this.toolBarArea.runButton.setDisabled(true);
 		this.toolBarArea.stopButton.setDisabled(false);

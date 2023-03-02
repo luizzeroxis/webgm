@@ -1,7 +1,6 @@
 import {HElement, add} from "../../common/H.js";
 import {Project} from "../../common/Project.js";
 import HMenuBar from "../HMenuBar.js";
-import HWindowPreferences from "../windows/HWindowPreferences.js";
 
 export default class HAreaMenuBar extends HElement {
 	constructor(editor) {
@@ -15,7 +14,7 @@ export default class HAreaMenuBar extends HElement {
 				{text: "Open...", onClick: () => this.editor.openProject()},
 				{text: "Save", onClick: () => this.editor.saveProject()},
 				{text: "Save as...", onClick: () => this.editor.saveProjectAs(), enabled: ("showOpenFilePicker" in window)},
-				{text: "Preferences...", onClick: () => this.editor.windowsArea.open(HWindowPreferences, "preferences")},
+				{text: "Preferences...", onClick: () => this.editor.windowsArea.openPreferences()},
 				{text: "Exit", onClick: () => window.close()},
 			]},
 			{text: "Edit", items: [

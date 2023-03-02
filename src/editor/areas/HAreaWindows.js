@@ -69,19 +69,30 @@ export default class HAreaWindows extends HElement {
 	// Open or focus on a resource window.
 	openResource(resource) {
 		const windowClass = HAreaWindows.resourceTypesWindowClasses[resource.constructor.getClassName()];
-		this.open(windowClass, resource, resource);
+		return this.open(windowClass, resource, resource);
 	}
 
 	// Open or focus on the game information window.
 	openGameInformation() {
-		this.open(HWindowGameInformation, "game-information", this.editor.project.gameInformation);
+		return this.open(HWindowGameInformation, "game-information", this.editor.project.gameInformation);
 	}
 
 	// Open or focus on the global game settings window.
 	openGlobalGameSettings() {
-		this.open(HWindowGlobalGameSettings, "global-game-settings", this.editor.project.globalGameSettings);
+		return this.open(HWindowGlobalGameSettings, "global-game-settings", this.editor.project.globalGameSettings);
 	}
 
+	// Open or focus on the preferences window.
+	openPreferences() {
+		return this.open(HWindowPreferences, "preferences");
+	}
+
+	// Open or focus on the game window.
+	openGame() {
+		return this.open(HWindowGame, "game");
+	}
+
+	// Get window by id.
 	getId(id) {
 		return this.windows.find(x => x.id == id);
 	}
@@ -144,6 +155,7 @@ export default class HAreaWindows extends HElement {
 		});
 	}
 
+	// Moves all windows into a cascanding pattern.
 	cascade() {
 		let x = 0;
 		let y = 0;

@@ -28,6 +28,9 @@ module.exports = mergeWithRules({
 		static: false,
 		hot: false,
 		liveReload: false,
+		client: {
+			overlay: false,
+		},
 	},
 	devtool: "inline-source-map",
 });

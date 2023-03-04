@@ -1,5 +1,3 @@
-import {WebGMException} from "./Exceptions.js";
-
 export default class ImageWrapper {
 	constructor(res, load=true) {
 		this.image = new Image();
@@ -33,7 +31,7 @@ export default class ImageWrapper {
 					resolve();
 				};
 				this.image.onerror = () => {
-					reject(new WebGMException("Could not load image"));
+					reject(new Error("Could not load image"));
 				};
 			});
 

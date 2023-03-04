@@ -1,5 +1,3 @@
-import {WebGMException} from "./Exceptions.js";
-
 export default class AudioWrapper {
 	constructor(res, load=true) {
 		this.audio = new Audio();
@@ -29,7 +27,7 @@ export default class AudioWrapper {
 					resolve();
 				};
 				this.audio.onerror = () => {
-					reject(new WebGMException("Could not load audio"));
+					reject(new Error("Could not load audio"));
 				};
 			});
 

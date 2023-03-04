@@ -223,52 +223,9 @@ export function classToArray(_class) {
 	}
 }
 
-//// ID generator for unique elements
-
+// ID generator for unique elements
 let lastUniqueID = 0;
 
 export function uniqueID() {
 	return lastUniqueID++;
-}
-
-//// Helpers
-
-export function setOnFileDropAsFileHandle(element, onSelectFile, multiple=false) {
-	return setOnFileDrop(element, onSelectFile, multiple, true);
-}
-
-// Make a element be able to receive drops of files from anywhere.
-export function setOnFileDrop(element, onSelectFile, multiple=false, asFileHandle=false) {
-	element.addEventListener("dragover", e => {
-		e.stopPropagation();
-		e.preventDefault();
-	});
-
-	element.addEventListener("drop", async e => {
-		e.preventDefault();
-		e.stopPropagation();
-
-		const files = Array.from(e.dataTransfer.items).filter(item => item.kind == "file");
-
-		let fileOrFiles;
-
-		if (multiple) {
-			if (asFileHandle) {
-				fileOrFiles = await Promise.all(files.map(async file => await file.getAsFileSystemHandle()))
-				.filter(handle => (handle.kind == "file"));
-				if (fileOrFiles == null) return;
-			} else {
-				fileOrFiles = files.map(file => file.getAsFile());
-			}
-		} else {
-			if (asFileHandle) {
-				fileOrFiles = await files[0]?.getAsFileSystemHandle();
-				if (fileOrFiles?.kind != "file") return;
-			} else {
-				fileOrFiles = files[0].getAsFile();
-			}
-		}
-
-		onSelectFile(fileOrFiles);
-	});
 }

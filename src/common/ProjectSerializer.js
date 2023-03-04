@@ -1,10 +1,12 @@
 import JSZip from "jszip";
 
 import AudioWrapper from "./AudioWrapper.js";
-import {UnserializeException} from "./Exceptions.js";
+import {WebGMException} from "./Exceptions.js";
 import ImageWrapper from "./ImageWrapper.js";
-import {Project} from "./Project.js";
+import Project from "./Project.js";
 import Serializer from "./Serializer.js";
+
+export class UnserializeException extends WebGMException {}
 
 export default class ProjectSerializer {
 	static serializeZIP(project) {

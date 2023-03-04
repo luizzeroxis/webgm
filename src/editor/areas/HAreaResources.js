@@ -1,5 +1,5 @@
 import {parent, endparent, add, moveAdd, moveBefore, remove, HElement, HButton, HImage} from "../../common/H.js";
-import {Project} from "../../common/Project.js";
+import Project from "../../common/Project.js";
 import HResourceListItem from "../HResourceListItem.js";
 import FolderIcon from "../img/folder-icon.png";
 import GameInformationIcon from "../img/game-information-icon.png";

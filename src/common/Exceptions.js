@@ -46,6 +46,3 @@ export class StepStopException extends WebGMException {
 		this.fn = fn;
 	}
 }
-
-// Errors used within the editor
-export class UnserializeException extends WebGMException {}

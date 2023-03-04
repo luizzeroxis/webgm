@@ -1,6 +1,6 @@
-import {parent, endparent, add, HElement, HButton, HTextInput, HImage, setOnFileDrop} from "../../common/H.js";
+import {parent, endparent, add, HElement, HButton, HTextInput, HImage} from "../../common/H.js";
 import ImageWrapper from "../../common/ImageWrapper.js";
-import {openFile} from "../../common/tools.js";
+import {openFile, setOnFileDrop} from "../../common/tools.js";
 import HWindow from "../HWindow.js";
 
 export default class HWindowBackground extends HWindow {

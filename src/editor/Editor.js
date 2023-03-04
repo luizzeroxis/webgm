@@ -1,14 +1,12 @@
 //The editor class
 
 import Dispatcher from "../common/Dispatcher.js";
-import {WebGMException, UnserializeException} from "../common/Exceptions.js";
-import {HElement, parent, endparent, add, setOnFileDrop, setOnFileDropAsFileHandle} from "../common/H.js";
-import {
-	Project,
-	ProjectAction,
-} from "../common/Project.js";
-import ProjectSerializer from "../common/ProjectSerializer.js";
-import {openFile, saveFile, readFileAsText} from "../common/tools.js";
+import {WebGMException} from "../common/Exceptions.js";
+import {HElement, parent, endparent, add} from "../common/H.js";
+import Project from "../common/Project.js";
+import {ProjectAction} from "../common/ProjectProperties.js";
+import ProjectSerializer, {UnserializeException} from "../common/ProjectSerializer.js";
+import {openFile, saveFile, readFileAsText, setOnFileDrop, setOnFileDropAsFileHandle} from "../common/tools.js";
 import Game from "../game/Game.js";
 
 import HAreaMenuBar from "./areas/HAreaMenuBar.js";

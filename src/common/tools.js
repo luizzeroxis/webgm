@@ -71,28 +71,6 @@ export function readFileAsText(file) {
 	});
 }
 
-// Base 64
-export function base64ToBlob(base64Data, contentType) {
-	contentType = contentType || "";
-	const sliceSize = 1024;
-	const byteCharacters = atob(base64Data);
-	const bytesLength = byteCharacters.length;
-	const slicesCount = Math.ceil(bytesLength / sliceSize);
-	const byteArrays = new Array(slicesCount);
-
-	for (let sliceIndex = 0; sliceIndex < slicesCount; ++sliceIndex) {
-		const begin = sliceIndex * sliceSize;
-		const end = Math.min(begin + sliceSize, bytesLength);
-
-		const bytes = new Array(end - begin);
-		for (let offset = begin, i = 0; offset < end; ++i, ++offset) {
-			bytes[i] = byteCharacters[offset].charCodeAt(0);
-		}
-		byteArrays[sliceIndex] = new Uint8Array(bytes);
-	}
-	return new Blob(byteArrays, {type: contentType});
-}
-
 // decimal -> rgb
 export function decimalToRGB(color) {
 	return {
@@ -255,4 +233,47 @@ export function toInteger(value) {
 export function parseNewLineHash(string) {
 	// Replace # without backslash before and \r with \n, then replace \# with #.
 	return string.replaceAll(/(?<!\\)#|\r/g, "\n").replaceAll("\\#", "#");
+}
+
+// Elements
+
+// Make a element be able to receive drops of files from anywhere, but returns a file handle
+export function setOnFileDropAsFileHandle(element, onSelectFile, multiple=false) {
+	return setOnFileDrop(element, onSelectFile, multiple, true);
+}
+
+// Make a element be able to receive drops of files from anywhere.
+export function setOnFileDrop(element, onSelectFile, multiple=false, asFileHandle=false) {
+	element.addEventListener("dragover", e => {
+		e.stopPropagation();
+		e.preventDefault();
+	});
+
+	element.addEventListener("drop", async e => {
+		e.preventDefault();
+		e.stopPropagation();
+
+		const files = Array.from(e.dataTransfer.items).filter(item => item.kind == "file");
+
+		let fileOrFiles;
+
+		if (multiple) {
+			if (asFileHandle) {
+				fileOrFiles = await Promise.all(files.map(async file => await file.getAsFileSystemHandle()))
+				.filter(handle => (handle.kind == "file"));
+				if (fileOrFiles == null) return;
+			} else {
+				fileOrFiles = files.map(file => file.getAsFile());
+			}
+		} else {
+			if (asFileHandle) {
+				fileOrFiles = await files[0]?.getAsFileSystemHandle();
+				if (fileOrFiles?.kind != "file") return;
+			} else {
+				fileOrFiles = files[0].getAsFile();
+			}
+		}
+
+		onSelectFile(fileOrFiles);
+	});
 }

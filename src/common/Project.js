@@ -3,9 +3,7 @@ import {ProjectGameInformation, ProjectGlobalGameSettings, ProjectExtensionPacka
 import {ProjectResources, ProjectCounters} from "./ProjectResourcesAndCounters.js";
 import Serializer from "./Serializer.js";
 
-export * from "./ProjectProperties.js";
-
-export class Project {
+export default class Project {
 	static resourceTypes = ProjectResources.types;
 
 	static {
@@ -101,5 +99,3 @@ export class Project {
 		this.dispatcher.speak("changeObjectSprite", object);
 	}
 }
-
-export default Project;

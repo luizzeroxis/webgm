@@ -1,5 +1,5 @@
 import {parent, endparent, add, HElement, HButton, HImage} from "../../common/H.js";
-import {Project} from "../../common/Project.js";
+import Project from "../../common/Project.js";
 import BackgroundIcon from "../img/background-icon.png";
 import FontIcon from "../img/font-icon.png";
 import ObjectIcon from "../img/object-icon.png";

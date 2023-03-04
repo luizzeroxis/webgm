@@ -1,5 +1,5 @@
 import {parent, endparent, add, HElement, HButton, HImage} from "../common/H.js";
-import {ProjectSprite, ProjectSound, ProjectBackground, ProjectObject} from "../common/Project.js";
+import {ProjectSprite, ProjectSound, ProjectBackground, ProjectObject} from "../common/ProjectProperties.js";
 
 import FontResourceIcon from "./img/font-resource-icon.png";
 import PathResourceIcon from "./img/path-resource-icon.png";

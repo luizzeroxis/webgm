@@ -1,6 +1,6 @@
 import {parent, endparent, add, HElement, HButton, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from "../../common/H.js";
 import ImageWrapper from "../../common/ImageWrapper.js";
-import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground} from "../../common/Project.js";
+import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground} from "../../common/ProjectProperties.js";
 import HResourceSelect from "../HResourceSelect.js";
 import HTabControl from "../HTabControl.js";
 import HWindow from "../HWindow.js";

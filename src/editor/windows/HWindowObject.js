@@ -3,7 +3,7 @@ import {parent, endparent, add, removeChildren, HElement, HButton, HTextInput, H
 import {
 	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline,
 	ProjectEvent, ProjectAction, ProjectActionArg,
-} from "../../common/Project.js";
+} from "../../common/ProjectProperties.js";
 import HResourceSelect from "../HResourceSelect.js";
 import HTabControl from "../HTabControl.js";
 import HWindow from "../HWindow.js";

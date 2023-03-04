@@ -1,7 +1,7 @@
 import Dispatcher from "../common/Dispatcher.js";
 import Events from "../common/Events.js";
 import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from "../common/Exceptions.js";
-import {Project} from "../common/Project.js";
+import Project from "../common/Project.js";
 import VariableHolder from "../common/VariableHolder.js";
 
 import BuiltInConstants from "./BuiltInConstants.js";

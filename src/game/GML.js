@@ -1,4 +1,5 @@
-import ohm, {extras as ohmExtras} from "ohm-js";
+import * as ohm from "ohm-js";
+import * as ohmExtras from "ohm-js/extras";
 
 import {ExitException, ReturnException, BreakException, ContinueException, VariableException} from "../common/Exceptions.js";
 import {toInteger, forceReal, asString, forceBool} from "../common/tools.js";

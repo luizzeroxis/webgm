@@ -11,11 +11,11 @@
 	},
 	"dependencies": {
 		"jszip": "^3.10.1",
-		"ohm-js": "^16.6.0"
+		"ohm-js": "^17.0.3"
 	},
 	"devDependencies": {
 		"css-loader": "^6.7.3",
-		"eslint": "^8.34.0",
+		"eslint": "^8.35.0",
 		"eslint-plugin-import": "^2.27.5",
 		"eslint-webpack-plugin": "^4.0.0",
 		"git-revision-webpack-plugin": "^5.0.0",

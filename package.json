@@ -7,7 +7,11 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"lint": "eslint --ignore-path .gitignore .",
 		"start": "webpack serve --open --config webpack.dev.js",
-		"build": "webpack --config webpack.prod.js"
+		"build": "webpack --config webpack.prod.js",
+		"build-dev": "webpack --config webpack.dev.js",
+		"clean": "run-script-os",
+		"clean:default": "rm -r dist-dev && rm -r dist",
+		"clean:windows": "rmdir dist-dev /s /q && rmdir dist /s /q"
 	},
 	"dependencies": {
 		"jszip": "^3.10.1",
@@ -21,6 +25,7 @@
 		"git-revision-webpack-plugin": "^5.0.0",
 		"html-webpack-plugin": "^5.5.0",
 		"mini-css-extract-plugin": "^2.7.2",
+		"run-script-os": "^1.1.6",
 		"sass": "^1.58.3",
 		"sass-loader": "^13.2.0",
 		"style-loader": "^3.3.1",

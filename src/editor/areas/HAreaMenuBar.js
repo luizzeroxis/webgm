@@ -14,6 +14,7 @@ export default class HAreaMenuBar extends HElement {
 				{text: "Open...", onClick: () => this.editor.openProject()},
 				{text: "Save", onClick: () => this.editor.saveProject()},
 				{text: "Save as...", onClick: () => this.editor.saveProjectAs(), enabled: ("showOpenFilePicker" in window)},
+				{text: "Create executable...", onClick: () => this.editor.createStandAlone()},
 				{text: "Preferences...", onClick: () => this.editor.windowsArea.openPreferences()},
 				{text: "Exit", onClick: () => window.close()},
 			]},

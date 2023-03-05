@@ -17,6 +17,7 @@ import BuiltInLibraries from "./BuiltInLibraries.js";
 import HMenuManager from "./HMenuManager.js";
 import HWIPWarning from "./HWIPWarning.js";
 import PreferencesManager from "./PreferencesManager.js";
+import StandAloneBuilder from "./StandAloneBuilder.js";
 import ThemeManager from "./ThemeManager.js";
 
 import "./Editor.scss";
@@ -239,6 +240,15 @@ export default class Editor {
 		} else {
 			throw new Error("Not supposed to call saveProjectToFileHandle when the File System Access API is not supported!");
 		}
+	}
+
+	createStandAlone() {
+		if (this.project.resources.ProjectRoom.length <= 0) {
+			alert("A game must have at least one room to run.");
+			return;
+		}
+
+		StandAloneBuilder.build(this.project, this.projectName + "-build");
 	}
 
 	findResource() {

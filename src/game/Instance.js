@@ -1,7 +1,7 @@
 import {mod} from "../common/tools.js";
-import VariableHolder from "../common/VariableHolder.js";
 
 import BuiltInLocals from "./BuiltInLocals.js";
+import VariableHolder from "./VariableHolder.js";
 
 export default class Instance {
 	constructor(id, x, y, objectIndex, game) {

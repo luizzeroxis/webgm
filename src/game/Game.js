@@ -2,7 +2,6 @@ import Dispatcher from "../common/Dispatcher.js";
 import Events from "../common/Events.js";
 import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from "../common/Exceptions.js";
 import Project from "../common/Project.js";
-import VariableHolder from "../common/VariableHolder.js";
 
 import BuiltInConstants from "./BuiltInConstants.js";
 import BuiltInGlobals from "./BuiltInGlobals.js";
@@ -12,6 +11,7 @@ import GameInput from "./GameInput.js";
 import GML from "./GML.js";
 import Instance from "./Instance.js";
 import ProjectLoader from "./ProjectLoader.js";
+import VariableHolder from "./VariableHolder.js";
 
 export default class Game {
 	constructor(options) {

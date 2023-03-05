@@ -36,9 +36,6 @@ export class ReturnException extends WebGMException {
 export class BreakException extends WebGMException {}
 export class ContinueException extends WebGMException {}
 
-// Used when there's an error in getting or setting variables
-export class VariableException extends WebGMException {}
-
 // Used when calling functions that require stopping the current step
 export class StepStopException extends WebGMException {
 	constructor(fn, ...args) {

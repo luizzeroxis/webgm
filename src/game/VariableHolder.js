@@ -1,5 +1,7 @@
-import {VariableException} from "./Exceptions.js";
-import {forceString, forceReal, forceInteger, forceBool, forceUnit, forceChar} from "./tools.js";
+import {WebGMException} from "../common/Exceptions.js";
+import {forceString, forceReal, forceInteger, forceBool, forceUnit, forceChar} from "../common/tools.js";
+
+export class VariableException extends WebGMException {}
 
 export default class VariableHolder {
 	constructor(caller, builtInClass) {

@@ -21,7 +21,8 @@ module.exports = mergeWithRules({
 			{
 				test: /\.[s]css$/,
 				use: [
-					MiniCssExtractPlugin.loader,
+					// MiniCssExtractPlugin.loader,
+					"style-loader", // temporarily using this for standalone reasons
 				],
 			},
 		],

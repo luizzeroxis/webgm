@@ -11,7 +11,10 @@ const webpack = require("webpack");
 const gitRevisionPlugin = new GitRevisionPlugin();
 
 module.exports = {
-	entry: "./src/index.js",
+	entry: {
+		"main": "./src/index.js",
+		"main-game": "./src/index-game.js",
+	},
 	output: {
 		path: path.resolve(__dirname, "dist"),
 		filename: "[name].bundle.js",
@@ -43,13 +46,13 @@ module.exports = {
 	optimization: {
 		runtimeChunk: "single",
 		splitChunks: {
+			chunks: "all", // insurance
 			cacheGroups: {
-				vendor: {
+				vendors: {
 					test: /[\\/]node_modules[\\/]/,
 					name: "vendors",
-					chunks: "all",
 				},
-				image: {
+				images: {
 					test(module) {
 						return (
 							module.resource
@@ -57,7 +60,14 @@ module.exports = {
 						);
 					},
 					name: "images",
-					chunks: "all",
+				},
+				game: {
+					test: /[\\/]src[\\/]game[\\/]/,
+					name: "game",
+				},
+				common: { // technically, this could be in 'game', but it's probably good to be separate
+					test: /[\\/]src[\\/]common[\\/]/,
+					name: "common",
 				},
 			},
 		},
@@ -69,12 +79,18 @@ module.exports = {
 				"LASTCOMMITDATETIME": JSON.stringify(gitRevisionPlugin.lastcommitdatetime()),
 			},
 		}),
-		new HtmlWebpackPlugin({
-			title: "webgm",
-		}),
-		new MiniCssExtractPlugin(),
 		new ESLintPlugin({
 			files: path.resolve(__dirname, "."),
 		}),
+		new HtmlWebpackPlugin({
+			title: "webgm",
+			excludeChunks: ["main-game"],
+		}),
+		new HtmlWebpackPlugin({
+			filename: "game.html",
+			title: "webgm game",
+			chunks: ["main-game"],
+		}),
+		new MiniCssExtractPlugin(),
 	],
 };

@@ -101,8 +101,8 @@ export default class GameInput {
 			const rect = this.inputElement.getBoundingClientRect();
 			this.mouseDisplayX = e.clientX + document.documentElement.scrollLeft;
 			this.mouseDisplayY = e.clientY + document.documentElement.scrollTop;
-			this.mouseX = Math.floor(Math.max(0, Math.min(e.clientX - rect.left, this.game.room.width || 0)));
-			this.mouseY = Math.floor(Math.max(0, Math.min(e.clientY - rect.top, this.game.room.height || 0)));
+			this.mouseX = Math.floor(Math.max(0, Math.min(e.clientX - rect.left, this.game.room?.width ?? 0)));
+			this.mouseY = Math.floor(Math.max(0, Math.min(e.clientY - rect.top, this.game.room?.height ?? 0)));
 		};
 		this.inputElement.addEventListener("mousemove", this.mouseMoveHandler);
 

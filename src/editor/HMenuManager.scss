@@ -1,0 +1,25 @@
+.h-menu-manager {
+	position: absolute;
+	width: 100%;
+	top: 0;
+	left: 0;
+	z-index: 10000;
+
+	.h-menu {
+		position: absolute;
+		color: black;
+		background-color: white;
+		border: 1px solid black;
+
+		@media (prefers-color-scheme: dark) {
+			color: white;
+			background-color: black;
+			border: 1px solid white;
+		}
+
+		.h-menu-item {
+			display: flex;
+			align-items: center;
+		}
+	}
+}

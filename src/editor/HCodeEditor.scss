@@ -1,0 +1,11 @@
+.h-code-editor {
+	display: flex;
+
+	> .h-code {
+		resize: none;
+		width: 100%;
+		tab-size: 4;
+		min-height: 256px;
+		min-width: 768px;
+	}
+}

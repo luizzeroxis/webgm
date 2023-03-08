@@ -2,6 +2,8 @@ import {HElement, parent, endparent, add} from "../common/H.js";
 
 import HMenu from "./HMenu.js";
 
+import "./HMenuManager.scss";
+
 export default class HMenuManager extends HElement {
 	constructor() {
 		super("div", {class: "h-menu-manager"});

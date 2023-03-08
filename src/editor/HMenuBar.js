@@ -2,6 +2,8 @@ import {HElement, add, parent, endparent} from "../common/H.js";
 
 import HMenuBarButton from "./HMenuBarButton.js";
 
+import "./HMenuBar.scss";
+
 export default class HMenuBar extends HElement {
 	constructor(menuManager, menus) {
 		super("div", {class: "h-menu-bar"});

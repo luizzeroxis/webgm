@@ -1,0 +1,10 @@
+.h-menu-bar {
+	display: flex;
+
+	> .h-menu-bar-button {
+		line-height: 24px;
+		padding-left: 4px;
+		padding-right: 4px;
+		user-select: none;
+	}
+}

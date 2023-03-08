@@ -1,5 +1,7 @@
 import {parent, endparent, add, HElement} from "../common/H.js";
 
+import "./HCodeEditor.scss";
+
 export default class HCodeEditor extends HElement {
 	constructor(code) {
 		super("div", {class: "h-code-editor"});

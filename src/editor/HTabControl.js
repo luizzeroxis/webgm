@@ -1,5 +1,7 @@
 import {parent, endparent, add, remove, HElement, HRadioInput, uniqueID} from "../common/H.js";
 
+import "./HTabControl.scss";
+
 export default class HTabControl extends HElement {
 	constructor(_class) {
 		parent( super("div", {class: _class}) );

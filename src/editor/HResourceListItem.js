@@ -1,6 +1,6 @@
-import {parent, endparent, add, HElement, HButton, HImage} from "../common/H.js";
 import {ProjectSprite, ProjectSound, ProjectBackground, ProjectObject} from "../common/ProjectProperties.js";
 
+import HTreeItem from "./HTreeItem.js";
 import FontResourceIcon from "./img/font-resource-icon.png";
 import PathResourceIcon from "./img/path-resource-icon.png";
 import RoomResourceIcon from "./img/room-resource-icon.png";
@@ -8,7 +8,7 @@ import ScriptResourceIcon from "./img/script-resource-icon.png";
 import SoundResourceIcon from "./img/sound-resource-icon.png";
 import TimelineResourceIcon from "./img/timeline-resource-icon.png";
 
-export default class HResourceListItem extends HElement {
+export default class HResourceListItem extends HTreeItem {
 	static resourceIcons = {
 		"ProjectSprite": null,
 		"ProjectSound": SoundResourceIcon,
@@ -22,49 +22,24 @@ export default class HResourceListItem extends HElement {
 	};
 
 	constructor(resource, editor) {
-		super("li");
+		super(null, resource.name, () => this.properties(), editor.menuManager, [
+			{text: "Move up", onClick: () => this.moveUp()},
+			{text: "Move down", onClick: () => this.moveDown()},
+			{text: "Duplicate", onClick: () => this.duplicate()},
+			{text: "Delete", onClick: () => this.delete()},
+			{text: "Properties", onClick: () => this.properties()},
+		]);
 
 		this.id = resource;
 		this.resource = resource;
 		this.editor = editor;
-
-		parent(this);
-
-			parent( add( new HElement("div", {class: "item"}) ) );
-
-				add( new HElement("div", {class: "expander"}, "–") );
-				this.icon = add( new HImage(null, "icon") );
-
-				this.updateIcon();
-
-				this.name = add( new HElement("div", {class: "name"}, this.resource.name) );
-				this.name.html.tabIndex = 0;
-				this.name.html.addEventListener("click", () => this.properties());
-				this.name.html.addEventListener("keypress", e => {
-					if (e.code == "Space" || e.code == "Enter") {
-						this.properties();
-					}
-				});
-
-				this.menuButton = add( new HButton("▼", () => {
-					this.editor.menuManager.openMenu([
-						{text: "Move up", onClick: () => this.moveUp()},
-						{text: "Move down", onClick: () => this.moveDown()},
-						{text: "Duplicate", onClick: () => this.duplicate()},
-						{text: "Delete", onClick: () => this.delete()},
-						{text: "Properties", onClick: () => this.properties()},
-					], {fromElement: this.menuButton});
-				}) );
-
-				endparent();
-			endparent();
 	}
 
 	onAdd() {
 		this.listeners = this.editor.project.dispatcher.listen({
 			changeResourceName: i => {
 				if (i !== this.resource) return;
-				this.name.html.textContent = i.name;
+				this.nameDiv.html.textContent = i.name;
 			},
 		});
 

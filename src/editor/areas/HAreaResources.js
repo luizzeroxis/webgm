@@ -1,41 +1,11 @@
-import {parent, endparent, add, moveAdd, moveBefore, remove, HElement, HButton, HImage} from "../../common/H.js";
+import {parent, endparent, add, moveAdd, moveBefore, HElement} from "../../common/H.js";
 import Project from "../../common/Project.js";
 import HResourceListItem from "../HResourceListItem.js";
+import HTreeItem from "../HTreeItem.js";
 import FolderIcon from "../img/folder-icon.png";
 import GameInformationIcon from "../img/game-information-icon.png";
 import GameSettingsIcon from "../img/global-game-settings-icon.png";
 // import ExtensionPackagesIcon from './img/extension-packages-icon.png';
-
-class HTreeItem extends HElement {
-	constructor(icon, name, onOpen, menuManager, menuItems) {
-		parent( super("li", {class: "h-tree-item"}) );
-			parent( add( new HElement("div", {class: "item"}) ) );
-				add( new HElement("div", {class: "expander"}, "–") );
-				add( new HImage(icon, "icon") );
-
-				this.nameDiv = add( new HElement("div", {class: "name"}, name) );
-				this.nameDiv.html.tabIndex = 0;
-
-				if (onOpen) {
-					this.nameDiv.setEvent("click", onOpen);
-					this.nameDiv.setEvent("keypress", (e) => {
-						if (e.code == "Space" || e.code == "Enter") {
-							onOpen();
-						}
-					});
-				}
-
-				if (menuItems) {
-					this.menuButton = add( new HButton("▼", () => {
-						menuManager.openMenu(menuItems, {fromElement: this.menuButton});
-					}) );
-				}
-				endparent();
-
-			this.childrenDiv = add( new HElement("ul", {class: "children"}) );
-			endparent();
-	}
-}
 
 export default class HAreaResources extends HElement {
 	constructor(editor) {
@@ -90,10 +60,8 @@ export default class HAreaResources extends HElement {
 
 	// Add resource to resources tree in the proper type.
 	add(resource) {
-		parent(this.resourceTypes[resource.constructor.name].childrenDiv);
-			const r = add( new HResourceListItem(resource, this.editor) );
-			this.resourceItemsByType.get(resource.constructor.name).push(r);
-			endparent();
+		const r = this.resourceTypes[resource.constructor.name].add(new HResourceListItem(resource, this.editor));
+		this.resourceItemsByType.get(resource.constructor.name).push(r);
 	}
 
 	// Move resource in the resources tree to some index.
@@ -120,7 +88,7 @@ export default class HAreaResources extends HElement {
 		const list = this.resourceItemsByType.get(resource.constructor.name);
 		const index = list.findIndex(x => x.id == resource);
 		if (index >= 0) {
-			remove(list[index]);
+			this.resourceTypes[resource.constructor.name].delete(list[index]);
 			list.splice(index, 1);
 		}
 	}
@@ -128,7 +96,7 @@ export default class HAreaResources extends HElement {
 	refresh() {
 		for (const [typeName, list] of this.resourceItemsByType.entries()) {
 			for (const resource of list) {
-				remove(resource);
+				this.resourceTypes[typeName].delete(resource);
 			}
 			this.resourceItemsByType.set(typeName, []);
 		}

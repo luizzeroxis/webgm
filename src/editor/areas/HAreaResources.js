@@ -78,7 +78,7 @@ export default class HAreaResources extends HElement {
 
 	refresh() {
 		Project.resourceTypes.forEach(type => {
-			this.resourceTypesTreeItems[type.name].clear();
+			this.resourceTypesTreeItems[type.name].childTree.clear();
 
 			this.editor.project.resources[type.getClassName()].forEach(resource => {
 				this.add(resource);

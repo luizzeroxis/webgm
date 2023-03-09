@@ -1,18 +1,16 @@
-import {parent, endparent, add, remove, HElement, HButton, HImage} from "../common/H.js";
+import {parent, endparent, add, HElement, HButton, HImage} from "../common/H.js";
+
+import HTree from "./HTree.js";
 
 export default class HTreeItem extends HElement {
 	constructor(icon, name, onOpen, menuManager, menuItems) {
-		parent( super("li", {class: "h-tree-item"}) );
+		parent( super("div", {class: "h-tree-item"}) );
 			this.open = true;
-			this.childItems = [];
 
 			parent( add( new HElement("div", {class: "item"}) ) );
 				this.expander = add( new HElement("div", {class: "expander"}) );
 				this.expander.setEvent("click", () => {
-					this.open = !this.open;
-
-					this.childrenDiv.html.style.display = (this.open ? "block" : "none");
-					this.updateExpander();
+					this.setOpen(!this.open);
 				});
 
 				this.icon = add( new HImage(icon, "icon") );
@@ -22,12 +20,18 @@ export default class HTreeItem extends HElement {
 
 				if (onOpen) {
 					this.nameDiv.setEvent("click", onOpen);
-					this.nameDiv.setEvent("keypress", (e) => {
-						if (e.code == "Space" || e.code == "Enter") {
-							onOpen();
-						}
-					});
 				}
+
+				this.nameDiv.setEvent("keydown", (e) => {
+					if (e.code == "Space" || e.code == "Enter") {
+						e.preventDefault();
+						onOpen?.();
+					} else if (e.code == "ArrowRight") {
+						this.setOpen(true);
+					} else if (e.code == "ArrowLeft") {
+						this.setOpen(false);
+					}
+				});
 
 				if (menuItems) {
 					this.nameDiv.setEvent("contextmenu", (e) => {
@@ -40,28 +44,18 @@ export default class HTreeItem extends HElement {
 				}
 				endparent();
 
-			this.childrenDiv = add( new HElement("ul", {class: "children"}) );
+			this.childTree = add( new HTree(this, "children") );
 			endparent();
+	}
+
+	setOpen(value) {
+		this.open = value;
+
+		this.childTree.html.classList.toggle("closed", !this.open);
+		this.updateExpander();
 	}
 
 	updateExpander() {
-		this.expander.html.textContent = (this.childItems.length != 0 ? (this.open ? "-" : "+") : "");
-	}
-
-	add(item) {
-		parent(this.childrenDiv);
-			this.childItems.push(item);
-			add(item);
-			endparent();
-
-		this.updateExpander();
-		return item;
-	}
-
-	delete(item) {
-		this.childItems.splice(this.childItems.findIndex(x => x == item), 1);
-		remove(item);
-
-		this.updateExpander();
+		this.expander.html.textContent = (this.childTree.items.length != 0 ? (this.open ? "-" : "+") : "");
 	}
 }

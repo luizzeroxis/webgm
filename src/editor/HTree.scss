@@ -1,0 +1,48 @@
+.h-tree {
+	> .h-tree-item {
+		> .item {
+			align-items: center;
+			display: flex;
+			height: 20px;
+			padding-bottom: 4px;
+
+			> .expander {
+				height: 16px;
+				margin-right: 4px;
+				text-align: center;
+				width: 16px;
+				user-select: none;
+			}
+
+			> .icon {
+				height: 16px;
+				margin-right: 4px;
+				object-fit: contain;
+				vertical-align: middle;
+				visibility: hidden;
+				width: 16px;
+			}
+
+			> .icon[src] {
+				visibility: visible;
+			}
+
+			> .name {
+				cursor: pointer;
+				flex: 1;
+
+				&:hover {
+					text-decoration: underline;
+				}
+			}
+		}
+
+		> .children {
+			padding-left: 20px;
+
+			&.closed {
+				display: none;
+			}
+		}
+	}
+}

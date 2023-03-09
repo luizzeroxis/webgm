@@ -73,8 +73,8 @@ export default class HWindow extends HElement {
 	}
 
 	onAdd() {
-		this.setSizeToDefault();
 		this.setPositionToDefault();
+		this.setSizeToDefault();
 	}
 
 	makeApplyOkButtons(applyOkFunc, okFunc) {
@@ -143,12 +143,20 @@ export default class HWindow extends HElement {
 		this.setPosition(x, y);
 	}
 
-	setSizeToDefault() {
+	setSizeToDefault(hasMaxSize=true) {
+		this.client.html.style.removeProperty("width");
+		this.client.html.style.removeProperty("height");
+
 		const style = window.getComputedStyle(this.client.html);
 
-		let {w, h} = this.getMaxSize();
-		w = Math.min(w, parseFloat(style.width));
-		h = Math.min(h, parseFloat(style.height));
+		let w = parseFloat(style.width);
+		let h = parseFloat(style.height);
+
+		if (hasMaxSize) {
+			const maxSize = this.getMaxSize();
+			w = Math.min(maxSize.w, w);
+			h = Math.min(maxSize.h, h);
+		}
 
 		this.setSize(w, h);
 	}

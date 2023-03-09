@@ -1,5 +1,6 @@
 // Entry point for the standalone game build
 
+import {add} from "./common/HCore.js";
 import ProjectSerializer from "./common/ProjectSerializer.js";
 import Game from "./game/Game.js";
 
@@ -25,20 +26,13 @@ async function main() {
 
 	const project = await ProjectSerializer.unserializeZIP(projectZip);
 
-	const canvas = document.createElement("canvas");
-	canvas.width = 640;
-	canvas.height = 480;
-	canvas.tabIndex = 0;
-	document.body.append(canvas);
-
-	canvas.focus({preventScroll: true});
-
 	const game = new Game({
 		project: project,
-		canvas: canvas,
-		input: canvas,
-		menuManager: null,
 	});
+
+	add(game.div);
+
+	game.canvas.focus({preventScroll: true});
 
 	game.start();
 

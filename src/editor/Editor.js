@@ -2,7 +2,8 @@
 
 import Dispatcher from "../common/Dispatcher.js";
 import {WebGMException} from "../common/Exceptions.js";
-import {HElement, parent, endparent, add} from "../common/H.js";
+import {HElement, parent, endparent, add, removeChildren} from "../common/H.js";
+import HMenuManager from "../common/HMenuManager.js";
 import Project from "../common/Project.js";
 import {ProjectAction} from "../common/ProjectProperties.js";
 import ProjectSerializer, {UnserializeException} from "../common/ProjectSerializer.js";
@@ -14,7 +15,6 @@ import HAreaResources from "./areas/HAreaResources.js";
 import HAreaToolBar from "./areas/HAreaToolBar.js";
 import HAreaWindows from "./areas/HAreaWindows.js";
 import BuiltInLibraries from "./BuiltInLibraries.js";
-import HMenuManager from "./HMenuManager.js";
 import HWIPWarning from "./HWIPWarning.js";
 import PreferencesManager from "./PreferencesManager.js";
 import StandAloneBuilder from "./StandAloneBuilder.js";
@@ -278,19 +278,24 @@ export default class Editor {
 		this.toolBarArea.runButton.setDisabled(true);
 		this.toolBarArea.stopButton.setDisabled(false);
 
+		this.game = new Game({
+			project: this.project,
+		});
+
+		removeChildren(this.gameWindow.client);
+
+		parent(this.gameWindow.client);
+			add(this.game.div);
+			endparent();
+
+		this.gameWindow.setSizeToDefault(false);
+
 		if (this.preferences.get("scrollToGameOnRun")) {
 			this.gameWindow.html.scrollIntoView();
 		}
 		if (this.preferences.get("focusCanvasOnRun")) {
-			this.gameWindow.canvas.html.focus({preventScroll: true});
+			this.game.canvas.focus({preventScroll: true});
 		}
-
-		this.game = new Game({
-			project: this.project,
-			canvas: this.gameWindow.canvas.html,
-			input: this.gameWindow.canvas.html,
-			menuManager: this.gameWindow.menuManager,
-		});
 
 		const gameListeners = this.game.dispatcher.listen({
 			close: e => {
@@ -302,7 +307,9 @@ export default class Editor {
 				this.toolBarArea.stopButton.setDisabled(true);
 
 				if (this.preferences.get("clearCanvasOnStop")) {
-					this.gameWindow.canvas.clear();
+					const h = this.game.canvas.height;
+					this.game.canvas.height = 0;
+					this.game.canvas.height = h;
 				}
 
 				if (this.gameWindow.userClosed) {

@@ -1,7 +1,7 @@
-import {HElement, parent, endparent, add, remove} from "../common/H.js";
+import {HElement, parent, endparent, add, remove} from "./H.js";
 
 export default class HMenu extends HElement {
-	constructor(items, options) {
+	constructor(manager, items, options) {
 		parent( super("div", {class: "h-menu"}) );
 
 			this.items = items;
@@ -21,6 +21,10 @@ export default class HMenu extends HElement {
 				x = rect.left + document.documentElement.scrollLeft;
 				y = rect.bottom + document.documentElement.scrollTop;
 			}
+
+			const managerRect = manager.html.getBoundingClientRect();
+			x -= managerRect.left;
+			y -= managerRect.top;
 
 			this.selectedIndex = null;
 			this.focusedBefore = document.activeElement;

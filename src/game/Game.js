@@ -1,6 +1,9 @@
 import Dispatcher from "../common/Dispatcher.js";
 import Events from "../common/Events.js";
 import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from "../common/Exceptions.js";
+import {HCanvas} from "../common/HComponents.js";
+import {HElement, parent, endparent, add} from "../common/HCore.js";
+import HMenuManager from "../common/HMenuManager.js";
 import Project from "../common/Project.js";
 
 import BuiltInConstants from "./BuiltInConstants.js";
@@ -16,14 +19,19 @@ import VariableHolder from "./VariableHolder.js";
 export default class Game {
 	constructor(options) {
 		this.project = new Project(options.project);
-		this.canvas = options.canvas;
-		// this.input = options.input;
-		this.menuManager = options.menuManager;
+
+		this.div = parent( new HElement("div", {class: "game"}) );
+			this.canvas = add(new HCanvas()).html;
+			this.canvas.setAttribute("tabindex", 0);
+			this.setInitialCanvasSize();
+
+			this.menuManager = add(new HMenuManager());
+			endparent(this.div);
 
 		this.dispatcher = new Dispatcher();
 
 		//
-		this.input = new GameInput(this, options.input);
+		this.input = new GameInput(this, this.canvas);
 		this.audio = new GameAudio(this);
 		this.collision = new GameCollision(this);
 
@@ -216,6 +224,13 @@ export default class Game {
 		});
 
 		this.lastId = this.project.lastId;
+	}
+
+	// Resizes the canvas to the size of the first room
+	setInitialCanvasSize() {
+		const room = this.project.resources.ProjectRoom[0];
+		this.canvas.width = room.width;
+		this.canvas.height = room.height;
 	}
 
 	// // Game running

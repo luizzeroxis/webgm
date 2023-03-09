@@ -466,23 +466,6 @@ body, button, input, select {
 	}
 }
 
-.window-game {
-	> canvas {
-		display: block;
-		image-rendering: pixelated;
-		margin: 0 auto;
-
-		&.no-cursor {
-			cursor: none;
-		}
-	}
-}
-
-.window > .client:has(> .window-game) {
-	padding: 0;
-	resize: none;
-}
-
 .window-game-information {
 	display: flex;
 	flex-direction: column;
@@ -496,4 +479,27 @@ body, button, input, select {
 
 .window-global-game-settings {
 	flex: 1;
+}
+
+.game {
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	justify-content: center;
+	position: relative;
+
+	> canvas {
+		display: block;
+		image-rendering: pixelated;
+
+		&.no-cursor {
+			cursor: none;
+		}
+	}
+}
+
+.window > .client:has(> .game) {
+	padding: 0;
+	resize: none;
 }

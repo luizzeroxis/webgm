@@ -1,5 +1,4 @@
-import {HElement, parent, endparent, add} from "../common/H.js";
-
+import {HElement, parent, endparent, add} from "./H.js";
 import HMenu from "./HMenu.js";
 
 import "./HMenuManager.scss";
@@ -11,7 +10,7 @@ export default class HMenuManager extends HElement {
 
 	openMenu(items, options) {
 		parent(this);
-			const menu = add( new HMenu(items, options) );
+			const menu = add( new HMenu(this, items, options) );
 			endparent();
 
 		return menu;

@@ -1,4 +1,4 @@
-.h-tree {
+.h-tree-list {
 	> .h-tree-item {
 		> .item {
 			align-items: center;
@@ -33,6 +33,11 @@
 
 				&:hover {
 					text-decoration: underline;
+				}
+
+				&.selected {
+					background: blue;
+					color: white;
 				}
 			}
 		}

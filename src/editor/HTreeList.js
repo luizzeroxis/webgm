@@ -2,10 +2,11 @@ import {parent, endparent, add, remove, moveBefore, moveAdd, classToAttr, classT
 
 import "./HTree.scss";
 
-export default class HTree extends HElement {
-	constructor(parentItem, _class) {
-		super("div", {class: classToAttr([...classToArray(_class), "h-tree"])});
+export default class HTreeList extends HElement {
+	constructor(tree, parentItem, _class) {
+		super("div", {class: classToAttr([...classToArray(_class), "h-tree-list"])});
 
+		this.tree = tree;
 		this.parentItem = parentItem;
 		this.items = [];
 	}
@@ -13,6 +14,7 @@ export default class HTree extends HElement {
 	add(item) {
 		parent(this);
 			this.items.push(item);
+			item.tree = this.tree;
 			add(item);
 			endparent();
 
@@ -40,6 +42,10 @@ export default class HTree extends HElement {
 		remove(item);
 
 		this.parentItem?.updateExpander();
+
+		if (item == this.tree.selected) {
+			this.tree.setSelected(null);
+		}
 	}
 
 	find(fn) {

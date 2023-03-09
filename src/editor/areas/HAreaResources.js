@@ -1,7 +1,7 @@
 import {parent, endparent, add, HElement} from "../../common/H.js";
 import Project from "../../common/Project.js";
 import HResourceListItem from "../HResourceListItem.js";
-import HTree from "../HTree.js";
+import HTreeList from "../HTreeList.js";
 import HTreeItem from "../HTreeItem.js";
 import FolderIcon from "../img/folder-icon.png";
 import GameInformationIcon from "../img/game-information-icon.png";
@@ -18,7 +18,8 @@ export default class HAreaResources extends HElement {
 
 		parent(this);
 
-			this.tree = add( new HTree() );
+			this.tree = add( new HTreeList(this) ); // TODO temp arg
+			this.selected = null;
 
 			Project.resourceTypes.forEach(type => {
 				this.resourceTypesTreeItems[type.name] = this.tree.add( new HTreeItem(FolderIcon, type.getScreenGroupName(), null, this.editor.menuManager, [
@@ -58,31 +59,41 @@ export default class HAreaResources extends HElement {
 
 	// Add resource to resources tree in the proper type.
 	add(resource) {
-		const tree = this.resourceTypesTreeItems[resource.constructor.name].childTree;
+		const tree = this.resourceTypesTreeItems[resource.constructor.name].treeList;
 		tree.add(new HResourceListItem(resource, this.editor));
 	}
 
 	// Move resource in the resources tree to some index.
 	move(resource, toIndex) {
-		const tree = this.resourceTypesTreeItems[resource.constructor.name].childTree;
+		const tree = this.resourceTypesTreeItems[resource.constructor.name].treeList;
 		const item = tree.find(x => x.resource == resource);
 		tree.move(item, toIndex);
 	}
 
 	// Delete resource from resources tree.
 	delete(resource) {
-		const tree = this.resourceTypesTreeItems[resource.constructor.name].childTree;
+		const tree = this.resourceTypesTreeItems[resource.constructor.name].treeList;
 		const item = tree.find(x => x.resource == resource);
 		tree.delete(item);
 	}
 
 	refresh() {
 		Project.resourceTypes.forEach(type => {
-			this.resourceTypesTreeItems[type.name].childTree.clear();
+			this.resourceTypesTreeItems[type.name].treeList.clear();
 
 			this.editor.project.resources[type.getClassName()].forEach(resource => {
 				this.add(resource);
 			});
 		});
+	}
+
+	setSelected(item) {
+		if (this.selected) {
+			this.selected.nameDiv.html.classList.remove("selected");
+		}
+		this.selected = item;
+		if (item) {
+			item.nameDiv.html.classList.add("selected");
+		}
 	}
 }

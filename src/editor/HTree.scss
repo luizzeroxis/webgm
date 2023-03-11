@@ -36,8 +36,13 @@
 				}
 
 				&.selected {
-					background: blue;
+					background: black;
 					color: white;
+
+					@media (prefers-color-scheme: dark) {
+						background: white;
+						color: black;
+					}
 				}
 			}
 		}

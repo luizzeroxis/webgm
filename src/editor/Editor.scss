@@ -1,15 +1,17 @@
 :root {
 	color-scheme: light dark;
 	--area-border: #444;
+	--background-selected: #666;
 	--background: #ddd;
 	--menu-background: #fff;
 	--menu-bar-background: #fff;
 	--menu-bar-button-selected: #eee;
 	--menu-border: #ddd;
-	--menu-item-selected-background: #eee;
+	--menu-item-background-selected: #eee;
 	--menu-text-disabled: #666;
 	--menu-text: #222;
 	--resources-area-background: #fff;
+	--text-selected: #fff;
 	--text: #000;
 	--titlebar-background: #fff;
 	--warning-background: #fb0;
@@ -22,15 +24,17 @@
 :root.dark {
 	color-scheme: dark;
 	--area-border: #bbb;
+	--background-selected: #444;
 	--background: #111;
 	--menu-background: #222;
 	--menu-bar-background: #111;
 	--menu-bar-button-selected: #444;
 	--menu-border: #444;
-	--menu-item-selected-background: #444;
+	--menu-item-background-selected: #444;
 	--menu-text-disabled: #888;
 	--menu-text: #eee;
 	--resources-area-background: #000;
+	--text-selected: #fff;
 	--text: #fff;
 	--titlebar-background: #555;
 	--warning-background: #740;
@@ -58,7 +62,7 @@
 			padding-right: 56px;
 
 			&.selected {
-				background-color: var(--menu-item-selected-background);
+				background-color: var(--menu-item-background-selected);
 			}
 
 			&.disabled {
@@ -79,6 +83,19 @@
 	> .h-menu-bar-button {
 		&:hover, &:focus, &.selected {
 			background-color: var(--menu-bar-button-selected);
+		}
+	}
+}
+
+.h-tree-list {
+	> .h-tree-item {
+		> .item {
+			> .name {
+				&.selected {
+					background-color: var(--background-selected);
+					color: var(--text-selected);
+				}
+			}
 		}
 	}
 }

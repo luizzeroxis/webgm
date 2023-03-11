@@ -1,26 +1,26 @@
 .h-tree-list {
 	> .h-tree-item {
 		> .item {
-			align-items: center;
 			display: flex;
 			height: 20px;
+			align-items: center;
 			padding-bottom: 4px;
 
 			> .expander {
+				width: 16px;
 				height: 16px;
 				margin-right: 4px;
 				text-align: center;
-				width: 16px;
 				user-select: none;
 			}
 
 			> .icon {
+				width: 16px;
 				height: 16px;
 				margin-right: 4px;
 				object-fit: contain;
 				vertical-align: middle;
 				visibility: hidden;
-				width: 16px;
 			}
 
 			> .icon[src] {
@@ -28,8 +28,8 @@
 			}
 
 			> .name {
-				cursor: pointer;
 				flex: 1;
+				cursor: pointer;
 
 				&:hover {
 					text-decoration: underline;

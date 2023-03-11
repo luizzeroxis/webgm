@@ -1,29 +1,29 @@
 .h-menu-manager {
-	height: 100%;
+	position: absolute;
+	z-index: 10000;
+	top: 0;
 	left: 0;
 	overflow: hidden;
-	pointer-events: none;
-	position: absolute;
-	top: 0;
 	width: 100%;
-	z-index: 10000;
+	height: 100%;
+	pointer-events: none;
 
 	.h-menu {
-		background-color: white;
+		position: absolute;
 		border: 1px solid black;
+		background-color: white;
 		color: black;
 		pointer-events: auto;
-		position: absolute;
 
 		@media (prefers-color-scheme: dark) {
-			background-color: black;
 			border: 1px solid white;
+			background-color: black;
 			color: white;
 		}
 
 		.h-menu-item {
-			align-items: center;
 			display: flex;
+			align-items: center;
 		}
 	}
 }

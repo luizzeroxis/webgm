@@ -1,5 +1,6 @@
 :root {
 	color-scheme: light dark;
+
 	--area-border: #444;
 	--background-selected: #666;
 	--background: #ddd;
@@ -23,6 +24,7 @@
 
 :root.dark {
 	color-scheme: dark;
+
 	--area-border: #bbb;
 	--background-selected: #444;
 	--background: #111;
@@ -50,16 +52,16 @@
 
 .h-menu-manager {
 	.h-menu {
-		background-color: var(--menu-background);
-		border: 1px solid var(--menu-border);
-		color: var(--menu-text);
-		padding-bottom: 2px;
 		padding-top: 2px;
+		padding-bottom: 2px;
+		border: 1px solid var(--menu-border);
+		background-color: var(--menu-background);
+		color: var(--menu-text);
 
 		.h-menu-item {
 			height: 24px;
-			padding-left: 32px;
 			padding-right: 56px;
+			padding-left: 32px;
 
 			&.selected {
 				background-color: var(--menu-item-background-selected);
@@ -73,8 +75,8 @@
 }
 
 .h-tab-content {
-	border: 1px solid var(--window-client-horizontal-border);
 	padding: 8px;
+	border: 1px solid var(--window-client-horizontal-border);
 }
 
 .h-menu-bar {
@@ -102,8 +104,8 @@
 
 html, body {
 	display: flex;
-	flex-direction: column;
 	height: 100%;
+	flex-direction: column;
 }
 
 body {
@@ -116,36 +118,36 @@ body, button, input, select {
 }
 
 .editor {
-	color: var(--text);
 	display: flex;
-	flex-direction: column;
-	flex: 1;
 	min-height: 0;
+	flex: 1;
+	flex-direction: column;
+	color: var(--text);
 
 	div > .warning {
-		background-color: var(--warning-background);
 		padding: 2px;
+		background-color: var(--warning-background);
 		text-align: center;
 	}
 
 	> .horizontal {
-		background-color: var(--background);
 		display: flex;
-		flex-direction: row;
-		flex: 1;
-		gap: 4px;
 		min-height: 0;
+		flex: 1;
+		flex-direction: row;
 		padding: 4px;
+		background-color: var(--background);
+		gap: 4px;
 	}
 }
 
 .tool-bar-area {
-	background-color: var(--background);
 	display: flex;
 	flex-wrap: wrap;
-	padding-left: 4px;
-	padding-right: 4px;
 	padding-top: 4px;
+	padding-right: 4px;
+	padding-left: 4px;
+	background-color: var(--background);
 
 	.separator {
 		width: 8px;
@@ -153,35 +155,35 @@ body, button, input, select {
 }
 
 .resources-area {
-	background-color: var(--resources-area-background);
-	border: 1px solid var(--area-border);
-	flex: none;
-	overflow-y: scroll;
-	padding: 4px;
 	width: 300px;
+	flex: none;
+	padding: 4px;
+	border: 1px solid var(--area-border);
+	background-color: var(--resources-area-background);
+	overflow-y: scroll;
 }
 
 .windows-area {
-	background-color: var(--windows-area-background);
-	border: 1px solid var(--area-border);
-	display: flex;
-	flex-direction: column;
-	flex: 1;
-	gap: 4px;
-	min-width: 500px;
-	overflow-y: scroll;
 	position: relative;
+	display: flex;
+	min-width: 500px;
+	flex: 1;
+	flex-direction: column;
+	border: 1px solid var(--area-border);
+	background-color: var(--windows-area-background);
+	gap: 4px;
+	overflow-y: scroll;
 }
 
 .window {
-	border: 1px solid var(--window-border);
 	position: absolute;
+	border: 1px solid var(--window-border);
 
 	> .titlebar {
-		align-items: center;
-		background-color: var(--titlebar-background);
 		display: flex;
+		align-items: center;
 		padding: 2px;
+		background-color: var(--titlebar-background);
 		user-select: none;
 
 		> .title {
@@ -190,11 +192,11 @@ body, button, input, select {
 	}
 
 	> .client {
-		background-color: var(--window-client-background);
 		display: flex;
-		flex-direction: column;
 		overflow: auto;
+		flex-direction: column;
 		padding: 8px;
+		background-color: var(--window-client-background);
 		resize: both;
 	}
 }
@@ -209,15 +211,15 @@ body, button, input, select {
 		}
 
 		&:not(:last-child) {
-			border-right: 1px solid var(--window-client-horizontal-border);
 			padding-right: 4px;
+			border-right: 1px solid var(--window-client-horizontal-border);
 		}
 	}
 }
 
 .window-sprite {
-	flex: 1;
 	min-height: 0;
+	flex: 1;
 
 	> .properties {
 		flex: none;
@@ -241,9 +243,9 @@ body, button, input, select {
 	}
 
 	> .preview {
-		flex: 1;
-		min-width: 250px;
 		overflow: auto;
+		min-width: 250px;
+		flex: 1;
 	}
 }
 
@@ -251,23 +253,23 @@ body, button, input, select {
 	flex: 1;
 
 	> .preview > audio {
-		min-width: 300px;
 		width: 100%;
+		min-width: 300px;
 	}
 }
 
 .window-background {
-	flex: 1;
 	min-height: 0;
+	flex: 1;
 
 	> .properties {
 		flex: none;
 	}
 
 	> .preview {
-		flex: 1;
-		min-width: 250px;
 		overflow: auto;
+		min-width: 250px;
+		flex: 1;
 	}
 }
 
@@ -277,8 +279,8 @@ body, button, input, select {
 
 .window-script {
 	display: flex;
-	flex-direction: column;
 	flex: 1;
+	flex-direction: column;
 
 	> .h-code-editor {
 		flex: 1;
@@ -302,16 +304,16 @@ body, button, input, select {
 
 	> .events {
 		display: flex;
-		flex-direction: column;
-		flex: none;
 		min-width: 200px;
+		flex: none;
+		flex-direction: column;
 	}
 
 	> .actions {
 		display: flex;
-		flex-direction: column;
-		flex: 1;
 		min-width: 200px;
+		flex: 1;
+		flex-direction: column;
 
 		> .actions-list > select > option {
 			&.bold {
@@ -326,8 +328,8 @@ body, button, input, select {
 
 	> .events .events-list,
 	> .actions .actions-list {
-		flex-direction: column;
 		flex: 1;
+		flex-direction: column;
 	}
 
 	> .libraries {
@@ -378,8 +380,8 @@ body, button, input, select {
 
 .window-code {
 	display: flex;
-	flex-direction: column;
 	flex: 1;
+	flex-direction: column;
 
 	> .applies-to {
 		display: flex;
@@ -391,13 +393,13 @@ body, button, input, select {
 }
 
 .window-room {
-	flex: 1;
 	min-height: 0;
+	flex: 1;
 
 	> .properties {
+		width: 250px;
 		flex: none;
 		overflow-y: auto;
-		width: 250px;
 
 		> .properties-tabs > .h-tab-content > .backgrounds > select {
 			overflow: auto;
@@ -406,11 +408,11 @@ body, button, input, select {
 
 	> .room {
 		display: flex;
-		flex-direction: column;
-		flex: 1;
-		justify-content: space-between;
-		min-height: 0;
 		min-width: 250px;
+		min-height: 0;
+		flex: 1;
+		flex-direction: column;
+		justify-content: space-between;
 
 		> .preview {
 			overflow: auto;
@@ -428,8 +430,8 @@ body, button, input, select {
 			}
 
 			.id {
-				flex: 1 1 60px;
 				width: 60px;
+				flex: 1 1 60px;
 			}
 		}
 	}
@@ -437,12 +439,12 @@ body, button, input, select {
 
 .window-game-information {
 	display: flex;
-	flex-direction: column;
 	flex: 1;
+	flex-direction: column;
 
 	> .h-multiline-text-input {
-		align-items: normal;
 		flex: 1;
+		align-items: normal;
 	}
 }
 
@@ -451,12 +453,12 @@ body, button, input, select {
 }
 
 .game {
-	align-items: center;
-	display: flex;
-	flex-direction: column;
-	flex: 1;
-	justify-content: center;
 	position: relative;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 
 	> canvas {
 		display: block;

@@ -13,59 +13,58 @@ export default class BuiltInFunctions {
 	static random = {
 		args: [{type: "real"}],
 		func: function([x]) {
-			return Math.random() * x;
+			return this.game.rng() * x;
 		},
 	};
 
 	static random_range = {
 		args: [{type: "real"}, {type: "real"}],
 		func: function([x1, x2]) {
-			return (Math.random() * (x2-x1)) + x1;
+			return (this.game.rng() * (x2-x1)) + x1;
 		},
 	};
 
 	static irandom = {
 		args: null,
 		func: function([x]) {
-			return Math.floor(Math.random() * (Math.floor(x) + 1));
+			return Math.floor(this.game.rng() * (Math.floor(x) + 1));
 		},
 	};
 
 	static irandom_range = {
 		args: null,
 		func: function([x1, x2]) {
-			return Math.floor(Math.random() * (Math.floor(x1) - Math.floor(x2) + 1)) + Math.floor(x2);
+			return Math.floor(this.game.rng() * (Math.floor(x1) - Math.floor(x2) + 1)) + Math.floor(x2);
 		},
 	};
 
 	static random_set_seed = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function random_set_seed is not implemented");
-			// return 0;
+		args: [{type: "any"}],
+		func: function([seed]) {
+			this.game.setRandomSeed(seed);
+			return 0;
 		},
 	};
 
 	static random_get_seed = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function random_get_seed is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			return this.game.rngSeed;
 		},
 	};
 
 	static randomize = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function randomize is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			this.game.setRandomSeed();
+			return 0;
 		},
 	};
 
 	static choose = {
 		args: null,
 		func: function([...vals]) {
-			return vals[Math.floor((Math.random()*vals.length))];
+			return vals[Math.floor((this.game.rng()*vals.length))];
 		},
 	};
 
@@ -924,8 +923,8 @@ export default class BuiltInFunctions {
 
 			let x, y;
 			for (let i=0; i<100; ++i) {
-				x = Math.floor((Math.random() * this.game.room.width) / hsnap) * hsnap;
-				y = Math.floor((Math.random() * this.game.room.height) / vsnap) * vsnap;
+				x = Math.floor((this.game.rng() * this.game.room.width) / hsnap) * hsnap;
+				y = Math.floor((this.game.rng() * this.game.room.height) / vsnap) * vsnap;
 
 				if (!this.game.collision.instanceOnInstances(this.currentInstance, this.game.instances, x, y, true)) {
 					this.currentInstance.x = x;
@@ -9019,7 +9018,7 @@ export default class BuiltInFunctions {
 				}
 			}
 
-			const chosenAngle = possibleAngles[Math.floor( Math.random() * possibleAngles.length )];
+			const chosenAngle = possibleAngles[Math.floor( this.game.rng() * possibleAngles.length )];
 
 			if (chosenAngle != null) {
 				speed = (!relative ? speed : this.currentInstance.speed + speed);
@@ -9305,7 +9304,7 @@ export default class BuiltInFunctions {
 			const objects = [object1, object2, object3, object4].filter(x => x >= 0);
 
 			if (objects.length > 0) {
-				const object = objects[Math.floor(Math.random() * objects.length)];
+				const object = objects[Math.floor(this.game.rng() * objects.length)];
 				await BuiltInFunctions.instance_create.func.call(this, [x, y, object]);
 			}
 
@@ -9727,7 +9726,7 @@ export default class BuiltInFunctions {
 	static action_if_dice = {
 		args: null,
 		func: function([sides]) {
-			return ((Math.random() * sides) < 1) ? 1 : 0;
+			return ((this.game.rng() * sides) < 1) ? 1 : 0;
 		},
 	};
 

@@ -1,3 +1,5 @@
+import seedrandom from "seedrandom";
+
 import Dispatcher from "../common/Dispatcher.js";
 import Events from "../common/Events.js";
 import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from "../common/Exceptions.js";
@@ -75,6 +77,11 @@ export default class Game {
 		// Room
 		this.room = null;
 		this.instances = [];
+
+		// Random
+		this.rngSeed = null;
+		this.rng = null;
+		this.setRandomSeed();
 
 		// Cursor
 		this.cursorSprite = null;
@@ -1101,6 +1108,12 @@ export default class Game {
 			};
 		}
 		return this.room.views[index];
+	}
+
+	// Sets the random seed used by the game. If null, make random one.
+	setRandomSeed(seed) {
+		this.rngSeed = seed ?? Math.floor(((Math.random() - 0.5) * (2 ** 32))); // 32 bit signed int
+		this.rng = seedrandom(this.rngSeed);
 	}
 
 	// Set the fullscreen status.

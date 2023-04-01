@@ -233,7 +233,7 @@ export default class GameCollision {
 
 	// Check if any of instances is colliding with point.
 	instancesOnPoint(instances, point) {
-		return (this.getInstanceOnPoint(instances, point) != null);
+		return (this.getFirstInstanceOnPoint(instances, point) != null);
 	}
 
 	// Return the first instance that is colliding with point.

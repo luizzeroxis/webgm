@@ -458,26 +458,40 @@ export default class BuiltInFunctions {
 	};
 
 	static clipboard_has_text = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function clipboard_has_text is not implemented");
-			// return 0;
+		args: [],
+		func: async function([]) {
+			let text;
+			try {
+				text = await navigator.clipboard.readText();
+			} catch (e) {
+				text = "";
+			}
+			return (text != "") ? 1 : 0;
 		},
 	};
 
 	static clipboard_get_text = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function clipboard_get_text is not implemented");
-			// return 0;
+		args: [],
+		func: async function([]) {
+			let text;
+			try {
+				text = await navigator.clipboard.readText();
+			} catch (e) {
+				text = "";
+			}
+			return text;
 		},
 	};
 
 	static clipboard_set_text = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function clipboard_set_text is not implemented");
-			// return 0;
+		args: [{type: "as_string"}],
+		func: async function([str]) {
+			try {
+				await navigator.clipboard.writeText(str);
+			} catch (e) {
+				//
+			}
+			return 0;
 		},
 	};
 

@@ -1271,9 +1271,21 @@ export default class BuiltInFunctions {
 
 	static collision_rectangle = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function collision_rectangle is not implemented");
-			// return 0;
+		func: function([x1, y1, x2, y2, obj, prec, notme]) {
+			let instances = this.objectReferenceToInstances(obj);
+			if (!Array.isArray(instances)) return -4;
+
+			if (notme) {
+				instances = instances.filter(x => x != this.currentInstance);
+			}
+
+			const instance = this.game.collision.getFirstInstanceOnRectangle(instances,
+				this.game.collision.normalizeRectangle({x1, y1, x2, y2}), prec);
+			if (instance) {
+				return instance.id;
+			}
+
+			return -4;
 		},
 	};
 

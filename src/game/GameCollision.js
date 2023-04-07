@@ -30,6 +30,16 @@ export default class GameCollision {
 		};
 	}
 
+	normalizeRectangle(rect) {
+		if (rect.x1 > rect.x2) {
+			[rect.x1, rect.x2] = [rect.x2, rect.x1];
+		}
+		if (rect.y1 > rect.y2) {
+			[rect.y1, rect.y2] = [rect.y2, rect.y1];
+		}
+		return rect;
+	}
+
 	// Check if two instances are colliding.
 	instanceOnInstance(aInstance, bInstance, aX, aY, bX, bY) {
 		// Don't allow collision with self
@@ -100,14 +110,15 @@ export default class GameCollision {
 
 	// Check if instance is colliding with point.
 	instanceOnPoint(instance, point, precise=true) {
-		if (instance.getMaskImage() == null) return false;
+		const instanceImage = instance.getMaskImage();
+
+		if (instanceImage == null) return false;
 
 		if (!precise) {
 			return this.pointOnRectangle(point, instance.getBoundingBox());
 		}
 
 		const imagePoint = instance.roomPointToInstanceImagePoint(point);
-		const instanceImage = instance.getMaskImage();
 
 		if (!this.pointOnRectangle(imagePoint, {x1: 0, x2: instanceImage.width, y1: 0, y2: instanceImage.height})) {
 			return false;
@@ -141,15 +152,45 @@ export default class GameCollision {
 		});
 	}
 
-	// TODO Check if instance is colliding with rectangle
+	// Check if instance is colliding with rectangle
 	instanceOnRectangle(instance, rectangle, precise=true) {
 		if (instance.getMaskImage() == null) return false;
 
+		const aRect = instance.getBoundingBox();
+
+		const impreciseCol = this.rectangleOnRectangle(aRect, rectangle);
+
+		// If imprecise check fails, then collision will never happen.
+		if (!impreciseCol) {
+			return false;
+		}
+		// If imprecise check succeeds, and we don't want to check precisely, then collision happened.
 		if (!precise) {
-			return this.rectangleOnRectangle(rectangle, instance.getBoundingBox());
+			return true;
 		}
 
-		// code
+		const iRect = this.rectangleOnRectangleIntersection(aRect, rectangle);
+
+		const aImage = instance.getMaskImage();
+
+		const aImageRect = {x1: 0, x2: aImage.width, y1: 0, y2: aImage.height};
+
+		const aCol = this.game.loadedProject.collisionMasks.get(aImage);
+
+		// TODO possibly optimize this?
+		for (let x = Math.floor(iRect.x1); x < iRect.x2; ++x)
+		for (let y = Math.floor(iRect.y1); y < iRect.y2; ++y) {
+			const aPoint = instance.roomPointToInstanceImagePoint({x, y});
+
+			if (!this.pointOnRectangle(aPoint, aImageRect)) {
+				continue;
+			}
+			if (!(aCol[aPoint.x][aPoint.y] === true)) {
+				continue;
+			}
+
+			return true;
+		}
 
 		return false;
 	}

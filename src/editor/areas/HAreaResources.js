@@ -1,8 +1,8 @@
 import {parent, endparent, add, HElement} from "../../common/H.js";
 import Project from "../../common/Project.js";
 import HResourceListItem from "../HResourceListItem.js";
-import HTreeList from "../HTreeList.js";
 import HTreeItem from "../HTreeItem.js";
+import HTreeList from "../HTreeList.js";
 import FolderIcon from "../img/folder-icon.png";
 import GameInformationIcon from "../img/game-information-icon.png";
 import GameSettingsIcon from "../img/global-game-settings-icon.png";

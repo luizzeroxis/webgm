@@ -1,6 +1,8 @@
 import {EngineException} from "../common/Exceptions.js";
 import {decimalToHSV, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger, parseNewLineHash} from "../common/tools.js";
 
+import GameCollision from "./GameCollision.js";
+
 export default class BuiltInFunctions {
 	// this = GML
 
@@ -1280,7 +1282,7 @@ export default class BuiltInFunctions {
 			}
 
 			const instance = this.game.collision.getFirstInstanceOnRectangle(instances,
-				this.game.collision.normalizeRectangle({x1, y1, x2, y2}), prec);
+				GameCollision.normalizeRectangle({x1, y1, x2, y2}), prec);
 			if (instance) {
 				return instance.id;
 			}

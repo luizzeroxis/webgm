@@ -1991,18 +1991,18 @@ export default class BuiltInFunctions {
 	};
 
 	static keyboard_clear = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function keyboard_clear is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([key]) {
+			this.game.input.clearKey(key);
+			return 0;
 		},
 	};
 
 	static io_clear = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function io_clear is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			this.game.input.clear();
+			return 0;
 		},
 	};
 
@@ -2060,10 +2060,10 @@ export default class BuiltInFunctions {
 	};
 
 	static mouse_clear = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function mouse_clear is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([button]) {
+			this.game.input.clearMouse(button);
+			return 0;
 		},
 	};
 

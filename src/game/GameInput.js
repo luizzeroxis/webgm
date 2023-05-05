@@ -145,6 +145,18 @@ export default class GameInput {
 		this.mouseWheel = 0;
 	}
 
+	clearKey(key) {
+		this.key[key] = false;
+		this.keyPressed[key] = false;
+		this.keyReleased[key] = false;
+	}
+
+	clearMouse(numb) {
+		this.mouse[numb] = false;
+		this.mousePressed[numb] = false;
+		this.mouseReleased[numb] = false;
+	}
+
 	toEngineButton(button) {
 		return button == 1 ? 3 // middle button
 			: button == 2 ? 2 // right button

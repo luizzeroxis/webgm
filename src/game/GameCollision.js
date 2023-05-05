@@ -126,14 +126,20 @@ export default class GameCollision {
 
 	// Check if an instance is colliding with any of otherInstances.
 	instanceOnInstances(instance, otherInstances, x, y, solidOnly=false) {
-		// place_free / place_empty / place_meeting
-		for (const otherInstance of otherInstances) {
-			if (!otherInstance.exists) continue;
-			if (solidOnly && !otherInstance.solid) continue;
-			const c = this.instanceOnInstance(instance, otherInstance, x, y);
-			if (c) return true;
+		return (this.getFirstInstanceOnInstance(instance, otherInstances, x, y, solidOnly) != null);
+	}
+
+	// Return the first instance that is colliding with colInstance.
+	getFirstInstanceOnInstance(colInstance, instances, x, y, solidOnly=false) {
+		for (const instance of instances) {
+			if (!instance.exists) continue;
+			if (solidOnly && !instance.solid) continue;
+
+			if (this.instanceOnInstance(colInstance, instance, x, y)) {
+				return instance;
+			}
 		}
-		return false;
+		return null;
 	}
 
 	// Check if instance is colliding with point.

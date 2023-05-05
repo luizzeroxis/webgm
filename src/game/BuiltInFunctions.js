@@ -1390,10 +1390,15 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_position = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function instance_position is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([x, y, obj]) {
+			const instances = this.objectReferenceToInstances(obj);
+			if (!Array.isArray(instances)) { return -4; }
+
+			const instance = this.game.collision.getFirstInstanceOnPoint(instances, {x, y});
+
+			if (!instance) return -4;
+			return instance.id;
 		},
 	};
 
@@ -1448,10 +1453,15 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_place = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function instance_place is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([x, y, obj]) {
+			const instances = this.objectReferenceToInstances(obj);
+			if (!Array.isArray(instances)) { return -4; }
+
+			const instance = this.game.collision.getFirstInstanceOnInstance(this.currentInstance, instances, x, y);
+			if (!instance) return -4;
+
+			return instance;
 		},
 	};
 

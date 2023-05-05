@@ -1047,18 +1047,41 @@ export default class BuiltInFunctions {
 	};
 
 	static distance_to_point = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function distance_to_point is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}],
+		func: function([x, y]) {
+			const rect = this.currentInstance.getBoundingBox();
+
+			if (GameCollision.pointOnRectangle({x, y}, rect)) {
+				return 0;
+			}
+
+			const fx = Math.min(Math.max(x, rect.x1), rect.x2);
+			const fy = Math.min(Math.max(y, rect.y1), rect.y2);
+
+			return Math.hypot(x - fx, y - fy);
 		},
 	};
 
 	static distance_to_object = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function distance_to_object is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([obj]) {
+			const instances = this.objectReferenceToInstances(obj);
+			if (!Array.isArray(instances)) { return 0; } // TODO check
+
+			const rect1 = this.currentInstance.getBoundingBox();
+
+			let closest = Infinity;
+
+			for (const instance of instances) {
+				const rect2 = instance.getBoundingBox();
+
+				const distance = GameCollision.closestDistanceBetweenRectangles(rect1, rect2);
+				if (distance < closest) {
+					closest = distance;
+				}
+			}
+
+			return closest;
 		},
 	};
 

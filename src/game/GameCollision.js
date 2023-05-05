@@ -40,6 +40,35 @@ export default class GameCollision {
 		return rect;
 	}
 
+	static closestDistanceBetweenRectangles(rectA, rectB) {
+		// Which sides the rectB are on, relative to rectA, only if COMPLETELY on that side.
+		const l = (rectB.x2 < rectA.x1);
+		const r = (rectB.x1 > rectA.x2);
+		const t = (rectB.y2 < rectA.y1);
+		const b = (rectB.y1 > rectA.y2);
+
+		// If one those sides, distances between rects the direction and axis of that side.
+		const lDist = rectA.x1 - rectB.x2;
+		const rDist = rectB.x1 - rectA.x2;
+		const tDist = rectA.y1 - rectB.y2;
+		const bDist = rectB.y1 - rectA.y2;
+
+		// If in corner quadrants.
+		if (t && l) return Math.hypot(lDist, tDist);
+		if (t && r) return Math.hypot(rDist, tDist);
+		if (b && l) return Math.hypot(lDist, bDist);
+		if (b && r) return Math.hypot(rDist, bDist);
+
+		// If in side quadrants. (only works after checking corners)
+		if (l) return lDist;
+		if (r) return rDist;
+		if (t) return tDist;
+		if (b) return bDist;
+
+		// If overlapping.
+		return 0;
+	}
+
 	// Check if two instances are colliding.
 	instanceOnInstance(aInstance, bInstance, aX, aY, bX, bY) {
 		// Don't allow collision with self

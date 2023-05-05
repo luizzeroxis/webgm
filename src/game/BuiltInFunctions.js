@@ -2448,10 +2448,31 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_roundrect = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_roundrect is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([x1, y1, x2, y2, outline]) {
+			// TODO remove antialiasing
+			if (outline >= 1) {
+				this.game.ctx.save();
+				this.game.ctx.translate(0.5, 0.5);
+
+				this.game.ctx.strokeStyle = this.game.drawColorAlpha;
+			} else {
+				this.game.ctx.fillStyle = this.game.drawColorAlpha;
+			}
+
+			this.game.ctx.beginPath();
+			this.game.ctx.roundRect(x1, y1, x2-x1, y2-y1, 4);
+			this.game.ctx.closePath();
+
+			if (outline >= 1) {
+				this.game.ctx.stroke();
+
+				this.game.ctx.restore();
+			} else {
+				this.game.ctx.fill();
+			}
+
+			return 0;
 		},
 	};
 

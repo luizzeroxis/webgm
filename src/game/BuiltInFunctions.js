@@ -1081,6 +1081,7 @@ export default class BuiltInFunctions {
 				}
 			}
 
+			if (closest == Infinity) closest = 0;
 			return closest;
 		},
 	};
@@ -1397,18 +1398,52 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_nearest = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function instance_nearest is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([x, y, obj]) {
+			const instances = this.objectReferenceToInstances(obj);
+			if (!Array.isArray(instances)) { return -4; }
+
+			let closest = Infinity;
+			let closestInstance;
+			const rect1 = {x1: x, y1: y, x2: x, y2: y};
+
+			for (const instance of instances) {
+				const rect2 = instance.getBoundingBox();
+
+				const distance = GameCollision.closestDistanceBetweenRectangles(rect1, rect2);
+				if (distance < closest) {
+					closest = distance;
+					closestInstance = instance;
+				}
+			}
+
+			if (!closestInstance) return -4;
+			return closestInstance.id;
 		},
 	};
 
 	static instance_furthest = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function instance_furthest is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([x, y, obj]) {
+			const instances = this.objectReferenceToInstances(obj);
+			if (!Array.isArray(instances)) { return -4; }
+
+			let furthest = 0;
+			let furthestInstance;
+			const rect1 = {x1: x, y1: y, x2: x, y2: y};
+
+			for (const instance of instances) {
+				const rect2 = instance.getBoundingBox();
+
+				const distance = GameCollision.closestDistanceBetweenRectangles(rect1, rect2);
+				if (distance > furthest) {
+					furthest = distance;
+					furthestInstance = instance;
+				}
+			}
+
+			if (!furthestInstance) return -4;
+			return furthestInstance.id;
 		},
 	};
 

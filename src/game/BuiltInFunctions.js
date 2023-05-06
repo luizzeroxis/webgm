@@ -2616,7 +2616,7 @@ export default class BuiltInFunctions {
 	static make_color_rgb = {
 		args: null,
 		func: function([red, green, blue]) {
-			return red*256 + green*256*256 + blue*256*256*256;
+			return rgbToDecimal({r: red, g: green, b: blue});
 		},
 	};
 

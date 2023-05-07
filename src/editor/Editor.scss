@@ -176,28 +176,108 @@ body, button, input, select {
 }
 
 .window {
-	position: absolute;
-	border: 1px solid var(--window-border);
+	--window-border-size: 8px;
 
-	> .titlebar {
-		display: flex;
-		align-items: center;
-		padding: 2px;
+	position: absolute;
+	display: grid;
+	grid-template-columns: var(--window-border-size) 1fr var(--window-border-size);
+	grid-template-rows: var(--window-border-size) 1fr var(--window-border-size);
+
+	> .border {
 		background-color: var(--titlebar-background);
 		user-select: none;
 
-		> .title {
-			flex: 1;
+		&.top-left {
+			cursor: nw-resize;
+		}
+
+		&.top {
+			cursor: n-resize;
+		}
+
+		&.top-right {
+			cursor: ne-resize;
+		}
+
+		&.left {
+			cursor: w-resize;
+		}
+
+		&.right {
+			cursor: e-resize;
+		}
+
+		&.bottom-left {
+			cursor: sw-resize;
+		}
+
+		&.bottom {
+			cursor: s-resize;
+		}
+
+		&.bottom-right {
+			cursor: se-resize;
+		}
+
+		&.top-left, &.top, &.top-right {
+			border-top: 1px solid var(--window-border);
+		}
+
+		&.bottom-left, &.bottom, &.bottom-right {
+			border-bottom: 1px solid var(--window-border);
+		}
+
+		&.top-left, &.left, &.bottom-left {
+			border-left: 1px solid var(--window-border);
+		}
+
+		&.top-right, &.right, &.bottom-right {
+			border-right: 1px solid var(--window-border);
 		}
 	}
 
-	> .client {
+	> .contents {
 		display: flex;
 		overflow: auto;
 		flex-direction: column;
-		padding: 8px;
-		background-color: var(--window-client-background);
-		resize: both;
+
+		> .titlebar {
+			display: flex;
+			align-items: center;
+			padding: 2px;
+			background-color: var(--titlebar-background);
+			user-select: none;
+
+			> .title {
+				overflow: hidden;
+				width: 0;
+				flex: 1;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+		}
+
+		> .client {
+			display: flex;
+			overflow: auto;
+			flex: 1;
+			flex-direction: column;
+			padding: 8px;
+			background-color: var(--window-client-background);
+		}
+	}
+
+	&.maximized {
+		display: flex;
+		flex-direction: column;
+
+		> .border {
+			display: none;
+		}
+
+		> .contents {
+			flex: 1;
+		}
 	}
 }
 
@@ -218,7 +298,6 @@ body, button, input, select {
 }
 
 .window-sprite {
-	min-height: 0;
 	flex: 1;
 
 	> .properties {
@@ -259,7 +338,6 @@ body, button, input, select {
 }
 
 .window-background {
-	min-height: 0;
 	flex: 1;
 
 	> .properties {
@@ -393,7 +471,6 @@ body, button, input, select {
 }
 
 .window-room {
-	min-height: 0;
 	flex: 1;
 
 	> .properties {
@@ -470,7 +547,7 @@ body, button, input, select {
 	}
 }
 
-.window > .client:has(> .game) {
+.window > .contents > .client:has(> .game) {
 	padding: 0;
 	resize: none;
 }

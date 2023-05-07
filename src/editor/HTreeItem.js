@@ -65,8 +65,10 @@ export default class HTreeItem extends HElement {
 	setOpen(value) {
 		this.open = value;
 
-		this.treeList.html.classList.toggle("closed", !this.open);
-		this.updateExpander();
+		if (this.treeList) {
+			this.treeList.html.classList.toggle("closed", !this.open);
+			this.updateExpander();
+		}
 	}
 
 	updateExpander() {

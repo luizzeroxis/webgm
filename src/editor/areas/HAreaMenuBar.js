@@ -20,6 +20,8 @@ export default class HAreaMenuBar extends HElement {
 			]},
 			{text: "Edit", items: [
 				{text: "Find resource", onClick: () => this.editor.findResource()},
+				{text: "Expand resource tree", onClick: () => this.editor.resourcesArea.tree.setAllOpen(true)},
+				{text: "Collapse resource tree", onClick: () => this.editor.resourcesArea.tree.setAllOpen(false)},
 			]},
 			{text: "Resources", items: [
 

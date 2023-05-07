@@ -60,4 +60,13 @@ export default class HTreeList extends HElement {
 
 		this.parentItem?.updateExpander();
 	}
+
+	setAllOpen(value) {
+		for (const item of this.items) {
+			item.setOpen(value);
+			if (item.treeList) {
+				item.treeList.setAllOpen(value);
+			}
+		}
+	}
 }

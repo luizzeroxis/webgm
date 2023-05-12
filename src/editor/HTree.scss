@@ -2,9 +2,9 @@
 	> .h-tree-item {
 		> .item {
 			display: flex;
-			height: 20px;
+			height: 18px;
 			align-items: center;
-			padding-bottom: 4px;
+			box-sizing: border-box;
 
 			> .expander {
 				width: 16px;

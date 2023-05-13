@@ -2,9 +2,10 @@
 	> .h-tree-item {
 		> .item {
 			display: flex;
+			width: fit-content;
 			height: 18px;
-			align-items: center;
 			box-sizing: border-box;
+			align-items: center;
 
 			> .expander {
 				width: 16px;
@@ -14,34 +15,43 @@
 				user-select: none;
 			}
 
-			> .icon {
-				width: 16px;
-				height: 16px;
-				margin-right: 4px;
-				object-fit: contain;
-				vertical-align: middle;
-				visibility: hidden;
-			}
-
-			> .icon[src] {
-				visibility: visible;
-			}
-
-			> .name {
-				flex: 1;
+			> .icon-and-name {
+				display: flex;
+				align-items: center;
 				cursor: pointer;
 
 				&:hover {
 					text-decoration: underline;
 				}
 
-				&.selected {
-					background: black;
-					color: white;
+				> .icon {
+					width: 16px;
+					height: 16px;
+					margin-right: 4px;
+					object-fit: contain;
+					vertical-align: middle;
+					visibility: hidden;
+				}
 
-					@media (prefers-color-scheme: dark) {
-						background: white;
-						color: black;
+				> .icon[src] {
+					visibility: visible;
+				}
+
+				> .name {
+					flex: 1;
+				}
+			}
+
+			&.selected {
+				> .icon-and-name {
+					> .name {
+						background: black;
+						color: white;
+
+						@media (prefers-color-scheme: dark) {
+							background: white;
+							color: black;
+						}
 					}
 				}
 			}

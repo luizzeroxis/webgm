@@ -8,27 +8,19 @@ export default class HTreeItem extends HElement {
 			this.open = true;
 			this.tree = null;
 
-			parent( add( new HElement("div", {class: "item"}) ) );
-				this.expander = add( new HElement("div", {class: "expander"}) );
-				this.expander.setEvent("click", () => {
-					this.setOpen(!this.open);
-				});
+			this.itemDiv = parent( add( new HElement("div", {class: "item"}) ) );
+				this.itemDiv.html.tabIndex = 0;
 
-				this.icon = add( new HImage(icon, "icon") );
-
-				this.nameDiv = add( new HElement("div", {class: "name"}, name) );
-				this.nameDiv.html.tabIndex = 0;
-
-				this.nameDiv.setEvent("focus", () => {
-					this.nameDiv.html.classList.add("selected");
+				this.itemDiv.setEvent("focus", () => {
+					this.itemDiv.html.classList.add("selected");
 					this.tree.setSelected(this);
 				});
 
 				if (onOpen) {
-					this.nameDiv.setEvent("click", onOpen);
+					this.itemDiv.setEvent("click", onOpen);
 				}
 
-				this.nameDiv.setEvent("keydown", (e) => {
+				this.itemDiv.setEvent("keydown", (e) => {
 					if (e.code == "Space" || e.code == "Enter") {
 						e.preventDefault();
 						onOpen?.();
@@ -40,7 +32,7 @@ export default class HTreeItem extends HElement {
 				});
 
 				if (menuItems) {
-					this.nameDiv.setEvent("contextmenu", (e) => {
+					this.itemDiv.setEvent("contextmenu", (e) => {
 						e.preventDefault();
 						menuManager.openMenu(menuItems, {x: e.clientX, y: e.clientY});
 					});
@@ -48,6 +40,17 @@ export default class HTreeItem extends HElement {
 					// 	menuManager.openMenu(menuItems, {fromElement: this.menuButton});
 					// }) );
 				}
+
+				this.expander = add( new HElement("div", {class: "expander"}) );
+				this.expander.setEvent("click", () => {
+					this.setOpen(!this.open);
+				});
+
+				parent(add( new HElement("div", {class: "icon-and-name"}) ));
+					this.icon = add( new HImage(icon, "icon") );
+					this.nameDiv = add( new HElement("div", {class: "name"}, name) );
+					endparent();
+
 				endparent();
 
 			endparent();

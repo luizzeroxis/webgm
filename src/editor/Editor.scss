@@ -92,10 +92,12 @@
 .h-tree-list {
 	> .h-tree-item {
 		> .item {
-			> .name {
-				&.selected {
-					background-color: var(--background-selected);
-					color: var(--text-selected);
+			&.selected {
+				> .icon-and-name {
+					> .name {
+						background-color: var(--background-selected);
+						color: var(--text-selected);
+					}
 				}
 			}
 		}

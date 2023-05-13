@@ -89,11 +89,11 @@ export default class HAreaResources extends HElement {
 
 	setSelected(item) {
 		if (this.selected) {
-			this.selected.nameDiv.html.classList.remove("selected");
+			this.selected.itemDiv.html.classList.remove("selected");
 		}
 		this.selected = item;
 		if (item) {
-			item.nameDiv.html.classList.add("selected");
+			item.itemDiv.html.classList.add("selected");
 		}
 	}
 }

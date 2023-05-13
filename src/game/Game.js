@@ -132,6 +132,13 @@ export default class Game {
 		}
 	}
 
+	// Restarts the game.
+	async restart() {
+		this.audio.stopAllSounds();
+		await this.loadFirstRoom();
+		this.startMainLoop();
+	}
+
 	// Ends the game properly, calling events and such.
 	async end() {
 		// If one instance calls a step stop exception, then even the other event type doesn't run

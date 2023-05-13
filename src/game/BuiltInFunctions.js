@@ -1663,8 +1663,7 @@ export default class BuiltInFunctions {
 		args: null,
 		func: function([]) {
 			this.game.stepStopAction = async () => {
-				await this.game.loadFirstRoom();
-				this.game.startMainLoop();
+				await this.game.restart();
 			};
 			return 0;
 		},

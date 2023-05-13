@@ -999,18 +999,18 @@ export default class BuiltInFunctions {
 	};
 
 	static move_bounce_solid = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function move_bounce_solid is not implemented");
-			// return 0;
+		args: [{type: "bool"}],
+		func: function([adv]) {
+			this.game.collision.moveBounce(this.currentInstance, adv, true);
+			return 0;
 		},
 	};
 
 	static move_bounce_all = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function move_bounce_all is not implemented");
-			// return 0;
+		args: [{type: "bool"}],
+		func: function([adv]) {
+			this.game.collision.moveBounce(this.currentInstance, adv, false);
+			return 0;
 		},
 	};
 

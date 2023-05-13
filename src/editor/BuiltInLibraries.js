@@ -336,10 +336,10 @@ export default class BuiltInLibraries {
 						},
 					],
 				},
-				/*
 				{
 					kind: "separator",
 				},
+				/*
 				{
 					id: 999,
 					description: "Move to Contact",
@@ -362,28 +362,37 @@ export default class BuiltInLibraries {
 						},
 					],
 				},
+				*/
 				{
-					id: 999,
+					id: 115,
 					description: "Bounce",
-					listText: [""],
-					hintText: [""],
+					listText: ["Bounce against ", a[1]],
+					hintText: [w, "bounce ", a[0], " against ", a[1]],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_bounce",
 
 					interfaceKind: "normal",
 					isQuestion: false,
-					hasApplyTo: false,
+					hasApplyTo: true,
 					hasRelative: false,
 
 					args: [
 						{
-							name: "",
-							kind: "",
-							default: "",
+							name: "precise:",
+							kind: "menu",
+							menu: ["not precisely", "precisely"],
+							default: 0,
+						},
+						{
+							name: "against:",
+							kind: "menu",
+							menu: ["solid objects", "all objects"],
+							default: 0,
 						},
 					],
 				},
+				/*
 				{
 					name: "Paths",
 					kind: "label",

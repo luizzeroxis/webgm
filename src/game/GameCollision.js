@@ -237,4 +237,86 @@ export default class GameCollision {
 		}
 		return null;
 	}
+
+	// Changes direction of instance if it will collide with an instance in the next instance position update.
+	moveBounce(instance, adv, solidOnly=false) {
+		if (adv) {
+			const x = instance.x + instance.hSpeed;
+			const y = instance.y + instance.vSpeed;
+			const dir = instance.direction;
+			const dirRad = dir * (Math.PI / 180);
+
+			const col = this.instanceOnInstances(instance, this.game.instances, x, y, solidOnly);
+			if (!col) return;
+
+			const dirStep = 10;
+
+			let positiveCollisionDirRad = dirRad;
+			let negativeCollisionDirRad = dirRad;
+
+			// positive angles
+			for (let cDir = dir; cDir < dir + 180; cDir += dirStep) {
+				const cDirRad = cDir * (Math.PI / 180);
+				const cX = instance.x + Math.cos(cDirRad) * instance.speed;
+				const cY = instance.y + -Math.sin(cDirRad) * instance.speed;
+
+				const col = this.instanceOnInstances(instance, this.game.instances, cX, cY, solidOnly);
+				if (!col) {
+					positiveCollisionDirRad = cDirRad;
+					break;
+				}
+			}
+
+			// negative angles
+			for (let cDir = dir; cDir > dir - 180; cDir -= dirStep) {
+				const cDirRad = cDir * (Math.PI / 180);
+				const cX = instance.x + Math.cos(cDirRad) * instance.speed;
+				const cY = instance.y + -Math.sin(cDirRad) * instance.speed;
+
+				const col = this.instanceOnInstances(instance, this.game.instances, cX, cY, solidOnly);
+				if (!col) {
+					negativeCollisionDirRad = cDirRad;
+					break;
+				}
+			}
+
+			const normalDirRad = (negativeCollisionDirRad + positiveCollisionDirRad) / 2;
+
+			const vectorX = Math.sin(dirRad);
+			const vectorY = Math.cos(dirRad);
+			const normalX = Math.sin(normalDirRad);
+			const normalY = Math.cos(normalDirRad);
+
+			// Reflect vector by normal
+			const dotProduct = vectorX * normalX + vectorY * normalY;
+
+			const reflectedDirRad = Math.atan2(
+				vectorX - (2 * dotProduct * normalX),
+				vectorY - (2 * dotProduct * normalY),
+			);
+
+			const reflectedDir = reflectedDirRad * (180/Math.PI);
+
+			instance.setDirectionAndSpeed(reflectedDir, instance.speed);
+		} else {
+			const x = instance.x + instance.hSpeed;
+			const y = instance.y + instance.vSpeed;
+
+			const col = this.instanceOnInstances(instance, this.game.instances, x, y, solidOnly);
+			if (!col) return;
+
+			const hCol = this.instanceOnInstances(instance, this.game.instances, x, null, solidOnly);
+			const vCol = this.instanceOnInstances(instance, this.game.instances, null, y, solidOnly);
+
+			if (hCol) {
+				instance.setHspeedAndVspeed(-instance.hSpeed, instance.vSpeed);
+			}
+			if (vCol) {
+				instance.setHspeedAndVspeed(instance.hSpeed, -instance.vSpeed);
+			}
+			if (!hCol && !vCol) {
+				instance.setHspeedAndVspeed(-instance.hSpeed, -instance.vSpeed);
+			}
+		}
+	}
 }

@@ -338,7 +338,7 @@ export default class GameCollision {
 		let xPrev = x;
 		let yPrev = y;
 
-		for (let dist; dist<maxDist; ++dist) {
+		for (let dist=1; dist<maxDist; ++dist) {
 			x += dirRadCos; // * 1
 			y += dirRadSin; // * 1
 

@@ -319,4 +319,68 @@ export default class GameCollision {
 			}
 		}
 	}
+
+	moveContact(instance, dir, maxDist, solidOnly=false) {
+		maxDist = (maxDist >= 0) ? maxDist : 1000;
+
+		let x = instance.x;
+		let y = instance.y;
+
+		const col = this.instanceOnInstances(instance, this.game.instances, x, y, solidOnly);
+		if (col) {
+			return;
+		}
+
+		const dirRad = dir * (Math.PI / 180);
+		const dirRadCos = Math.cos(dirRad);
+		const dirRadSin = -Math.sin(dirRad);
+
+		let xPrev = x;
+		let yPrev = y;
+
+		for (let dist; dist<maxDist; ++dist) {
+			x += dirRadCos; // * 1
+			y += dirRadSin; // * 1
+
+			const col = this.instanceOnInstances(instance, this.game.instances, x, y, solidOnly);
+			if (col) {
+				break;
+			}
+
+			xPrev = x;
+			yPrev = y;
+		}
+
+		instance.x = xPrev;
+		instance.y = yPrev;
+	}
+
+	moveOutside(instance, dir, maxDist, solidOnly=false) {
+		maxDist = (maxDist >= 0) ? maxDist : 1000;
+
+		let x = instance.x;
+		let y = instance.y;
+
+		const col = this.instanceOnInstances(instance, this.game.instances, x, y, solidOnly);
+		if (!col) {
+			return;
+		}
+
+		const dirRad = dir * (Math.PI / 180);
+		const dirRadCos = Math.cos(dirRad);
+		const dirRadSin = -Math.sin(dirRad);
+
+		for (let dist=1; dist<maxDist; ++dist) {
+			x += dirRadCos; // * 1
+			y += dirRadSin; // * 1
+
+			const col = this.instanceOnInstances(instance, this.game.instances, x, y, solidOnly);
+			if (!col) {
+				break;
+			}
+		}
+
+		instance.x = x;
+		instance.y = y;
+	}
 }

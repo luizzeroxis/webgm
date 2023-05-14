@@ -1015,34 +1015,34 @@ export default class BuiltInFunctions {
 	};
 
 	static move_contact_solid = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function move_contact_solid is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}],
+		func: function([dir, maxdist]) {
+			this.game.collision.moveContact(this.currentInstance, dir, maxdist, true);
+			return 0;
 		},
 	};
 
 	static move_contact_all = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function move_contact_all is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}],
+		func: function([dir, maxdist]) {
+			this.game.collision.moveContact(this.currentInstance, dir, maxdist, false);
+			return 0;
 		},
 	};
 
 	static move_outside_solid = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function move_outside_solid is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}],
+		func: function([dir, maxdist]) {
+			this.game.collision.moveOutside(this.currentInstance, dir, maxdist, true);
+			return 0;
 		},
 	};
 
 	static move_outside_all = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function move_outside_all is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}],
+		func: function([dir, maxdist]) {
+			this.game.collision.moveOutside(this.currentInstance, dir, maxdist, false);
+			return 0;
 		},
 	};
 

@@ -2,7 +2,7 @@ import * as ohm from "ohm-js";
 import * as ohmExtras from "ohm-js/extras";
 
 import {ExitException, ReturnException, BreakException, ContinueException} from "../common/Exceptions.js";
-import {toInteger, forceReal, asString, forceBool} from "../common/tools.js";
+import {toInteger, forceString, forceReal, forceInteger, asString, forceBool} from "../common/tools.js";
 
 import BuiltInFunctions from "./BuiltInFunctions.js";
 import GMLGrammar from "./GMLGrammar.js";
@@ -567,7 +567,8 @@ export default class GML {
 			let result;
 
 			if (typeof func != "function") {
-				result = await func.func.call(this, this.typeCheckArgs(args, func.args), relative);
+				const typeCheckedArgs = this.typeCheckArgs(args, func.args);
+				result = await func.func.call(this, typeCheckedArgs, relative);
 			} else {
 				result = await func.call(this, args, relative);
 			}
@@ -606,6 +607,10 @@ export default class GML {
 					properArgs[i] = args[i];
 				} else if (funcArg.type == "real") {
 					properArgs[i] = forceReal(args[i]);
+				} else if (funcArg.type == "integer") {
+					properArgs[i] = forceInteger(args[i]);
+				} else if (funcArg.type == "string") {
+					properArgs[i] = forceString(args[i]);
 				} else if (funcArg.type == "as_string") {
 					properArgs[i] = asString(args[i]);
 				} else if (funcArg.type == "bool") {

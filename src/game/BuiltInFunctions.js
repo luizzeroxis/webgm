@@ -1,5 +1,5 @@
 import {EngineException} from "../common/Exceptions.js";
-import {decimalToHSV, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, asString, forceString, forceReal, forceInteger, toInteger, parseNewLineHash} from "../common/tools.js";
+import {decimalToHSV, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, forceInteger, toInteger, parseNewLineHash} from "../common/tools.js";
 
 import GameCollision from "./GameCollision.js";
 
@@ -27,14 +27,14 @@ export default class BuiltInFunctions {
 	};
 
 	static irandom = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.floor(this.game.rng() * (Math.floor(x) + 1));
 		},
 	};
 
 	static irandom_range = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([x1, x2]) {
 			return Math.floor(this.game.rng() * (Math.floor(x1) - Math.floor(x2) + 1)) + Math.floor(x2);
 		},
@@ -64,189 +64,189 @@ export default class BuiltInFunctions {
 	};
 
 	static choose = {
-		args: null,
+		args: [{type: "any", infinite: true}],
 		func: function([...vals]) {
 			return vals[Math.floor((this.game.rng()*vals.length))];
 		},
 	};
 
 	static abs = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.abs(x);
 		},
 	};
 
 	static sign = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.sign(x);
 		},
 	};
 
 	static round = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return toInteger(x);
 		},
 	};
 
 	static floor = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.floor(x);
 		},
 	};
 
 	static ceil = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.ceil(x);
 		},
 	};
 
 	static frac = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return x % 1;
 		},
 	};
 
 	static sqrt = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.sqrt(x);
 		},
 	};
 
 	static sqr = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return x * x;
 		},
 	};
 
 	static power = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([x, n]) {
 			return x ** n;
 		},
 	};
 
 	static exp = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.exp(x);
 		},
 	};
 
 	static ln = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.log(x);
 		},
 	};
 
 	static log2 = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.log2(x);
 		},
 	};
 
 	static log10 = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.log10(x);
 		},
 	};
 
 	static logn = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([x, n]) {
 			return Math.log(x) / Math.log(n);
 		},
 	};
 
 	static sin = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.sin(x);
 		},
 	};
 
 	static cos = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.cos(x);
 		},
 	};
 
 	static tan = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.tan(x);
 		},
 	};
 
 	static arcsin = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.asin(x);
 		},
 	};
 
 	static arccos = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.acos(x);
 		},
 	};
 
 	static arctan = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return Math.atan(x);
 		},
 	};
 
 	static arctan2 = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([y, x]) {
 			return Math.atan2(y, x);
 		},
 	};
 
 	static degtorad = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return x * Math.PI / 180;
 		},
 	};
 
 	static radtodeg = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([x]) {
 			return x * (180 / Math.PI);
 		},
 	};
 
 	static min = {
-		args: null,
+		args: [{type: "real", infinite: true}], // TODO allow strings
 		func: function([...vals]) {
 			return Math.min(...vals);
 		},
 	};
 
 	static max = {
-		args: null,
+		args: [{type: "real", infinite: true}], // TODO allow strings
 		func: function([...vals]) {
 			return Math.max(...vals);
 		},
 	};
 
 	static mean = {
-		args: null,
+		args: [{type: "real", infinite: true}],
 		func: function([...vals]) {
 			if (vals.length == 0) return 0;
 			return vals.reduce((a, b) => a+b) / vals.length;
@@ -254,7 +254,7 @@ export default class BuiltInFunctions {
 	};
 
 	static median = {
-		args: null,
+		args: [{type: "real", infinite: true}],
 		func: function([...vals]) {
 			if (vals.length == 0) return 0;
 			vals.sort();
@@ -267,42 +267,42 @@ export default class BuiltInFunctions {
 	};
 
 	static point_distance = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([x1, y1, x2, y2]) {
 			return Math.hypot(x2 - x1, y2 - y1);
 		},
 	};
 
 	static point_direction = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([x1, y1, x2, y2]) {
 			return Math.atan2(-(y2 - y1), x2 - x1) * (180 / Math.PI);
 		},
 	};
 
 	static lengthdir_x = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([len, dir]) {
 			return Math.cos(dir * Math.PI / 180) * len;
 		},
 	};
 
 	static lengthdir_y = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([len, dir]) {
 			return Math.sin(dir * Math.PI / 180) * len;
 		},
 	};
 
 	static is_real = {
-		args: null,
+		args: [{type: "any"}],
 		func: function([x]) {
 			return (typeof x == "number") ? 1 : 0;
 		},
 	};
 
 	static is_string = {
-		args: null,
+		args: [{type: "any"}],
 		func: function([x]) {
 			return (typeof x == "string") ? 1 : 0;
 		},
@@ -311,21 +311,21 @@ export default class BuiltInFunctions {
 	// ## String handling functions
 
 	static chr = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([val]) {
 			return String.fromCharCode(val);
 		},
 	};
 
 	static ord = {
-		args: null,
+		args: [{type: "string"}],
 		func: function([str]) {
-			return str.charCodeAt(0);
+			return str.charCodeAt(0) || 0;
 		},
 	};
 
 	static real = {
-		args: null,
+		args: [{type: "any"}],
 		func: function([str]) {
 			const float = parseFloat(str);
 			return (!Number.isNaN(float)) ? float : 0;
@@ -333,77 +333,79 @@ export default class BuiltInFunctions {
 	};
 
 	static string = {
-		args: null,
+		args: [{type: "any"}],
 		func: function([val]) {
-			return val.toString();
+			if (typeof val == "string") return val;
+			return (val % 1 == 0) ? val.toString() : val.toFixed(2);
 		},
 	};
 
 	static string_format = {
-		args: null,
+		args: [{type: "any"}, {type: "real"}, {type: "real"}],
 		func: function([val, tot, dec]) {
+			if (typeof val == "string") return val;
 			return val.toFixed(dec).padStart(tot);
 		},
 	};
 
 	static string_length = {
-		args: null,
+		args: [{type: "string"}],
 		func: function([str]) {
 			return str.length;
 		},
 	};
 
 	static string_pos = {
-		args: null,
+		args: [{type: "string"}, {type: "string"}],
 		func: function([substr, str]) {
 			return str.indexOf(substr) + 1;
 		},
 	};
 
 	static string_copy = {
-		args: null,
+		args: [{type: "string"}, {type: "real"}, {type: "real"}],
 		func: function([str, index, count]) {
 			return str.slice(index - 1, index - 1 + count);
 		},
 	};
 
 	static string_char_at = {
-		args: null,
+		args: [{type: "string"}, {type: "real"}],
 		func: function([str, index]) {
 			return str[index - 1];
 		},
 	};
 
 	static string_delete = {
-		args: null,
+		args: [{type: "string"}, {type: "real"}, {type: "real"}],
 		func: function([str, index, count]) {
 			return str.substring(0, index) + str.substring(index+count);
 		},
 	};
 
 	static string_insert = {
-		args: null,
+		args: [{type: "string"}, {type: "string"}, {type: "real"}],
 		func: function([substr, str, index]) {
 			return str.substring(0, index) + substr + str.substring(index);
 		},
 	};
 
 	static string_replace = {
-		args: null,
+		args: [{type: "string"}, {type: "string"}, {type: "string"}],
 		func: function([str, substr, newstr]) {
 			return str.replace(substr, newstr);
 		},
 	};
 
 	static string_replace_all = {
-		args: null,
+		args: [{type: "string"}, {type: "string"}, {type: "string"}],
 		func: function([str, substr, newstr]) {
 			return str.replaceAll(substr, newstr);
 		},
 	};
 
 	static string_count = {
-		args: null,
+		args: [{type: "string"}, {type: "string"}],
 		func: function([substr, str]) {
 			let count = 0;
 			let position;
@@ -418,42 +420,42 @@ export default class BuiltInFunctions {
 	};
 
 	static string_lower = {
-		args: null,
+		args: [{type: "string"}],
 		func: function([str]) {
 			return str.toLowerCase();
 		},
 	};
 
 	static string_upper = {
-		args: null,
+		args: [{type: "string"}],
 		func: function([str]) {
 			return str.toUpperCase();
 		},
 	};
 
 	static string_repeat = {
-		args: null,
+		args: [{type: "string"}, {type: "real"}],
 		func: function([str, count]) {
 			return str.repeat(count);
 		},
 	};
 
 	static string_letters = {
-		args: null,
+		args: [{type: "string"}],
 		func: function([str]) {
 			return str.match(/[A-Za-z]/g).join("");
 		},
 	};
 
 	static string_digits = {
-		args: null,
+		args: [{type: "string"}],
 		func: function([str]) {
 			return str.match(/[0-9]/g).join("");
 		},
 	};
 
 	static string_lettersdigits = {
-		args: null,
+		args: [{type: "string"}],
 		func: function([str]) {
 			return str.match(/[A-Za-z0-9]/g).join("");
 		},
@@ -880,7 +882,7 @@ export default class BuiltInFunctions {
 	// ## Moving around
 
 	static motion_set = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([dir, speed]) {
 			this.currentInstance.setDirectionAndSpeed(dir, speed);
 			return 0;
@@ -888,7 +890,7 @@ export default class BuiltInFunctions {
 	};
 
 	static motion_add = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([dir, speed]) {
 			const dirRadians = dir * (Math.PI / 180);
 			this.currentInstance.setHspeedAndVspeed(
@@ -900,21 +902,21 @@ export default class BuiltInFunctions {
 	};
 
 	static place_free = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([x, y]) {
 			return !this.game.collision.instanceOnInstances(this.currentInstance, this.game.instances, x, y, true) ? 1 : 0;
 		},
 	};
 
 	static place_empty = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([x, y]) {
 			return !this.game.collision.instanceOnInstances(this.currentInstance, this.game.instances, x, y, false) ? 1 : 0;
 		},
 	};
 
 	static place_meeting = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([x, y, obj]) {
 			const instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) { return 0; }
@@ -923,14 +925,14 @@ export default class BuiltInFunctions {
 	};
 
 	static place_snapped = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([hsnap, vsnap]) {
 			return (this.currentInstance.x % hsnap == 0) && (this.currentInstance.y % vsnap == 0);
 		},
 	};
 
 	static move_random = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([hsnap, vsnap]) {
 			hsnap = hsnap <= 0 ? 1 : hsnap;
 			vsnap = vsnap <= 0 ? 1 : vsnap;
@@ -954,7 +956,7 @@ export default class BuiltInFunctions {
 	};
 
 	static move_snap = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([hsnap, vsnap]) {
 			this.currentInstance.x = Math.floor(this.currentInstance.x / hsnap) * hsnap;
 			this.currentInstance.y = Math.floor(this.currentInstance.y / vsnap) * vsnap;
@@ -963,7 +965,7 @@ export default class BuiltInFunctions {
 	};
 
 	static move_wrap = {
-		args: null,
+		args: [{type: "bool"}, {type: "bool"}, {type: "real"}],
 		func: function([hor, vert, margin]) {
 			if (hor) {
 				const x = this.currentInstance.x;
@@ -989,7 +991,7 @@ export default class BuiltInFunctions {
 	};
 
 	static move_towards_point = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([x, y, sp]) {
 			const cx = this.currentInstance.x;
 			const cy = this.currentInstance.y;
@@ -1087,14 +1089,14 @@ export default class BuiltInFunctions {
 	};
 
 	static position_empty = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([x, y]) {
 			return !this.game.collision.instancesOnPoint(this.game.instances, {x: x, y: y}) ? 1 : 0;
 		},
 	};
 
 	static position_meeting = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([x, y, obj]) {
 			const instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) { return 0; }
@@ -1296,7 +1298,7 @@ export default class BuiltInFunctions {
 	};
 
 	static collision_rectangle = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}, {type: "bool"}],
 		func: function([x1, y1, x2, y2, obj, prec, notme]) {
 			let instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) return -4;
@@ -1342,7 +1344,7 @@ export default class BuiltInFunctions {
 	// ## Instances
 
 	static instance_find = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([obj, n]) {
 			const instances = this.objectReferenceToInstances(obj);
 
@@ -1355,7 +1357,7 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_exists = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([obj]) {
 			if (obj == -7) { // local
 				return 0;
@@ -1374,7 +1376,7 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_number = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([obj]) {
 			if (obj == -7) { // local
 				return 0;
@@ -1466,7 +1468,7 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_create = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}],
 		func: async function([x, y, obj]) {
 			const object = this.game.project.getResourceById("ProjectObject", obj);
 			if (object == null) {
@@ -1489,7 +1491,7 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_destroy = {
-		args: null,
+		args: [],
 		func: async function([]) {
 			await this.game.instanceDestroy(this.currentInstance);
 			return 0;
@@ -1505,7 +1507,7 @@ export default class BuiltInFunctions {
 	};
 
 	static position_destroy = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: async function([x, y]) {
 			const instances = this.game.collision.getAllInstancesOnPoint(this.game.instances, {x, y});
 			for (const instance of instances) {
@@ -1577,7 +1579,7 @@ export default class BuiltInFunctions {
 	// ## Timing
 
 	static sleep = {
-		args: null,
+		args: [{type: "real"}],
 		func: async function([numb]) {
 			await new Promise((resolve) => {
 				setTimeout(() => resolve(), numb);
@@ -1589,7 +1591,7 @@ export default class BuiltInFunctions {
 	// ## Rooms
 
 	static room_goto = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([numb]) {
 			const room = this.game.project.getResourceById("ProjectRoom", numb);
 			if (room == null) {
@@ -1607,21 +1609,21 @@ export default class BuiltInFunctions {
 	};
 
 	static room_goto_previous = {
-		args: null,
+		args: [],
 		func: function([]) {
 			return BuiltInFunctions.room_goto.func.call(this, [BuiltInFunctions.room_previous.func.call(this, [this.game.room.resource.id])]);
 		},
 	};
 
 	static room_goto_next = {
-		args: null,
+		args: [],
 		func: function([]) {
 			return BuiltInFunctions.room_goto.func.call(this, [BuiltInFunctions.room_next.func.call(this, [this.game.room.resource.id])]);
 		},
 	};
 
 	static room_previous = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([numb]) {
 			const index = this.game.project.resources.ProjectRoom.findIndex(x => x.id == numb);
 			if (index == null || index == 0) {
@@ -1632,7 +1634,7 @@ export default class BuiltInFunctions {
 	};
 
 	static room_next = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([numb]) {
 			const index = this.game.project.resources.ProjectRoom.findIndex(x => x.id == numb);
 			if (index == null || index == this.game.project.resources.ProjectRoom.length - 1) {
@@ -1643,14 +1645,14 @@ export default class BuiltInFunctions {
 	};
 
 	static room_restart = {
-		args: null,
+		args: [],
 		func: function([]) {
 			return BuiltInFunctions.room_goto.func.call(this, [this.game.room.resource.id]);
 		},
 	};
 
 	static game_end = {
-		args: null,
+		args: [],
 		func: function([]) {
 			this.game.stepStopAction = async () => {
 				await this.game.end();
@@ -1660,7 +1662,7 @@ export default class BuiltInFunctions {
 	};
 
 	static game_restart = {
-		args: null,
+		args: [],
 		func: function([]) {
 			this.game.stepStopAction = async () => {
 				await this.game.restart();
@@ -1722,7 +1724,7 @@ export default class BuiltInFunctions {
 	};
 
 	static event_user = {
-		args: null,
+		args: [{type: "real"}],
 		func: async function([numb]) {
 			if (numb >= 0 && numb <= 15) {
 			// User 0 has id of 10
@@ -1743,7 +1745,7 @@ export default class BuiltInFunctions {
 	// ## Miscellaneous variables and functions
 
 	static show_debug_message = {
-		args: null,
+		args: [{type: "any"}],
 		func: function([message]) {
 			console.log(message);
 			return 0;
@@ -1751,21 +1753,21 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_global_exists = {
-		args: null,
+		args: [{type: "string"}],
 		func: function([name]) {
 			return (this.game.globalVars.exists(name) || this.game.globalObjectVars.exists(name)) ? 1 : 0;
 		},
 	};
 
 	static variable_local_exists = {
-		args: null,
+		args: [{type: "string"}],
 		func: function([name]) {
 			return this.currentInstance.vars.exists(name) ? 1 : 0;
 		},
 	};
 
 	static variable_global_get = {
-		args: null,
+		args: [{type: "string"}],
 		func: function([name]) {
 			if (this.game.globalVars.exists(name))
 				return this.game.globalVars.get(name);
@@ -1776,7 +1778,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_global_array_get = {
-		args: null,
+		args: [{type: "string"}, {type: "real"}],
 		func: function([name, ind]) {
 			if (this.game.globalVars.exists(name))
 				return this.game.globalVars.get(name, [ind]);
@@ -1787,7 +1789,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_global_array2_get = {
-		args: null,
+		args: [{type: "string"}, {type: "real"}, {type: "real"}],
 		func: function([name, ind1, ind2]) {
 			if (this.game.globalVars.exists(name))
 				return this.game.globalVars.get(name, [ind1, ind2]);
@@ -1798,7 +1800,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_local_get = {
-		args: null,
+		args: [{type: "string"}],
 		func: function([name]) {
 			if (this.currentInstance.vars.exists(name))
 				return this.currentInstance.vars.get(name);
@@ -1807,7 +1809,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_local_array_get = {
-		args: null,
+		args: [{type: "string"}, {type: "real"}],
 		func: function([name, ind]) {
 			if (this.currentInstance.vars.exists(name))
 				return this.currentInstance.vars.get(name, [ind]);
@@ -1816,7 +1818,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_local_array2_get = {
-		args: null,
+		args: [{type: "string"}, {type: "real"}, {type: "real"}],
 		func: function([name, ind1, ind2]) {
 			if (this.currentInstance.vars.exists(name))
 				return this.currentInstance.vars.get(name, [ind1, ind2]);
@@ -1825,7 +1827,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_global_set = {
-		args: null,
+		args: [{type: "string"}, {type: "any"}],
 		func: function([name, value]) {
 			if (this.game.globalVars.exists(name)) {
 				this.game.globalVars.set(name, value);
@@ -1837,7 +1839,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_global_array_set = {
-		args: null,
+		args: [{type: "string"}, {type: "real"}, {type: "any"}],
 		func: function([name, ind, value]) {
 			if (this.game.globalVars.exists(name)) {
 				this.game.globalVars.set(name, value, [ind]);
@@ -1849,7 +1851,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_global_array2_set = {
-		args: null,
+		args: [{type: "string"}, {type: "real"}, {type: "real"}, {type: "any"}],
 		func: function([name, ind1, ind2, value]) {
 			if (this.game.globalVars.exists(name)) {
 				this.game.globalVars.set(name, value, [ind1, ind2]);
@@ -1861,7 +1863,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_local_set = {
-		args: null,
+		args: [{type: "string"}, {type: "any"}],
 		func: function([name, value]) {
 			this.currentInstance.vars.set(name, value);
 			return 0;
@@ -1869,7 +1871,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_local_array_set = {
-		args: null,
+		args: [{type: "string"}, {type: "real"}, {type: "any"}],
 		func: function([name, ind, value]) {
 			this.currentInstance.vars.set(name, value, [ind]);
 			return 0;
@@ -1877,7 +1879,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_local_array2_set = {
-		args: null,
+		args: [{type: "string"}, {type: "real"}, {type: "real"}, {type: "any"}],
 		func: function([name, ind1, ind2, value]) {
 			this.currentInstance.vars.set(name, value, [ind1, ind2]);
 			return 0;
@@ -1929,21 +1931,21 @@ export default class BuiltInFunctions {
 	};
 
 	static keyboard_check = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([key]) {
 			return this.game.input.getKey(key, this.game.input.key) ? 1 : 0;
 		},
 	};
 
 	static keyboard_check_pressed = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([key]) {
 			return this.game.input.getKey(key, this.game.input.keyPressed) ? 1 : 0;
 		},
 	};
 
 	static keyboard_check_released = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([key]) {
 			return this.game.input.getKey(key, this.game.input.keyReleased) ? 1 : 0;
 		},
@@ -2024,35 +2026,35 @@ export default class BuiltInFunctions {
 	// ## The mouse
 
 	static mouse_check_button = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([numb]) {
 			return this.game.input.getMouse(numb, this.game.input.mouse) ? 1 : 0;
 		},
 	};
 
 	static mouse_check_button_pressed = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([numb]) {
 			return this.game.input.getMouse(numb, this.game.input.mousePressed) ? 1 : 0;
 		},
 	};
 
 	static mouse_check_button_released = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([numb]) {
 			return this.game.input.getMouse(numb, this.game.input.mouseReleased) ? 1 : 0;
 		},
 	};
 
 	static mouse_wheel_up = {
-		args: null,
+		args: [],
 		func: function([]) {
 			return (this.game.input.mouseWheel < 0);
 		},
 	};
 
 	static mouse_wheel_down = {
-		args: null,
+		args: [],
 		func: function([]) {
 			return (this.game.input.mouseWheel > 0);
 		},
@@ -2200,7 +2202,7 @@ export default class BuiltInFunctions {
 	// ## Drawing sprites and backgrounds
 
 	static draw_sprite = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([sprite, subimg, x, y]) {
 			const spriteResource = this.game.project.getResourceById("ProjectSprite", sprite);
 			if (spriteResource) {
@@ -2240,7 +2242,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_background = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([back, x, y]) {
 			const backgroundResource = this.game.project.getResourceById("ProjectBackground", back);
 			if (backgroundResource) {
@@ -2280,7 +2282,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_sprite_ext = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([sprite, subimg, x, y, xscale, yscale, rot, color, alpha]) {
 			const spriteResource = this.game.project.getResourceById("ProjectSprite", sprite);
 			if (!spriteResource) {
@@ -2370,7 +2372,7 @@ export default class BuiltInFunctions {
 	// ## Drawing shapes
 
 	static draw_clear = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([col]) {
 			this.game.ctx.fillStyle = decimalToHex(col);
 			this.game.ctx.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
@@ -2379,7 +2381,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_clear_alpha = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([col, alpha]) {
 			this.game.ctx.clearRect(0, 0, this.game.canvas.width, this.game.canvas.height);
 
@@ -2390,7 +2392,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_point = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([x, y]) {
 			this.game.ctx.fillStyle = this.game.drawColorAlpha;
 			this.game.ctx.fillRect(x, y, 1, 1);
@@ -2399,7 +2401,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_line = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([x1, y1, x2, y2]) {
 			this.game.ctx.strokeStyle = this.game.drawColorAlpha;
 
@@ -2419,7 +2421,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_line_width = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([x1, y1, x2, y2, w]) {
 			this.game.ctx.lineWidth = w;
 			BuiltInFunctions.draw_line.func.call(this, [x1, y1, x2, y2]);
@@ -2429,9 +2431,9 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_rectangle = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}],
 		func: function([x1, y1, x2, y2, outline]) {
-			if (outline >= 1) {
+			if (outline) {
 				this.game.ctx.strokeStyle = this.game.drawColorAlpha;
 				this.game.ctx.save();
 				this.game.ctx.translate(0.5, 0.5);
@@ -2447,10 +2449,10 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_roundrect = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}],
 		func: function([x1, y1, x2, y2, outline]) {
 			// TODO remove antialiasing
-			if (outline >= 1) {
+			if (outline) {
 				this.game.ctx.save();
 				this.game.ctx.translate(0.5, 0.5);
 
@@ -2463,7 +2465,7 @@ export default class BuiltInFunctions {
 			this.game.ctx.roundRect(x1, y1, x2-x1, y2-y1, 4);
 			this.game.ctx.closePath();
 
-			if (outline >= 1) {
+			if (outline) {
 				this.game.ctx.stroke();
 
 				this.game.ctx.restore();
@@ -2476,9 +2478,9 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_triangle = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}],
 		func: function([x1, y1, x2, y2, x3, y3, outline]) {
-			if (outline >= 1) {
+			if (outline) {
 				this.game.ctx.strokeStyle = this.game.drawColorAlpha;
 			// this.game.ctx.save();
 			// this.game.ctx.translate(0.5, 0.5);
@@ -2492,7 +2494,7 @@ export default class BuiltInFunctions {
 			this.game.ctx.lineTo(x3, y3);
 			this.game.ctx.closePath();
 
-			if (outline >= 1) {
+			if (outline) {
 				this.game.ctx.stroke();
 			// this.game.ctx.restore();
 			} else {
@@ -2504,11 +2506,11 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_circle = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}],
 		func: function([x, y, r, outline]) {
 			this.game.ctx.beginPath();
 			this.game.ctx.arc(x, y, r, 0, Math.PI*2);
-			if (outline >= 1) {
+			if (outline) {
 				this.game.ctx.strokeStyle = this.game.drawColorAlpha;
 				this.game.ctx.stroke();
 			} else {
@@ -2522,14 +2524,14 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_ellipse = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}],
 		func: function([x1, y1, x2, y2, outline]) {
 			const x = (x2 - x1) / 2 + x1;
 			const y = (y2 - y1) / 2 + y1;
 
 			this.game.ctx.beginPath();
 			this.game.ctx.ellipse(x, y, x2 - x, y2 - y, 0, 0, Math.PI*2);
-			if (outline >= 1) {
+			if (outline) {
 				this.game.ctx.strokeStyle = this.game.drawColorAlpha;
 				this.game.ctx.stroke();
 			} else {
@@ -2583,7 +2585,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_set_color = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([color]) {
 			this.game.drawColorAlpha = decimalToHexAlpha(color, hexAlphaToDecimal(this.game.drawColorAlpha).alpha);
 			return 0;
@@ -2591,7 +2593,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_set_alpha = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([alpha]) {
 			this.game.drawColorAlpha = decimalToHexAlpha(hexAlphaToDecimal(this.game.drawColorAlpha).color, alpha);
 			return 0;
@@ -2599,21 +2601,21 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_get_color = {
-		args: null,
+		args: [],
 		func: function([]) {
 			return hexAlphaToDecimal(this.game.drawColorAlpha).color;
 		},
 	};
 
 	static draw_get_alpha = {
-		args: null,
+		args: [],
 		func: function([]) {
 			return hexAlphaToDecimal(this.game.drawColorAlpha).alpha;
 		},
 	};
 
 	static make_color_rgb = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([red, green, blue]) {
 			return rgbToDecimal({r: red, g: green, b: blue});
 		},
@@ -2628,42 +2630,42 @@ export default class BuiltInFunctions {
 	};
 
 	static color_get_red = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([col]) {
 			return col % 256;
 		},
 	};
 
 	static color_get_green = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([col]) {
 			return Math.floor(col % (256*256) / 256);
 		},
 	};
 
 	static color_get_blue = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([col]) {
 			return Math.floor(col % (256*256*256) / (256*256));
 		},
 	};
 
 	static color_get_hue = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([col]) {
 			return decimalToHSV(col).h;
 		},
 	};
 
 	static color_get_saturation = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([col]) {
 			return decimalToHSV(col).s;
 		},
 	};
 
 	static color_get_value = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([col]) {
 			return decimalToHSV(col).v;
 		},
@@ -2678,7 +2680,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_getpixel = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([x, y]) {
 			const data = this.game.ctx.getImageData(x, y, 1, 1);
 			return rgbToDecimal({
@@ -2706,7 +2708,7 @@ export default class BuiltInFunctions {
 	// ## Fonts and text
 
 	static draw_set_font = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([font]) {
 			this.game.drawFont = font;
 			return 0;
@@ -2714,7 +2716,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_set_halign = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([halign]) {
 			this.game.drawHAlign = halign;
 			return 0;
@@ -2722,7 +2724,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_set_valign = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([valign]) {
 			this.game.drawVAlign = valign;
 			return 0;
@@ -2859,7 +2861,7 @@ export default class BuiltInFunctions {
 	// ## Advanced drawing functions
 
 	static draw_point_color = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([x, y, col1]) {
 			this.game.ctx.fillStyle = decimalToHex(col1);
 			this.game.ctx.fillRect(x, y, 1, 1);
@@ -3620,16 +3622,15 @@ export default class BuiltInFunctions {
 	};
 
 	static window_set_fullscreen = {
-		args: null,
+		args: [{type: "bool"}],
 		func: async function([full]) {
-			full = (forceReal(full) > 0.5);
 			await this.game.setFullscreen(full);
 			return 0;
 		},
 	};
 
 	static window_get_fullscreen = {
-		args: null,
+		args: [],
 		func: function([]) {
 			return this.game.getFullscreen() ? 1 : 0;
 		},
@@ -3980,7 +3981,7 @@ export default class BuiltInFunctions {
 	// ## Basic sound functions
 
 	static sound_play = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([index]) {
 			const sound = this.game.project.getResourceById("ProjectSound", index);
 			if (!sound) {
@@ -3996,7 +3997,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sound_loop = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([index]) {
 			const sound = this.game.project.getResourceById("ProjectSound", index);
 			if (!sound) {
@@ -4012,7 +4013,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sound_stop = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([index]) {
 			const sound = this.game.project.getResourceById("ProjectSound", index);
 			if (!sound) {
@@ -4027,7 +4028,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sound_stop_all = {
-		args: null,
+		args: [],
 		func: function([]) {
 			this.game.audio.stopAllSounds();
 			return 0;
@@ -4035,7 +4036,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sound_isplaying = {
-		args: null,
+		args: [{type: "real"}],
 		func: function([index]) {
 			const sound = this.game.project.getResourceById("ProjectSound", index);
 			if (!sound) return 0;
@@ -4051,7 +4052,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sound_volume = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}],
 		func: function([index, value]) {
 			const sound = this.game.project.getResourceById("ProjectSound", index);
 			if (!sound) return 0; // TODO check if error
@@ -4535,9 +4536,8 @@ export default class BuiltInFunctions {
 	// ## Pop-up messages and questions
 
 	static show_message = {
-		args: null,
+		args: [{type: "as_string"}],
 		func: function([str]) {
-			str = asString(str);
 			str = parseNewLineHash(str);
 			this.game.input.clear();
 			alert(str);
@@ -4555,7 +4555,7 @@ export default class BuiltInFunctions {
 	};
 
 	static show_question = {
-		args: null,
+		args: [{type: "as_string"}],
 		func: function([str]) {
 			this.game.input.clear();
 			return confirm(str) ? 1 : 0;
@@ -4563,11 +4563,8 @@ export default class BuiltInFunctions {
 	};
 
 	static get_integer = {
-		args: null,
+		args: [{type: "string"}, {type: "integer"}],
 		func: function([str, def]) {
-			str = forceString(str);
-			def = forceInteger(def);
-
 			const result = prompt(str, def);
 			if (result === null) return def;
 
@@ -4579,11 +4576,8 @@ export default class BuiltInFunctions {
 	};
 
 	static get_string = {
-		args: null,
+		args: [{type: "string"}, {type: "string"}],
 		func: function([str, def]) {
-			str = forceString(str);
-			def = forceString(def);
-
 			const result = prompt(str, def);
 			if (result === null) return def;
 
@@ -4680,7 +4674,7 @@ export default class BuiltInFunctions {
 	};
 
 	static show_menu = {
-		args: null,
+		args: [{type: "string"}, {type: "integer"}],
 		func: async function([str, def]) {
 			const x = this.game.input.mouseDisplayX;
 			const y = this.game.input.mouseDisplayY;
@@ -4690,7 +4684,7 @@ export default class BuiltInFunctions {
 	};
 
 	static show_menu_pos = {
-		args: null,
+		args: [{type: "real"}, {type: "real"}, {type: "string"}, {type: "integer"}],
 		func: async function([x, y, str, def]) {
 			const items = str.split("|").map(text => ( { text: text } ));
 
@@ -4860,7 +4854,7 @@ export default class BuiltInFunctions {
 	// ## Sprites
 
 	static sprite_exists = {
-		args: null,
+		args: [{type: "integer"}],
 		func: function([ind]) {
 			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
 			return sprite ? 1 : 0;
@@ -4966,7 +4960,7 @@ export default class BuiltInFunctions {
 	// ## Sounds
 
 	static sound_exists = {
-		args: null,
+		args: [{type: "integer"}],
 		func: function([ind]) {
 			const sound = this.game.project.getResourceById("ProjectSound", ind);
 			return sound ? 1 : 0;
@@ -5016,7 +5010,7 @@ export default class BuiltInFunctions {
 	// ## Backgrounds
 
 	static background_exists = {
-		args: null,
+		args: [{type: "integer"}],
 		func: function([ind]) {
 			const background = this.game.project.getResourceById("ProjectBackground", ind);
 			return background ? 1 : 0;
@@ -5058,7 +5052,7 @@ export default class BuiltInFunctions {
 	// ## Fonts
 
 	static font_exists = {
-		args: null,
+		args: [{type: "integer"}],
 		func: function([ind]) {
 			const font = this.game.project.getResourceById("ProjectFont", ind);
 			return font ? 1 : 0;
@@ -5116,7 +5110,7 @@ export default class BuiltInFunctions {
 	// ## Paths
 
 	static path_exists = {
-		args: null,
+		args: [{type: "integer"}],
 		func: function([ind]) {
 			const path = this.game.project.getResourceById("ProjectPath", ind);
 			return path ? 1 : 0;
@@ -5222,7 +5216,7 @@ export default class BuiltInFunctions {
 	// ## Scripts
 
 	static script_exists = {
-		args: null,
+		args: [{type: "integer"}],
 		func: function([ind]) {
 			const script = this.game.project.getResourceById("ProjectScript", ind);
 			return script ? 1 : 0;
@@ -5248,7 +5242,7 @@ export default class BuiltInFunctions {
 	// ## Time lines
 
 	static timeline_exists = {
-		args: null,
+		args: [{type: "integer"}],
 		func: function([ind]) {
 			const timeline = this.game.project.getResourceById("ProjectTimeline", ind);
 			return timeline ? 1 : 0;
@@ -5266,7 +5260,7 @@ export default class BuiltInFunctions {
 	// ## Objects
 
 	static object_exists = {
-		args: null,
+		args: [{type: "integer"}],
 		func: function([ind]) {
 			const object = this.game.project.getResourceById("ProjectObject", ind);
 			return object ? 1 : 0;
@@ -5348,7 +5342,7 @@ export default class BuiltInFunctions {
 	// ## Rooms
 
 	static room_exists = {
-		args: null,
+		args: [{type: "integer"}],
 		func: function([ind]) {
 			const room = this.game.project.getResourceById("ProjectRoom", ind);
 			return room ? 1 : 0;
@@ -5810,7 +5804,7 @@ export default class BuiltInFunctions {
 	// ## Scripts
 
 	static execute_string = {
-		args: null,
+		args: [{type: "string"}, {type: "any", infinite: true}],
 		func: async function([str, ...args]) {
 			await this.game.executeString(str, this.currentInstance, this.currentOther, args);
 			return 0;
@@ -5826,7 +5820,7 @@ export default class BuiltInFunctions {
 	};
 
 	static script_execute = {
-		args: null,
+		args: [{type: "integer"}, {type: "any", infinite: true}],
 		func: function([scr, ...args]) {
 			const script = this.game.project.getResourceById("ProjectScript", scr);
 			if (script) {
@@ -10862,7 +10856,7 @@ export default class BuiltInFunctions {
 	*/
 
 	static __WEBGM_debugger = {
-		args: null,
+		args: [],
 		func: function([]) {
 			debugger; // eslint-disable-line no-debugger
 			return 0;
@@ -10870,7 +10864,7 @@ export default class BuiltInFunctions {
 	};
 
 	static __WEBGM_javascript = {
-		args: null,
+		args: [{type: "string"}, {type: "any", infinite: true}],
 		func: async function([f, ...args]) {
 			const AsyncFunction = async function() {}.constructor; // eslint-disable-line func-names
 			const result = await (new AsyncFunction(f).call(this, ...args));

@@ -9302,9 +9302,13 @@ export default class BuiltInFunctions {
 
 	static action_move_contact = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_move_contact is not implemented");
-			// return 0;
+		func: function([direction, maximum, against]) {
+			if (against == 0) {
+				BuiltInFunctions.move_contact_solid.func.call(this, [direction, maximum]);
+			} else if (against == 1) {
+				BuiltInFunctions.move_contact_all.func.call(this, [direction, maximum]);
+			}
+			return 0;
 		},
 	};
 

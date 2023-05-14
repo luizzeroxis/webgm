@@ -339,30 +339,39 @@ export default class BuiltInLibraries {
 				{
 					kind: "separator",
 				},
-				/*
 				{
-					id: 999,
+					id: 116,
 					description: "Move to Contact",
-					listText: [""],
-					hintText: [""],
+					listText: ["Move to contact in direction ", a[0]],
+					hintText: [w, "move in direction ", a[0], " at most ", a[1], " till a contact with ", a[2]],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_move_contact",
 
 					interfaceKind: "normal",
 					isQuestion: false,
-					hasApplyTo: false,
+					hasApplyTo: true,
 					hasRelative: false,
 
 					args: [
 						{
-							name: "",
-							kind: "",
-							default: "",
+							name: "direction:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "maximum:",
+							kind: "expression",
+							default: "-1",
+						},
+						{
+							name: "against:",
+							kind: "menu",
+							menu: ["solid objects", "all objects"],
+							default: 0,
 						},
 					],
 				},
-				*/
 				{
 					id: 115,
 					description: "Bounce",

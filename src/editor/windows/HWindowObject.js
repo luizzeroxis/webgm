@@ -31,8 +31,6 @@ export default class HWindowObject extends HWindow {
 
 		this.updateTitle();
 
-		this.htmlActionWindows = [];
-
 		// Create paramEvents as copy
 		this.copyProperties();
 
@@ -85,29 +83,11 @@ export default class HWindowObject extends HWindow {
 
 						// Add event button
 						this.buttonEventAdd = add( new HButton("Add Event", () => {
+
 							const eventType = this.selectEventType.getValue();
-							let eventSubtype = 0;
+							const eventSubtype = this.subtypeValueFunction?.() ?? 0;
 
-							if (this.subtypeValueFunction) {
-								eventSubtype = this.subtypeValueFunction();
-							}
-
-							// Don't continue if there's an event with the exact same type and subtype
-							if (this.paramEvents.find(x => x.type == eventType && x.subtype == eventSubtype))
-								return;
-
-							const event = new ProjectEvent();
-							event.type = eventType;
-							event.subtype = eventSubtype;
-							this.paramEvents.push(event);
-
-							this.sortEvents();
-
-							this.updateSelectEvents();
-							this.selectEvents.setValue(event.getNameId());
-							this.updateEventsMenu();
-							this.updateSelectActions();
-							this.updateActionsMenu();
+							this.addEvent(eventType, eventSubtype);
 						}) );
 
 						// Delete event button
@@ -139,11 +119,7 @@ export default class HWindowObject extends HWindow {
 							if (!event) return;
 
 							const eventType = this.selectEventType.getValue();
-							let eventSubtype = 0;
-
-							if (this.subtypeValueFunction) {
-								eventSubtype = this.subtypeValueFunction();
-							}
+							const eventSubtype = this.subtypeValueFunction?.() ?? 0;
 
 							// Don't continue if there's an event with the exact same type and subtype
 							if (this.paramEvents.find(x => x.type == eventType && x.subtype == eventSubtype))
@@ -378,6 +354,10 @@ export default class HWindowObject extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
+					for (const w of this.windowChildren) {
+						w.apply?.();
+					}
+
 					this.editor.project.changeResourceName(object, inputName.getValue());
 					this.editor.project.changeObjectSprite(object, this.selectSprite.getValue());
 					object.visible = inputVisible.getChecked();
@@ -385,11 +365,6 @@ export default class HWindowObject extends HWindow {
 					object.depth = parseInt(inputDepth.getValue());
 					object.persistent = inputPersistent.getChecked();
 					object.mask_index = this.selectMask.getValue();
-
-					this.htmlActionWindows.forEach(w => {
-						w.apply();
-					});
-
 					object.events = this.paramEvents;
 
 					// Make sure that paramEvents is a copy
@@ -426,6 +401,25 @@ export default class HWindowObject extends HWindow {
 	// Make a copy of every property of the resource so we can change it at will without changing the original resource.
 	copyProperties() {
 		this.paramEvents = this.object.events.map(event => new ProjectEvent(event));
+	}
+
+	addEvent(type, subtype) {
+		// Don't continue if there's an event with the exact same type and subtype
+		if (this.paramEvents.find(x => x.type == type && x.subtype == subtype))
+			return;
+
+		const event = new ProjectEvent();
+		event.type = type;
+		event.subtype = subtype;
+		this.paramEvents.push(event);
+
+		this.sortEvents();
+
+		this.updateSelectEvents();
+		this.selectEvents.setValue(event.getNameId());
+		this.updateEventsMenu();
+		this.updateSelectActions();
+		this.updateActionsMenu();
 	}
 
 	sortEvents() {
@@ -662,29 +656,11 @@ export default class HWindowObject extends HWindow {
 		const actionTypeInfoItem = actionTypeInfo.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind);
 
 		if (actionTypeInfoItem.htmlclass) {
-			let w = this.editor.windowsArea.getId(action);
-			if (w) {
-				this.editor.windowsArea.focus(action);
-			} else {
-				w = this.editor.windowsArea.open(actionTypeInfoItem.htmlclass, action, action, this);
-				this.htmlActionWindows.push(w);
-			}
+			this.openAsChild(actionTypeInfoItem.htmlclass, action, action, this);
 		}
 	}
 
 	deleteActionWindow(id) {
-		const index = this.htmlActionWindows.findIndex(x => x.id == id);
-		if (index >= 0) {
-			this.htmlActionWindows[index].close();
-			this.htmlActionWindows.splice(index, 1);
-		}
-	}
-
-	close() {
-		super.close();
-		this.htmlActionWindows.forEach(w => {
-			w.close();
-		});
-		this.htmlActionWindows = [];
+		this.windowChildren.find(x => x.id == id)?.close();
 	}
 }

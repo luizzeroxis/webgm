@@ -80,6 +80,9 @@ export default class HWindow extends HElement {
 		this.restore = {x: 0, y: 0, w: 0, h: 0};
 		this.isMaximized = false;
 
+		this.windowChildren = [];
+		this.windowParent = null;
+
 		this.html.addEventListener("focusin", () => {
 			this.editor.windowsArea.focus(this.id);
 		});
@@ -259,7 +262,21 @@ export default class HWindow extends HElement {
 		}
 	}
 
+	openAsChild(windowClass, id, ...clientArgs) {
+		const w = this.editor.windowsArea.open(windowClass, id, ...clientArgs);
+		w.parent = this;
+		this.windowChildren.push(w);
+	}
+
 	close() {
 		this.editor.windowsArea.delete(this);
+
+		for (const child of this.windowChildren) {
+			child.close();
+		}
+
+		if (this.windowParent) {
+			this.windowParent.children.splice(this.windowParent.children.indexOf(this), 1);
+		}
 	}
 }

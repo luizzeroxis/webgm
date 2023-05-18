@@ -15,6 +15,7 @@ import HAreaResources from "./areas/HAreaResources.js";
 import HAreaToolBar from "./areas/HAreaToolBar.js";
 import HAreaWindows from "./areas/HAreaWindows.js";
 import BuiltInLibraries from "./BuiltInLibraries.js";
+import HSplitter from "./HSplitter.js";
 import HWIPWarning from "./HWIPWarning.js";
 import PreferencesManager from "./PreferencesManager.js";
 import StandAloneBuilder from "./StandAloneBuilder.js";
@@ -59,10 +60,9 @@ export default class Editor {
 
 			this.toolBarArea = add( new HAreaToolBar(this) );
 
-			parent( add( new HElement("div", {class: "horizontal"}) ) );
-				this.resourcesArea = add( new HAreaResources(this) );
-				this.windowsArea = add( new HAreaWindows(this) );
-				endparent();
+			this.resourcesArea = new HAreaResources(this);
+			this.windowsArea = new HAreaWindows(this);
+			add( new HSplitter(this.resourcesArea, this.windowsArea) );
 
 			add( this.menuManager );
 

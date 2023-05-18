@@ -1,0 +1,15 @@
+.h-splitter {
+	display: flex;
+	min-height: 0;
+	flex: 1;
+	flex-direction: row;
+
+	> .h-splitter-separator {
+		flex: 0 0 4px;
+		user-select: none;
+
+		&:hover {
+			cursor: col-resize;
+		}
+	}
+}

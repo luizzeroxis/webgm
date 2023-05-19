@@ -1334,10 +1334,21 @@ export default class BuiltInFunctions {
 	};
 
 	static collision_line = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function collision_line is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}, {type: "bool"}],
+		func: function([x1, y1, x2, y2, obj, prec, notme]) {
+			let instances = this.objectReferenceToInstances(obj);
+			if (!Array.isArray(instances)) return -4;
+
+			if (notme) {
+				instances = instances.filter(x => x != this.currentInstance);
+			}
+
+			const instance = this.game.collision.getFirstInstanceOnLine(instances, {x1, y1, x2, y2}, prec);
+			if (instance) {
+				return instance.id;
+			}
+
+			return -4;
 		},
 	};
 

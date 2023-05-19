@@ -186,7 +186,7 @@ export default class GameCollision {
 		});
 	}
 
-	// Check if instance is colliding with rectangle
+	// Check if instance is colliding with rectangle.
 	instanceOnRectangle(instance, rectangle, precise=true) {
 		if (instance.getMaskImage() == null) return false;
 
@@ -232,6 +232,78 @@ export default class GameCollision {
 		for (const instance of instances) {
 			if (!instance.exists) continue;
 			if (this.instanceOnRectangle(instance, rectangle, precise)) {
+				return instance;
+			}
+		}
+		return null;
+	}
+
+	// Check if instance is colliding with line.
+	instanceOnLine(instance, line, precise=true) {
+		if (instance.getMaskImage() == null) return false;
+
+		const p1 = instance.roomPointToInstanceImagePoint({x: line.x1, y: line.y1});
+		const p2 = instance.roomPointToInstanceImagePoint({x: line.x2, y: line.y2});
+
+		const imageLine = {
+			x1: p1.x,
+			y1: p1.y,
+			x2: p2.x,
+			y2: p2.y,
+		};
+
+		const aImage = instance.getMaskImage();
+		const aCol = this.game.loadedProject.collisionMasks.get(aImage);
+
+		// Loop through every point in the line
+		const dx = (imageLine.x2 - imageLine.x1);
+		const dy = (imageLine.y2 - imageLine.y1);
+
+		let stepX, stepY, maxStep;
+
+		// Which direction the line slopes.
+		if (Math.abs(dx) >= Math.abs(dy)) {
+			// If dx > dy, meaning more horizontal line, slope is <1, so will loop on every x
+			stepX = Math.sign(dx); // Goes by 1, invert if negative
+			stepY = dy / Math.abs(dx); // This is by how much y will go down every x. Should be less than 1 here
+			// TODO check why abs
+			maxStep = Math.abs(dx);
+		} else {
+			// If dx < dy, meaning more vertical line, slope is >1, so will loop on every y
+			stepX = dx / Math.abs(dy); // This is by how much x will go down every y. <1
+			stepY = Math.sign(dy); // Goes by 1, invert if negative
+			maxStep = Math.abs(dy);
+		}
+
+		let x = imageLine.x1;
+		let y = imageLine.y1;
+
+		// TODO optimize this so it starts at the image boundary already
+		for (let i=0; i<maxStep; i+=1) {
+			const rx = Math.round(x);
+			const ry = Math.round(y);
+
+			if (rx >= 0 && rx < aImage.width && ry >= 0 && ry < aImage.height) {
+				if (!precise) {
+					return true;
+				}
+				if (aCol[rx][ry]) {
+					return true;
+				}
+			}
+
+			x += stepX;
+			y += stepY;
+		}
+
+		return false;
+	}
+
+	// Return the first instance that is colliding with line.
+	getFirstInstanceOnLine(instances, line, precise=true) {
+		for (const instance of instances) {
+			if (!instance.exists) continue;
+			if (this.instanceOnLine(instance, line, precise)) {
 				return instance;
 			}
 		}

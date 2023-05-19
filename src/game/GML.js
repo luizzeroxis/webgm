@@ -1,7 +1,7 @@
 import * as ohm from "ohm-js";
 import * as ohmExtras from "ohm-js/extras";
 
-import {ExitException, ReturnException, BreakException, ContinueException} from "../common/Exceptions.js";
+import {ExitException, ReturnException, BreakException, ContinueException, NonFatalErrorException} from "../common/Exceptions.js";
 import {toInteger, forceString, forceReal, forceInteger, asString, forceBool} from "../common/tools.js";
 
 import BuiltInFunctions from "./BuiltInFunctions.js";
@@ -14,6 +14,10 @@ export default class GML {
 
 		this.vars = new VariableHolder();
 		this.currentInstance = null;
+		this.currentOther = null;
+
+		this.arguments = [];
+		this.argumentRelative = false;
 
 		this.grammar = ohm.grammar(GMLGrammar.getText());
 
@@ -518,12 +522,12 @@ export default class GML {
 		this.vars.clearAll();
 
 		// Save previous arguments
-		const previousArguments = this.game.arguments;
-		const previousArgumentRelative = this.game.argumentRelative;
+		const previousArguments = this.arguments;
+		const previousArgumentRelative = this.argumentRelative;
 
 		// Set new arguments
-		this.game.arguments = [...args]; // Copy just in case
-		this.game.argumentRelative = argRelative;
+		this.arguments = [...args]; // Copy just in case
+		this.argumentRelative = argRelative;
 
 		let result = 0;
 
@@ -545,11 +549,27 @@ export default class GML {
 			this.vars.loadAll(savedVars);
 
 			// Load previous arguments
-			this.game.arguments = previousArguments;
-			this.game.argumentRelative = previousArgumentRelative;
+			this.arguments = previousArguments;
+			this.argumentRelative = previousArgumentRelative;
 		}
 
 		return result;
+	}
+
+	// Compile and execute a GML string.
+	async executeString(gml, instance, other, args) {
+		const result = this.compile(gml);
+		if (!result.succeeded) {
+			throw new NonFatalErrorException({
+					type: "compilation",
+					location: "executeString",
+					matchResult: result.matchResult,
+					text: "COMPILATION ERROR in string to be executed\n" + result.matchResult.message + "\n",
+				},
+			);
+		}
+
+		return await this.execute(result.ast, instance, other, args);
 	}
 
 	async builtInFunction(name, instance, other, args, relative=false) {

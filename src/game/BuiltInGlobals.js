@@ -12,10 +12,10 @@ export default class BuiltInGlobals {
 	static argument = {dimensions: 1,
 		length() { return 16; },
 		get(index) {
-			return this.arguments[index] ?? 0;
+			return this.gml.arguments[index] ?? 0;
 		},
 		set(value, index) {
-			this.arguments[index] = value;
+			this.gml.arguments[index] = value;
 		},
 	};
 
@@ -25,10 +25,10 @@ export default class BuiltInGlobals {
 		for (let i=0; i<16; ++i) {
 			this["argument" + i.toString()] = {
 				get() {
-					return this.arguments[i] ?? 0;
+					return this.gml.arguments[i] ?? 0;
 				},
 				set(value) {
-					this.arguments[i] = value;
+					this.gml.arguments[i] = value;
 				},
 			};
 		}
@@ -36,7 +36,7 @@ export default class BuiltInGlobals {
 	*/
 
 	static argument_relative = {readOnly: true,
-		get() { return this.argumentRelative; },
+		get() { return this.gml.argumentRelative; },
 	};
 
 	// Game play / Instances
@@ -530,10 +530,10 @@ export default class BuiltInGlobals {
 for (let i=0; i<16; ++i) {
 	BuiltInGlobals["argument" + i.toString()] = {
 		get() {
-			return this.arguments[i] ?? 0;
+			return this.gml.arguments[i] ?? 0;
 		},
 		set(value) {
-			this.arguments[i] = value;
+			this.gml.arguments[i] = value;
 		},
 	};
 }

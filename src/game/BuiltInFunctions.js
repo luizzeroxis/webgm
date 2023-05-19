@@ -5658,7 +5658,7 @@ export default class BuiltInFunctions {
 	static execute_string = {
 		args: [{type: "string"}, {type: "any", infinite: true}],
 		func: async function([str, ...args]) {
-			await this.game.executeString(str, this.currentInstance, this.currentOther, args);
+			await this.game.gml.executeString(str, this.currentInstance, this.currentOther, args);
 			return 0;
 		},
 	};

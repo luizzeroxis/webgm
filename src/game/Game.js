@@ -51,9 +51,6 @@ export default class Game {
 		// GML
 		this.gml = new GML(this);
 
-		this.arguments = [];
-		this.argumentRelative = false;
-
 		// Main loop
 		this.timeout = null;
 		this.mapEvents = null;
@@ -978,22 +975,6 @@ export default class Game {
 				await this.doEventOfInstance("other", OTHER_NO_MORE_HEALTH, instance);
 			}
 		}
-	}
-
-	// Compile and execute a GML string.
-	async executeString(gml, instance, other, args) {
-		const result = this.gml.compile(gml);
-		if (!result.succeeded) {
-			throw new NonFatalErrorException({
-					type: "compilation",
-					location: "executeString",
-					matchResult: result.matchResult,
-					text: "COMPILATION ERROR in string to be executed\n" + result.matchResult.message + "\n",
-				},
-			);
-		}
-
-		return await this.gml.execute(result.ast, instance, other, args);
 	}
 
 	// // Helper functions

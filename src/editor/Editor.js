@@ -294,7 +294,7 @@ export default class Editor {
 			this.gameWindow.html.scrollIntoView();
 		}
 		if (this.preferences.get("focusCanvasOnRun")) {
-			this.game.canvas.focus({preventScroll: true});
+			this.game.render.canvas.focus({preventScroll: true});
 		}
 
 		const gameListeners = this.game.dispatcher.listen({
@@ -307,9 +307,9 @@ export default class Editor {
 				this.toolBarArea.stopButton.setDisabled(true);
 
 				if (this.preferences.get("clearCanvasOnStop")) {
-					const h = this.game.canvas.height;
-					this.game.canvas.height = 0;
-					this.game.canvas.height = h;
+					const h = this.game.render.canvas.height;
+					this.game.render.canvas.height = 0;
+					this.game.render.canvas.height = h;
 				}
 
 				if (this.gameWindow.userClosed) {

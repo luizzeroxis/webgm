@@ -75,7 +75,7 @@ export default class GameInput {
 		this.mouseDownHandler = (e) => {
 			e.preventDefault();
 
-			this.game.canvas.focus({preventScroll: true});
+			this.game.render.canvas.focus({preventScroll: true});
 
 			const button = this.toEngineButton(e.button);
 			this.mouse[button] = true;

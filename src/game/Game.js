@@ -3,7 +3,6 @@ import seedrandom from "seedrandom";
 import Dispatcher from "../common/Dispatcher.js";
 import Events from "../common/Events.js";
 import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from "../common/Exceptions.js";
-import {HCanvas} from "../common/HComponents.js";
 import {HElement, parent, endparent, add} from "../common/HCore.js";
 import HMenuManager from "../common/HMenuManager.js";
 import Project from "../common/Project.js";
@@ -13,6 +12,7 @@ import BuiltInGlobals from "./BuiltInGlobals.js";
 import GameAudio from "./GameAudio.js";
 import GameCollision from "./GameCollision.js";
 import GameInput from "./GameInput.js";
+import GameRender from "./GameRender.js";
 import GML from "./GML.js";
 import Instance from "./Instance.js";
 import ProjectLoader from "./ProjectLoader.js";
@@ -22,23 +22,13 @@ export default class Game {
 	constructor(options) {
 		this.project = new Project(options.project);
 
-		this.div = parent( new HElement("div", {class: "game"}) );
-			this.canvas = add(new HCanvas()).html;
-			this.canvas.setAttribute("tabindex", 0);
-			this.setInitialCanvasSize();
-
-			this.menuManager = add(new HMenuManager());
-			endparent(this.div);
-
 		this.dispatcher = new Dispatcher();
 
 		//
-		this.input = new GameInput(this, this.canvas);
+		this.render = new GameRender(this);
+		this.input = new GameInput(this, this.render.canvas);
 		this.audio = new GameAudio(this);
 		this.collision = new GameCollision(this);
-
-		// Canvas
-		this.ctx = null;
 
 		// Project
 		this.loadedProject = new ProjectLoader(this, this.project);
@@ -83,19 +73,9 @@ export default class Game {
 		this.rng = null;
 		this.setRandomSeed();
 
-		// Cursor
-		this.cursorSprite = null;
-		this.cursorImageIndex = 0;
-
 		// Transitions
 		this.transitionKind = 0;
 		this.transitionSteps = 80;
-
-		// Draw functions
-		this.drawColorAlpha = "#000000ff";
-		this.drawFont = -1;
-		this.drawHAlign = 0;
-		this.drawVAlign = 0;
 
 		// Score, lives, health
 		this.score = 0;
@@ -113,12 +93,19 @@ export default class Game {
 		// Errors
 		this.errorOccurred = false;
 		this.errorLast = "";
+
+		// HTML
+		this.div = parent( new HElement("div", {class: "game"}) );
+			add(this.render.canvasHElement);
+
+			this.menuManager = add(new HMenuManager());
+			endparent(this.div);
 	}
 
 	// Starts the game.
 	async start() {
 		try {
-			this.startCanvas();
+			this.render.start();
 			this.input.start();
 			this.startEngine();
 			this.audio.start();
@@ -193,7 +180,7 @@ export default class Game {
 		this.endMainLoop();
 
 		// canvas
-		this.canvas.classList.remove("no-cursor");
+		this.render.end();
 
 		// input
 		this.input.end();
@@ -202,24 +189,6 @@ export default class Game {
 		this.audio.end();
 
 		this.dispatcher.speak("close", e);
-	}
-
-	// Called by start, inits the canvas.
-	startCanvas() {
-		this.ctx = this.canvas.getContext("2d", {alpha: false});
-		this.setCanvasProperties();
-
-		if (this.project.globalGameSettings.startInFullScreen) {
-			this.setFullscreen(true);
-		}
-
-		if (!this.project.globalGameSettings.displayCursor) {
-			this.canvas.classList.add("no-cursor");
-		}
-	}
-
-	setCanvasProperties() {
-		this.ctx.imageSmoothingEnabled = false;
 	}
 
 	// Called by start, inits general engine stuff.
@@ -238,13 +207,6 @@ export default class Game {
 		});
 
 		this.lastId = this.project.lastId;
-	}
-
-	// Resizes the canvas to the size of the first room
-	setInitialCanvasSize() {
-		const room = this.project.resources.ProjectRoom[0];
-		this.canvas.width = room.width;
-		this.canvas.height = room.height;
 	}
 
 	// // Game running
@@ -521,7 +483,7 @@ export default class Game {
 		}
 
 		// Draw
-		await this.drawViews();
+		await this.render.drawViews();
 
 		// Update some global variables
 		for (const roomBackground of this.room.backgrounds) {
@@ -563,7 +525,7 @@ export default class Game {
 		// }
 		if (this.project.globalGameSettings.keyF4SwitchesFullscreen) {
 			if (this.input.getKey(115, this.input.keyPressed)) {
-				this.setFullscreen(!this.getFullscreen());
+				this.render.setFullscreen(!this.render.getFullscreen());
 			}
 		}
 		// if (this.project.globalGameSettings.keyF5SavesF6Loads) {
@@ -629,108 +591,6 @@ export default class Game {
 		// TODO paths?
 	}
 
-	// Draw all the views of the current room.
-	async drawViews() {
-		// Currently there are no views. But the following should happen for every view.
-
-		// Draw background color
-		if (this.room.backgroundShowColor) {
-			this.ctx.fillStyle = this.room.backgroundColor;
-			this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-		}
-		// this.ctx.fillStyle = "black";
-
-		// Draw background backgrounds
-
-		for (const roomBackground of this.room.backgrounds) {
-			if (!roomBackground) continue;
-			if (roomBackground.isForeground == true) continue;
-			this.drawRoomBackground(roomBackground);
-		}
-
-		// TODO Draw tiles
-
-		// Draw instances
-
-		const instances_by_depth = this.instances
-			.filter(x => x.exists)
-			.sort((a, b) => b.depth - a.depth);
-
-		for (const instance of instances_by_depth) {
-			if (!instance.exists) continue;
-
-			// Only draw if visible
-			if (instance.visible) {
-				const drawEvent = this.getEventOfInstance(instance, "draw");
-
-				if (drawEvent) {
-					await this.doEvent(drawEvent, instance);
-				} else {
-					// No draw event, draw sprite if it has one.
-					if (instance.sprite) {
-						this.drawSpriteExt(instance.sprite, instance.getImageIndex(), instance.x, instance.y, instance.imageXScale, instance.imageYScale, instance.imageAngle, instance.imageBlend, instance.imageAlpha);
-					}
-				}
-			}
-		}
-
-		// Draw foreground backgrounds
-
-		for (const roomBackground of this.room.backgrounds) {
-			if (!roomBackground) continue;
-			if (roomBackground.isForeground == false) continue;
-			this.drawRoomBackground(roomBackground);
-		}
-
-		// Draw mouse cursor
-
-		if (this.cursorSprite) {
-			this.drawSprite(this.cursorSprite, this.cursorImageIndex, this.mouseX, this.mouseY);
-			this.cursorImageIndex = ((++this.cursorImageIndex) % this.cursorSprite.images.length);
-		}
-	}
-
-	drawRoomBackground(roomBackground) {
-		if (!roomBackground.visible) return false;
-
-		const background = this.project.getResourceById("ProjectBackground", roomBackground.backgroundIndex);
-		if (!background) return false;
-
-		const image = background.image;
-		if (!image) return false;
-
-		// TODO blend
-
-		let xStart = roomBackground.x;
-		let yStart = roomBackground.y;
-
-		const width = background.image.width * roomBackground.xScale;
-		const height = background.image.height * roomBackground.yScale;
-
-		if (roomBackground.tileHorizontally) {
-			xStart = (roomBackground.x % width) - width;
-		}
-		if (roomBackground.tileVertically) {
-			yStart = (roomBackground.y % height) - height;
-		}
-
-		for (let x = xStart; x < this.room.width; x += width) {
-			for (let y = yStart; y < this.room.height; y += height) {
-				this.ctx.globalAlpha = roomBackground.alpha;
-				this.ctx.drawImage(image.image, x, y, width, height);
-				this.ctx.globalAlpha = 1;
-
-				if (!roomBackground.tileVertically) {
-					break;
-				}
-			}
-			if (!roomBackground.tileHorizontally) {
-				break;
-			}
-		}
-
-		return true;
-	}
 
 	// Execute a event.
 	async doEvent(event, instance, other=null) {
@@ -977,10 +837,7 @@ export default class Game {
 			})),
 		};
 
-		this.canvas.width = room.width;
-		this.canvas.height = room.height;
-
-		this.setCanvasProperties();
+		this.render.setSize(room.width, room.height);
 
 		this.input.clear();
 
@@ -1012,7 +869,7 @@ export default class Game {
 			await this.doEventOfInstance("other", OTHER_ROOM_START, instance);
 		}
 
-		await this.drawViews();
+		await this.render.drawViews();
 	}
 
 	// Create an instance in the room.
@@ -1040,34 +897,6 @@ export default class Game {
 	async instanceDestroy(instance) {
 		await this.doEventOfInstance("destroy", null, instance);
 		instance.exists = false;
-	}
-
-	// Draw a sprite with the image index at x and y.
-	drawSprite(sprite, imageIndex, x, y) {
-		const image = sprite?.images[Math.floor(Math.floor(imageIndex) % sprite.images.length)]?.image;
-		if (!image) return;
-
-		this.ctx.drawImage(image, x - sprite.originx, y - sprite.originy);
-	}
-
-	// Draw a sprite with extra options.
-	drawSpriteExt(sprite, imageIndex, x, y, xScale, yScale, angle, blend, alpha) {
-		// TODO blend
-
-		const image = sprite?.images[Math.floor(Math.floor(imageIndex) % sprite.images.length)]?.image;
-		if (!image) return;
-
-		this.ctx.save();
-
-		this.ctx.translate(x, y);
-		this.ctx.rotate(-angle * Math.PI/180);
-		this.ctx.scale(xScale, yScale);
-
-		this.ctx.globalAlpha = alpha;
-		this.ctx.drawImage(image, -sprite.originx, -sprite.originy);
-		this.ctx.globalAlpha = 1;
-
-		this.ctx.restore();
 	}
 
 	// Get a room background. If it doesn't exist, create one with default parameters.
@@ -1121,26 +950,6 @@ export default class Game {
 	setRandomSeed(seed) {
 		this.rngSeed = seed ?? Math.floor(((Math.random() - 0.5) * (2 ** 32))); // 32 bit signed int
 		this.rng = seedrandom(this.rngSeed);
-	}
-
-	// Set the fullscreen status.
-	async setFullscreen(fullscreen) {
-		if (fullscreen) {
-			try {
-				await this.canvas.requestFullscreen();
-			} catch (e) {
-				console.warn("window_set_fullscreen failed");
-			}
-		} else {
-			if (document.fullscreenElement) {
-				await document.exitFullscreen();
-			}
-		}
-	}
-
-	// Get the fullscreen status.
-	getFullscreen() {
-		return (document.fullscreenElement != null);
 	}
 
 	// Sets the lives variable, calling the relevant events.

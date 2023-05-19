@@ -2204,15 +2204,7 @@ export default class BuiltInFunctions {
 	static draw_sprite = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([sprite, subimg, x, y]) {
-			const spriteResource = this.game.project.getResourceById("ProjectSprite", sprite);
-			if (spriteResource) {
-				this.game.drawSprite(spriteResource, subimg, x, y);
-			} else {
-				throw this.game.makeNonFatalError({
-					type: "trying_to_draw_non_existing_sprite",
-					sprite: sprite,
-				}, "Trying to draw non-existing sprite. (" + sprite.toString() +")");
-			}
+			this.game.render.drawSprite(sprite, subimg, x, y);
 			return 0;
 		},
 	};
@@ -2244,15 +2236,7 @@ export default class BuiltInFunctions {
 	static draw_background = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([back, x, y]) {
-			const backgroundResource = this.game.project.getResourceById("ProjectBackground", back);
-			if (backgroundResource) {
-				this.game.ctx.drawImage(backgroundResource.image.image, x, y);
-			} else {
-				throw this.game.makeNonFatalError({
-					type: "trying_to_draw_non_existing_background",
-					background: back,
-				}, "Trying to draw non-existing background. (" + back.toString() +")");
-			}
+			this.game.render.drawBackground(back, x, y);
 			return 0;
 		},
 	};
@@ -2284,15 +2268,7 @@ export default class BuiltInFunctions {
 	static draw_sprite_ext = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([sprite, subimg, x, y, xscale, yscale, rot, color, alpha]) {
-			const spriteResource = this.game.project.getResourceById("ProjectSprite", sprite);
-			if (!spriteResource) {
-				throw this.game.makeNonFatalError({
-					type: "trying_to_draw_non_existing_sprite",
-					sprite: sprite,
-				}, "Trying to draw non-existing sprite. (" + sprite.toString() +")");
-			}
-
-			this.game.drawSpriteExt(spriteResource, subimg, x, y, xscale, yscale, rot, color, alpha);
+			this.game.render.drawSpriteExt(sprite, subimg, x, y, xscale, yscale, rot, decimalToHex(color), alpha);
 			return 0;
 		},
 	};
@@ -2374,8 +2350,7 @@ export default class BuiltInFunctions {
 	static draw_clear = {
 		args: [{type: "real"}],
 		func: function([col]) {
-			this.game.ctx.fillStyle = decimalToHex(col);
-			this.game.ctx.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
+			this.game.render.drawClear(col);
 			return 0;
 		},
 	};
@@ -2383,10 +2358,7 @@ export default class BuiltInFunctions {
 	static draw_clear_alpha = {
 		args: [{type: "real"}, {type: "real"}],
 		func: function([col, alpha]) {
-			this.game.ctx.clearRect(0, 0, this.game.canvas.width, this.game.canvas.height);
-
-			this.game.ctx.fillStyle = decimalToHexAlpha(col, alpha);
-			this.game.ctx.fillRect(0, 0, this.game.canvas.width, this.game.canvas.height);
+			this.game.render.drawClear(col, alpha);
 			return 0;
 		},
 	};
@@ -2394,8 +2366,7 @@ export default class BuiltInFunctions {
 	static draw_point = {
 		args: [{type: "real"}, {type: "real"}],
 		func: function([x, y]) {
-			this.game.ctx.fillStyle = this.game.drawColorAlpha;
-			this.game.ctx.fillRect(x, y, 1, 1);
+			this.game.render.drawPoint(x, y);
 			return 0;
 		},
 	};
@@ -2403,19 +2374,7 @@ export default class BuiltInFunctions {
 	static draw_line = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([x1, y1, x2, y2]) {
-			this.game.ctx.strokeStyle = this.game.drawColorAlpha;
-
-			this.game.ctx.save();
-			this.game.ctx.translate(0.5, 0.5);
-
-			this.game.ctx.beginPath();
-			this.game.ctx.moveTo(x1, y1);
-			this.game.ctx.lineTo(x2, y2);
-			this.game.ctx.closePath();
-			this.game.ctx.stroke();
-
-			this.game.ctx.restore();
-
+			this.game.render.drawLine(x1, y1, x2, y2);
 			return 0;
 		},
 	};
@@ -2423,9 +2382,7 @@ export default class BuiltInFunctions {
 	static draw_line_width = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([x1, y1, x2, y2, w]) {
-			this.game.ctx.lineWidth = w;
-			BuiltInFunctions.draw_line.func.call(this, [x1, y1, x2, y2]);
-			this.game.ctx.lineWidth = 1;
+			this.game.render.drawLine(x1, y1, x2, y2, w);
 			return 0;
 		},
 	};
@@ -2433,17 +2390,7 @@ export default class BuiltInFunctions {
 	static draw_rectangle = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}],
 		func: function([x1, y1, x2, y2, outline]) {
-			if (outline) {
-				this.game.ctx.strokeStyle = this.game.drawColorAlpha;
-				this.game.ctx.save();
-				this.game.ctx.translate(0.5, 0.5);
-				this.game.ctx.strokeRect(x1, y1, x2-x1, y2-y1);
-				this.game.ctx.restore();
-			} else {
-				this.game.ctx.fillStyle = this.game.drawColorAlpha;
-				this.game.ctx.fillRect(x1, y1, x2-x1, y2-y1);
-			}
-
+			this.game.render.drawRectangle(x1, y1, x2, y2, outline);
 			return 0;
 		},
 	};
@@ -2451,28 +2398,7 @@ export default class BuiltInFunctions {
 	static draw_roundrect = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}],
 		func: function([x1, y1, x2, y2, outline]) {
-			// TODO remove antialiasing
-			if (outline) {
-				this.game.ctx.save();
-				this.game.ctx.translate(0.5, 0.5);
-
-				this.game.ctx.strokeStyle = this.game.drawColorAlpha;
-			} else {
-				this.game.ctx.fillStyle = this.game.drawColorAlpha;
-			}
-
-			this.game.ctx.beginPath();
-			this.game.ctx.roundRect(x1, y1, x2-x1, y2-y1, 4);
-			this.game.ctx.closePath();
-
-			if (outline) {
-				this.game.ctx.stroke();
-
-				this.game.ctx.restore();
-			} else {
-				this.game.ctx.fill();
-			}
-
+			this.game.render.drawRoundRect(x1, y1, x2, y2, outline);
 			return 0;
 		},
 	};
@@ -2480,27 +2406,7 @@ export default class BuiltInFunctions {
 	static draw_triangle = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}],
 		func: function([x1, y1, x2, y2, x3, y3, outline]) {
-			if (outline) {
-				this.game.ctx.strokeStyle = this.game.drawColorAlpha;
-			// this.game.ctx.save();
-			// this.game.ctx.translate(0.5, 0.5);
-			} else {
-				this.game.ctx.fillStyle = this.game.drawColorAlpha;
-			}
-
-			this.game.ctx.beginPath();
-			this.game.ctx.moveTo(x1, y1);
-			this.game.ctx.lineTo(x2, y2);
-			this.game.ctx.lineTo(x3, y3);
-			this.game.ctx.closePath();
-
-			if (outline) {
-				this.game.ctx.stroke();
-			// this.game.ctx.restore();
-			} else {
-				this.game.ctx.fill();
-			}
-
+			this.game.render.drawTriangle(x1, y1, x2, y2, x3, y3, outline);
 			return 0;
 		},
 	};
@@ -2508,17 +2414,7 @@ export default class BuiltInFunctions {
 	static draw_circle = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}],
 		func: function([x, y, r, outline]) {
-			this.game.ctx.beginPath();
-			this.game.ctx.arc(x, y, r, 0, Math.PI*2);
-			if (outline) {
-				this.game.ctx.strokeStyle = this.game.drawColorAlpha;
-				this.game.ctx.stroke();
-			} else {
-				this.game.ctx.fillStyle = this.game.drawColorAlpha;
-				this.game.ctx.fill();
-			}
-			this.game.ctx.closePath();
-
+			this.game.render.drawCircle(x, y, r, outline);
 			return 0;
 		},
 	};
@@ -2526,20 +2422,7 @@ export default class BuiltInFunctions {
 	static draw_ellipse = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}],
 		func: function([x1, y1, x2, y2, outline]) {
-			const x = (x2 - x1) / 2 + x1;
-			const y = (y2 - y1) / 2 + y1;
-
-			this.game.ctx.beginPath();
-			this.game.ctx.ellipse(x, y, x2 - x, y2 - y, 0, 0, Math.PI*2);
-			if (outline) {
-				this.game.ctx.strokeStyle = this.game.drawColorAlpha;
-				this.game.ctx.stroke();
-			} else {
-				this.game.ctx.fillStyle = this.game.drawColorAlpha;
-				this.game.ctx.fill();
-			}
-			this.game.ctx.closePath();
-
+			this.drawEllipse(x1, y1, x2, y2, outline);
 			return 0;
 		},
 	};
@@ -2587,7 +2470,7 @@ export default class BuiltInFunctions {
 	static draw_set_color = {
 		args: [{type: "real"}],
 		func: function([color]) {
-			this.game.drawColorAlpha = decimalToHexAlpha(color, hexAlphaToDecimal(this.game.drawColorAlpha).alpha);
+			this.game.render.drawColorAlpha = decimalToHexAlpha(color, hexAlphaToDecimal(this.game.render.drawColorAlpha).alpha);
 			return 0;
 		},
 	};
@@ -2595,7 +2478,7 @@ export default class BuiltInFunctions {
 	static draw_set_alpha = {
 		args: [{type: "real"}],
 		func: function([alpha]) {
-			this.game.drawColorAlpha = decimalToHexAlpha(hexAlphaToDecimal(this.game.drawColorAlpha).color, alpha);
+			this.game.render.drawColorAlpha = decimalToHexAlpha(hexAlphaToDecimal(this.game.render.drawColorAlpha).color, alpha);
 			return 0;
 		},
 	};
@@ -2603,14 +2486,14 @@ export default class BuiltInFunctions {
 	static draw_get_color = {
 		args: [],
 		func: function([]) {
-			return hexAlphaToDecimal(this.game.drawColorAlpha).color;
+			return hexAlphaToDecimal(this.game.render.drawColorAlpha).color;
 		},
 	};
 
 	static draw_get_alpha = {
 		args: [],
 		func: function([]) {
-			return hexAlphaToDecimal(this.game.drawColorAlpha).alpha;
+			return hexAlphaToDecimal(this.game.render.drawColorAlpha).alpha;
 		},
 	};
 
@@ -2682,7 +2565,7 @@ export default class BuiltInFunctions {
 	static draw_getpixel = {
 		args: [{type: "real"}, {type: "real"}],
 		func: function([x, y]) {
-			const data = this.game.ctx.getImageData(x, y, 1, 1);
+			const data = this.game.render.ctx.getImageData(x, y, 1, 1);
 			return rgbToDecimal({
 				r: data[0], g: data[1], b: data[2],
 			});
@@ -2710,7 +2593,7 @@ export default class BuiltInFunctions {
 	static draw_set_font = {
 		args: [{type: "real"}],
 		func: function([font]) {
-			this.game.drawFont = font;
+			this.game.render.drawFont = font;
 			return 0;
 		},
 	};
@@ -2718,7 +2601,7 @@ export default class BuiltInFunctions {
 	static draw_set_halign = {
 		args: [{type: "real"}],
 		func: function([halign]) {
-			this.game.drawHAlign = halign;
+			this.game.render.drawHAlign = halign;
 			return 0;
 		},
 	};
@@ -2726,7 +2609,7 @@ export default class BuiltInFunctions {
 	static draw_set_valign = {
 		args: [{type: "real"}],
 		func: function([valign]) {
-			this.game.drawVAlign = valign;
+			this.game.render.drawVAlign = valign;
 			return 0;
 		},
 	};
@@ -2734,38 +2617,7 @@ export default class BuiltInFunctions {
 	static draw_text = {
 		args: [{type: "real"}, {type: "real"}, {type: "as_string"}],
 		func: function([x, y, string]) {
-			this.game.ctx.fillStyle = this.game.drawColorAlpha;
-			this.game.ctx.font = this.game.loadedProject.cssFontsCache[this.game.drawFont];
-
-			// holy shit now this is epic
-			this.game.ctx.textAlign = (["left", "center", "right"])[this.game.drawHAlign];
-			this.game.ctx.textBaseline = (["top", "middle", "bottom"])[this.game.drawVAlign];
-
-			// Look, I tried making this be like GM but it just doesn't add up. Hopefully will be fixed if and when we change to a custom font renderer
-
-			const lines = parseNewLineHash(string).split("\n");
-			let height = 0;
-
-			// Calculate heights, only if more than 1 line
-			if (lines.length > 1) {
-				const textMetrics = this.game.ctx.measureText("");
-				height = Math.abs(textMetrics.fontBoundingBoxDescent) + Math.abs(textMetrics.fontBoundingBoxAscent);
-			}
-
-			// Calculate initial y
-			let currentY;
-			if (this.game.drawVAlign == 0) { // top
-				currentY = y;
-			} else if (this.game.drawVAlign == 1) { // middle
-				currentY = y - (height * (lines.length - 1)) / 2;
-			} else if (this.game.drawVAlign == 2) { // bottom
-				currentY = y - (height * (lines.length - 1));
-			}
-
-			for (const line of lines) {
-				this.game.ctx.fillText(line, x, currentY);
-				currentY += height;
-			}
+			this.game.render.drawText(x, y, string);
 			return 0;
 		},
 	};
@@ -2863,8 +2715,8 @@ export default class BuiltInFunctions {
 	static draw_point_color = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([x, y, col1]) {
-			this.game.ctx.fillStyle = decimalToHex(col1);
-			this.game.ctx.fillRect(x, y, 1, 1);
+			this.game.render.ctx.fillStyle = decimalToHex(col1);
+			this.game.render.ctx.fillRect(x, y, 1, 1);
 			return 0;
 		},
 	};
@@ -3624,7 +3476,7 @@ export default class BuiltInFunctions {
 	static window_set_fullscreen = {
 		args: [{type: "bool"}],
 		func: async function([full]) {
-			await this.game.setFullscreen(full);
+			await this.game.render.setFullscreen(full);
 			return 0;
 		},
 	};
@@ -3632,7 +3484,7 @@ export default class BuiltInFunctions {
 	static window_get_fullscreen = {
 		args: [],
 		func: function([]) {
-			return this.game.getFullscreen() ? 1 : 0;
+			return this.game.render.getFullscreen() ? 1 : 0;
 		},
 	};
 
@@ -10232,12 +10084,12 @@ export default class BuiltInFunctions {
 	static action_set_cursor = {
 		args: null,
 		func: function([sprite, cursor]) {
-			this.game.cursorSprite = this.game.project.getResourceById("ProjectSprite", sprite);
+			this.game.render.cursorSprite = this.game.project.getResourceById("ProjectSprite", sprite);
 
 			if (cursor == 0) {
-				this.game.canvas.classList.add("no-cursor");
+				this.game.render.canvas.classList.add("no-cursor");
 			} else if (cursor == 1) {
-				this.game.canvas.classList.remove("no-cursor");
+				this.game.render.canvas.classList.remove("no-cursor");
 			}
 			return 0;
 		},
@@ -10383,11 +10235,11 @@ export default class BuiltInFunctions {
 		args: null,
 		func: async function([action]) {
 			if (action == 0) { // switch
-				await this.game.setFullscreen(!this.game.getFullscreen());
+				await this.game.render.setFullscreen(!this.game.render.getFullscreen());
 			} else if (action == 1) { // window
-				await this.game.setFullscreen(false);
+				await this.game.render.setFullscreen(false);
 			} else if (action == 2) { // fullscreen
-				await this.game.setFullscreen(true);
+				await this.game.render.setFullscreen(true);
 			}
 			return 0;
 		},

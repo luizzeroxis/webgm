@@ -287,9 +287,9 @@ export default class BuiltInGlobals {
 	};
 
 	static cursor_sprite = {type: "integer",
-		get() { return this.cursorSprite?.id ?? -1; },
+		get() { return this.render.cursorSprite?.id ?? -1; },
 		set(value) {
-			this.cursorSprite = this.project.getResourceById("ProjectSprite", value);
+			this.render.cursorSprite = this.project.getResourceById("ProjectSprite", value);
 		},
 	};
 

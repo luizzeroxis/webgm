@@ -1,4 +1,4 @@
-import {HElement, parent, add} from "../common/H.js";
+import {HElement, parent, add, endparent} from "../common/H.js";
 
 import "./HSplitter.scss";
 
@@ -33,10 +33,10 @@ class HSplitterSeparator extends HElement {
 
 export default class HSplitter extends HElement {
 	constructor(left, right) {
-		parent( super("div", {class: "h-splitter"}), _ => {
+		parent( super("div", {class: "h-splitter"}) );
 			this.left = add(left);
 			this.separator = add(new HSplitterSeparator(this));
 			this.right = add(right);
-		});
+			endparent();
 	}
 }

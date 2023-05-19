@@ -2218,10 +2218,10 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_sprite_tiled = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_sprite_tiled is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([sprite, subimg, x, y]) {
+			this.game.render.drawSpriteTiledExt(sprite, subimg, x, y);
+			return 0;
 		},
 	};
 
@@ -2283,9 +2283,9 @@ export default class BuiltInFunctions {
 
 	static draw_sprite_tiled_ext = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_sprite_tiled_ext is not implemented");
-			// return 0;
+		func: function([sprite, subimg, x, y, xscale, yscale, color, alpha]) {
+			this.game.render.drawSpriteTiledExt(sprite, subimg, x, y, xscale, yscale, color, alpha);
+			return 0;
 		},
 	};
 

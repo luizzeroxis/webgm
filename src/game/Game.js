@@ -869,6 +869,21 @@ export default class Game {
 		await this.render.drawViews();
 	}
 
+	// Loads a room after the current step
+	loadRoomAtStepStop(roomIndex) {
+		const room = this.project.getResourceById("ProjectRoom", roomIndex);
+		if (room == null) {
+			throw this.makeFatalError({
+				type: "unexisting_room_number",
+				numb: roomIndex,
+			}, "Unexisting room number: " + roomIndex.toString());
+		}
+		this.stepStopAction = async () => {
+			await this.loadRoom(room);
+			this.startMainLoop();
+		};
+	}
+
 	// Create an instance in the room.
 	async instanceCreate(id, x, y, object) {
 		const instance = this.instanceCreateNoEvents(id, x, y, object);

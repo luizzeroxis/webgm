@@ -2,8 +2,6 @@ import Events from "~/common/Events.js";
 import {NonFatalErrorException} from "~/common/Exceptions.js";
 import {hexToDecimal, decimalToHex} from "~/common/tools.js";
 
-import BuiltInFunctions from "./BuiltInFunctions.js";
-
 export default class BuiltInGlobals {
 	// this = Game
 
@@ -109,8 +107,7 @@ export default class BuiltInGlobals {
 	static room = {type: "integer",
 		get() { return this.room.resource.id; },
 		set(value) {
-			// TODO check if room value is changed immediately or only after room change
-			BuiltInFunctions.room_goto.call(this.gml, [value]);
+			this.loadRoomAtStepStop(value);
 		},
 	};
 

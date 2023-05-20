@@ -1604,17 +1604,7 @@ export default class BuiltInFunctions {
 	static room_goto = {
 		args: [{type: "real"}],
 		func: function([numb]) {
-			const room = this.game.project.getResourceById("ProjectRoom", numb);
-			if (room == null) {
-				throw this.game.makeFatalError({
-					type: "unexisting_room_number",
-					numb: numb,
-				}, "Unexisting room number: " + numb.toString());
-			}
-			this.game.stepStopAction = async () => {
-				await this.game.loadRoom(room);
-				this.game.startMainLoop();
-			};
+			this.game.loadRoomAtStepStop(numb);
 			return 0;
 		},
 	};
@@ -1622,14 +1612,16 @@ export default class BuiltInFunctions {
 	static room_goto_previous = {
 		args: [],
 		func: function([]) {
-			return BuiltInFunctions.room_goto.func.call(this, [BuiltInFunctions.room_previous.func.call(this, [this.game.room.resource.id])]);
+			this.game.loadRoomAtStepStop(BuiltInFunctions.room_previous.func.call(this, [this.game.room.resource.id]));
+			return 0;
 		},
 	};
 
 	static room_goto_next = {
 		args: [],
 		func: function([]) {
-			return BuiltInFunctions.room_goto.func.call(this, [BuiltInFunctions.room_next.func.call(this, [this.game.room.resource.id])]);
+			this.game.loadRoomAtStepStop(BuiltInFunctions.room_next.func.call(this, [this.game.room.resource.id]));
+			return 0;
 		},
 	};
 
@@ -1658,7 +1650,8 @@ export default class BuiltInFunctions {
 	static room_restart = {
 		args: [],
 		func: function([]) {
-			return BuiltInFunctions.room_goto.func.call(this, [this.game.room.resource.id]);
+			this.game.loadRoomAtStepStop(this.game.room.resource.id);
+			return 0;
 		},
 	};
 
@@ -9416,8 +9409,8 @@ export default class BuiltInFunctions {
 	static action_another_room = {
 		args: null,
 		func: function([newRoom, transition]) { // eslint-disable-line no-unused-vars
-		// TODO transition
-			BuiltInFunctions.room_goto.func.call(this, [newRoom]);
+			// TODO transition
+			this.loadRoomAtStepStop(newRoom);
 			return 0;
 		},
 	};

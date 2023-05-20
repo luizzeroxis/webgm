@@ -1,10 +1,11 @@
 import * as ohm from "ohm-js";
 import * as ohmExtras from "ohm-js/extras";
 
-import {ExitException, ReturnException, BreakException, ContinueException, NonFatalErrorException} from "~/common/Exceptions.js";
 import {toInteger, forceString, forceReal, forceInteger, asString, forceBool} from "~/common/tools.js";
+import WebGMException from "~/common/WebGMException.js";
 
 import BuiltInFunctions from "./BuiltInFunctions.js";
+import {NonFatalErrorException, ExitException} from "./Game.js";
 import GMLGrammar from "./GMLGrammar.js";
 import VariableHolder, {VariableException} from "./VariableHolder.js";
 
@@ -864,3 +865,13 @@ export default class GML {
 		);
 	}
 }
+
+class ReturnException extends WebGMException {
+	constructor(value, ...args) {
+		super(...args);
+		this.value = value;
+	}
+}
+
+class BreakException extends WebGMException {}
+class ContinueException extends WebGMException {}

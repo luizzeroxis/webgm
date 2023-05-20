@@ -2,10 +2,10 @@ import seedrandom from "seedrandom";
 
 import Dispatcher from "~/common/Dispatcher.js";
 import Events from "~/common/Events.js";
-import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from "~/common/Exceptions.js";
 import {HElement, parent, endparent, add} from "~/common/HCore.js";
 import HMenuManager from "~/common/HMenuManager.js";
 import Project from "~/common/Project.js";
+import WebGMException from "~/common/WebGMException.js";
 
 import BuiltInConstants from "./BuiltInConstants.js";
 import BuiltInGlobals from "./BuiltInGlobals.js";
@@ -1115,5 +1115,27 @@ export default class Game {
 	showError(exception) {
 		console.log(exception.text);
 		alert(exception.text);
+	}
+}
+
+// Errors related to webgm itself (editor or runner catches it)
+export class EngineException extends WebGMException {}
+
+// Errors in the user project
+class ProjectErrorException extends WebGMException {}
+
+// Errors in the game that are fatal
+export class FatalErrorException extends ProjectErrorException {}
+// Errors in the game that are not fatal
+export class NonFatalErrorException extends ProjectErrorException {}
+
+// Used in exit statement and exit action
+export class ExitException extends WebGMException {}
+
+// Used when calling functions that require stopping the current step
+class StepStopException extends WebGMException {
+	constructor(fn, ...args) {
+		super(...args);
+		this.fn = fn;
 	}
 }

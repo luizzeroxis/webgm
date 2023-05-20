@@ -1,6 +1,7 @@
 import Events from "~/common/Events.js";
-import {NonFatalErrorException} from "~/common/Exceptions.js";
 import {hexToDecimal, decimalToHex} from "~/common/tools.js";
+
+import {NonFatalErrorException} from "./Game.js";
 
 export default class BuiltInGlobals {
 	// this = Game

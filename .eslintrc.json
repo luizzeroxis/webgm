@@ -18,8 +18,21 @@
     "globals": {
         "CONSTANTS": "readonly"
     },
+    "settings": {
+        "import/resolver": {
+            "alias": [
+                ["~", "./src"]
+            ]
+        }
+    },
     "rules": {
-        "import/order": ["warn", {"newlines-between": "always", "alphabetize": {"order": "asc", "caseInsensitive": true}}],
+        "import/order": ["warn", {
+            "groups": [
+                "builtin", "external", "internal", "parent", "sibling", "index"
+            ],
+            "newlines-between": "always",
+            "alphabetize": {"order": "asc", "caseInsensitive": true}
+        }],
 
         "array-callback-return": "warn",
         "no-constant-binary-expression": "warn",

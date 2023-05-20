@@ -43,6 +43,11 @@ module.exports = {
 			},
 		],
 	},
+	resolve: {
+		alias: {
+			"~": path.resolve(__dirname, "src"),
+		},
+	},
 	optimization: {
 		runtimeChunk: "single",
 		splitChunks: {

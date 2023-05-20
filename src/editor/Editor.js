@@ -1,21 +1,21 @@
 //The editor class
 
-import Dispatcher from "../common/Dispatcher.js";
-import {WebGMException} from "../common/Exceptions.js";
-import {HElement, parent, endparent, add, removeChildren} from "../common/H.js";
-import HMenuManager from "../common/HMenuManager.js";
-import Project from "../common/Project.js";
-import {ProjectAction} from "../common/ProjectProperties.js";
-import ProjectSerializer, {UnserializeException} from "../common/ProjectSerializer.js";
-import {openFile, saveFile, readFileAsText, setOnFileDrop, setOnFileDropAsFileHandle} from "../common/tools.js";
-import Game from "../game/Game.js";
+import Dispatcher from "~/common/Dispatcher.js";
+import {WebGMException} from "~/common/Exceptions.js";
+import {HElement, parent, endparent, add, removeChildren} from "~/common/H.js";
+import HMenuManager from "~/common/HMenuManager.js";
+import Project from "~/common/Project.js";
+import {ProjectAction} from "~/common/ProjectProperties.js";
+import ProjectSerializer, {UnserializeException} from "~/common/ProjectSerializer.js";
+import {openFile, saveFile, readFileAsText, setOnFileDrop, setOnFileDropAsFileHandle} from "~/common/tools.js";
+import HSplitter from "~/editor/HSplitter.js";
+import Game from "~/game/Game.js";
 
 import HAreaMenuBar from "./areas/HAreaMenuBar.js";
 import HAreaResources from "./areas/HAreaResources.js";
 import HAreaToolBar from "./areas/HAreaToolBar.js";
 import HAreaWindows from "./areas/HAreaWindows.js";
 import BuiltInLibraries from "./BuiltInLibraries.js";
-import HSplitter from "./HSplitter.js";
 import HWIPWarning from "./HWIPWarning.js";
 import PreferencesManager from "./PreferencesManager.js";
 import StandAloneBuilder from "./StandAloneBuilder.js";

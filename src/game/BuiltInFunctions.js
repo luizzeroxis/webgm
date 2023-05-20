@@ -1,5 +1,5 @@
-import {EngineException} from "../common/Exceptions.js";
-import {decimalToHSV, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, forceInteger, toInteger, parseNewLineHash} from "../common/tools.js";
+import {EngineException} from "~/common/Exceptions.js";
+import {decimalToHSV, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, forceInteger, toInteger, parseNewLineHash} from "~/common/tools.js";
 
 import GameCollision from "./GameCollision.js";
 

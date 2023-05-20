@@ -1,4 +1,4 @@
-import {HElement, parent, endparent, add, remove} from "./H.js";
+import {HElement, parent, endparent, add, remove} from "~/common/H.js";
 
 export default class HMenu extends HElement {
 	constructor(manager, items, options) {

@@ -1,6 +1,6 @@
-import {ProjectSprite, ProjectSound, ProjectBackground, ProjectObject} from "../common/ProjectProperties.js";
+import {ProjectSprite, ProjectSound, ProjectBackground, ProjectObject} from "~/common/ProjectProperties.js";
+import HTreeItem from "~/editor/HTreeItem.js";
 
-import HTreeItem from "./HTreeItem.js";
 import FontResourceIcon from "./img/font-resource-icon.png";
 import PathResourceIcon from "./img/path-resource-icon.png";
 import RoomResourceIcon from "./img/room-resource-icon.png";

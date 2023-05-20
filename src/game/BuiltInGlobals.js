@@ -1,6 +1,6 @@
-import Events from "../common/Events.js";
-import {NonFatalErrorException} from "../common/Exceptions.js";
-import {hexToDecimal, decimalToHex} from "../common/tools.js";
+import Events from "~/common/Events.js";
+import {NonFatalErrorException} from "~/common/Exceptions.js";
+import {hexToDecimal, decimalToHex} from "~/common/tools.js";
 
 import BuiltInFunctions from "./BuiltInFunctions.js";
 

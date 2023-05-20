@@ -1,14 +1,14 @@
-import {parent, endparent, add, HElement, HButton, HImage} from "../../common/H.js";
-import Project from "../../common/Project.js";
-import BackgroundIcon from "../img/background-icon.png";
-import FontIcon from "../img/font-icon.png";
-import ObjectIcon from "../img/object-icon.png";
-import PathIcon from "../img/path-icon.png";
-import RoomIcon from "../img/room-icon.png";
-import ScriptIcon from "../img/script-icon.png";
-import SoundIcon from "../img/sound-icon.png";
-import SpriteIcon from "../img/sprite-icon.png";
-import TimelineIcon from "../img/timeline-icon.png";
+import {parent, endparent, add, HElement, HButton, HImage} from "~/common/H.js";
+import Project from "~/common/Project.js";
+import BackgroundIcon from "~/editor/img/background-icon.png";
+import FontIcon from "~/editor/img/font-icon.png";
+import ObjectIcon from "~/editor/img/object-icon.png";
+import PathIcon from "~/editor/img/path-icon.png";
+import RoomIcon from "~/editor/img/room-icon.png";
+import ScriptIcon from "~/editor/img/script-icon.png";
+import SoundIcon from "~/editor/img/sound-icon.png";
+import SpriteIcon from "~/editor/img/sprite-icon.png";
+import TimelineIcon from "~/editor/img/timeline-icon.png";
 
 export default class HAreaToolBar extends HElement {
 	static resourceTypeIcons = {

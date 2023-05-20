@@ -1,7 +1,8 @@
-import Dispatcher from "./Dispatcher.js";
+import Dispatcher from "~/common/Dispatcher.js";
+import Serializer from "~/common/Serializer.js";
+
 import {ProjectGameInformation, ProjectGlobalGameSettings, ProjectExtensionPackages} from "./ProjectProperties.js";
 import {ProjectResources, ProjectCounters} from "./ProjectResourcesAndCounters.js";
-import Serializer from "./Serializer.js";
 
 export default class Project {
 	static resourceTypes = ProjectResources.types;

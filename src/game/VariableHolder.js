@@ -1,5 +1,5 @@
-import {WebGMException} from "../common/Exceptions.js";
-import {forceString, forceReal, forceInteger, forceBool, forceUnit, forceChar} from "../common/tools.js";
+import {WebGMException} from "~/common/Exceptions.js";
+import {forceString, forceReal, forceInteger, forceBool, forceUnit, forceChar} from "~/common/tools.js";
 
 export class VariableException extends WebGMException {}
 

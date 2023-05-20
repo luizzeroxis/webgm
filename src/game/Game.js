@@ -1,11 +1,11 @@
 import seedrandom from "seedrandom";
 
-import Dispatcher from "../common/Dispatcher.js";
-import Events from "../common/Events.js";
-import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from "../common/Exceptions.js";
-import {HElement, parent, endparent, add} from "../common/HCore.js";
-import HMenuManager from "../common/HMenuManager.js";
-import Project from "../common/Project.js";
+import Dispatcher from "~/common/Dispatcher.js";
+import Events from "~/common/Events.js";
+import {EngineException, ProjectErrorException, FatalErrorException, NonFatalErrorException, ExitException, StepStopException} from "~/common/Exceptions.js";
+import {HElement, parent, endparent, add} from "~/common/HCore.js";
+import HMenuManager from "~/common/HMenuManager.js";
+import Project from "~/common/Project.js";
 
 import BuiltInConstants from "./BuiltInConstants.js";
 import BuiltInGlobals from "./BuiltInGlobals.js";

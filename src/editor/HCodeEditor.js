@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement} from "../common/H.js";
+import {parent, endparent, add, HElement} from "~/common/H.js";
 
 import "./HCodeEditor.scss";
 

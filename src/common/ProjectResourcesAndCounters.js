@@ -1,5 +1,6 @@
+import Serializer from "~/common/Serializer.js";
+
 import {ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectFont, ProjectTimeline, ProjectObject, ProjectRoom} from "./ProjectProperties.js";
-import Serializer from "./Serializer.js";
 
 export class ProjectResources {
 	static types = [

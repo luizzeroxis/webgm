@@ -1,10 +1,11 @@
 import JSZip from "jszip";
 
-import ProjectSerializer from "../common/ProjectSerializer.js";
-import {saveFile} from "../common/tools.js";
+import ProjectSerializer from "~/common/ProjectSerializer.js";
+import {saveFile} from "~/common/tools.js";
 
 export default class StandAloneBuilder {
 	static async build(project, name) {
+		// TODO: Load game.html to find out what files to include (maybe)
 		const files = [
 			{url: "game.html", name: "index.html"},
 			{url: "main-game.bundle.js"},

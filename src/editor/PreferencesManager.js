@@ -1,4 +1,4 @@
-import Dispatcher from "../common/Dispatcher.js";
+import Dispatcher from "~/common/Dispatcher.js";
 
 export default class PreferencesManager {
 	constructor() {

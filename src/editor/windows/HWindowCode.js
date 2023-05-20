@@ -1,8 +1,8 @@
-import {parent, endparent, add, HElement, HRadioInput, uniqueID} from "../../common/H.js";
-import {ProjectObject} from "../../common/ProjectProperties.js";
-import HCodeEditor from "../HCodeEditor.js";
-import HResourceSelect from "../HResourceSelect.js";
-import HWindow from "../HWindow.js";
+import {parent, endparent, add, HElement, HRadioInput, uniqueID} from "~/common/H.js";
+import {ProjectObject} from "~/common/ProjectProperties.js";
+import HCodeEditor from "~/editor/HCodeEditor.js";
+import HResourceSelect from "~/editor/HResourceSelect.js";
+import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowCode extends HWindow {
 	constructor(editor, id, action, object) {

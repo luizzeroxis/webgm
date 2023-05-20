@@ -1,12 +1,12 @@
-import {parent, endparent, add, HElement} from "../../common/H.js";
-import Project from "../../common/Project.js";
-import HResourceListItem from "../HResourceListItem.js";
-import HTreeItem from "../HTreeItem.js";
-import HTreeList from "../HTreeList.js";
-import FolderIcon from "../img/folder-icon.png";
-import GameInformationIcon from "../img/game-information-icon.png";
-import GameSettingsIcon from "../img/global-game-settings-icon.png";
-// import ExtensionPackagesIcon from './img/extension-packages-icon.png';
+import {parent, endparent, add, HElement} from "~/common/H.js";
+import Project from "~/common/Project.js";
+import HResourceListItem from "~/editor/HResourceListItem.js";
+import HTreeItem from "~/editor/HTreeItem.js";
+import HTreeList from "~/editor/HTreeList.js";
+import FolderIcon from "~/editor/img/folder-icon.png";
+import GameInformationIcon from "~/editor/img/game-information-icon.png";
+import GameSettingsIcon from "~/editor/img/global-game-settings-icon.png";
+// import ExtensionPackagesIcon from '~/editor/img/extension-packages-icon.png';
 
 export default class HAreaResources extends HElement {
 	constructor(editor) {

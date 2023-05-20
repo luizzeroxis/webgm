@@ -1,4 +1,4 @@
-import {parent, endparent, add, remove, moveBefore, moveAdd, classToAttr, classToArray, HElement} from "../common/H.js";
+import {parent, endparent, add, remove, moveBefore, moveAdd, classToAttr, classToArray, HElement} from "~/common/H.js";
 
 import "./HTree.scss";
 

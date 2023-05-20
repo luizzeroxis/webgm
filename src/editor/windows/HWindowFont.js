@@ -1,5 +1,5 @@
-import {parent, endparent, add, HElement, HTextInput, HNumberInput, HCheckBoxInput} from "../../common/H.js";
-import HWindow from "../HWindow.js";
+import {parent, endparent, add, HElement, HTextInput, HNumberInput, HCheckBoxInput} from "~/common/H.js";
+import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowFont extends HWindow {
 	constructor(editor, id, font) {

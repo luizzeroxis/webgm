@@ -1,17 +1,17 @@
-import {parent, endparent, add, remove, HElement} from "../../common/H.js";
-import HWindowBackground from "../windows/HWindowBackground.js";
-import HWindowFont from "../windows/HWindowFont.js";
-import HWindowGame from "../windows/HWindowGame.js";
-import HWindowGameInformation from "../windows/HWindowGameInformation.js";
-import HWindowGlobalGameSettings from "../windows/HWindowGlobalGameSettings.js";
-import HWindowObject from "../windows/HWindowObject.js";
-import HWindowPath from "../windows/HWindowPath.js";
-import HWindowPreferences from "../windows/HWindowPreferences.js";
-import HWindowRoom from "../windows/HWindowRoom.js";
-import HWindowScript from "../windows/HWindowScript.js";
-import HWindowSound from "../windows/HWindowSound.js";
-import HWindowSprite from "../windows/HWindowSprite.js";
-import HWindowTimeline from "../windows/HWindowTimeline.js";
+import {parent, endparent, add, remove, HElement} from "~/common/H.js";
+import HWindowBackground from "~/editor/windows/HWindowBackground.js";
+import HWindowFont from "~/editor/windows/HWindowFont.js";
+import HWindowGame from "~/editor/windows/HWindowGame.js";
+import HWindowGameInformation from "~/editor/windows/HWindowGameInformation.js";
+import HWindowGlobalGameSettings from "~/editor/windows/HWindowGlobalGameSettings.js";
+import HWindowObject from "~/editor/windows/HWindowObject.js";
+import HWindowPath from "~/editor/windows/HWindowPath.js";
+import HWindowPreferences from "~/editor/windows/HWindowPreferences.js";
+import HWindowRoom from "~/editor/windows/HWindowRoom.js";
+import HWindowScript from "~/editor/windows/HWindowScript.js";
+import HWindowSound from "~/editor/windows/HWindowSound.js";
+import HWindowSprite from "~/editor/windows/HWindowSprite.js";
+import HWindowTimeline from "~/editor/windows/HWindowTimeline.js";
 
 export default class HAreaWindows extends HElement {
 	static resourceTypesWindowClasses = {

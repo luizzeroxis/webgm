@@ -1,4 +1,4 @@
-import {HElement} from "../common/H.js";
+import {HElement} from "~/common/H.js";
 
 export default class HMenuBarButton extends HElement {
 	constructor(menuBar, text, items) {

@@ -1,6 +1,6 @@
-import AudioWrapper from "./AudioWrapper.js";
-import ImageWrapper from "./ImageWrapper.js";
-import Serializer from "./Serializer.js";
+import AudioWrapper from "~/common/AudioWrapper.js";
+import ImageWrapper from "~/common/ImageWrapper.js";
+import Serializer from "~/common/Serializer.js";
 
 export class ProjectSprite {
 	static {

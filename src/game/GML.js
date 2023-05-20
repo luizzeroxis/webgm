@@ -1,8 +1,8 @@
 import * as ohm from "ohm-js";
 import * as ohmExtras from "ohm-js/extras";
 
-import {ExitException, ReturnException, BreakException, ContinueException, NonFatalErrorException} from "../common/Exceptions.js";
-import {toInteger, forceString, forceReal, forceInteger, asString, forceBool} from "../common/tools.js";
+import {ExitException, ReturnException, BreakException, ContinueException, NonFatalErrorException} from "~/common/Exceptions.js";
+import {toInteger, forceString, forceReal, forceInteger, asString, forceBool} from "~/common/tools.js";
 
 import BuiltInFunctions from "./BuiltInFunctions.js";
 import GMLGrammar from "./GMLGrammar.js";

@@ -1,5 +1,5 @@
-import {EngineException, FatalErrorException} from "../common/Exceptions.js";
-import {makeCSSFont} from "../common/tools.js";
+import {EngineException, FatalErrorException} from "~/common/Exceptions.js";
+import {makeCSSFont} from "~/common/tools.js";
 
 import ActionsParser from "./ActionsParser.js";
 

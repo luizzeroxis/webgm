@@ -1,4 +1,4 @@
-import {mod} from "../common/tools.js";
+import {mod} from "~/common/tools.js";
 
 import BuiltInLocals from "./BuiltInLocals.js";
 import VariableHolder from "./VariableHolder.js";

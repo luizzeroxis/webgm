@@ -1,4 +1,4 @@
-import {hexToDecimal, decimalToHex} from "../common/tools.js";
+import {hexToDecimal, decimalToHex} from "~/common/tools.js";
 
 export default class BuiltInLocals {
 	// this = Instance

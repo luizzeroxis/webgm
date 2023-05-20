@@ -1,5 +1,5 @@
-import {parent, endparent} from "../../common/H.js";
-import HWindow from "../HWindow.js";
+import {parent, endparent} from "~/common/H.js";
+import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowExtensionPackages extends HWindow {
 	constructor(editor, id) {

@@ -415,7 +415,7 @@ export default class GameRender {
 
 	drawCircle(x, y, r, outline) {
 		this.ctx.beginPath();
-		this.ctx.arc(x, y, r, 0, Math.PI*2);
+		this.ctx.arc(x, y, Math.abs(r), 0, Math.PI*2);
 		if (outline) {
 			this.ctx.strokeStyle = this.drawColorAlpha;
 			this.ctx.stroke();

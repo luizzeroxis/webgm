@@ -237,6 +237,38 @@ export default class GameCollision {
 		return null;
 	}
 
+	// Check if instance is colliding with circle.
+	instanceOnCircle(instance, circle, precise=true) {
+		const image = instance.getMaskImage();
+		if (image == null) return false;
+
+		const col = this.game.loadedProject.collisionMasks.get(image);
+
+		for (let x=0; x<image.width; x+=1) {
+			for (let y=0; y<image.height; y+=1) {
+				const point = instance.instanceImagePointToRoomPoint({x, y});
+
+				if (Math.hypot(circle.x - point.x, circle.y - point.y) <= Math.abs(circle.r)) {
+					if (!precise) return true;
+					if (col[x][y]) return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	// Return the first instance that is colliding with circle.
+	getFirstInstanceOnCircle(instances, circle, precise=true) {
+		for (const instance of instances) {
+			if (!instance.exists) continue;
+			if (this.instanceOnCircle(instance, circle, precise)) {
+				return instance;
+			}
+		}
+		return null;
+	}
+
 	// Check if instance is colliding with ellipse.
 	instanceOnEllipse(instance, ellipse, precise=true) {
 		const image = instance.getMaskImage();
@@ -271,12 +303,12 @@ export default class GameCollision {
 	// Return the first instance that is colliding with ellipse.
 	getFirstInstanceOnEllipse(instances, ellipse, precise=true) {
 		for (const instance of instances) {
-				if (!instance.exists) continue;
-				if (this.instanceOnEllipse(instance, ellipse, precise)) {
-					return instance;
-				}
+			if (!instance.exists) continue;
+			if (this.instanceOnEllipse(instance, ellipse, precise)) {
+				return instance;
 			}
-			return null;
+		}
+		return null;
 	}
 
 	// Check if instance is colliding with line.

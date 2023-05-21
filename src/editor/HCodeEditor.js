@@ -11,6 +11,7 @@ export default class HCodeEditor extends HElement {
 		parent(this);
 
 			this.textareaCode = add( new HElement("textarea", {class: "h-code"}, code) );
+			this.textareaCode.html.spellcheck = false;
 			this.textareaCode.html.title = "Press Esc to continue keyboard navigation!";
 			this.textareaCode.html.addEventListener("keydown", e => {
 				if (e.code == "Tab" && e.shiftKey == false) {

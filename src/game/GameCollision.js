@@ -74,7 +74,9 @@ export default class GameCollision {
 		// Don't allow collision with self
 		if (aInstance == bInstance) return false;
 
-		if (aInstance.getMaskImage() == null || bInstance.getMaskImage() == null) return false;
+		const aImage = aInstance.getMaskImage();
+		const bImage = bInstance.getMaskImage();
+		if (aImage == null || bImage == null) return false;
 
 		// TODO collision masks
 		// spriteA.boundingBox == 'fullimage';
@@ -89,11 +91,9 @@ export default class GameCollision {
 
 		const iRect = GameCollision.rectangleOnRectangleIntersection(aRect, bRect);
 
-		const aImage = aInstance.getMaskImage();
 		const aImageRect = {x1: 0, x2: aImage.width, y1: 0, y2: aImage.height};
 		const aCol = this.game.loadedProject.collisionMasks.get(aImage);
 
-		const bImage = bInstance.getMaskImage();
 		const bImageRect = {x1: 0, x2: bImage.width, y1: 0, y2: bImage.height};
 		const bCol = this.game.loadedProject.collisionMasks.get(bImage);
 
@@ -144,9 +144,8 @@ export default class GameCollision {
 
 	// Check if instance is colliding with point.
 	instanceOnPoint(instance, point, precise=true) {
-		const instanceImage = instance.getMaskImage();
-
-		if (instanceImage == null) return false;
+		const image = instance.getMaskImage();
+		if (image == null) return false;
 
 		if (!precise) {
 			return GameCollision.pointOnRectangle(point, instance.getBoundingBox());
@@ -154,11 +153,11 @@ export default class GameCollision {
 
 		const imagePoint = instance.roomPointToInstanceImagePoint(point);
 
-		if (!GameCollision.pointOnRectangle(imagePoint, {x1: 0, x2: instanceImage.width, y1: 0, y2: instanceImage.height})) {
+		if (!GameCollision.pointOnRectangle(imagePoint, {x1: 0, x2: image.width, y1: 0, y2: image.height})) {
 			return false;
 		}
 
-		const col = this.game.loadedProject.collisionMasks.get(instanceImage);
+		const col = this.game.loadedProject.collisionMasks.get(image);
 		return col[imagePoint.x][imagePoint.y] === true;
 	}
 
@@ -188,11 +187,12 @@ export default class GameCollision {
 
 	// Check if instance is colliding with rectangle.
 	instanceOnRectangle(instance, rectangle, precise=true) {
-		if (instance.getMaskImage() == null) return false;
+		const image = instance.getMaskImage();
+		if (image == null) return false;
 
-		const aRect = instance.getBoundingBox();
+		const rect = instance.getBoundingBox();
 
-		const impreciseCol = GameCollision.rectangleOnRectangle(aRect, rectangle);
+		const impreciseCol = GameCollision.rectangleOnRectangle(rect, rectangle);
 
 		// If imprecise check fails, then collision will never happen.
 		if (!impreciseCol) {
@@ -203,21 +203,20 @@ export default class GameCollision {
 			return true;
 		}
 
-		const iRect = GameCollision.rectangleOnRectangleIntersection(aRect, rectangle);
+		const iRect = GameCollision.rectangleOnRectangleIntersection(rect, rectangle);
 
-		const aImage = instance.getMaskImage();
-		const aImageRect = {x1: 0, x2: aImage.width, y1: 0, y2: aImage.height};
-		const aCol = this.game.loadedProject.collisionMasks.get(aImage);
+		const imageRect = {x1: 0, x2: image.width, y1: 0, y2: image.height};
+		const col = this.game.loadedProject.collisionMasks.get(image);
 
 		// TODO possibly optimize this?
 		for (let x = Math.floor(iRect.x1); x < iRect.x2; ++x)
 		for (let y = Math.floor(iRect.y1); y < iRect.y2; ++y) {
 			const aPoint = instance.roomPointToInstanceImagePoint({x, y});
 
-			if (!GameCollision.pointOnRectangle(aPoint, aImageRect)) {
+			if (!GameCollision.pointOnRectangle(aPoint, imageRect)) {
 				continue;
 			}
-			if (!(aCol[aPoint.x][aPoint.y] === true)) {
+			if (!(col[aPoint.x][aPoint.y] === true)) {
 				continue;
 			}
 
@@ -238,9 +237,54 @@ export default class GameCollision {
 		return null;
 	}
 
+	// Check if instance is colliding with ellipse.
+	instanceOnEllipse(instance, ellipse, precise=true) {
+		const image = instance.getMaskImage();
+		if (image == null) return false;
+
+		const col = this.game.loadedProject.collisionMasks.get(image);
+
+		const w = (ellipse.x2 - ellipse.x1);
+		const h = (ellipse.y2 - ellipse.y1);
+		const ellipseX = ellipse.x1 + (w/2);
+		const ellipseY = ellipse.y1 + (h/2);
+		const wPrime = ((w/2) ** 2);
+		const hPrime = ((h/2) ** 2);
+
+		for (let x=0; x<image.width; x+=1) {
+			for (let y=0; y<image.height; y+=1) {
+				const point = instance.instanceImagePointToRoomPoint({x, y});
+
+				const xPrime = ((point.x - ellipseX) ** 2);
+				const yPrime = ((point.y - ellipseY) ** 2);
+
+				if ((xPrime/wPrime + yPrime/hPrime) <= 1) {
+					if (!precise) return true;
+					if (col[x][y]) return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	// Return the first instance that is colliding with ellipse.
+	getFirstInstanceOnEllipse(instances, ellipse, precise=true) {
+		for (const instance of instances) {
+				if (!instance.exists) continue;
+				if (this.instanceOnEllipse(instance, ellipse, precise)) {
+					return instance;
+				}
+			}
+			return null;
+	}
+
 	// Check if instance is colliding with line.
 	instanceOnLine(instance, line, precise=true) {
-		if (instance.getMaskImage() == null) return false;
+		const image = instance.getMaskImage();
+		if (image == null) return false;
+
+		const col = this.game.loadedProject.collisionMasks.get(image);
 
 		const p1 = instance.roomPointToInstanceImagePoint({x: line.x1, y: line.y1});
 		const p2 = instance.roomPointToInstanceImagePoint({x: line.x2, y: line.y2});
@@ -251,9 +295,6 @@ export default class GameCollision {
 			x2: p2.x,
 			y2: p2.y,
 		};
-
-		const aImage = instance.getMaskImage();
-		const aCol = this.game.loadedProject.collisionMasks.get(aImage);
 
 		// Loop through every point in the line
 		const dx = (imageLine.x2 - imageLine.x1);
@@ -283,11 +324,11 @@ export default class GameCollision {
 			const rx = Math.round(x);
 			const ry = Math.round(y);
 
-			if (rx >= 0 && rx < aImage.width && ry >= 0 && ry < aImage.height) {
+			if (rx >= 0 && rx < image.width && ry >= 0 && ry < image.height) {
 				if (!precise) {
 					return true;
 				}
-				if (aCol[rx][ry]) {
+				if (col[rx][ry]) {
 					return true;
 				}
 			}

@@ -431,7 +431,7 @@ export default class GameRender {
 		const y = (y2 - y1) / 2 + y1;
 
 		this.ctx.beginPath();
-		this.ctx.ellipse(x, y, x2 - x, y2 - y, 0, 0, Math.PI*2);
+		this.ctx.ellipse(x, y, Math.abs(x2 - x), Math.abs(y2 - y), 0, 0, Math.PI*2);
 		if (outline) {
 			this.ctx.strokeStyle = this.drawColorAlpha;
 			this.ctx.stroke();

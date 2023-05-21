@@ -2426,7 +2426,7 @@ export default class BuiltInFunctions {
 	static draw_ellipse = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}],
 		func: function([x1, y1, x2, y2, outline]) {
-			this.drawEllipse(x1, y1, x2, y2, outline);
+			this.game.render.drawEllipse(x1, y1, x2, y2, outline);
 			return 0;
 		},
 	};

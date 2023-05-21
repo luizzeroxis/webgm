@@ -105,6 +105,17 @@ export default class HWindowSprite extends HWindow {
 					sprite.shape = inputPreciseCollisionChecking.getChecked() ? "precise" : "rectangle";
 					sprite.separateCollisionMasks = inputSeparateCollisionMasks.getChecked();
 
+					sprite.alphaTolerance = 0;
+					sprite.boundingBox = "automatic";
+					sprite.bbLeft = 0;
+					sprite.bbTop = 0;
+					sprite.bbRight = 0;
+					sprite.bbBottom = 0;
+					if (this.paramImages.length > 0) {
+						sprite.bbRight = this.paramImages[0].width - 1;
+						sprite.bbBottom = this.paramImages[0].height - 1;
+					}
+
 					this.updateTitle();
 				},
 				() => this.close(),

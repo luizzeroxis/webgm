@@ -4740,82 +4740,84 @@ export default class BuiltInFunctions {
 	};
 
 	static sprite_get_name = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function sprite_get_name is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
+			return sprite?.name ?? "<undefined>";
 		},
 	};
 
 	static sprite_get_number = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function sprite_get_number is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
+			return sprite?.images.length ?? -1;
 		},
 	};
 
 	static sprite_get_width = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function sprite_get_width is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
+			if (!sprite) return -1;
+			return sprite.images[0]?.width ?? 1;
 		},
 	};
 
 	static sprite_get_height = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function sprite_get_height is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
+			if (!sprite) return -1;
+			return sprite.images[0]?.height ?? 1;
 		},
 	};
 
 	static sprite_get_xoffset = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function sprite_get_xoffset is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
+			return sprite?.originx ?? -1;
 		},
 	};
 
 	static sprite_get_yoffset = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function sprite_get_yoffset is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
+			return sprite?.originy ?? -1;
 		},
 	};
 
 	static sprite_get_bbox_left = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function sprite_get_bbox_left is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
+			return sprite?.bbLeft ?? -1;
 		},
 	};
 
 	static sprite_get_bbox_right = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function sprite_get_bbox_right is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
+			return sprite?.bbRight ?? -1;
 		},
 	};
 
 	static sprite_get_bbox_top = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function sprite_get_bbox_top is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
+			return sprite?.bbTop ?? -1;
 		},
 	};
 
 	static sprite_get_bbox_bottom = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function sprite_get_bbox_bottom is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
+			return sprite?.bbBottom ?? -1;
 		},
 	};
 
@@ -4846,10 +4848,10 @@ export default class BuiltInFunctions {
 	};
 
 	static sound_get_name = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function sound_get_name is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const sound = this.game.project.getResourceById("ProjectSound", ind);
+			return sound?.name ?? "<undefined>";
 		},
 	};
 
@@ -4896,26 +4898,28 @@ export default class BuiltInFunctions {
 	};
 
 	static background_get_name = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function background_get_name is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const background = this.game.project.getResourceById("ProjectBackground", ind);
+			return background?.name ?? "<undefined>";
 		},
 	};
 
 	static background_get_width = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function background_get_width is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const background = this.game.project.getResourceById("ProjectBackground", ind);
+			if (!background) return -1;
+			return background.image?.width ?? 0;
 		},
 	};
 
 	static background_get_height = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function background_get_height is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const background = this.game.project.getResourceById("ProjectBackground", ind);
+			if (!background) return -1;
+			return background.image?.height ?? 0;
 		},
 	};
 
@@ -4938,34 +4942,34 @@ export default class BuiltInFunctions {
 	};
 
 	static font_get_name = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function font_get_name is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const font = this.game.project.getResourceById("ProjectFont", ind);
+			return font?.name ?? "<undefined>";
 		},
 	};
 
 	static font_get_fontname = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function font_get_fontname is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const font = this.game.project.getResourceById("ProjectFont", ind);
+			return font?.font ?? "";
 		},
 	};
 
 	static font_get_bold = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function font_get_bold is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const font = this.game.project.getResourceById("ProjectFont", ind);
+			return (font?.bold ? 1 : 0) ?? -1;
 		},
 	};
 
 	static font_get_italic = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function font_get_italic is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const font = this.game.project.getResourceById("ProjectFont", ind);
+			return (font?.italic ? 1 : 0) ?? -1;
 		},
 	};
 
@@ -4996,10 +5000,10 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_name = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function path_get_name is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const path = this.game.project.getResourceById("ProjectPath", ind);
+			return path?.name ?? "<undefined>";
 		},
 	};
 
@@ -5012,58 +5016,58 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_kind = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function path_get_kind is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const path = this.game.project.getResourceById("ProjectPath", ind);
+			return (path?.connectionKind == "lines" ? 0 : 1) ?? -1;
 		},
 	};
 
 	static path_get_closed = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function path_get_closed is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const path = this.game.project.getResourceById("ProjectPath", ind);
+			return (path?.closed ? 1 : 0) ?? -1;
 		},
 	};
 
 	static path_get_precision = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function path_get_precision is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const path = this.game.project.getResourceById("ProjectPath", ind);
+			return path?.precision ?? -1;
 		},
 	};
 
 	static path_get_number = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function path_get_number is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const path = this.game.project.getResourceById("ProjectPath", ind);
+			return path?.points.length ?? -1;
 		},
 	};
 
 	static path_get_point_x = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function path_get_point_x is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}],
+		func: function([ind, n]) {
+			const path = this.game.project.getResourceById("ProjectPath", ind);
+			return path?.points[n]?.x ?? -1;
 		},
 	};
 
 	static path_get_point_y = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function path_get_point_y is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}],
+		func: function([ind, n]) {
+			const path = this.game.project.getResourceById("ProjectPath", ind);
+			return path?.points[n]?.y ?? -1;
 		},
 	};
 
 	static path_get_point_speed = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function path_get_point_speed is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}],
+		func: function([ind, n]) {
+			const path = this.game.project.getResourceById("ProjectPath", ind);
+			return path?.points[n]?.sp ?? -1;
 		},
 	};
 
@@ -5102,18 +5106,18 @@ export default class BuiltInFunctions {
 	};
 
 	static script_get_name = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function script_get_name is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const script = this.game.project.getResourceById("ProjectScript", ind);
+			return script?.name ?? "<undefined>";
 		},
 	};
 
 	static script_get_text = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function script_get_text is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const script = this.game.project.getResourceById("ProjectScript", ind);
+			return script?.code ?? "";
 		},
 	};
 
@@ -5128,10 +5132,10 @@ export default class BuiltInFunctions {
 	};
 
 	static timeline_get_name = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function timeline_get_name is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const timeline = this.game.project.getResourceById("ProjectTimeline", ind);
+			return timeline?.name ?? "<undefined>";
 		},
 	};
 
@@ -5146,66 +5150,66 @@ export default class BuiltInFunctions {
 	};
 
 	static object_get_name = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function object_get_name is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const object = this.game.project.getResourceById("ProjectObject", ind);
+			return object?.name ?? "<undefined>";
 		},
 	};
 
 	static object_get_sprite = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function object_get_sprite is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const object = this.game.project.getResourceById("ProjectObject", ind);
+			return object?.sprite_index ?? -1;
 		},
 	};
 
 	static object_get_solid = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function object_get_solid is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const object = this.game.project.getResourceById("ProjectObject", ind);
+			return (object?.solid ? 1 : 0) ?? -1;
 		},
 	};
 
 	static object_get_visible = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function object_get_visible is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const object = this.game.project.getResourceById("ProjectObject", ind);
+			return (object?.visible ? 1 : 0) ?? -1;
 		},
 	};
 
 	static object_get_depth = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function object_get_depth is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const object = this.game.project.getResourceById("ProjectObject", ind);
+			return object?.depth ?? -1;
 		},
 	};
 
 	static object_get_persistent = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function object_get_persistent is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const object = this.game.project.getResourceById("ProjectObject", ind);
+			return (object?.persistent ? 1 : 0) ?? -1;
 		},
 	};
 
 	static object_get_mask = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function object_get_mask is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const object = this.game.project.getResourceById("ProjectObject", ind);
+			return object?.mask_index ?? -1;
 		},
 	};
 
 	static object_get_parent = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function object_get_parent is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const object = this.game.project.getResourceById("ProjectObject", ind);
+			return object?.parent_index ?? -1;
 		},
 	};
 
@@ -5228,10 +5232,10 @@ export default class BuiltInFunctions {
 	};
 
 	static room_get_name = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function room_get_name is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const room = this.game.project.getResourceById("ProjectRoom", ind);
+			return room?.name ?? "<undefined>";
 		},
 	};
 

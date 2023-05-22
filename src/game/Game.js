@@ -588,7 +588,6 @@ export default class Game {
 		// TODO paths?
 	}
 
-
 	// Execute a event.
 	async doEvent(event, instance, other=null) {
 		if (event == null) return;
@@ -1001,7 +1000,18 @@ export default class Game {
 
 	// Get event of type and subtype (optional) of an instance.
 	getEventOfInstance(instance, type, subtype) {
-		return instance.object.events.find(x => (x.type == type) && (subtype ? (x.subtype == subtype) : true));
+		return this.getEventOfObject(instance.object, type, subtype);
+	}
+
+	getEventOfObject(object, type, subtype) {
+		const event = object.events.find(x => (x.type == type) && (subtype ? (x.subtype == subtype) : true));
+		if (event) return event;
+
+		const parent = this.project.getResourceById("ProjectObject", object.parent_index);
+		if (parent) {
+			return this.getEventOfObject(parent, type, subtype);
+		}
+		return null;
 	}
 
 	// Returns a map containg all event-instance pairs that exist currently. It is structured like so:
@@ -1012,21 +1022,36 @@ export default class Game {
 		for (const instance of this.instances) {
 			if (!instance.exists) continue;
 
-			instance.object.events.forEach(event => {
-				let subtypes = map.get(event.type);
-				if (subtypes == undefined) {
-					subtypes = new Map();
-					map.set(event.type, subtypes);
-				}
+			// outside: map, instance
+			const findEvents = (object) => {
+				object.events.forEach(event => {
+					let subtypes = map.get(event.type);
+					if (subtypes == undefined) {
+						subtypes = new Map();
+						map.set(event.type, subtypes);
+					}
 
-				let eventInstancePairs = subtypes.get(event.subtype);
-				if (eventInstancePairs == undefined) {
-					eventInstancePairs = [];
-					subtypes.set(event.subtype, eventInstancePairs);
-				}
+					let eventInstancePairs = subtypes.get(event.subtype);
+					if (eventInstancePairs == undefined) {
+						eventInstancePairs = [];
+						subtypes.set(event.subtype, eventInstancePairs);
+					}
 
-				eventInstancePairs.push({event: event, instance: instance});
-			});
+					// maybe this is slow
+					if (eventInstancePairs.find(x => x.instance == instance
+						&& x.event.type == event.type && x.event.subtype == event.subtype)) {
+						return;
+					}
+					eventInstancePairs.push({event: event, instance: instance});
+				});
+
+				const parent = this.project.getResourceById("ProjectObject", object.parent_index);
+				if (parent) {
+					findEvents(parent);
+				}
+			};
+
+			findEvents(instance.object);
 		}
 
 		return map;
@@ -1057,8 +1082,27 @@ export default class Game {
 			case -2:
 				return [this.currentEventOther || this.currentEventInstance];
 			default:
-				return this.instances.filter(x => x.exists && x.objectIndex == appliesTo);
+				return this.instances.filter(x => x.exists
+					&& (x.objectIndex == appliesTo || this.objectIsAncestorByIndex(appliesTo, x.objectIndex)));
 		}
+	}
+
+	// If parent is an ancenstor of child, by index.
+	objectIsAncestorByIndex(parentIndex, childIndex) {
+		const parent = this.project.getResourceById("ProjectObject", parentIndex);
+		const child = this.project.getResourceById("ProjectObject", childIndex);
+		return this.objectIsAncestor(parent, child);
+	}
+
+	// If parent is an ancenstor of child.
+	objectIsAncestor(parent, child) {
+		if (child.parent_index >= 0) {
+			if (child.parent_index == parent.id) return true;
+
+			const childParent = this.project.getResourceById("ProjectObject", child.parent_index);
+			return this.objectIsAncestor(parent, childParent);
+		}
+		return false;
 	}
 
 	// // Game error checking and throwing

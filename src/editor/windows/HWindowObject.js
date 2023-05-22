@@ -49,6 +49,9 @@ export default class HWindowObject extends HWindow {
 					const inputDepth = add( new HNumberInput("Depth:", object.depth, 1) );
 					const inputPersistent = add( new HCheckBoxInput("Persistent", object.persistent) );
 
+					this.selectParent = add( new HResourceSelect(this.editor, "Parent:", ProjectObject) );
+					this.selectParent.setValue(object.parent_index);
+
 					this.selectMask = add( new HResourceSelect(this.editor, "Mask:", ProjectSprite) );
 					this.selectMask.setValue(object.mask_index);
 
@@ -364,6 +367,7 @@ export default class HWindowObject extends HWindow {
 					object.solid = inputSolid.getChecked();
 					object.depth = parseInt(inputDepth.getValue());
 					object.persistent = inputPersistent.getChecked();
+					object.parent_index = this.selectParent.getValue();
 					object.mask_index = this.selectMask.getValue();
 					object.events = this.paramEvents;
 

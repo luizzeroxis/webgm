@@ -28,7 +28,7 @@ export default class ImageWrapper {
 				this.image.onload = () => {
 					this.width = this.image.width;
 					this.height = this.image.height;
-					resolve();
+					resolve(this);
 				};
 				this.image.onerror = () => {
 					reject(new Error("Could not load image"));

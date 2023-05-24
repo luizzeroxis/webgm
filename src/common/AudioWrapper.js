@@ -24,7 +24,7 @@ export default class AudioWrapper {
 		if (this.promise == null) {
 			this.promise = new Promise((resolve, reject) => {
 				this.audio.oncanplaythrough = () => { // onload simply isn't a thing. That's great.
-					resolve();
+					resolve(this);
 				};
 				this.audio.onerror = () => {
 					reject(new Error("Could not load audio"));

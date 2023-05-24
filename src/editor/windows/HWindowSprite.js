@@ -3,6 +3,8 @@ import ImageWrapper from "~/common/ImageWrapper.js";
 import {openFile, setOnFileDrop} from "~/common/tools.js";
 import HWindow from "~/editor/HWindow.js";
 
+import HWindowSpriteImages from "./HWindowSpriteImages.js";
+
 export default class HWindowSprite extends HWindow {
 	constructor(editor, id, sprite) {
 		super(editor, id);
@@ -22,10 +24,19 @@ export default class HWindowSprite extends HWindow {
 
 					const inputName = add( new HTextInput("Name:", paramName) );
 
-					this.buttonLoadSprite = add( new HButton("Load Sprite", async () => {
-						const files = await openFile("image/*", true);
-						this.loadSpriteFromFiles(files);
-					}) );
+					parent( add( new HElement("div") ) );
+						this.buttonLoadSprite = add( new HButton("Load Sprite", async () => {
+							const files = await openFile("image/*", true);
+							this.setImagesFromFiles(files);
+						}) );
+						endparent();
+
+					parent( add( new HElement("div") ) );
+						const editSpriteWindowId = {spriteWindow: this};
+						add( new HButton("Edit Sprite", () => {
+							this.openAsChild(HWindowSpriteImages, editSpriteWindowId);
+						}) );
+						endparent();
 
 					parent( add( new HElement("div", {}, "Width: ")) );
 						this.divWidth = add( new HElement("span") );
@@ -124,24 +135,32 @@ export default class HWindowSprite extends HWindow {
 			endparent();
 
 		// Open file if dropped in the window body
-		setOnFileDrop(this.html, files => this.loadSpriteFromFiles(files), true);
+		setOnFileDrop(this.html, files => this.setImagesFromFiles(files), true);
 	}
 
 	updateTitle() {
 		this.title.html.textContent = "Sprite Properties: "+this.sprite.name;
 	}
 
-	loadSpriteFromFiles(files) {
-		this.buttonLoadSprite.setDisabled(true);
-
+	loadImagesFromFiles(files) {
 		const images = [];
 
 		for (const file of files) {
 			images.push(new ImageWrapper(file));
 		}
 
-		Promise.all(images.map(x => x.promise))
-		.then(() => {
+		return Promise.all(images.map(x => x.promise));
+	}
+
+	setImagesFromFiles(files) {
+		for (const child of this.windowChildren) {
+			child.close();
+		}
+
+		this.buttonLoadSprite.setDisabled(true);
+
+		this.loadImagesFromFiles(files)
+		.then(images => {
 			this.paramImages = images;
 			this.updateImageInfo();
 		})

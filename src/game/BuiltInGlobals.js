@@ -199,15 +199,15 @@ export default class BuiltInGlobals {
 	// Game play / Generating events
 
 	static event_type = {readOnly: true, get() {
-		return this.currentEvent ? Events.listEventTypes.find(x => x.value == this.currentEvent.type).id : 0;
+		return this.currentEvent ? Events.listEventTypes.find(x => x.value == this.currentEvent.event.type).id : 0;
 	}};
 
 	static event_number = {readOnly: true, get() {
-		return this.currentEvent ? this.currentEvent.subtype : 0;
+		return this.currentEvent ? this.currentEvent.event.subtype : 0;
 	}};
 
 	static event_object = {readOnly: true, get() {
-		return this.currentEventInstance ? this.currentEventInstance.objectIndex : 0;
+		return this.currentEvent ? this.currentEvent.object.id : 0;
 	}};
 
 	static event_action = {readOnly: true, get() {

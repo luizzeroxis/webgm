@@ -600,7 +600,7 @@ export default class Game {
 		this.currentEventInstance = instance;
 		this.currentEventOther = other;
 
-		const parsedActions = this.loadedProject.actionsCache.get(event);
+		const parsedActions = this.loadedProject.actionsCache.get(event.event);
 
 		for (const treeAction of parsedActions) {
 			try {
@@ -741,6 +741,7 @@ export default class Game {
 				);
 			}
 
+			// Using currentEventInstance instead of currentInstance is technically okay here, because to get here you get to run doEvent which is always (hopefully) setting the right instance.
 			return await this.gml.execute(result.ast, this.currentEventInstance, this.currentEventOther || this.currentEventInstance);
 		}
 		return arg.value;
@@ -1003,9 +1004,10 @@ export default class Game {
 		return this.getEventOfObject(instance.object, type, subtype);
 	}
 
+	// Get an event that is in an object or its parents. Returns {event, object}
 	getEventOfObject(object, type, subtype) {
 		const event = object.events.find(x => (x.type == type) && (subtype ? (x.subtype == subtype) : true));
-		if (event) return event;
+		if (event) return {event, object};
 
 		const parent = this.project.getResourceById("ProjectObject", object.parent_index);
 		if (parent) {
@@ -1042,7 +1044,7 @@ export default class Game {
 						&& x.event.type == event.type && x.event.subtype == event.subtype)) {
 						return;
 					}
-					eventInstancePairs.push({event: event, instance: instance});
+					eventInstancePairs.push({event: {event, object}, instance: instance});
 				});
 
 				const parent = this.project.getResourceById("ProjectObject", object.parent_index);
@@ -1134,8 +1136,8 @@ export default class Game {
 	// extraText will be added after the main information.
 	// object, event and actionNumber can be null to use the current values.
 	makeErrorOptions(isFatal, options, extraText, object=null, event=null, actionNumber=null) {
-		const _object = object==null ? this.currentEventInstance.object : object;
-		const _event = event==null ? this.currentEvent : event;
+		const _object = object==null ? this.currentEvent.object : object;
+		const _event = event==null ? this.currentEvent.event : event;
 		const _actionNumber = actionNumber==null ? this.currentEventActionNumber : actionNumber;
 
 		const base = {text:

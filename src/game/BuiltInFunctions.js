@@ -1761,10 +1761,14 @@ export default class BuiltInFunctions {
 	};
 
 	static event_inherited = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function event_inherited is not implemented");
-			// return 0;
+		args: [],
+		func: async function([]) {
+			const parent = this.game.project.getResourceById("ProjectObject", this.game.currentEvent.object.parent_index);
+			if (parent) {
+				const event = this.game.getEventOfObject(parent, this.game.currentEvent.event.type, this.game.currentEvent.event.subtype);
+				await this.game.doEvent(event, this.currentInstance, this.currentOther);
+			}
+			return 0;
 		},
 	};
 

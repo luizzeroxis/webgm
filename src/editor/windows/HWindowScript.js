@@ -37,6 +37,6 @@ export default class HWindowScript extends HWindow {
 	}
 
 	updateTitle() {
-		this.title.html.textContent = "Edit Script "+this.script.name;
+		this.title.html.textContent = "Script Properties: "+this.script.name;
 	}
 }

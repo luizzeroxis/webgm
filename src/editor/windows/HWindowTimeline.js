@@ -30,6 +30,6 @@ export default class HWindowTimeline extends HWindow {
 	}
 
 	updateTitle() {
-		this.title.html.textContent = "Edit Time Line "+this.timeline.name;
+		this.title.html.textContent = "Time Line Properties: "+this.timeline.name;
 	}
 }

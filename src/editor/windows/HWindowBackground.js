@@ -58,7 +58,7 @@ export default class HWindowBackground extends HWindow {
 	}
 
 	updateTitle() {
-		this.title.html.textContent = "Edit Background "+this.background.name;
+		this.title.html.textContent = "Background Properties: "+this.background.name;
 	}
 
 	loadBackgroundFromFile(file) {

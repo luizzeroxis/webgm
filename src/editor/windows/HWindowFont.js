@@ -44,7 +44,7 @@ export default class HWindowFont extends HWindow {
 	}
 
 	updateTitle() {
-		this.title.html.textContent = "Edit Font "+this.font.name;
+		this.title.html.textContent = "Font Properties: "+this.font.name;
 	}
 
 	updatePreview() {

@@ -394,7 +394,7 @@ export default class HWindowRoom extends HWindow {
 	}
 
 	updateTitle() {
-		this.title.html.textContent = "Edit Room "+this.room.name;
+		this.title.html.textContent = "Room Properties: "+this.room.name;
 	}
 
 	// Make a copy of every property of the resource so we can change it at will without changing the original resource.

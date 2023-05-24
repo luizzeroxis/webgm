@@ -30,6 +30,6 @@ export default class HWindowPath extends HWindow {
 	}
 
 	updateTitle() {
-		this.title.html.textContent = "Edit Path "+this.path.name;
+		this.title.html.textContent = "Path Properties: "+this.path.name;
 	}
 }

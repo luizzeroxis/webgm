@@ -128,7 +128,7 @@ export default class HWindowSprite extends HWindow {
 	}
 
 	updateTitle() {
-		this.title.html.textContent = "Edit Sprite "+this.sprite.name;
+		this.title.html.textContent = "Sprite Properties: "+this.sprite.name;
 	}
 
 	loadSpriteFromFiles(files) {

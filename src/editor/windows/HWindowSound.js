@@ -50,7 +50,7 @@ export default class HWindowSound extends HWindow {
 	}
 
 	updateTitle() {
-		this.title.html.textContent = "Edit Sound "+this.sound.name;
+		this.title.html.textContent = "Sound Properties: "+this.sound.name;
 	}
 
 	loadSoundFromFile(file) {

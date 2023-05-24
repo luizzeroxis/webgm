@@ -29,7 +29,7 @@
 		"mini-css-extract-plugin": "^2.7.6",
 		"run-script-os": "^1.1.6",
 		"sass": "^1.62.1",
-		"sass-loader": "^13.2.2",
+		"sass-loader": "^13.3.0",
 		"seedrandom": "^3.0.5",
 		"style-loader": "^3.3.3",
 		"stylelint": "^15.6.2",
@@ -39,7 +39,7 @@
 		"webpack": "^5.83.1",
 		"webpack-cli": "^5.1.1",
 		"webpack-dev-server": "^4.15.0",
-		"webpack-merge": "^5.8.0",
+		"webpack-merge": "^5.9.0",
 		"workbox-webpack-plugin": "^6.5.4"
 	}
 }

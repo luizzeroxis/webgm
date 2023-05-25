@@ -16,7 +16,8 @@
 	},
 	"dependencies": {
 		"jszip": "^3.10.1",
-		"ohm-js": "^17.1.0"
+		"ohm-js": "^17.1.0",
+		"seedrandom": "^3.0.5"
 	},
 	"devDependencies": {
 		"css-loader": "^6.7.4",
@@ -30,7 +31,6 @@
 		"run-script-os": "^1.1.6",
 		"sass": "^1.62.1",
 		"sass-loader": "^13.3.0",
-		"seedrandom": "^3.0.5",
 		"style-loader": "^3.3.3",
 		"stylelint": "^15.6.2",
 		"stylelint-config-idiomatic-order": "^9.0.0",

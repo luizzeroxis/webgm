@@ -1,15 +1,15 @@
 export class HElement {
+	// new HElement(HElement element)
+	// new HElement(tag, attributes=null, text=null)
 	constructor(...args) {
-		if (args.length == 1) {
+		this.parent = null;
+		this.children = [];
+
+		if (args.length == 1 && args[0] instanceof Element) {
 			const [html] = args;
-			if (html instanceof Element) {
-				this.html = html;
-			}
-		}
-
-		if (this.html == null) {
+			this.html = html;
+		} else {
 			const [tag, attributes, text] = args;
-
 			this.html = document.createElement(tag);
 
 			if (attributes) {
@@ -24,9 +24,26 @@ export class HElement {
 				this.html.textContent = text;
 			}
 		}
+	}
 
-		this.parent = null;
-		this.children = [];
+	// Remove the element from its parent.
+	remove() {
+		if (!this.parent) {
+			throw new Error("Trying to remove element that already has no parent!");
+		}
+		if (this.parent) {
+			this.parent.children.splice(this.parent.children.indexOf(this), 1);
+			this.parent = null;
+		}
+		this.html.remove();
+		callOnRemoveIfNotConnected(this);
+	}
+
+	// Remove the element's children.
+	removeChildren() {
+		for (const child of [...this.children]) {
+			child.remove();
+		}
 	}
 
 	setEvent(event, fn) {
@@ -40,11 +57,13 @@ export class HElement {
 export const parentStack = [new HElement(document.body)];
 
 // Make the element the parent of newly added elements.
-export function parent(element) {
-	// if (!(element instanceof HElement)) {
-	// 	element = new HElement(element);
-	// }
+// If inFunction is defined, it is called with the element as it's argument, and afterwards endparent is called.
+export function parent(element, inFunction) {
 	parentStack.push(element);
+	if (inFunction) {
+		inFunction(element);
+		parentStack.pop();
+	}
 	return element;
 }
 
@@ -54,7 +73,14 @@ export function endparent() {
 }
 
 // Add the element to the current parent.
-export function add(element) {
+export function add(...args) {
+	let element;
+	if (typeof args[0] == "string") {
+		element = new HElement(...args);
+	} else {
+		element = args[0];
+	}
+
 	const parent = parentStack[parentStack.length - 1];
 
 	if (parent instanceof HElement) {
@@ -148,34 +174,6 @@ export function moveBefore(beforeElement, element) {
 		callOnAddIfConnected(element);
 	} else {
 		callOnRemoveIfNotConnected(element);
-	}
-}
-
-// Remove the element from its parent.
-export function remove(element) {
-	if (element instanceof HElement) {
-		if (!element.parent) {
-			throw new Error("Trying to remove element that already has no parent!");
-		}
-		if (element.parent) {
-			element.parent.children.splice(element.parent.children.indexOf(element), 1);
-			element.parent = null;
-		}
-		element.html.remove();
-		callOnRemoveIfNotConnected(element);
-	} else {
-		element.remove();
-	}
-}
-
-// Remove the element's children.
-export function removeChildren(element) {
-	if (element instanceof HElement) {
-		for (const child of [...element.children]) {
-			remove(child);
-		}
-	} else {
-		element.replaceChildren();
 	}
 }
 

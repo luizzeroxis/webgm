@@ -1,4 +1,4 @@
-import {parent, endparent, add, remove, HElement} from "~/common/H.js";
+import {parent, endparent, add, HElement} from "~/common/H.js";
 import HWindowBackground from "~/editor/windows/HWindowBackground.js";
 import HWindowFont from "~/editor/windows/HWindowFont.js";
 import HWindowGame from "~/editor/windows/HWindowGame.js";
@@ -101,7 +101,7 @@ export default class HAreaWindows extends HElement {
 	delete(w) {
 		const index = this.windows.findIndex(x => x == w);
 		if (index>=0) {
-			remove(this.windows[index]);
+			this.windows[index].remove();
 			this.windows.splice(index, 1);
 			this.organize();
 			return true;
@@ -113,7 +113,7 @@ export default class HAreaWindows extends HElement {
 	deleteId(id) {
 		const index = this.windows.findIndex(x => x.id == id);
 		if (index>=0) {
-			remove(this.windows[index]);
+			this.windows[index].remove();
 			this.windows.splice(index, 1);
 			this.organize();
 			return true;
@@ -124,7 +124,7 @@ export default class HAreaWindows extends HElement {
 	// Remove all windows.
 	clear() {
 		for (const w of this.windows) {
-			remove(w);
+			w.remove();
 		}
 		this.windows = [];
 	}
@@ -133,7 +133,7 @@ export default class HAreaWindows extends HElement {
 	clearProject() {
 		this.windows = this.windows.filter(w => {
 			const isProject = !([HWindowGame, HWindowPreferences].includes(w.constructor));
-			if (isProject) { remove(w); }
+			if (isProject) { w.remove(); }
 			return !isProject;
 		});
 	}

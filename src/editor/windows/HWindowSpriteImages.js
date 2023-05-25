@@ -1,4 +1,4 @@
-import {parent, endparent, add, removeChildren, HElement, HButton} from "~/common/H.js";
+import {parent, endparent, add, HElement, HButton} from "~/common/H.js";
 import {openFile} from "~/common/tools.js";
 import HWindow from "~/editor/HWindow.js";
 
@@ -91,11 +91,11 @@ export default class HWindowSpriteImages extends HWindow {
 	updateMenu() {
 		this.buttonMoveLeft.setDisabled(this.selected == null ? true : (this.selected == 0));
 		this.buttonMoveRight.setDisabled(this.selected == null ? true : (this.selected == this.images.length-1));
-		this.buttonDelete.setDisabled(this.selected == null ? true : false);
+		this.buttonDelete.setDisabled(this.selected == null);
 	}
 
 	updateList() {
-		removeChildren(this.divList);
+		this.divList.removeChildren();
 		this.divItems = [];
 
 		parent(this.divList);

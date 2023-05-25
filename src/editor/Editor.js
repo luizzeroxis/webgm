@@ -1,7 +1,7 @@
 //The editor class
 
 import Dispatcher from "~/common/Dispatcher.js";
-import {HElement, parent, endparent, add, removeChildren} from "~/common/H.js";
+import {HElement, parent, endparent, add} from "~/common/H.js";
 import HMenuManager from "~/common/HMenuManager.js";
 import Project from "~/common/Project.js";
 import {ProjectAction} from "~/common/ProjectProperties.js";
@@ -282,7 +282,7 @@ export default class Editor {
 			project: this.project,
 		});
 
-		removeChildren(this.gameWindow.client);
+		this.gameWindow.client.removeChildren();
 
 		parent(this.gameWindow.client);
 			add(this.game.div);

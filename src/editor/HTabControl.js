@@ -1,4 +1,4 @@
-import {parent, endparent, add, remove, HElement, HRadioInput, uniqueID} from "~/common/H.js";
+import {parent, endparent, add, HElement, HRadioInput, uniqueID} from "~/common/H.js";
 
 import "./HTabControl.scss";
 
@@ -37,7 +37,7 @@ export default class HTabControl extends HElement {
 
 	showTabContent(tabContent) {
 		if (this.currentTabContent) {
-			remove(this.currentTabContent);
+			this.currentTabContent.remove();
 		}
 
 		parent(this);

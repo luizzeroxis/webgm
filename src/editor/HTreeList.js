@@ -1,4 +1,4 @@
-import {parent, endparent, add, remove, moveBefore, moveAdd, classToAttr, classToArray, HElement} from "~/common/H.js";
+import {parent, endparent, add, moveBefore, moveAdd, classToAttr, classToArray, HElement} from "~/common/H.js";
 
 import "./HTree.scss";
 
@@ -39,7 +39,7 @@ export default class HTreeList extends HElement {
 
 	delete(item) {
 		this.items.splice(this.items.findIndex(x => x == item), 1);
-		remove(item);
+		item.remove();
 
 		this.parentItem?.updateExpander();
 
@@ -54,7 +54,7 @@ export default class HTreeList extends HElement {
 
 	clear() {
 		this.items.forEach(item => {
-			remove(item);
+			item.remove();
 		});
 		this.items = [];
 

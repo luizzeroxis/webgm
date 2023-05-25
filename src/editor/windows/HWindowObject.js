@@ -1,5 +1,5 @@
 import Events from "~/common/Events.js";
-import {parent, endparent, add, removeChildren, HElement, HButton, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HOption, HSelectWithOptions, HImage} from "~/common/H.js";
+import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HOption, HSelectWithOptions, HImage} from "~/common/H.js";
 import {
 	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline,
 	ProjectEvent, ProjectAction, ProjectActionArg,
@@ -466,7 +466,7 @@ export default class HWindowObject extends HWindow {
 	}
 
 	updateDivEventSubtype() {
-		removeChildren(this.divEventSubtype);
+		this.divEventSubtype.removeChildren();
 
 		const eventType = this.selectEventType.getValue();
 

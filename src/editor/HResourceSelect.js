@@ -1,4 +1,4 @@
-import {parent, endparent, add, remove, HSelect, HOption} from "~/common/H.js";
+import {parent, endparent, add, HSelect, HOption} from "~/common/H.js";
 
 export default class HResourceSelect extends HSelect {
 	constructor(editor, label, resourceType, noNone=false) {
@@ -25,7 +25,7 @@ export default class HResourceSelect extends HSelect {
 			},
 			deleteResource: i => {
 				if (i.constructor != this.resourceType) return;
-				remove(this.selectOptions[i.id]);
+				this.selectOptions[i.id].remove();
 				delete this.selectOptions[i.id];
 			},
 			changeResourceName: i => {

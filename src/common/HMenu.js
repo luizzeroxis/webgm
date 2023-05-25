@@ -1,4 +1,4 @@
-import {HElement, parent, endparent, add, remove} from "~/common/H.js";
+import {HElement, parent, endparent, add} from "~/common/H.js";
 
 export default class HMenu extends HElement {
 	constructor(manager, items, options) {
@@ -130,7 +130,7 @@ export default class HMenu extends HElement {
 	closeWithoutFocusBefore(resolveValue=null) {
 		if (this.isOpen) {
 			this.isOpen = false;
-			remove(this);
+			this.remove();
 
 			if (resolveValue != null && this.items[resolveValue].enabled === false) {
 				resolveValue = null;

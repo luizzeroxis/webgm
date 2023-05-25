@@ -25,6 +25,10 @@ export default class HCodeEditor extends HElement {
 			endparent();
 	}
 
+	onAdd() {
+		this.textareaCode.html.focus();
+	}
+
 	setNextElem(nextElem) {
 		this.nextElem = nextElem;
 	}

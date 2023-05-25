@@ -6,7 +6,7 @@ import {HElement, parent, endparent, add} from "~/common/h";
 import Project from "~/common/project/Project.js";
 import {ProjectAction} from "~/common/project/ProjectProperties.js";
 import ProjectSerializer, {UnserializeException} from "~/common/project/ProjectSerializer.js";
-import {openFile, saveFile, readFileAsText, setOnFileDrop, setOnFileDropAsFileHandle} from "~/common/tools.js";
+import {openFile, saveFile, setOnFileDrop, setOnFileDropAsFileHandle} from "~/common/tools.js";
 import WebGMException from "~/common/WebGMException.js";
 import HSplitter from "~/editor/components/HSplitter/HSplitter.js";
 import Game from "~/game/Game.js";
@@ -139,13 +139,7 @@ export default class Editor {
 
 	async openProjectFromFile(file) {
 		try {
-			let project;
-			if (file.type == "application/json") {
-				const json = readFileAsText(file);
-				project = await ProjectSerializer.unserializeV1(json);
-			} else {
-				project = await ProjectSerializer.unserializeZIP(file);
-			}
+			const project = await ProjectSerializer.unserializeZIP(file);
 			project.dispatcher = this.project.dispatcher;
 			this.project = project;
 		} catch (e) {

@@ -153,24 +153,24 @@ body, button, input, select {
 
 .resources-area {
 	width: 250px;
+	min-width: 32px;
+	box-sizing: border-box;
 	padding: 4px;
 	border: 1px solid var(--area-border);
 	background-color: var(--resources-area-background);
 	overflow-y: scroll;
-	box-sizing: border-box;
-	min-width: 32px;
 }
 
 .windows-area {
 	position: relative;
 	display: flex;
+	min-width: 32px;
 	flex: 1;
 	flex-direction: column;
 	border: 1px solid var(--area-border);
 	background-color: var(--windows-area-background);
 	gap: 4px;
 	overflow-y: scroll;
-	min-width: 32px;
 }
 
 .window {
@@ -335,13 +335,13 @@ body, button, input, select {
 		row-gap: 16px;
 
 		> .item {
-			text-align: center;
-			margin-left: 16px;
 			margin-right: 16px;
+			margin-left: 16px;
+			text-align: center;
 
 			&.selected {
-				color: var(--text-selected);
 				background: var(--background-selected);
+				color: var(--text-selected);
 			}
 		}
 	}

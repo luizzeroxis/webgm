@@ -1,0 +1,11 @@
+.h-image-list {
+	display: flex;
+	flex-wrap: wrap;
+	row-gap: 16px;
+
+	> .item {
+		margin-right: 16px;
+		margin-left: 16px;
+		text-align: center;
+	}
+}

@@ -1,5 +1,6 @@
 import {parent, endparent, add, HElement, HButton} from "~/common/H.js";
 import {openFile} from "~/common/tools.js";
+import HImageList from "~/editor/HImageList.js";
 import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowSpriteImages extends HWindow {
@@ -11,8 +12,6 @@ export default class HWindowSpriteImages extends HWindow {
 		this.spriteWindow = id.spriteWindow;
 		this.images = [...id.spriteWindow.paramImages];
 
-		this.selected = null;
-
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-sprite-images"}) ) );
 				parent( add( new HElement("div") ) );
@@ -21,39 +20,35 @@ export default class HWindowSpriteImages extends HWindow {
 					}) );
 
 					this.buttonMoveLeft = add( new HButton("Move left", () => {
-						this.images.splice(this.selected-1, 0, ...this.images.splice(this.selected, 1));
-						this.updateList();
-						this.setSelected(this.selected-1);
+						this.images.splice(this.imageList.selected-1, 0, ...this.images.splice(this.imageList.selected, 1));
+						this.updateImageListItems();
+						this.imageList.setSelected(this.imageList.selected-1);
 					}) );
 
 					this.buttonMoveRight = add( new HButton("Move right", () => {
-						this.images.splice(this.selected+1, 0, ...this.images.splice(this.selected, 1));
-						this.updateList();
-						this.setSelected(this.selected+1);
+						this.images.splice(this.imageList.selected+1, 0, ...this.images.splice(this.imageList.selected, 1));
+						this.updateImageListItems();
+						this.imageList.setSelected(this.imageList.selected+1);
 					}) );
 
 					this.buttonDelete = add( new HButton("Delete", () => {
-						this.images.splice(this.selected, 1);
-						this.updateList();
+						this.images.splice(this.imageList.selected, 1);
+						this.updateImageListItems();
 
 						if (this.images.length == 0) {
-							this.setSelected(null);
+							this.imageList.setSelected(null);
 						} else
-						if (this.selected >= this.images.length) {
-							this.setSelected(this.images.length - 1);
+						if (this.imageList.selected >= this.images.length) {
+							this.imageList.setSelected(this.images.length - 1);
 						}
 					}) );
 
 					endparent();
 
-				this.divList = add( new HElement("div", {class: "list"}) );
-				this.divList.setEvent("click", e => {
-					if (e.target != this.divList.html) return;
-					this.setSelected(null);
-				});
-				this.divItems = [];
+				this.imageList = add(new HImageList());
+				this.imageList.onSelectedChange = () => this.updateMenu();
+				this.updateImageListItems();
 
-				this.updateList();
 				endparent();
 
 			this.makeApplyOkButtons(
@@ -77,53 +72,24 @@ export default class HWindowSpriteImages extends HWindow {
 			} else {
 				this.images.push(...images);
 			}
-			this.updateList();
-			this.setSelected(null);
+			this.updateImageListItems();
+			this.imageList.setSelected(null);
 		})
 		.catch(() => {
 			alert("Error when opening image");
-		})
-		.finally(() => {
-			//
 		});
 	}
 
+	updateImageListItems() {
+		this.imageList.setItems(this.images.map((image, index) => ({
+			image: image.image,
+			text: "image " + index.toString(),
+		})));
+	}
+
 	updateMenu() {
-		this.buttonMoveLeft.setDisabled(this.selected == null ? true : (this.selected == 0));
-		this.buttonMoveRight.setDisabled(this.selected == null ? true : (this.selected == this.images.length-1));
-		this.buttonDelete.setDisabled(this.selected == null);
-	}
-
-	updateList() {
-		this.divList.removeChildren();
-		this.divItems = [];
-
-		parent(this.divList);
-			for (const [index, image] of this.images.entries()) {
-				this.divItems[index] = parent( add( new HElement("div", {class: "item"}) ) );
-					this.divItems[index].html.tabIndex = 0;
-					this.divItems[index].setEvent("focus", () => {
-						this.setSelected(index);
-					});
-					this.divItems[index].setEvent("click", () => {
-						this.setSelected(index);
-					});
-
-					add( image.image );
-					add( new HElement("div", {}, "image "+index.toString()) );
-					endparent();
-			}
-			endparent();
-
-		this.setSelected(this.selected);
-	}
-
-	setSelected(index) {
-		this.divItems[this.selected]?.html.classList.remove("selected");
-		this.selected = index;
-		if (index != null) {
-			this.divItems[index]?.html.classList.add("selected");
-		}
-		this.updateMenu();
+		this.buttonMoveLeft.setDisabled(this.imageList.selected == null ? true : (this.imageList.selected == 0));
+		this.buttonMoveRight.setDisabled(this.imageList.selected == null ? true : (this.imageList.selected == this.images.length-1));
+		this.buttonDelete.setDisabled(this.imageList.selected == null);
 	}
 }

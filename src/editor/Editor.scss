@@ -104,6 +104,15 @@
 	}
 }
 
+.h-image-list {
+	> .item {
+		&.selected {
+			background: var(--background-selected);
+			color: var(--text-selected);
+		}
+	}
+}
+
 .h-splitter {
 	padding: 4px;
 	background-color: var(--background);
@@ -328,23 +337,6 @@ body, button, input, select {
 
 .window-sprite-images {
 	flex: 1;
-
-	> .list {
-		display: flex;
-		flex-wrap: wrap;
-		row-gap: 16px;
-
-		> .item {
-			margin-right: 16px;
-			margin-left: 16px;
-			text-align: center;
-
-			&.selected {
-				background: var(--background-selected);
-				color: var(--text-selected);
-			}
-		}
-	}
 }
 
 .window-sound {

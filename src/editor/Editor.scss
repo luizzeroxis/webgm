@@ -306,9 +306,11 @@ body, button, input, select {
 
 .window-sprite {
 	flex: 1;
+	min-height: 0;
 
 	> .properties {
 		flex: none;
+		overflow: auto;
 
 		.origin-x-y {
 			display: flex;
@@ -326,6 +328,7 @@ body, button, input, select {
 
 	> .mask {
 		flex: none;
+		overflow: auto;
 	}
 
 	> .preview {
@@ -483,6 +486,7 @@ body, button, input, select {
 
 .window-room {
 	flex: 1;
+	min-height: 0;
 
 	> .properties {
 		width: 250px;

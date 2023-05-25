@@ -1,5 +1,5 @@
-import {parent, endparent, add, HElement, HTextInput} from "~/common/H.js";
-import HCodeEditor from "~/editor/HCodeEditor.js";
+import {parent, endparent, add, HElement, HTextInput} from "~/common/h";
+import HCodeEditor from "~/editor/components/HCodeEditor/HCodeEditor.js";
 import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowScript extends HWindow {

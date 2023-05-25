@@ -1,4 +1,4 @@
-import {parent, endparent, add, HTextInput, HCheckBoxInput, HSelectWithOptions} from "~/common/H.js";
+import {parent, endparent, add, HTextInput, HCheckBoxInput, HSelectWithOptions} from "~/common/h";
 import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowPreferences extends HWindow {

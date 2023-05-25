@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement} from "~/common/H.js";
+import {parent, endparent, add, HElement} from "~/common/h";
 import HWindowBackground from "~/editor/windows/HWindowBackground.js";
 import HWindowFont from "~/editor/windows/HWindowFont.js";
 import HWindowGame from "~/editor/windows/HWindowGame.js";

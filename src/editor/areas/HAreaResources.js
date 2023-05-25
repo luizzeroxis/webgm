@@ -1,8 +1,8 @@
-import {parent, endparent, add, HElement} from "~/common/H.js";
-import Project from "~/common/Project.js";
+import {parent, endparent, add, HElement} from "~/common/h";
+import Project from "~/common/project/Project.js";
+import HTreeItem from "~/editor/components/HTreeList/HTreeItem.js";
+import HTreeList from "~/editor/components/HTreeList/HTreeList.js";
 import HResourceListItem from "~/editor/HResourceListItem.js";
-import HTreeItem from "~/editor/HTreeItem.js";
-import HTreeList from "~/editor/HTreeList.js";
 import FolderIcon from "~/editor/img/folder-icon.png";
 import GameInformationIcon from "~/editor/img/game-information-icon.png";
 import GameSettingsIcon from "~/editor/img/global-game-settings-icon.png";

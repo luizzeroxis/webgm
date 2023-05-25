@@ -1,5 +1,5 @@
 import AudioWrapper from "~/common/AudioWrapper.js";
-import {parent, endparent, add, HElement, HButton, HTextInput, HRangeInput} from "~/common/H.js";
+import {parent, endparent, add, HElement, HButton, HTextInput, HRangeInput} from "~/common/h";
 import {openFile} from "~/common/tools.js";
 import HWindow from "~/editor/HWindow.js";
 

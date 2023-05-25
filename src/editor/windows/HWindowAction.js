@@ -1,5 +1,5 @@
-import {parent, endparent, add, HElement, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, uniqueID} from "~/common/H.js";
-import {ProjectObject, ProjectActionArg} from "~/common/ProjectProperties.js";
+import {parent, endparent, add, HElement, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, uniqueID} from "~/common/h";
+import {ProjectObject, ProjectActionArg} from "~/common/project/ProjectProperties.js";
 import {parseArrowString, stringifyArrowValues, decimalToHex, hexToDecimal} from "~/common/tools.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
 import HWindow from "~/editor/HWindow.js";

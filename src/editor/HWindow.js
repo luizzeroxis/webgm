@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, HButton} from "~/common/H.js";
+import {parent, endparent, add, HElement, HButton} from "~/common/h";
 
 class HWindowBorder extends HElement {
 	constructor(win, side) {

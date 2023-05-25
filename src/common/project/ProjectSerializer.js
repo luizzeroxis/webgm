@@ -2,9 +2,10 @@ import JSZip from "jszip";
 
 import AudioWrapper from "~/common/AudioWrapper.js";
 import ImageWrapper from "~/common/ImageWrapper.js";
-import Project from "~/common/Project.js";
 import Serializer from "~/common/Serializer.js";
 import WebGMException from "~/common/WebGMException.js";
+
+import Project from "./Project.js";
 
 export class UnserializeException extends WebGMException {}
 

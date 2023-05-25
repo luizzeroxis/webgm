@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, HTextInput} from "~/common/H.js";
+import {parent, endparent, add, HElement, HTextInput} from "~/common/h";
 import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowPath extends HWindow {

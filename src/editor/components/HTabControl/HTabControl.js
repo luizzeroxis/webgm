@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, HRadioInput, uniqueID} from "~/common/H.js";
+import {parent, endparent, add, HElement, HRadioInput, uniqueID} from "~/common/h";
 
 import "./HTabControl.scss";
 

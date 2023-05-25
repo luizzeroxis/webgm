@@ -1,8 +1,8 @@
-import {parent, endparent, add, HElement, HButton, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from "~/common/H.js";
+import {parent, endparent, add, HElement, HButton, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from "~/common/h";
 import ImageWrapper from "~/common/ImageWrapper.js";
-import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground} from "~/common/ProjectProperties.js";
+import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground} from "~/common/project/ProjectProperties.js";
+import HTabControl from "~/editor/components/HTabControl/HTabControl.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
-import HTabControl from "~/editor/HTabControl.js";
 import HWindow from "~/editor/HWindow.js";
 import DefaultInstanceIcon from "~/editor/img/default-instance-icon.png";
 

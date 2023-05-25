@@ -1,4 +1,4 @@
-import {HElement, parent, endparent, add} from "~/common/H.js";
+import {HElement, parent, endparent, add} from "~/common/h";
 
 import HMenu from "./HMenu.js";
 

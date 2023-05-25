@@ -1,6 +1,6 @@
-import {parent, endparent, add, HElement, HRadioInput, uniqueID} from "~/common/H.js";
-import {ProjectObject} from "~/common/ProjectProperties.js";
-import HCodeEditor from "~/editor/HCodeEditor.js";
+import {parent, endparent, add, HElement, HRadioInput, uniqueID} from "~/common/h";
+import {ProjectObject} from "~/common/project/ProjectProperties.js";
+import HCodeEditor from "~/editor/components/HCodeEditor/HCodeEditor.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
 import HWindow from "~/editor/HWindow.js";
 

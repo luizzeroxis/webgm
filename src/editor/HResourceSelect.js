@@ -1,4 +1,4 @@
-import {parent, endparent, add, HSelect, HOption} from "~/common/H.js";
+import {parent, endparent, add, HSelect, HOption} from "~/common/h";
 
 export default class HResourceSelect extends HSelect {
 	constructor(editor, label, resourceType, noNone=false) {

@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, HImage} from "~/common/H.js";
+import {parent, endparent, add, HElement, HImage} from "~/common/h";
 
 import HTreeList from "./HTreeList.js";
 

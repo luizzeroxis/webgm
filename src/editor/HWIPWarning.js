@@ -1,4 +1,4 @@
-import {HElement, parent, endparent, add} from "~/common/H.js";
+import {HElement, parent, endparent, add} from "~/common/h";
 
 export default class HWIPWarning extends HElement {
 	constructor(editor) {

@@ -1,7 +1,7 @@
 // Entry point for the standalone game build
 
-import {add} from "./common/HCore.js";
-import ProjectSerializer from "./common/ProjectSerializer.js";
+import {add} from "./common/h";
+import ProjectSerializer from "./common/project/ProjectSerializer.js";
 import Game from "./game/Game.js";
 
 async function main() {

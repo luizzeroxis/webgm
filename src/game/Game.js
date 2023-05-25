@@ -1,10 +1,10 @@
 import seedrandom from "seedrandom";
 
+import HMenuManager from "~/common/components/HMenuManager/HMenuManager.js";
 import Dispatcher from "~/common/Dispatcher.js";
 import Events from "~/common/Events.js";
-import {HElement, parent, endparent, add} from "~/common/HCore.js";
-import HMenuManager from "~/common/HMenuManager.js";
-import Project from "~/common/Project.js";
+import {HElement, parent, endparent, add} from "~/common/h";
+import Project from "~/common/project/Project.js";
 import WebGMException from "~/common/WebGMException.js";
 
 import BuiltInConstants from "./BuiltInConstants.js";

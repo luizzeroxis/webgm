@@ -1,5 +1,5 @@
-import {parent, endparent, add, HElement, HTextInput, HMultilineTextInput, HCheckBoxInput, HColorInput} from "~/common/H.js";
-import HTabControl from "~/editor/HTabControl.js";
+import {parent, endparent, add, HElement, HTextInput, HMultilineTextInput, HCheckBoxInput, HColorInput} from "~/common/h";
+import HTabControl from "~/editor/components/HTabControl/HTabControl.js";
 import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowGlobalGameSettings extends HWindow {

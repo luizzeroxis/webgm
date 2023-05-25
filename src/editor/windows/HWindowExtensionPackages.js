@@ -1,4 +1,4 @@
-import {parent, endparent} from "~/common/H.js";
+import {parent, endparent} from "~/common/h";
 import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowExtensionPackages extends HWindow {

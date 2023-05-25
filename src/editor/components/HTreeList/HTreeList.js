@@ -1,6 +1,6 @@
-import {parent, endparent, add, moveBefore, moveAdd, classToAttr, classToArray, HElement} from "~/common/H.js";
+import {parent, endparent, add, moveBefore, moveAdd, classToAttr, classToArray, HElement} from "~/common/h";
 
-import "./HTree.scss";
+import "./HTreeList.scss";
 
 export default class HTreeList extends HElement {
 	constructor(tree, parentItem, _class) {

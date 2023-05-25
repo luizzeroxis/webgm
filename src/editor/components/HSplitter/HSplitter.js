@@ -1,4 +1,4 @@
-import {HElement, parent, add, endparent} from "~/common/H.js";
+import {HElement, parent, add, endparent} from "~/common/h";
 
 import "./HSplitter.scss";
 

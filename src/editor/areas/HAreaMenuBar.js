@@ -1,6 +1,6 @@
-import {HElement, add} from "~/common/H.js";
-import Project from "~/common/Project.js";
-import HMenuBar from "~/editor/HMenuBar.js";
+import {HElement, add} from "~/common/h";
+import Project from "~/common/project/Project.js";
+import HMenuBar from "~/editor/components/HMenuBar/HMenuBar.js";
 
 export default class HAreaMenuBar extends HElement {
 	constructor(editor) {

@@ -1,6 +1,6 @@
 import JSZip from "jszip";
 
-import ProjectSerializer from "~/common/ProjectSerializer.js";
+import ProjectSerializer from "~/common/project/ProjectSerializer.js";
 import {saveFile} from "~/common/tools.js";
 
 export default class StandAloneBuilder {

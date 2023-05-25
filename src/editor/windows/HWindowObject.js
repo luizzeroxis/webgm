@@ -1,11 +1,11 @@
 import Events from "~/common/Events.js";
-import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HOption, HSelectWithOptions, HImage} from "~/common/H.js";
+import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HOption, HSelectWithOptions, HImage} from "~/common/h";
 import {
 	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline,
 	ProjectEvent, ProjectAction, ProjectActionArg,
-} from "~/common/ProjectProperties.js";
+} from "~/common/project/ProjectProperties.js";
+import HTabControl from "~/editor/components/HTabControl/HTabControl.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
-import HTabControl from "~/editor/HTabControl.js";
 import HWindow from "~/editor/HWindow.js";
 
 import HWindowAction from "./HWindowAction.js";

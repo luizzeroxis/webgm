@@ -1,4 +1,4 @@
-import {HCanvas} from "~/common/HComponents.js";
+import {HCanvas} from "~/common/h";
 import {decimalToHexAlpha, parseNewLineHash} from "~/common/tools.js";
 
 export default class GameRender {

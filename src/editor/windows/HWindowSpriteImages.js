@@ -1,6 +1,6 @@
-import {parent, endparent, add, HElement, HButton} from "~/common/H.js";
+import {parent, endparent, add, HElement, HButton} from "~/common/h";
 import {openFile} from "~/common/tools.js";
-import HImageList from "~/editor/HImageList.js";
+import HImageList from "~/editor/components/HImageList/HImageList.js";
 import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowSpriteImages extends HWindow {

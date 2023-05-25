@@ -1,14 +1,14 @@
 //The editor class
 
+import HMenuManager from "~/common/components/HMenuManager/HMenuManager.js";
 import Dispatcher from "~/common/Dispatcher.js";
-import {HElement, parent, endparent, add} from "~/common/H.js";
-import HMenuManager from "~/common/HMenuManager.js";
-import Project from "~/common/Project.js";
-import {ProjectAction} from "~/common/ProjectProperties.js";
-import ProjectSerializer, {UnserializeException} from "~/common/ProjectSerializer.js";
+import {HElement, parent, endparent, add} from "~/common/h";
+import Project from "~/common/project/Project.js";
+import {ProjectAction} from "~/common/project/ProjectProperties.js";
+import ProjectSerializer, {UnserializeException} from "~/common/project/ProjectSerializer.js";
 import {openFile, saveFile, readFileAsText, setOnFileDrop, setOnFileDropAsFileHandle} from "~/common/tools.js";
 import WebGMException from "~/common/WebGMException.js";
-import HSplitter from "~/editor/HSplitter.js";
+import HSplitter from "~/editor/components/HSplitter/HSplitter.js";
 import Game from "~/game/Game.js";
 
 import HAreaMenuBar from "./areas/HAreaMenuBar.js";

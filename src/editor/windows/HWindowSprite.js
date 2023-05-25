@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HImage, HCheckBoxInput} from "~/common/H.js";
+import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HImage, HCheckBoxInput} from "~/common/h";
 import ImageWrapper from "~/common/ImageWrapper.js";
 import {openFile, setOnFileDrop} from "~/common/tools.js";
 import HWindow from "~/editor/HWindow.js";

@@ -1,6 +1,6 @@
 // Bunch of random functions that make my life easier
 
-import {HElement} from "./H.js";
+import {HElement} from "./h";
 
 // Math
 

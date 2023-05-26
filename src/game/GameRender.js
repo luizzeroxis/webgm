@@ -197,7 +197,7 @@ export default class GameRender {
 				background: backgroundIndex,
 			}, "Trying to draw non-existing background. (" + backgroundIndex.toString() +")");
 		}
-		return 0;
+		return background;
 	}
 
 	drawImageExt(image, x, y, originX, originY, xScale, yScale, angle, blend, alpha) {
@@ -265,15 +265,15 @@ export default class GameRender {
 	}
 
 	drawBackground(backgroundIndex, x, y) {
-		this.game.ctx.drawImage(this.getBackground(backgroundIndex), x, y);
+		this.ctx.drawImage(this.getBackground(backgroundIndex).image.image, x, y);
 	}
 
 	drawBackgroundExt(backgroundIndex, x, y, xScale, yScale, angle, blend, alpha) {
-		this.drawImageExt(this.getBackground(backgroundIndex), x, y, 0, 0, xScale, yScale, angle, blend, alpha);
+		this.drawImageExt(this.getBackground(backgroundIndex).image.image, x, y, 0, 0, xScale, yScale, angle, blend, alpha);
 	}
 
 	drawBackgroundTiledExt(backgroundIndex, x, y, xScale, yScale, blend, alpha) {
-		this.drawImageTiled(this.getBackground(backgroundIndex), x, y, xScale, yScale, blend, alpha);
+		this.drawImageTiled(this.getBackground(backgroundIndex).image.image, x, y, xScale, yScale, blend, alpha);
 	}
 
 	drawClear(col, alpha=1) {

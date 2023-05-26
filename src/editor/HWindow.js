@@ -1,23 +1,20 @@
 import {parent, endparent, add, HElement, HButton} from "~/common/h";
+import {setDraggable} from "~/common/tools.js";
 
 class HWindowBorder extends HElement {
 	constructor(win, side) {
 		super("div", {class: "border "+side});
 
-		this.setEvent("mousedown", e => {
-			if (e.button != 0) return;
+		setDraggable(this,
+			e => { // mousedown
+				const rect = win.html.getBoundingClientRect();
+				this.offX = rect.width - (e.clientX - rect.left);
+				this.offY = rect.height - (e.clientY - rect.top);
 
-			document.removeEventListener("mousemove", this.mouseMoveHandler);
-			document.removeEventListener("mouseup", this.mouseUpHandler);
-
-			const rect = win.html.getBoundingClientRect();
-			this.offX = rect.width - (e.clientX - rect.left);
-			this.offY = rect.height - (e.clientY - rect.top);
-
-			this.offLeft = e.clientX - rect.left;
-			this.offTop = e.clientY - rect.top;
-
-			this.mouseMoveHandler = e => {
+				this.offLeft = e.clientX - rect.left;
+				this.offTop = e.clientY - rect.top;
+			},
+			e => { // mousemove
 				let x = win.x;
 				let y = win.y;
 				let w = win.w;
@@ -51,17 +48,8 @@ class HWindowBorder extends HElement {
 
 				win.setSize(w, h);
 				win.setPosition(x, y);
-			};
-
-			document.addEventListener("mousemove", this.mouseMoveHandler);
-
-			this.mouseUpHandler = () => {
-				document.removeEventListener("mousemove", this.mouseMoveHandler);
-				document.removeEventListener("mouseup", this.mouseUpHandler);
-			};
-
-			document.addEventListener("mouseup", this.mouseUpHandler);
-		});
+			},
+		);
 	}
 }
 
@@ -101,42 +89,30 @@ export default class HWindow extends HElement {
 
 				this.titlebar = parent( add( new HElement("div", {class: "titlebar"}) ) );
 
-				this.titlebar.html.addEventListener("mousedown", e => {
-					if (e.button != 0) return;
-					if (e.target != this.titlebar.html && e.target != this.title.html) return;
-					if (this.isMaximized) return;
+					setDraggable(this.titlebar,
+						e => { // mousedown
+							if (e.target != this.titlebar.html && e.target != this.title.html) return;
+							if (this.isMaximized) return;
 
-					// Pos relative to window
-					const rect = this.html.getBoundingClientRect();
-					this.offX = e.clientX - rect.left;
-					this.offY = e.clientY - rect.top;
+							// Pos relative to window
+							const rect = this.html.getBoundingClientRect();
+							this.offX = e.clientX - rect.left;
+							this.offY = e.clientY - rect.top;
+						},
+						e => { // mousemove
+							// Pos relative to windowarea
+							const rect = editor.windowsArea.html.getBoundingClientRect();
+							const style = window.getComputedStyle(editor.windowsArea.html);
 
-					document.removeEventListener("mousemove", this.mouseMoveHandler);
-					document.removeEventListener("mouseup", this.mouseUpHandler);
+							let x = e.clientX - rect.left - parseFloat(style.borderLeftWidth) + editor.windowsArea.html.scrollLeft;
+							let y = e.clientY - rect.top - parseFloat(style.borderTopWidth) + editor.windowsArea.html.scrollTop;
 
-					this.mouseMoveHandler = e => {
-						// Pos relative to windowarea
-						const rect = editor.windowsArea.html.getBoundingClientRect();
-						const style = window.getComputedStyle(editor.windowsArea.html);
+							if (x < 0) { x = 0; }
+							if (y < 0) { y = 0; }
 
-						let x = e.clientX - rect.left - parseFloat(style.borderLeftWidth) + editor.windowsArea.html.scrollLeft;
-						let y = e.clientY - rect.top - parseFloat(style.borderTopWidth) + editor.windowsArea.html.scrollTop;
-
-						if (x < 0) { x = 0; }
-						if (y < 0) { y = 0; }
-
-						this.setPosition(x - this.offX, y - this.offY);
-					};
-
-					document.addEventListener("mousemove", this.mouseMoveHandler);
-
-					this.mouseUpHandler = () => {
-						document.removeEventListener("mousemove", this.mouseMoveHandler);
-						document.removeEventListener("mouseup", this.mouseUpHandler);
-					};
-
-					document.addEventListener("mouseup", this.mouseUpHandler);
-				});
+							this.setPosition(x - this.offX, y - this.offY);
+						},
+					);
 
 					this.title = add( new HElement("div", {class: "title"}) );
 					this.restoreMaximizeButton = add( new HButton("Maximize", () => this.restoreMaximize(), "restore-maximize") );

@@ -1,4 +1,5 @@
 import {HElement, parent, add, endparent} from "~/common/h";
+import {setDraggable} from "~/common/tools.js";
 
 import "./HSplitter.scss";
 
@@ -6,28 +7,15 @@ class HSplitterSeparator extends HElement {
 	constructor(splitter) {
 		super("div", {class: "h-splitter-separator"});
 
-		this.setEvent("mousedown", e => {
-			if (e.button != 0) return;
-
-			document.removeEventListener("mousemove", this.mouseMoveHandler);
-			document.removeEventListener("mouseup", this.mouseUpHandler);
-
-			this.offX = e.offsetX;
-
-			this.mouseMoveHandler = e => {
+		setDraggable(this,
+			e => { // mousedown
+				this.offX = e.offsetX;
+			},
+			e => { // mousemove
 				const w = e.clientX - splitter.left.html.offsetLeft - this.offX;
 				splitter.left.html.style.width = w + "px";
-			};
-
-			document.addEventListener("mousemove", this.mouseMoveHandler);
-
-			this.mouseUpHandler = () => {
-				document.removeEventListener("mousemove", this.mouseMoveHandler);
-				document.removeEventListener("mouseup", this.mouseUpHandler);
-			};
-
-			document.addEventListener("mouseup", this.mouseUpHandler);
-		});
+			},
+		);
 	}
 }
 

@@ -236,3 +236,31 @@ export function setOnFileDrop(element, onSelectFile, multiple=false, asFileHandl
 		onSelectFile(fileOrFiles);
 	});
 }
+
+// Add in functions to make element draggable (doesn't actually move anything).
+/* eslint-disable no-trailing-spaces */
+/*
+setDraggable(this,
+	e => { // mousedown
+		
+	},
+	e => { // mousemove
+		
+	},
+);
+*/
+/* eslint-enable no-trailing-spaces */
+export function setDraggable(element, mouseDown, mouseMove) {
+	function mouseUp() {
+		document.removeEventListener("mousemove", mouseMove);
+		document.removeEventListener("mouseup", mouseUp);
+	}
+
+	element.setEvent("mousedown", e => {
+		if (e.button != 0) return;
+		mouseUp();
+		mouseDown(e);
+		document.addEventListener("mousemove", mouseMove);
+		document.addEventListener("mouseup", mouseUp);
+	});
+}

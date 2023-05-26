@@ -10153,9 +10153,15 @@ export default class BuiltInFunctions {
 
 	static action_draw_background = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_draw_background is not implemented");
-			// return 0;
+		func: function([background, x, y, tiled], relative) {
+			x = (!relative ? x : this.currentInstance.x + x);
+			y = (!relative ? y : this.currentInstance.y + y);
+			if (tiled == 1) {
+				BuiltInFunctions.draw_background_tiled.func.call(this, [background, x, y]);
+			} else {
+				BuiltInFunctions.draw_background.func.call(this, [background, x, y]);
+			}
+			return 0;
 		},
 	};
 

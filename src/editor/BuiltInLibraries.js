@@ -2852,30 +2852,43 @@ export default class BuiltInLibraries {
 						},
 					],
 				},
-				/*
 				{
-					id: 999,
+					id: 502,
 					description: "Draw Background",
-					listText: [""],
-					hintText: [""],
+					listText: ["Draw background ", a[0]],
+					hintText: ["at ", r, "position (", a[1], ",", a[2], ") draw background ", a[0], "; tiled: ", a[3]],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_draw_background",
 
 					interfaceKind: "normal",
 					isQuestion: false,
 					hasApplyTo: false,
-					hasRelative: false,
+					hasRelative: true,
 
 					args: [
 						{
-							name: "",
-							kind: "",
-							default: "",
+							name: "background:",
+							kind: "background",
+							default: -1,
+						},
+						{
+							name: "x:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "y:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "tiled:",
+							kind: "boolean",
+							default: false,
 						},
 					],
 				},
-				*/
 				{
 					kind: "separator",
 				},

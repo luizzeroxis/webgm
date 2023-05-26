@@ -9762,9 +9762,8 @@ export default class BuiltInFunctions {
 
 	static action_inherited = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_inherited is not implemented");
-			// return 0;
+		func: function([]) {
+			return BuiltInFunctions.event_inherited.func.call(this, []);
 		},
 	};
 

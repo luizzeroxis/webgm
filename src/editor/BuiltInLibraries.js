@@ -1847,30 +1847,18 @@ export default class BuiltInLibraries {
 					hintText: ["repeat next action (block) ", a[0], " times"],
 					kind: "repeat",
 				},
-				/*
 				{
-					id: 999,
+					id: 604,
 					description: "Call Parent Event",
-					listText: [""],
-					hintText: [""],
+					listText: ["Call the inherited event"],
+					hintText: ["call the inherited event of the parent object"],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_inherited",
 
-					interfaceKind: "normal",
+					interfaceKind: "none",
 					isQuestion: false,
-					hasApplyTo: false,
-					hasRelative: false,
-
-					args: [
-						{
-							name: "",
-							kind: "",
-							default: "",
-						},
-					],
 				},
-				*/
 				{
 					name: "Code",
 					kind: "label",

@@ -2509,10 +2509,10 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_arrow = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_arrow is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([x1, y1, x2, y2, size]) {
+			this.game.render.drawArrow(x1, y1, x2, y2, size);
+			return 0;
 		},
 	};
 

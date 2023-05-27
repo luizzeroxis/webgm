@@ -440,6 +440,42 @@ export default class GameRender {
 		this.ctx.closePath();
 	}
 
+	drawArrow(x1, y1, x2, y2, size) {
+		this.ctx.strokeStyle = this.drawColorAlpha;
+		this.ctx.fillStyle = this.drawColorAlpha;
+
+		this.ctx.save();
+		this.ctx.translate(0.5, 0.5);
+
+		this.ctx.beginPath();
+		this.ctx.moveTo(x1, y1);
+		this.ctx.lineTo(x2, y2);
+		this.ctx.closePath();
+		this.ctx.stroke();
+
+		const lineSize = Math.hypot(x2 - x1, y2 - y1);
+		size = Math.min(size, lineSize);
+
+		const angle = Math.atan2(y2 - y1, x2 - x1);
+		const mx = x2 + Math.cos(angle) * -size;
+		const my = y2 + Math.sin(angle) * -size;
+
+		const tx = mx + Math.cos(angle + Math.PI/2) * (size/3);
+		const ty = my + Math.sin(angle + Math.PI/2) * (size/3);
+
+		const bx = mx + Math.cos(angle - Math.PI/2) * (size/3);
+		const by = my + Math.sin(angle - Math.PI/2) * (size/3);
+
+		this.ctx.beginPath();
+		this.ctx.moveTo(x2, y2);
+		this.ctx.lineTo(tx, ty);
+		this.ctx.lineTo(bx, by);
+		this.ctx.closePath();
+		this.ctx.fill();
+
+		this.ctx.restore();
+	}
+
 	drawText(x, y, string) {
 		this.ctx.fillStyle = this.drawColorAlpha;
 		this.ctx.font = this.game.loadedProject.cssFontsCache[this.drawFont];

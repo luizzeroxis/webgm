@@ -2240,26 +2240,30 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_sprite_stretched = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_sprite_stretched is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([sprite, subimg, x, y, w, h]) {
+			this.game.render.drawSpriteExt(sprite, subimg, x, y, {
+				size: {width: w, height: h},
+			});
+			return 0;
 		},
 	};
 
 	static draw_sprite_tiled = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([sprite, subimg, x, y]) {
-			this.game.render.drawSpriteTiledExt(sprite, subimg, x, y);
+			this.game.render.drawSpriteTiled(sprite, subimg, x, y);
 			return 0;
 		},
 	};
 
 	static draw_sprite_part = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_sprite_part is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([sprite, subimg, left, top, width, height, x, y]) {
+			this.game.render.drawSpriteExt(sprite, subimg, x, y, {
+				part: {left, top, width, height},
+			});
+			return 0;
 		},
 	};
 
@@ -2272,58 +2276,79 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_background_stretched = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_background_stretched is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([back, x, y, w, h]) {
+			this.game.render.drawBackgroundExt(back, x, y, {
+				size: {width: w, height: h},
+			});
 		},
 	};
 
 	static draw_background_tiled = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([back, x, y]) {
-			this.game.render.drawBackgroundTiledExt(back, x, y);
+			this.game.render.drawBackgroundTiled(back, x, y);
 			return 0;
 		},
 	};
 
 	static draw_background_part = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_background_part is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([back, left, top, width, height, x, y]) {
+			this.game.render.drawBackgroundExt(back, x, y, {
+				part: {left, top, width, height},
+			});
+			return 0;
 		},
 	};
 
 	static draw_sprite_ext = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([sprite, subimg, x, y, xscale, yscale, rot, color, alpha]) {
-			this.game.render.drawSpriteExt(sprite, subimg, x, y, xscale, yscale, rot, decimalToHex(color), alpha);
+			this.game.render.drawSpriteExt(sprite, subimg, x, y, {
+				scale: {x: xscale, y: yscale},
+				angle: rot,
+				blend: decimalToHex(color),
+				alpha: alpha,
+			});
 			return 0;
 		},
 	};
 
 	static draw_sprite_stretched_ext = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_sprite_stretched_ext is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([sprite, subimg, x, y, w, h, color, alpha]) {
+			this.game.render.drawSpriteExt(sprite, subimg, x, y, {
+				blend: decimalToHex(color),
+				alpha: alpha,
+				size: {width: w, height: h},
+			});
+			return 0;
 		},
 	};
 
 	static draw_sprite_tiled_ext = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([sprite, subimg, x, y, xscale, yscale, color, alpha]) {
-			this.game.render.drawSpriteTiledExt(sprite, subimg, x, y, xscale, yscale, decimalToHex(color), alpha);
+			this.game.render.drawSpriteTiled(sprite, subimg, x, y, {
+				scale: {x: xscale, y: yscale},
+				blend: decimalToHex(color),
+				alpha: alpha,
+			});
 			return 0;
 		},
 	};
 
 	static draw_sprite_part_ext = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_sprite_part_ext is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([sprite, subimg, left, top, width, height, x, y, xscale, yscale, color, alpha]) {
+			this.game.render.drawSpriteExt(sprite, subimg, x, y, {
+				scale: {x: xscale, y: yscale},
+				blend: decimalToHex(color),
+				alpha: alpha,
+				part: {left, top, width, height},
+			});
+			return 0;
 		},
 	};
 
@@ -2338,32 +2363,50 @@ export default class BuiltInFunctions {
 	static draw_background_ext = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([back, x, y, xscale, yscale, rot, color, alpha]) {
-			this.game.render.drawBackgroundExt(back, x, y, xscale, yscale, rot, decimalToHex(color), alpha);
+			this.game.render.drawBackgroundExt(back, x, y, {
+				scale: {x: xscale, y: yscale},
+				angle: rot,
+				blend: decimalToHex(color),
+				alpha: alpha,
+			});
 			return 0;
 		},
 	};
 
 	static draw_background_stretched_ext = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_background_stretched_ext is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([back, x, y, w, h, color, alpha]) {
+			this.game.render.drawBackgroundExt(back, x, y, {
+				blend: decimalToHex(color),
+				alpha: alpha,
+				size: {width: w, height: h},
+			});
+			return 0;
 		},
 	};
 
 	static draw_background_tiled_ext = {
 		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([back, x, y, xscale, yscale, color, alpha]) {
-			this.game.render.drawBackgroundTiledExt(back, x, y, xscale, yscale, decimalToHex(color), alpha);
+			this.game.render.drawBackgroundTiled(back, x, y, {
+				scale: {x: xscale, y: yscale},
+				blend: decimalToHex(color),
+				alpha: alpha,
+			});
 			return 0;
 		},
 	};
 
 	static draw_background_part_ext = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_background_part_ext is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([back, left, top, width, height, x, y, xscale, yscale, color, alpha]) {
+			this.game.render.drawBackgroundExt(back, x, y, {
+				scale: {x: xscale, y: yscale},
+				blend: decimalToHex(color),
+				alpha: alpha,
+				part: {left, top, width, height},
+			});
+			return 0;
 		},
 	};
 

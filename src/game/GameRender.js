@@ -109,7 +109,12 @@ export default class GameRender {
 				} else {
 					// No draw event, draw sprite if it has one.
 					if (instance.sprite) {
-						this.drawSpriteExt(instance.sprite.id, instance.getImageIndex(), instance.x, instance.y, instance.imageXScale, instance.imageYScale, instance.imageAngle, instance.imageBlend, instance.imageAlpha);
+						this.drawSpriteExt(instance.sprite.id, instance.getImageIndex(), instance.x, instance.y, {
+							scale: {x: instance.imageXScale, y: instance.imageYScale},
+							angle: instance.imageAngle,
+							blend: instance.imageBlend,
+							alpha: instance.imageAlpha,
+						});
 					}
 				}
 			}
@@ -200,42 +205,80 @@ export default class GameRender {
 		return background;
 	}
 
-	drawImageExt(image, x, y, originX, originY, xScale, yScale, angle, blend, alpha) {
+	drawImageExt(image, x, y, options) {
+		/* options {
+			origin: {x, y},
+			scale: {x, y},
+			angle,
+			blend,
+			alpha,
+			size: {width, height},
+			part: {left, top, width, height},
+		} */
 		// TODO blend
 
 		this.ctx.save();
-
 		this.ctx.translate(x, y);
-		this.ctx.rotate(-angle * Math.PI/180);
-		this.ctx.scale(xScale, yScale);
 
-		this.ctx.globalAlpha = alpha;
-		this.ctx.drawImage(image, -originX, -originY);
-		this.ctx.globalAlpha = 1;
+		if (options?.angle != null) {
+			this.ctx.rotate(-options.angle * Math.PI/180);
+		}
+		if (options?.scale) {
+			this.ctx.scale(options.scale.x, options.scale.y);
+		}
+		if (options?.alpha != null) {
+			this.ctx.globalAlpha = options.alpha;
+		}
+
+		if (options?.size) {
+			this.ctx.drawImage(image,
+				0, 0, options.size.width, options.size.height);
+		} else if (options?.part) {
+			this.ctx.drawImage(image,
+				options.part.left, options.part.top, options.part.width, options.part.height,
+				0, 0, options.part.width, options.part.height);
+		} else if (options?.tiled) {
+			// nope
+		} else {
+			this.ctx.drawImage(image, -(options?.origin?.x ?? 0), -(options?.origin?.y ?? 0));
+		}
+
+		if (options?.alpha != null) {
+			this.ctx.globalAlpha = 1;
+		}
 
 		this.ctx.restore();
 	}
 
-	drawImageTiled(image, x, y, xScale=1, yScale=1, blend="#ffffff", alpha=1) {
+	drawImageTiled(image, x, y, options) {
+		/* options {
+			scale: {x, y},
+			blend,
+			alpha,
+		} */
 		// TODO blend
 
-		const w = image.width * xScale;
-		const h = image.height * yScale;
+		const w = image.width * (options?.scale?.x ?? 1);
+		const h = image.height * (options?.scale?.y ?? 1);
 
 		let xStart = x % w;
 		let yStart = y % h;
 		if (xStart > 0) xStart -= w;
 		if (yStart > 0) yStart -= h;
 
-		this.ctx.globalAlpha = alpha;
+		if (options?.alpha != null) {
+			this.ctx.globalAlpha = options.alpha;
+		}
 
 		for (let xx = xStart; xx < this.game.room.width; xx += w) {
 			for (let yy = yStart; yy < this.game.room.height; yy += h) {
-				this.ctx.drawImage(image, xx, yy, w, h);
+				this.ctx.drawImage(image, xx - (options?.origin?.x ?? 0), yy - (options?.origin?.y ?? 0), w, h);
 			}
 		}
 
-		this.ctx.globalAlpha = 1;
+		if (options?.alpha != null) {
+			this.ctx.globalAlpha = 1;
+		}
 	}
 
 	// Draw a sprite with the image index at x and y.
@@ -248,32 +291,32 @@ export default class GameRender {
 	}
 
 	// Draw a sprite with extra options.
-	drawSpriteExt(spriteIndex, imageIndex, x, y, xScale, yScale, angle, blend, alpha) {
+	drawSpriteExt(spriteIndex, imageIndex, x, y, options) {
 		const sprite = this.getSprite(spriteIndex);
 		const image = sprite?.images[Math.floor(Math.floor(imageIndex) % sprite.images.length)]?.image;
 		if (!image) return;
 
-		this.drawImageExt(image, x, y, sprite.originx, sprite.originy, xScale, yScale, angle, blend, alpha);
+		this.drawImageExt(image, x, y, {origin: {x: sprite.originx, y: sprite.originy}, ...options});
 	}
 
-	drawSpriteTiledExt(spriteIndex, imageIndex, x, y, xScale, yScale, blend, alpha) {
+	drawSpriteTiled(spriteIndex, imageIndex, x, y, options) {
 		const sprite = this.getSprite(spriteIndex);
 		const image = sprite?.images[Math.floor(Math.floor(imageIndex) % sprite.images.length)]?.image;
 		if (!image) return;
 
-		this.drawImageTiled(image, x, y, xScale, yScale, blend, alpha);
+		this.drawImageTiled(image, x, y, {origin: {x: sprite.originx, y: sprite.originy}, ...options});
 	}
 
 	drawBackground(backgroundIndex, x, y) {
 		this.ctx.drawImage(this.getBackground(backgroundIndex).image.image, x, y);
 	}
 
-	drawBackgroundExt(backgroundIndex, x, y, xScale, yScale, angle, blend, alpha) {
-		this.drawImageExt(this.getBackground(backgroundIndex).image.image, x, y, 0, 0, xScale, yScale, angle, blend, alpha);
+	drawBackgroundExt(backgroundIndex, x, y, options) {
+		this.drawImageExt(this.getBackground(backgroundIndex).image.image, x, y, options);
 	}
 
-	drawBackgroundTiledExt(backgroundIndex, x, y, xScale, yScale, blend, alpha) {
-		this.drawImageTiled(this.getBackground(backgroundIndex).image.image, x, y, xScale, yScale, blend, alpha);
+	drawBackgroundTiled(backgroundIndex, x, y, options) {
+		this.drawImageTiled(this.getBackground(backgroundIndex).image.image, x, y, options);
 	}
 
 	drawClear(col, alpha=1) {

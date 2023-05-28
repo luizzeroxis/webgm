@@ -1,4 +1,4 @@
-import {decimalToHSV, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, forceInteger, toInteger, parseNewLineHash} from "~/common/tools.js";
+import {decimalToHSV, hsvToDecimal, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, forceInteger, toInteger, parseNewLineHash} from "~/common/tools.js";
 
 import {EngineException} from "./Game.js";
 import GameCollision from "./GameCollision.js";
@@ -2578,10 +2578,9 @@ export default class BuiltInFunctions {
 	};
 
 	static make_color_hsv = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function make_color_hsv is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([hue, saturation, value]) {
+			return hsvToDecimal({h: hue, s: saturation, v: value});
 		},
 	};
 

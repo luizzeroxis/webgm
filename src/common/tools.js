@@ -66,31 +66,71 @@ export function decimalToHSV(color) {
 	return rgbToHSV(decimalToRGB(color));
 }
 
+// hsv -> decimal
+export function hsvToDecimal(hsv) {
+	return rgbToDecimal(hsvToRGB(hsv));
+}
+
 // rgb -> hsv
-export function rgbToHSV(rgb) {
-	const {r, g, b} = rgb;
+export function rgbToHSV({r, g, b}) {
+	r /= 255;
+	g /= 255;
+	b /= 255;
 
 	const max = Math.max(r, g, b);
 	const min = Math.min(r, g, b);
-
 	const d = max - min;
 
 	let h;
-	const s = (max == 0) ? 0 : Math.floor(255 * d / max);
-	const v = max;
-
 	if (max == min) {
-		h = 0; // achromatic
+		h = 0;
 	} else {
 		switch (max) {
-			case r: h = (g - b) / d * 42 + (g < b ? 256 : 0); break;
-			case g: h = (b - r) / d * 42 + 85; break;
-			case b: h = (r - g) / d + 42 + 170; break;
+			case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+			case g: h = (b - r) / d + 2; break;
+			case b: h = (r - g) / d + 4; break;
 		}
-		h = Math.floor(h);
+
+		h /= 6;
 	}
 
-	return {h, s, v};
+	const s = (max == 0) ? 0 : (d / max);
+	const v = max;
+
+	return {
+		h: Math.floor(h * 255),
+		s: Math.floor(s * 255),
+		v: Math.floor(v * 255),
+	};
+}
+
+// hsv -> rgb
+export function hsvToRGB({h, s, v}) {
+	h /= 255;
+	s /= 255;
+	v /= 255;
+
+	const i = Math.floor(h * 6);
+	const f = h * 6 - i;
+	const p = v * (1 - s);
+	const q = v * (1 - f * s);
+	const t = v * (1 - (1 - f) * s);
+
+	let r, g, b;
+	switch (i % 6) {
+		case 0: r = v; g = t; b = p; break;
+		case 1: r = q; g = v; b = p; break;
+		case 2: r = p; g = v; b = t; break;
+		case 3: r = p; g = q; b = v; break;
+		case 4: r = t; g = p; b = v; break;
+		case 5: r = v; g = p; b = q; break;
+	}
+
+	return {
+		r: Math.floor(r * 255),
+		g: Math.floor(g * 255),
+		b: Math.floor(b * 255),
+	};
 }
 
 // rgb string stuff

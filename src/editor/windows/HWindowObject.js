@@ -250,7 +250,7 @@ export default class HWindowObject extends HWindow {
 
 				parent( add( new HElement("div", {class: "libraries"}) ) );
 
-					this.librariesTabControl = add( new HTabControl("libraries-tabs") );
+					this.librariesTabControl = add( new HTabControl("libraries-tabs", "right") );
 
 					this.editor.libraries.forEach(library => {
 						parent( this.librariesTabControl.addTab(library.name, (library.name == this.editor.preferences.get("defaultActionLibraryTab"))) );

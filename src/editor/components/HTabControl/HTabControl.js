@@ -1,11 +1,16 @@
-import {parent, endparent, add, HElement, HRadioInput, uniqueID} from "~/common/h";
+import {parent, endparent, add, HElement, HRadioInput, classToAttr, classToArray, uniqueID} from "~/common/h";
 
 import "./HTabControl.scss";
 
 export default class HTabControl extends HElement {
-	constructor(_class) {
-		parent( super("div", {class: _class}) );
-			this.tabButtonsDiv = add( new HElement("div", {class: "h-tab-buttons"}) );
+	constructor(_class, side) {
+		parent( super("div", {class: classToAttr([...classToArray(_class), "h-tab-control"])}) );
+			this.side = side ?? "top";
+			if (side == "right") {
+				this.html.classList.add("right");
+			}
+
+			this.tabButtonsDiv = add( new HElement("div", {class: "buttons"}) );
 			this.currentTabContent = null;
 			endparent();
 
@@ -17,7 +22,7 @@ export default class HTabControl extends HElement {
 			isSelected = (this.currentTabContent == null);
 		}
 
-		const tabContent = new HElement("div", {class: "h-tab-content"});
+		const tabContent = new HElement("div", {class: "content"});
 
 		if (isSelected) {
 			this.showTabContent(tabContent);
@@ -25,7 +30,7 @@ export default class HTabControl extends HElement {
 
 		parent(this.tabButtonsDiv);
 
-			const radio = add( new HRadioInput(this.radioGroup, name, isSelected, "h-tab-button") );
+			const radio = add( new HRadioInput(this.radioGroup, name, isSelected, "button") );
 			radio.setOnClick(() => {
 				this.showTabContent(tabContent);
 			});

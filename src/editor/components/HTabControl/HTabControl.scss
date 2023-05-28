@@ -1,8 +1,34 @@
-.h-tab-buttons {
-	display: flex;
-}
+.h-tab-control {
+	> .buttons {
+		display: flex;
 
-.h-tab-button {
-	display: flex;
-	align-items: baseline;
+		> .button {
+			display: flex;
+			align-items: center;
+			padding: 2px;
+			border: 1px solid gray;
+
+			input {
+				margin: 0;
+			}
+
+			&:has(input:checked) {
+				border-bottom: none;
+			}
+		}
+	}
+
+	&.right {
+		> .buttons {
+			writing-mode: vertical-rl;
+
+			> .button {
+				border: 1px solid gray;
+
+				&:has(input:checked) {
+					border-left: none;
+				}
+			}
+		}
+	}
 }

@@ -74,9 +74,25 @@
 	}
 }
 
-.h-tab-content {
-	padding: 8px;
-	border: 1px solid var(--window-client-horizontal-border);
+.h-tab-control {
+	> .buttons {
+		> .button {
+			border-color: var(--window-client-horizontal-border) !important;
+		}
+	}
+
+	> .content {
+		padding: 8px;
+		border: 1px solid var(--window-client-horizontal-border);
+		border-top: none;
+	}
+
+	&.right {
+		> .content {
+			border: 1px solid var(--window-client-horizontal-border);
+			border-right: none;
+		}
+	}
 }
 
 .h-menu-bar {
@@ -85,6 +101,15 @@
 	> .h-menu-bar-button {
 		&:hover, &:focus, &.selected {
 			background-color: var(--menu-bar-button-selected);
+		}
+	}
+}
+
+.h-image-list {
+	> .item {
+		&.selected {
+			background: var(--background-selected);
+			color: var(--text-selected);
 		}
 	}
 }
@@ -100,15 +125,6 @@
 					}
 				}
 			}
-		}
-	}
-}
-
-.h-image-list {
-	> .item {
-		&.selected {
-			background: var(--background-selected);
-			color: var(--text-selected);
 		}
 	}
 }
@@ -305,12 +321,12 @@ body, button, input, select {
 }
 
 .window-sprite {
-	flex: 1;
 	min-height: 0;
+	flex: 1;
 
 	> .properties {
-		flex: none;
 		overflow: auto;
+		flex: none;
 
 		.origin-x-y {
 			display: flex;
@@ -327,8 +343,8 @@ body, button, input, select {
 	}
 
 	> .mask {
-		flex: none;
 		overflow: auto;
+		flex: none;
 	}
 
 	> .preview {
@@ -431,11 +447,7 @@ body, button, input, select {
 			display: flex;
 			flex-direction: row-reverse;
 
-			> .h-tab-buttons {
-				writing-mode: vertical-rl;
-			}
-
-			> .h-tab-content > .action-types {
+			> .content > .action-types {
 				display: grid;
 				grid-template-columns: repeat(3, minmax(0, 1fr));
 				overflow-wrap: break-word;
@@ -485,15 +497,15 @@ body, button, input, select {
 }
 
 .window-room {
-	flex: 1;
 	min-height: 0;
+	flex: 1;
 
 	> .properties {
 		width: 250px;
 		flex: none;
 		overflow-y: auto;
 
-		> .properties-tabs > .h-tab-content > .backgrounds > select {
+		> .properties-tabs > .content > .backgrounds > select {
 			overflow: auto;
 		}
 	}

@@ -59,19 +59,16 @@ module.exports = {
 				},
 				images: {
 					test(module) {
-						return (
-							module.resource
-							&& module.resource.endsWith(".png")
-						);
+						return (module.resource && module.resource.endsWith(".png"));
 					},
 					name: "images",
 				},
 				game: {
-					test: /[\\/]src[\\/]game[\\/]/,
+					test: path.resolve(__dirname, "src", "game"),
 					name: "game",
 				},
 				common: { // technically, this could be in 'game', but it's probably good to be separate
-					test: /[\\/]src[\\/]common[\\/]/,
+					test: path.resolve(__dirname, "src", "common"),
 					name: "common",
 				},
 			},

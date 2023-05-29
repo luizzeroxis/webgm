@@ -2695,42 +2695,38 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_text_ext = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_text_ext is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "as_string"}, {type: "real"}, {type: "real"}],
+		func: function([x, y, string, sep, w]) {
+			this.game.render.drawText(x, y, string, sep, w);
+			return 0;
 		},
 	};
 
 	static string_width = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function string_width is not implemented");
-			// return 0;
-		},
-	};
-
-	static string_width_ext = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function string_width_ext is not implemented");
-			// return 0;
+		args: [{type: "as_string"}],
+		func: function([string]) {
+			return this.game.render.getTextGeometry(string).width;
 		},
 	};
 
 	static string_height = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function string_height is not implemented");
-			// return 0;
+		args: [{type: "as_string"}],
+		func: function([string]) {
+			return this.game.render.getTextGeometry(string).height;
+		},
+	};
+
+	static string_width_ext = {
+		args: [{type: "as_string"}, {type: "real"}, {type: "real"}],
+		func: function([string, sep, w]) {
+			return this.game.render.getTextGeometry(string, sep, w).width;
 		},
 	};
 
 	static string_height_ext = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function string_height_ext is not implemented");
-			// return 0;
+		args: [{type: "as_string"}, {type: "real"}, {type: "real"}],
+		func: function([string, sep, w]) {
+			return this.game.render.getTextGeometry(string, sep, w).height;
 		},
 	};
 

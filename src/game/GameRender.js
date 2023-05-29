@@ -476,38 +476,94 @@ export default class GameRender {
 		this.ctx.restore();
 	}
 
-	drawText(x, y, string) {
+	drawText(x, y, string, sep, w) {
 		this.ctx.fillStyle = this.drawColorAlpha;
+
+		const geometry = this.getTextGeometry(string, sep, w);
+
+		let cy;
+		if (this.drawVAlign == 0) { cy = y; }
+		if (this.drawVAlign == 1) { cy = y - geometry.height/2; }
+		if (this.drawVAlign == 2) { cy = y - geometry.height; }
+
+		for (const line of geometry.lines) {
+			let cx;
+			if (this.drawHAlign == 0) { cx = x; }
+			if (this.drawHAlign == 1) { cx = x - line.width/2; }
+			if (this.drawHAlign == 2) { cx = x - line.width; }
+
+			this.ctx.fillText(line.text, cx, cy + line.y);
+		}
+	}
+
+	getTextGeometry(string, sep, w) {
+		// This does not render exactly like GM. Maybe changing to a bitmap based text renderer will help with that.
+
+		// Needed to do before measureText
 		this.ctx.font = this.game.loadedProject.cssFontsCache[this.drawFont];
+		this.ctx.textAlign = "left";
+		this.ctx.textBaseline = "top";
 
-		// holy shit now this is epic
-		this.ctx.textAlign = (["left", "center", "right"])[this.drawHAlign];
-		this.ctx.textBaseline = (["top", "middle", "bottom"])[this.drawVAlign];
-
-		// Look, I tried making this be like GM but it just doesn't add up. Hopefully will be fixed if and when we change to a custom font renderer
-
-		const lines = parseNewLineHash(string).split("\n");
-		let height = 0;
-
-		// Calculate heights, only if more than 1 line
-		if (lines.length > 1) {
-			const textMetrics = this.ctx.measureText("");
-			height = Math.abs(textMetrics.fontBoundingBoxDescent) + Math.abs(textMetrics.fontBoundingBoxAscent);
+		let lineHeight = sep;
+		if (sep == null || sep < 0) {
+			const font = this.game.project.getResourceById("ProjectFont", this.drawFont);
+			lineHeight = (font?.size ?? 12) / (0.75);
+			// const metrics = this.ctx.measureText("");
+			// lineHeight = metrics.fontBoundingBoxAscent + metrics.fontBoundingBoxDescent;
 		}
 
-		// Calculate initial y
-		let currentY;
-		if (this.drawVAlign == 0) { // top
-			currentY = y;
-		} else if (this.drawVAlign == 1) { // middle
-			currentY = y - (height * (lines.length - 1)) / 2;
-		} else if (this.drawVAlign == 2) { // bottom
-			currentY = y - (height * (lines.length - 1));
+		let totalWidth = 0;
+		let totalHeight = 0;
+
+		const drawLines = [];
+		let currentYInText = 0;
+
+		let lines = [];
+		if (string != "") {
+			lines = parseNewLineHash(string).split("\n");
 		}
 
 		for (const line of lines) {
-			this.ctx.fillText(line, x, currentY);
-			currentY += height;
+			let lineText = "";
+			let currentXInLine = 0;
+
+			let words;
+			if (w != null) {
+				words = line.split(/(?<=[ -])/);
+			} else {
+				words = [line];
+			}
+
+			for (const word of words) {
+				const metrics = this.ctx.measureText(word);
+				const width = metrics.width;
+
+				// check
+				if (w != null && w >= 0 && ((currentXInLine + width) > w) && currentXInLine != 0) {
+					// Break the line.
+					drawLines.push({y: currentYInText, width: currentXInLine, text: lineText});
+					currentYInText += lineHeight;
+					totalWidth = Math.max(totalWidth, currentXInLine);
+
+					lineText = "";
+					currentXInLine = 0;
+				}
+
+				lineText += word;
+				currentXInLine += width;
+			}
+
+			drawLines.push({y: currentYInText, width: currentXInLine, text: lineText});
+			currentYInText += lineHeight;
+			totalWidth = Math.max(totalWidth, currentXInLine);
 		}
+
+		totalHeight = currentYInText;
+
+		return {
+			width: totalWidth,
+			height: totalHeight,
+			lines: drawLines,
+		};
 	}
 }

@@ -14,7 +14,7 @@
 	--resources-area-background: #fff;
 	--text-selected: #fff;
 	--text: #000;
-	--titlebar-background: #fff;
+	--title-bar-background: #fff;
 	--warning-background: #fb0;
 	--window-border: #000;
 	--window-client-background: #eee;
@@ -38,7 +38,7 @@
 	--resources-area-background: #000;
 	--text-selected: #fff;
 	--text: #fff;
-	--titlebar-background: #555;
+	--title-bar-background: #555;
 	--warning-background: #740;
 	--window-border: #aaa;
 	--window-client-background: #000;
@@ -48,6 +48,23 @@
 
 :root.light {
 	color-scheme: light;
+}
+
+.h-window-manager {
+	> .h-window {
+		> .border {
+			background-color: var(--title-bar-background);
+			border-color: var(--window-border) !important;
+		}
+		> .contents {
+			> .title-bar {
+				background-color: var(--title-bar-background);
+			}
+			> .client {
+				background-color: var(--window-client-background);
+			}
+		}
+	}
 }
 
 .h-menu-manager {
@@ -196,110 +213,110 @@ body, button, input, select {
 	background-color: var(--windows-area-background);
 	gap: 4px;
 	overflow-y: scroll;
-}
 
-.window {
-	--window-border-size: 8px;
+	.window {
+		--window-border-size: 8px;
 
-	position: absolute;
-	display: grid;
-	grid-template-columns: var(--window-border-size) 1fr var(--window-border-size);
-	grid-template-rows: var(--window-border-size) 1fr var(--window-border-size);
+		position: absolute;
+		display: grid;
+		grid-template-columns: var(--window-border-size) 1fr var(--window-border-size);
+		grid-template-rows: var(--window-border-size) 1fr var(--window-border-size);
 
-	> .border {
-		background-color: var(--titlebar-background);
-		user-select: none;
-
-		&.top-left {
-			cursor: nw-resize;
-		}
-
-		&.top {
-			cursor: n-resize;
-		}
-
-		&.top-right {
-			cursor: ne-resize;
-		}
-
-		&.left {
-			cursor: w-resize;
-		}
-
-		&.right {
-			cursor: e-resize;
-		}
-
-		&.bottom-left {
-			cursor: sw-resize;
-		}
-
-		&.bottom {
-			cursor: s-resize;
-		}
-
-		&.bottom-right {
-			cursor: se-resize;
-		}
-
-		&.top-left, &.top, &.top-right {
-			border-top: 1px solid var(--window-border);
-		}
-
-		&.bottom-left, &.bottom, &.bottom-right {
-			border-bottom: 1px solid var(--window-border);
-		}
-
-		&.top-left, &.left, &.bottom-left {
-			border-left: 1px solid var(--window-border);
-		}
-
-		&.top-right, &.right, &.bottom-right {
-			border-right: 1px solid var(--window-border);
-		}
-	}
-
-	> .contents {
-		display: flex;
-		overflow: auto;
-		flex-direction: column;
-
-		> .titlebar {
-			display: flex;
-			align-items: center;
-			padding: 2px;
-			background-color: var(--titlebar-background);
+		> .border {
+			background-color: var(--title-bar-background);
 			user-select: none;
 
-			> .title {
-				overflow: hidden;
-				width: 0;
-				flex: 1;
-				text-overflow: ellipsis;
-				white-space: nowrap;
+			&.top-left {
+				cursor: nw-resize;
+			}
+
+			&.top {
+				cursor: n-resize;
+			}
+
+			&.top-right {
+				cursor: ne-resize;
+			}
+
+			&.left {
+				cursor: w-resize;
+			}
+
+			&.right {
+				cursor: e-resize;
+			}
+
+			&.bottom-left {
+				cursor: sw-resize;
+			}
+
+			&.bottom {
+				cursor: s-resize;
+			}
+
+			&.bottom-right {
+				cursor: se-resize;
+			}
+
+			&.top-left, &.top, &.top-right {
+				border-top: 1px solid var(--window-border);
+			}
+
+			&.bottom-left, &.bottom, &.bottom-right {
+				border-bottom: 1px solid var(--window-border);
+			}
+
+			&.top-left, &.left, &.bottom-left {
+				border-left: 1px solid var(--window-border);
+			}
+
+			&.top-right, &.right, &.bottom-right {
+				border-right: 1px solid var(--window-border);
 			}
 		}
 
-		> .client {
+		> .contents {
 			display: flex;
 			overflow: auto;
-			flex: 1;
 			flex-direction: column;
-			padding: 8px;
-			background-color: var(--window-client-background);
+
+			> .titlebar {
+				display: flex;
+				align-items: center;
+				padding: 2px;
+				background-color: var(--title-bar-background);
+				user-select: none;
+
+				> .title {
+					overflow: hidden;
+					width: 0;
+					flex: 1;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+				}
+			}
+
+			> .client {
+				display: flex;
+				overflow: auto;
+				flex: 1;
+				flex-direction: column;
+				padding: 8px;
+				background-color: var(--window-client-background);
+			}
 		}
-	}
 
-	&.maximized {
-		display: flex;
-		flex-direction: column;
+		&.maximized {
+			display: flex;
+			flex-direction: column;
 
-		> .border {
-			display: none;
-		}
+			> .border {
+				display: none;
+			}
 
-		> .contents {
-			flex: 1;
+			> .contents {
+				flex: 1;
+			}
 		}
 	}
 }

@@ -1,6 +1,7 @@
 //The editor class
 
 import HMenuManager from "~/common/components/HMenuManager/HMenuManager.js";
+import HWindowManager from "~/common/components/HWindowManager/HWindowManager.js";
 import Dispatcher from "~/common/Dispatcher.js";
 import {HElement, parent, endparent, add} from "~/common/h";
 import Project from "~/common/project/Project.js";
@@ -49,6 +50,7 @@ export default class Editor {
 		// Libraries
 		this.libraries = BuiltInLibraries.list;
 
+		this.windowManager = new HWindowManager();
 		this.menuManager = new HMenuManager();
 
 		// Areas
@@ -65,6 +67,7 @@ export default class Editor {
 			add( new HSplitter(this.resourcesArea, this.windowsArea) );
 
 			add( this.menuManager );
+			add( this.windowManager );
 
 			endparent();
 

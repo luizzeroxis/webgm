@@ -72,10 +72,10 @@ export default class HWindow extends HElement {
 		this.windowParent = null;
 
 		this.html.addEventListener("focusin", () => {
-			this.editor.windowsArea.focus(this.id);
+			this.editor.windowsArea.focus(this);
 		});
 		this.html.addEventListener("mousedown", () => {
-			this.editor.windowsArea.focus(this.id);
+			this.editor.windowsArea.focus(this);
 		});
 
 		parent(this);

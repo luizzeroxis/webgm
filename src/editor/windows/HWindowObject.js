@@ -86,7 +86,6 @@ export default class HWindowObject extends HWindow {
 
 						// Add event button
 						this.buttonEventAdd = add( new HButton("Add Event", () => {
-
 							const eventType = this.selectEventType.getValue();
 							const eventSubtype = this.subtypeValueFunction?.() ?? 0;
 

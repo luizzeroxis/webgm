@@ -526,6 +526,9 @@ export default class HWindowObject extends HWindow {
 						[...(listText.bold ? ["bold"] : []), ...(listText.italic ? ["italic"] : [])], // class
 					) );
 					option.html.title = hintText.text;
+					option.setEvent("dblclick", () => {
+						this.openActionWindow(action);
+					});
 				}
 				endparent();
 

@@ -8,7 +8,12 @@ export default class GameRender {
 		this.canvasHElement = new HCanvas();
 		this.canvas = this.canvasHElement.html;
 		this.canvas.setAttribute("tabindex", 0);
-		this.ctx = this.canvas.getContext("2d", {alpha: false});
+
+		this.currentCanvas = this.canvas;
+		this.offscreenCanvas = null;
+
+		this.canvasCtx = this.canvas.getContext("2d", {alpha: false});
+		this.ctx = this.canvasCtx;
 
 		this.setInitialSize();
 
@@ -21,6 +26,8 @@ export default class GameRender {
 		this.drawFont = -1;
 		this.drawHAlign = 0;
 		this.drawVAlign = 0;
+
+		this.currentView = 0;
 	}
 
 	start() {
@@ -72,9 +79,42 @@ export default class GameRender {
 
 	// Draw all the views of the current room.
 	async drawViews() {
-		// Currently there are no views. But the following should happen for every view.
+		if (this.game.room.viewsEnabled) {
+			this.ctx.fillStyle = this.game.project.globalGameSettings.colorOutsideRoom;
+			this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-		// Draw background color
+			this.currentView = 0;
+			this.offscreenCanvas = new OffscreenCanvas(0, 0);
+
+			for (const view of this.game.room.views) {
+				if (view.visible) {
+					this.offscreenCanvas.width = view.viewW;
+					this.offscreenCanvas.height = view.viewH;
+
+					this.ctx = this.offscreenCanvas.getContext("2d");
+					this.ctx.save();
+					this.ctx.translate(view.viewX + view.viewW / 2, view.viewY + view.viewH / 2);
+					this.ctx.rotate(view.angle * Math.PI / 180);
+					this.ctx.translate(-view.viewW / 2, -view.viewH / 2);
+
+					await this.drawRoom();
+
+					this.ctx.restore();
+					this.ctx = this.canvasCtx;
+
+					this.ctx.drawImage(this.offscreenCanvas, view.portX, view.portY, view.portW, view.portH);
+				}
+
+				this.currentView += 1;
+			}
+		} else {
+			this.drawRoom();
+		}
+	}
+
+	// Draw the room elements on the current view.
+	async drawRoom() {
+		// Draw background color // TODO this should ignore views
 		if (this.game.room.backgroundShowColor) {
 			this.ctx.fillStyle = this.game.room.backgroundColor;
 			this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);

@@ -405,7 +405,7 @@ export default class BuiltInGlobals {
 	};
 
 	static view_current = {readOnly: true,
-		get() { return this.currentView ? 1 : 0; },
+		get() { return this.render.currentView ? 1 : 0; },
 	};
 
 	static view_visible = {type: "bool", dimensions: 1,

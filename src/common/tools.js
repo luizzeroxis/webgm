@@ -299,8 +299,9 @@ export function setDraggable(element, mouseDown, mouseMove) {
 	element.setEvent("mousedown", e => {
 		if (e.button != 0) return;
 		mouseUp();
-		mouseDown(e);
-		document.addEventListener("mousemove", mouseMove);
-		document.addEventListener("mouseup", mouseUp);
+		if (mouseDown(e) !== false) {
+			document.addEventListener("mousemove", mouseMove);
+			document.addEventListener("mouseup", mouseUp);
+		}
 	});
 }

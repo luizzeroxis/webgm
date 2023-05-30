@@ -1,10 +1,10 @@
+import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HTextInput, HCheckBoxInput, HSelectWithOptions} from "~/common/h";
-import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowPreferences extends HWindow {
-	constructor(editor, id) {
-		super(editor, id);
-
+	constructor(manager, editor) {
+		super(manager);
+		this.editor = editor;
 		this.title.html.textContent = "Preferences";
 
 		parent(this.client);

@@ -212,112 +212,11 @@ body, button, input, select {
 	border: 1px solid var(--area-border);
 	background-color: var(--windows-area-background);
 	gap: 4px;
-	overflow-y: scroll;
 
-	.window {
-		--window-border-size: 8px;
-
-		position: absolute;
-		display: grid;
-		grid-template-columns: var(--window-border-size) 1fr var(--window-border-size);
-		grid-template-rows: var(--window-border-size) 1fr var(--window-border-size);
-
-		> .border {
-			background-color: var(--title-bar-background);
-			user-select: none;
-
-			&.top-left {
-				cursor: nw-resize;
-			}
-
-			&.top {
-				cursor: n-resize;
-			}
-
-			&.top-right {
-				cursor: ne-resize;
-			}
-
-			&.left {
-				cursor: w-resize;
-			}
-
-			&.right {
-				cursor: e-resize;
-			}
-
-			&.bottom-left {
-				cursor: sw-resize;
-			}
-
-			&.bottom {
-				cursor: s-resize;
-			}
-
-			&.bottom-right {
-				cursor: se-resize;
-			}
-
-			&.top-left, &.top, &.top-right {
-				border-top: 1px solid var(--window-border);
-			}
-
-			&.bottom-left, &.bottom, &.bottom-right {
-				border-bottom: 1px solid var(--window-border);
-			}
-
-			&.top-left, &.left, &.bottom-left {
-				border-left: 1px solid var(--window-border);
-			}
-
-			&.top-right, &.right, &.bottom-right {
-				border-right: 1px solid var(--window-border);
-			}
-		}
-
-		> .contents {
-			display: flex;
-			overflow: auto;
-			flex-direction: column;
-
-			> .titlebar {
-				display: flex;
-				align-items: center;
-				padding: 2px;
-				background-color: var(--title-bar-background);
-				user-select: none;
-
-				> .title {
-					overflow: hidden;
-					width: 0;
-					flex: 1;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-				}
-			}
-
-			> .client {
-				display: flex;
-				overflow: auto;
-				flex: 1;
-				flex-direction: column;
-				padding: 8px;
-				background-color: var(--window-client-background);
-			}
-		}
-
-		&.maximized {
-			display: flex;
-			flex-direction: column;
-
-			> .border {
-				display: none;
-			}
-
-			> .contents {
-				flex: 1;
-			}
-		}
+	.h-window-manager {
+		overflow-x: auto;
+		overflow-y: scroll;
+		pointer-events: auto;
 	}
 }
 
@@ -591,7 +490,7 @@ body, button, input, select {
 	}
 }
 
-.window > .contents > .client:has(> .game) {
+.h-window > .contents > .client:has(> .game) {
 	padding: 0;
 	resize: none;
 }

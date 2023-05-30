@@ -1,14 +1,15 @@
+import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HImage, HCheckBoxInput} from "~/common/h";
 import ImageWrapper from "~/common/ImageWrapper.js";
 import {openFile, setOnFileDrop} from "~/common/tools.js";
-import HWindow from "~/editor/HWindow.js";
 
 import HWindowSpriteImages from "./HWindowSpriteImages.js";
 
 export default class HWindowSprite extends HWindow {
-	constructor(editor, id, sprite) {
-		super(editor, id);
-
+	constructor(manager, editor, sprite) {
+		super(manager);
+		this.editor = editor;
+		this.resource = sprite;
 		this.sprite = sprite;
 
 		this.updateTitle();
@@ -32,9 +33,8 @@ export default class HWindowSprite extends HWindow {
 						endparent();
 
 					parent( add( new HElement("div") ) );
-						const editSpriteWindowId = {spriteWindow: this};
 						add( new HButton("Edit Sprite", () => {
-							this.openAsChild(HWindowSpriteImages, editSpriteWindowId);
+							this.openAsChild(HWindowSpriteImages, w => w.spriteWindow == this, this);
 						}) );
 						endparent();
 

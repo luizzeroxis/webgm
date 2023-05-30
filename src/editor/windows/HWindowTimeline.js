@@ -1,10 +1,11 @@
+import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HTextInput} from "~/common/h";
-import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowTimeline extends HWindow {
-	constructor(editor, id, timeline) {
-		super(editor, id);
-
+	constructor(manager, editor, timeline) {
+		super(manager);
+		this.editor = editor;
+		this.resource = timeline;
 		this.timeline = timeline;
 
 		this.updateTitle();

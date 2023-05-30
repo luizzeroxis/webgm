@@ -1,10 +1,10 @@
+import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent} from "~/common/h";
-import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowExtensionPackages extends HWindow {
-	constructor(editor, id) {
-		super(editor, id);
-
+	constructor(manager, editor) {
+		super(manager);
+		this.editor = editor;
 		this.title.html.textContent = "Extension Packages";
 
 		parent(this.client);

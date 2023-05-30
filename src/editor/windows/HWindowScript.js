@@ -1,11 +1,12 @@
+import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HTextInput} from "~/common/h";
 import HCodeEditor from "~/editor/components/HCodeEditor/HCodeEditor.js";
-import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowScript extends HWindow {
-	constructor(editor, id, script) {
-		super(editor, id);
-
+	constructor(manager, editor, script) {
+		super(manager);
+		this.editor = editor;
+		this.resource = script;
 		this.script = script;
 
 		this.updateTitle();

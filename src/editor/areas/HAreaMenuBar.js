@@ -40,8 +40,8 @@ export default class HAreaMenuBar extends HElement {
 				{text: "Run normally", onClick: () => this.editor.runGame()},
 			]},
 			{text: "Window", items: [
-				{text: "Cascade", onClick: () => this.editor.windowsArea.cascade()},
-				{text: "Close All", onClick: () => this.editor.windowsArea.clear()},
+				{text: "Cascade", onClick: () => this.editor.windowsArea.manager.cascade()},
+				{text: "Close All", onClick: () => this.editor.windowsArea.manager.clear()},
 			]},
 			{text: "Help", items: [
 				{text: "About webgm...", onClick: () => this.editor.showAbout()},

@@ -1,16 +1,16 @@
+import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HButton} from "~/common/h";
 import {openFile} from "~/common/tools.js";
 import HImageList from "~/editor/components/HImageList/HImageList.js";
-import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowSpriteImages extends HWindow {
-	constructor(editor, id) {
-		super(editor, id);
+	constructor(manager, spriteWindow) {
+		super(manager);
+		this.spriteWindow = spriteWindow;
 
-		this.title.html.textContent = "Sprite Editor: "+id.spriteWindow.sprite.name;
+		this.title.html.textContent = "Sprite Editor: "+spriteWindow.sprite.name;
 
-		this.spriteWindow = id.spriteWindow;
-		this.images = [...id.spriteWindow.paramImages];
+		this.images = [...spriteWindow.paramImages];
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-sprite-images"}) ) );
@@ -53,8 +53,8 @@ export default class HWindowSpriteImages extends HWindow {
 
 			this.makeApplyOkButtons(
 				() => {
-					id.spriteWindow.paramImages = this.images;
-					id.spriteWindow.updateImageInfo();
+					spriteWindow.paramImages = this.images;
+					spriteWindow.updateImageInfo();
 				},
 				() => this.close(),
 			);

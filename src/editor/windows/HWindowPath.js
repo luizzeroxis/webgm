@@ -1,10 +1,11 @@
+import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HTextInput} from "~/common/h";
-import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowPath extends HWindow {
-	constructor(editor, id, path) {
-		super(editor, id);
-
+	constructor(manager, editor, path) {
+		super(manager);
+		this.editor = editor;
+		this.resource = path;
 		this.path = path;
 
 		this.updateTitle();

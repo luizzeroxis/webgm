@@ -1,12 +1,13 @@
 import AudioWrapper from "~/common/AudioWrapper.js";
+import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HButton, HTextInput, HRangeInput} from "~/common/h";
 import {openFile} from "~/common/tools.js";
-import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowSound extends HWindow {
-	constructor(editor, id, sound) {
-		super(editor, id);
-
+	constructor(manager, editor, sound) {
+		super(manager);
+		this.editor = editor;
+		this.resource = sound;
 		this.sound = sound;
 
 		this.updateTitle();

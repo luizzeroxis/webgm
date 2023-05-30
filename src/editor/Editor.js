@@ -310,7 +310,7 @@ export default class Editor {
 				}
 
 				if (this.gameWindow.userClosed) {
-					this.windowsArea.delete(this.gameWindow);
+					this.windowsArea.manager.delete(this.gameWindow); // TODO wth is going on here
 				}
 
 				this.game.dispatcher.stopListening(gameListeners);

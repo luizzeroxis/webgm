@@ -1,10 +1,10 @@
+import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HMultilineTextInput} from "~/common/h";
-import HWindow from "~/editor/HWindow.js";
 
-export default class HWindowGameInformation extends HWindow {
-	constructor(editor, id, gameInformation) {
-		super(editor, id);
-
+export default class HGameInformationWindow extends HWindow {
+	constructor(manager, editor, gameInformation) {
+		super(manager);
+		this.editor = editor;
 		this.gameInformation = gameInformation;
 
 		this.title.html.textContent = "Game Information";

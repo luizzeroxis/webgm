@@ -1,12 +1,13 @@
+import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HButton, HTextInput, HImage} from "~/common/h";
 import ImageWrapper from "~/common/ImageWrapper.js";
 import {openFile, setOnFileDrop} from "~/common/tools.js";
-import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowBackground extends HWindow {
-	constructor(editor, id, background) {
-		super(editor, id);
-
+	constructor(manager, editor, background) {
+		super(manager);
+		this.editor = editor;
+		this.resource = background;
 		this.background = background;
 
 		this.updateTitle();

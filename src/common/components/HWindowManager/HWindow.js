@@ -50,6 +50,7 @@ export default class HWindow extends HElement {
 							const rect = this.html.getBoundingClientRect();
 							this.offX = e.clientX - rect.left;
 							this.offY = e.clientY - rect.top;
+							return true;
 						},
 						e => { // mousemove
 							// Pos relative to window manager

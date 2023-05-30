@@ -1,3 +1,4 @@
+import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import Events from "~/common/Events.js";
 import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HOption, HSelectWithOptions, HImage} from "~/common/h";
 import {
@@ -6,7 +7,6 @@ import {
 } from "~/common/project/ProjectProperties.js";
 import HTabControl from "~/editor/components/HTabControl/HTabControl.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
-import HWindow from "~/editor/HWindow.js";
 
 import HWindowAction from "./HWindowAction.js";
 import HWindowCode from "./HWindowCode.js";
@@ -24,9 +24,10 @@ export default class HWindowObject extends HWindow {
 		"timeline": ProjectTimeline,
 	};
 
-	constructor(editor, id, object) {
-		super(editor, id);
-
+	constructor(manager, editor, object) {
+		super(manager);
+		this.editor = editor;
+		this.resource = object;
 		this.object = object;
 
 		this.updateTitle();
@@ -567,25 +568,25 @@ export default class HWindowObject extends HWindow {
 	getActionTypeInfo() {
 		return [
 			{kind: "normal", interfaceKind: "none", args: []},
-			{kind: "normal", interfaceKind: "normal", htmlclass: HWindowAction},
-			{kind: "normal", interfaceKind: "arrows", htmlclass: HWindowAction, args: [
+			{kind: "normal", interfaceKind: "normal", windowClass: HWindowAction},
+			{kind: "normal", interfaceKind: "arrows", windowClass: HWindowAction, args: [
 				{name: "Directions:", kind: "string", default: "000000000"},
 				{name: "Speed:", kind: "expression", default: "0"},
 			]},
-			{kind: "normal", interfaceKind: "code", htmlclass: HWindowCode, args: [
+			{kind: "normal", interfaceKind: "code", windowClass: HWindowCode, args: [
 				{kind: "string", default: ""},
 			]},
-			{kind: "normal", interfaceKind: "text", htmlclass: HWindowCode, args: [
+			{kind: "normal", interfaceKind: "text", windowClass: HWindowCode, args: [
 				{kind: "string", default: ""},
 			]},
-			{kind: "repeat", htmlclass: HWindowAction, hasApplyTo: false, args: [
+			{kind: "repeat", windowClass: HWindowAction, hasApplyTo: false, args: [
 				{name: "times:", kind: "expression", default: "1"},
 			]},
-			{kind: "variable", htmlclass: HWindowAction, hasApplyTo: true, hasRelative: true, args: [
+			{kind: "variable", windowClass: HWindowAction, hasApplyTo: true, hasRelative: true, args: [
 				{name: "variable:", kind: "string", default: ""},
 				{name: "value:", kind: "expression", default: "0"},
 			]},
-			{kind: "code", htmlclass: HWindowCode, hasApplyTo: true, args: [
+			{kind: "code", windowClass: HWindowCode, hasApplyTo: true, args: [
 				{kind: "string", default: ""},
 			]},
 			{kind: "begin", args: []},
@@ -658,8 +659,8 @@ export default class HWindowObject extends HWindow {
 		const actionTypeInfo = this.getActionTypeInfo();
 		const actionTypeInfoItem = actionTypeInfo.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind);
 
-		if (actionTypeInfoItem.htmlclass) {
-			this.openAsChild(actionTypeInfoItem.htmlclass, action, action, this);
+		if (actionTypeInfoItem.windowClass) {
+			this.openAsChild(actionTypeInfoItem.windowClass, w => w.action == action, this.editor, action, this);
 		}
 	}
 

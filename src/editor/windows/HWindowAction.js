@@ -1,23 +1,23 @@
+import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, uniqueID} from "~/common/h";
 import {ProjectObject, ProjectActionArg} from "~/common/project/ProjectProperties.js";
 import {parseArrowString, stringifyArrowValues, decimalToHex, hexToDecimal} from "~/common/tools.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
-import HWindow from "~/editor/HWindow.js";
 
 import HWindowObject from "./HWindowObject.js";
 
 export default class HWindowAction extends HWindow {
-	constructor(editor, id, action, object) {
-		super(editor, id);
-
+	constructor(manager, editor, action, windowObject) {
+		super(manager);
+		this.editor = editor;
 		this.action = action;
-		this.object = object;
+		this.windowObject = windowObject;
 
 		this.actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
 
 		this.title.html.textContent = this.actionType.description;
 
-		const actionTypeInfo = this.object.getActionTypeInfo();
+		const actionTypeInfo = this.windowObject.getActionTypeInfo();
 		const actionTypeInfoItem = actionTypeInfo.find(x => x.kind == this.actionType.kind && x.interfaceKind == this.actionType.interfaceKind);
 
 		parent(this.client);
@@ -117,7 +117,7 @@ export default class HWindowAction extends HWindow {
 					this.apply();
 				},
 				() => {
-					this.object.deleteActionWindow(this.id);
+					this.windowObject.deleteActionWindow(this.id);
 					this.close();
 				},
 			);
@@ -208,6 +208,6 @@ export default class HWindowAction extends HWindow {
 			this.action.not = this.inputNot.getChecked();
 
 		// Update action in event in object
-		this.object.updateSelectActions();
+		this.windowObject.updateSelectActions();
 	}
 }

@@ -3,20 +3,16 @@ import {parent, endparent, add, HElement} from "~/common/h";
 import HWindowBackground from "~/editor/windows/HWindowBackground.js";
 import HWindowFont from "~/editor/windows/HWindowFont.js";
 import HWindowGame from "~/editor/windows/HWindowGame.js";
-// import HWindowGameInformation from "~/editor/windows/HWindowGameInformation.js";
+import HWindowGameInformation from "~/editor/windows/HWindowGameInformation.js";
 import HWindowGlobalGameSettings from "~/editor/windows/HWindowGlobalGameSettings.js";
 import HWindowObject from "~/editor/windows/HWindowObject.js";
 import HWindowPath from "~/editor/windows/HWindowPath.js";
-// import HWindowPreferences from "~/editor/windows/HWindowPreferences.js";
+import HWindowPreferences from "~/editor/windows/HWindowPreferences.js";
 import HWindowRoom from "~/editor/windows/HWindowRoom.js";
 import HWindowScript from "~/editor/windows/HWindowScript.js";
 import HWindowSound from "~/editor/windows/HWindowSound.js";
 import HWindowSprite from "~/editor/windows/HWindowSprite.js";
 import HWindowTimeline from "~/editor/windows/HWindowTimeline.js";
-
-import HConstantsWindow from "~/editor/windows2/HConstantsWindow.js";
-import HGameInformationWindow from "~/editor/windows2/HGameInformationWindow.js";
-import HPreferencesWindow from "~/editor/windows2/HPreferencesWindow.js";
 
 export default class HAreaWindows extends HElement {
 	static resourceTypesWindowClasses = {
@@ -32,18 +28,11 @@ export default class HAreaWindows extends HElement {
 	};
 
 	constructor(editor) {
-		super("div", {class: "windows-area"});
-
-		this.editor = editor;
-		this.windows = [];
-
-		this.cascadeDiff = 24;
-
-		parent(this);
+		parent(super("div", {class: "windows-area"}));
 			this.manager = add(new HWindowManager());
 			endparent();
 
-		// this.manager.open(HConstantsWindow, null);
+		this.editor = editor;
 	}
 
 	onAdd() {
@@ -52,7 +41,7 @@ export default class HAreaWindows extends HElement {
 				this.openResource(i);
 			},
 			deleteResource: i => {
-				this.delete(this.getId(i));
+				this.closeResource(i);
 			},
 		});
 	}
@@ -61,109 +50,43 @@ export default class HAreaWindows extends HElement {
 	// 	this.editor.project.dispatcher.stopListening(this.listeners);
 	// }
 
-	// Open a new window or focus on a existing one. windowClass is class that extends HWindow. It will send id, the editor and ...clientArgs as arguments. If a window with the same id is opened, it will focus on it. Returns existing or newly created window.
-	open(windowClass, id, ...clientArgs) {
-		let w = this.getId(id);
-		if (w) {
-			this.focus(w);
-		} else {
-			parent(this);
-				w = add( new windowClass(this.editor, id, ...clientArgs) );
-				endparent();
-
-			this.windows.unshift(w);
-			this.organize();
-		}
-		return w;
-	}
-
 	// Open or focus on a resource window.
 	openResource(resource) {
 		const windowClass = HAreaWindows.resourceTypesWindowClasses[resource.constructor.getClassName()];
-		return this.open(windowClass, resource, resource);
+		return this.manager.open(windowClass, w => w.resource == resource, this.editor, resource);
+	}
+
+	closeResource(resource) {
+		const windowClass = HAreaWindows.resourceTypesWindowClasses[resource.constructor.getClassName()];
+		this.manager.delete(this.manager.find(windowClass, w => w.resource == resource));
 	}
 
 	// Open or focus on the game information window.
 	openGameInformation() {
-		return this.manager.open(HGameInformationWindow, w => w.gameInformation == this.editor.project.gameInformation, this.editor, this.editor.project.gameInformation);
+		return this.manager.open(HWindowGameInformation, null, this.editor, this.editor.project.gameInformation);
 	}
 
 	// Open or focus on the global game settings window.
 	openGlobalGameSettings() {
-		return this.open(HWindowGlobalGameSettings, "global-game-settings", this.editor.project.globalGameSettings);
+		return this.manager.open(HWindowGlobalGameSettings, null, this.editor, this.editor.project.globalGameSettings);
 	}
 
 	// Open or focus on the preferences window.
 	openPreferences() {
-		return this.manager.open(HPreferencesWindow, null, this.editor);
+		return this.manager.open(HWindowPreferences, null, this.editor);
 	}
 
 	// Open or focus on the game window.
 	openGame() {
-		return this.open(HWindowGame, "game");
-	}
-
-	// Get window by id.
-	getId(id) {
-		return this.windows.find(x => x.id == id);
-	}
-
-	// Delete window instance.
-	delete(w) {
-		const index = this.windows.findIndex(x => x == w);
-		if (index>=0) {
-			this.windows[index].remove();
-			this.windows.splice(index, 1);
-			this.organize();
-			return true;
-		}
-		return false;
-	}
-
-	// Remove all windows.
-	clear() {
-		for (const w of this.windows) {
-			w.remove();
-		}
-		this.windows = [];
+		return this.manager.open(HWindowGame, null, this.editor);
 	}
 
 	// Remove all windows related to the project (that is, not of the global editor).
 	clearProject() {
-		this.windows = this.windows.filter(w => {
-			// const isProject = !([HWindowGame, HWindowPreferences].includes(w.constructor));
-			const isProject = !([HWindowGame].includes(w.constructor));
-			if (isProject) { w.remove(); }
-			return !isProject;
-		});
-	}
-
-	// Move window to the top of the screen.
-	focus(w) {
-		const index = this.windows.findIndex(x => x == w);
-
-		// Move the window to the top of the array.
-		this.windows.unshift(this.windows.splice(index, 1)[0]);
-
-		this.organize();
-	}
-
-	// Visually orders windows in the order of the array.
-	organize() {
-		this.windows.forEach((w, i) => {
-			w.html.style.zIndex = this.windows.length - i;
-		});
-	}
-
-	// Moves all windows into a cascanding pattern.
-	cascade() {
-		let x = 0;
-		let y = 0;
-
-		for (const w of [...this.windows].reverse()) {
-			w.setPosition(x, y);
-			x += this.cascadeDiff;
-			y += this.cascadeDiff;
+		for (const w of this.manager.windows) {
+			if (!([HWindowGame, HWindowPreferences].includes(w.constructor))) {
+				w.close();
+			}
 		}
 	}
 }

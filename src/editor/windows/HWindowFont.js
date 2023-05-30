@@ -1,10 +1,11 @@
+import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HTextInput, HNumberInput, HCheckBoxInput} from "~/common/h";
-import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowFont extends HWindow {
-	constructor(editor, id, font) {
-		super(editor, id);
-
+	constructor(manager, editor, font) {
+		super(manager);
+		this.editor = editor;
+		this.resource = font;
 		this.font = font;
 
 		this.updateTitle();

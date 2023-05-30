@@ -1,15 +1,16 @@
+import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HButton, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from "~/common/h";
 import ImageWrapper from "~/common/ImageWrapper.js";
 import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground} from "~/common/project/ProjectProperties.js";
 import HTabControl from "~/editor/components/HTabControl/HTabControl.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
-import HWindow from "~/editor/HWindow.js";
 import DefaultInstanceIcon from "~/editor/img/default-instance-icon.png";
 
 export default class HWindowRoom extends HWindow {
-	constructor(editor, id, room) {
-		super(editor, id);
-
+	constructor(manager, editor, room) {
+		super(manager);
+		this.editor = editor;
+		this.resource = room;
 		this.room = room;
 
 		this.updateTitle();

@@ -1,11 +1,11 @@
+import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HTextInput, HMultilineTextInput, HCheckBoxInput, HColorInput} from "~/common/h";
 import HTabControl from "~/editor/components/HTabControl/HTabControl.js";
-import HWindow from "~/editor/HWindow.js";
 
 export default class HWindowGlobalGameSettings extends HWindow {
-	constructor(editor, id, globalGameSettings) {
-		super(editor, id);
-
+	constructor(manager, editor, globalGameSettings) {
+		super(manager);
+		this.editor = editor;
 		this.globalGameSettings = globalGameSettings;
 
 		this.title.html.textContent = "Global Game Settings";

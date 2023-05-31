@@ -33,11 +33,12 @@ export default class HWindowManager extends HElement {
 	// Move window to the top.
 	focus(w) {
 		const index = this.windows.findIndex(x => x == w);
+		if (index >= 0) {
+			// Move the window to the top of the array.
+			this.windows.unshift(this.windows.splice(index, 1)[0]);
 
-		// Move the window to the top of the array.
-		this.windows.unshift(this.windows.splice(index, 1)[0]);
-
-		this.organize();
+			this.organize();
+		}
 	}
 
 	// Visually orders windows in the order of the array.

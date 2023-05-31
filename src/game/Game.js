@@ -812,7 +812,7 @@ export default class Game {
 				};
 			}),
 
-			// tiles
+			// TODO tiles
 
 			views: room.views.map(view => ({
 				visible: view.visibleAtStart,
@@ -824,7 +824,7 @@ export default class Game {
 				portY: view.portY,
 				portW: view.portW,
 				portH: view.portH,
-				objectFollowIndex: view.objectFollowIndex,
+				objectFollowIndex: view.objectFollowIndex, // TODO
 				objectFollowHorizontalBorder: view.objectFollowHorizontalBorder,
 				objectFollowVerticalBorder: view.objectFollowVerticalBorder,
 				objectFollowHorizontalSpeed: view.objectFollowHorizontalSpeed,
@@ -834,7 +834,17 @@ export default class Game {
 			})),
 		};
 
-		this.render.setSize(room.width, room.height);
+		if (room.enableViews) {
+			let w = 0;
+			let h = 0;
+			for (const view of room.views) {
+				w = Math.max(w, view.portX + view.portW);
+				h = Math.max(h, view.portY + view.portH);
+			}
+			this.render.setSize(w, h);
+		} else {
+			this.render.setSize(room.width, room.height);
+		}
 
 		this.input.clear();
 

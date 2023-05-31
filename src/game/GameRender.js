@@ -91,16 +91,19 @@ export default class GameRender {
 					this.offscreenCanvas.width = view.viewW;
 					this.offscreenCanvas.height = view.viewH;
 
+					this.currentCanvas = this.offscreenCanvas;
 					this.ctx = this.offscreenCanvas.getContext("2d");
 					this.ctx.save();
-					this.ctx.translate(view.viewX + view.viewW / 2, view.viewY + view.viewH / 2);
-					this.ctx.rotate(view.angle * Math.PI / 180);
+					this.ctx.translate(view.viewW / 2, view.viewH / 2);
+					this.ctx.rotate(-view.angle * Math.PI / 180);
 					this.ctx.translate(-view.viewW / 2, -view.viewH / 2);
+					this.ctx.translate(-view.viewX, -view.viewY);
 
 					await this.drawRoom();
 
 					this.ctx.restore();
 					this.ctx = this.canvasCtx;
+					this.currentCanvas = this.canvas;
 
 					this.ctx.drawImage(this.offscreenCanvas, view.portX, view.portY, view.portW, view.portH);
 				}
@@ -114,12 +117,15 @@ export default class GameRender {
 
 	// Draw the room elements on the current view.
 	async drawRoom() {
-		// Draw background color // TODO this should ignore views
+		// Draw background color
+
+		this.ctx.save();
+		this.ctx.resetTransform();
 		if (this.game.room.backgroundShowColor) {
 			this.ctx.fillStyle = this.game.room.backgroundColor;
-			this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+			this.ctx.fillRect(0, 0, this.currentCanvas.width, this.currentCanvas.height);
 		}
-		// this.ctx.fillStyle = "black";
+		this.ctx.restore();
 
 		// Draw background backgrounds
 
@@ -360,12 +366,17 @@ export default class GameRender {
 	}
 
 	drawClear(col, alpha=1) {
+		this.ctx.save();
+		this.ctx.resetTransform();
+
 		if (alpha != 1) {
-			this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+			this.ctx.clearRect(0, 0, this.currentCanvas.width, this.currentCanvas.height);
 		}
 
 		this.ctx.fillStyle = decimalToHexAlpha(col, alpha);
-		this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		this.ctx.fillRect(0, 0, this.currentCanvas.width, this.currentCanvas.height);
+
+		this.restore();
 	}
 
 	drawPoint(x, y) {

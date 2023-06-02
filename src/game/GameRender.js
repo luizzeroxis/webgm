@@ -10,7 +10,7 @@ export default class GameRender {
 		this.canvas.setAttribute("tabindex", 0);
 
 		this.currentCanvas = this.canvas;
-		this.offscreenCanvas = null;
+		this.offscreenCanvas = new OffscreenCanvas(0, 0);
 
 		this.canvasCtx = this.canvas.getContext("2d", {alpha: false});
 		this.ctx = this.canvasCtx;
@@ -84,7 +84,6 @@ export default class GameRender {
 			this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
 			this.currentView = 0;
-			this.offscreenCanvas = new OffscreenCanvas(0, 0);
 
 			for (const view of this.game.room.views) {
 				if (view.visible) {
@@ -119,13 +118,13 @@ export default class GameRender {
 	async drawRoom() {
 		// Draw background color
 
-		this.ctx.save();
-		this.ctx.resetTransform();
 		if (this.game.room.backgroundShowColor) {
+			this.ctx.save();
+			this.ctx.resetTransform();
 			this.ctx.fillStyle = this.game.room.backgroundColor;
 			this.ctx.fillRect(0, 0, this.currentCanvas.width, this.currentCanvas.height);
+			this.ctx.restore();
 		}
-		this.ctx.restore();
 
 		// Draw background backgrounds
 

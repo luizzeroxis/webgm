@@ -1,7 +1,7 @@
 import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HButton, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from "~/common/h";
 import ImageWrapper from "~/common/ImageWrapper.js";
-import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground} from "~/common/project/ProjectProperties.js";
+import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground, ProjectRoomView} from "~/common/project/ProjectProperties.js";
 import HTabControl from "~/editor/components/HTabControl/HTabControl.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
 import DefaultInstanceIcon from "~/editor/img/default-instance-icon.png";
@@ -15,7 +15,7 @@ export default class HWindowRoom extends HWindow {
 
 		this.updateTitle();
 
-		// Create paramInstances and paramBackgrounds as copies
+		// Create paramInstances, paramBackgrounds and paramViews as copies
 		this.copyProperties();
 
 		parent(this.client);
@@ -151,6 +151,94 @@ export default class HWindowRoom extends HWindow {
 						});
 
 						this.updateBackgroundProperties();
+
+						endparent();
+
+					parent( this.tabControl.addTab("Views") );
+						this.inputEnableViews = add( new HCheckBoxInput("Enable the use of Views", room.enableViews) );
+
+						this.selectViews = add( new HSelect(null, "views") );
+						this.selectViewsOptions = [];
+
+						parent(this.selectViews.select);
+							for (let i=0; i<8; ++i) {
+								const view = this.getView(i);
+								const _class = (view.visibleAtStart ? "bold" : null);
+								this.selectViewsOptions[i] = add( new HOption("View "+i.toString(), i, _class) );
+							}
+							endparent();
+
+						this.selectViews.select.html.size = 8;
+
+						this.selectViews.setOnChange(() => {
+							this.updateViewProperties();
+						});
+
+						this.inputViewVisibleAtStart = add( new HCheckBoxInput("Visible when room starts") );
+						this.inputViewVisibleAtStart.setOnChange(() => {
+							const currentViewId = this.selectViews.getValue();
+							const currentView = this.getOrCreateView(currentViewId);
+
+							currentView.visibleAtStart = this.inputViewVisibleAtStart.getChecked();
+
+							if (currentView.visibleAtStart) {
+								this.selectViewsOptions[currentViewId].html.classList.add("bold");
+							} else {
+								this.selectViewsOptions[currentViewId].html.classList.remove("bold");
+							}
+						});
+
+						parent( add( new HElement("fieldset") ) );
+							add( new HElement("legend", {}, "View in room") );
+
+							this.inputViewX = add( new HNumberInput("X:") );
+							this.inputViewX.setOnChange(() => {
+								this.getOrCreateCurrentView().viewX = this.inputViewX.getFloatValue();
+							});
+
+							this.inputViewY = add( new HNumberInput("Y:") );
+							this.inputViewY.setOnChange(() => {
+								this.getOrCreateCurrentView().viewY = this.inputViewY.getFloatValue();
+							});
+
+							this.inputViewW = add( new HNumberInput("W:") );
+							this.inputViewW.setOnChange(() => {
+								this.getOrCreateCurrentView().viewW = this.inputViewW.getFloatValue();
+							});
+
+							this.inputViewH = add( new HNumberInput("H:") );
+							this.inputViewH.setOnChange(() => {
+								this.getOrCreateCurrentView().viewH = this.inputViewH.getFloatValue();
+							});
+
+							endparent();
+
+						parent( add( new HElement("fieldset") ) );
+							add( new HElement("legend", {}, "Port on screen") );
+
+							this.inputPortX = add( new HNumberInput("X:") );
+							this.inputPortX.setOnChange(() => {
+								this.getOrCreateCurrentView().portX = this.inputPortX.getFloatValue();
+							});
+
+							this.inputPortY = add( new HNumberInput("Y:") );
+							this.inputPortY.setOnChange(() => {
+								this.getOrCreateCurrentView().portY = this.inputPortY.getFloatValue();
+							});
+
+							this.inputPortW = add( new HNumberInput("W:") );
+							this.inputPortW.setOnChange(() => {
+								this.getOrCreateCurrentView().portW = this.inputPortW.getFloatValue();
+							});
+
+							this.inputPortH = add( new HNumberInput("H:") );
+							this.inputPortH.setOnChange(() => {
+								this.getOrCreateCurrentView().portH = this.inputPortH.getFloatValue();
+							});
+
+							endparent();
+
+						this.updateViewProperties();
 
 						endparent();
 
@@ -297,6 +385,10 @@ export default class HWindowRoom extends HWindow {
 
 					room.backgrounds = this.paramBackgrounds;
 
+					room.enableViews = this.inputEnableViews.getChecked();
+
+					room.views = this.paramViews;
+
 					// In GM, these ids are saved instantly. Even if you close and don't save the room, it still uses the ids. In this project, ideally resource editors would only change the project when you press ok or apply. Because of that, we create the ProjectInstances without ids, and only when saving we fill in the ids.
 
 					for (const instance of this.paramInstances) {
@@ -308,7 +400,7 @@ export default class HWindowRoom extends HWindow {
 
 					room.instances = this.paramInstances;
 
-					// Make sure that paramInstances and paramBackgrounds are copies
+					// Make sure that paramInstances, paramBackgrounds and paramViews are copies
 					this.copyProperties();
 
 					this.updateTitle();
@@ -364,6 +456,10 @@ export default class HWindowRoom extends HWindow {
 		this.paramBackgrounds = this.room.backgrounds.map(background => {
 			if (background == null) return null;
 			return new ProjectRoomBackground(background);
+		});
+		this.paramViews = this.room.views.map(view => {
+			if (view == null) return null;
+			return new ProjectRoomView(view);
 		});
 		this.paramInstances = this.room.instances.map(instance => {
 			return new ProjectInstance(instance);
@@ -464,8 +560,7 @@ export default class HWindowRoom extends HWindow {
 	}
 
 	updateBackgroundProperties() {
-		const currentBackgroundId = this.selectBackgrounds.getValue();
-		const currentBackground = this.getBackground(currentBackgroundId);
+		const currentBackground = this.getBackground(this.selectBackgrounds.getValue());
 
 		this.inputBackgroundVisibleAtStart.setChecked(currentBackground.visibleAtStart);
 		this.inputForeground.setChecked(currentBackground.isForeground);
@@ -477,6 +572,41 @@ export default class HWindowRoom extends HWindow {
 		this.inputY.setValue(currentBackground.y);
 		this.inputHorizontalSpeed.setValue(currentBackground.horizontalSpeed);
 		this.inputVerticalSpeed.setValue(currentBackground.verticalSpeed);
+	}
+
+	// Views
+
+	getView(index) {
+		const currentView = this.paramViews[index];
+		if (currentView == null) {
+			return new ProjectRoomView(); // default values used
+		}
+		return currentView;
+	}
+
+	getOrCreateView(index) {
+		if (this.paramViews[index] == null) {
+			this.paramViews[index] = new ProjectRoomView(); // default values used
+		}
+		return this.paramViews[index];
+	}
+
+	getOrCreateCurrentView() {
+		return this.getOrCreateView(this.selectViews.getValue());
+	}
+
+	updateViewProperties() {
+		const currentView = this.getView(this.selectViews.getValue());
+
+		this.inputViewVisibleAtStart.setChecked(currentView.visibleAtStart);
+		this.inputViewX.setValue(currentView.viewX);
+		this.inputViewY.setValue(currentView.viewY);
+		this.inputViewW.setValue(currentView.viewW);
+		this.inputViewH.setValue(currentView.viewH);
+		this.inputPortX.setValue(currentView.portX);
+		this.inputPortY.setValue(currentView.portY);
+		this.inputPortW.setValue(currentView.portW);
+		this.inputPortH.setValue(currentView.portH);
 	}
 
 	// Preview

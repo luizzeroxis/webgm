@@ -421,8 +421,16 @@ body, button, input, select {
 		flex: none;
 		overflow-y: auto;
 
-		> .properties-tabs > .content > .backgrounds > select {
-			overflow: auto;
+		> .properties-tabs > .content {
+			> .backgrounds, > .views {
+				> select {
+					overflow: auto;
+
+					> option.bold {
+						font-weight: bold;
+					}
+				}
+			}
 		}
 	}
 

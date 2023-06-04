@@ -179,8 +179,8 @@ export default class GameRender {
 			const image = this.cursorSprite.images[Math.floor(Math.floor(this.cursorImageIndex) % this.cursorSprite.images.length)]?.image;
 			if (image) {
 				this.ctx.drawImage(image,
-					this.game.input.mouseX - this.cursorSprite.originx,
-					this.game.input.mouseY - this.cursorSprite.originy);
+					this.game.input.mouseXInCurrentView - this.cursorSprite.originx,
+					this.game.input.mouseYInCurrentView - this.cursorSprite.originy);
 			}
 			this.cursorImageIndex = ((++this.cursorImageIndex) % this.cursorSprite.images.length);
 		}

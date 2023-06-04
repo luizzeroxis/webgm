@@ -32,6 +32,9 @@ export default class GameInput {
 
 		this.mouseDisplayX = 0;
 		this.mouseDisplayY = 0;
+
+		this.mouseXInCurrentView = 0;
+		this.mouseYInCurrentView = 0;
 	}
 
 	start() {
@@ -101,8 +104,8 @@ export default class GameInput {
 			const rect = this.inputElement.getBoundingClientRect();
 			this.mouseDisplayX = e.clientX + document.documentElement.scrollLeft;
 			this.mouseDisplayY = e.clientY + document.documentElement.scrollTop;
-			this.mouseX = Math.floor(Math.max(0, Math.min(e.clientX - rect.left, this.game.room?.width ?? 0)));
-			this.mouseY = Math.floor(Math.max(0, Math.min(e.clientY - rect.top, this.game.room?.height ?? 0)));
+			this.mouseX = Math.floor(e.clientX - rect.left);
+			this.mouseY = Math.floor(e.clientY - rect.top);
 		};
 		this.inputElement.addEventListener("mousemove", this.mouseMoveHandler);
 
@@ -183,6 +186,64 @@ export default class GameInput {
 			return Object.values(dict).every(value => !value);
 		}
 		return dict[numb];
+	}
+
+	updateMousePositionInCurrentView() {
+		if (!this.game.room.viewsEnabled) {
+			this.mouseXInCurrentView = this.mouseX;
+			this.mouseYInCurrentView = this.mouseY;
+			return;
+		}
+
+		let currentView = null;
+		let firstVisibleView = null;
+
+		for (const view of [...this.game.room.views].reverse()) {
+			if (view.visible) {
+				if (this.mouseX >= view.portX && this.mouseX < view.portX + view.portW
+					&& this.mouseY >= view.portY && this.mouseY < view.portY + view.portH) {
+					currentView = view;
+					break;
+				}
+				firstVisibleView = view;
+			}
+		}
+
+		if (currentView == null) {
+			if (firstVisibleView == null) {
+				this.mouseXInCurrentView = this.mouseX;
+				this.mouseYInCurrentView = this.mouseY;
+				return;
+			}
+
+			currentView = firstVisibleView;
+		}
+
+		const pos = this.getMousePositionOnView(currentView);
+		this.mouseXInCurrentView = pos.x;
+		this.mouseYInCurrentView = pos.y;
+	}
+
+	getMousePositionOnView(view) {
+		let x = this.mouseX;
+		let y = this.mouseY;
+
+		[x, y] = [x - view.portX, y - view.portY];
+
+		[x, y] = [x * view.viewW / view.portW, y * view.viewH / view.portH];
+
+		[x, y] = [x + view.viewX, y + view.viewY];
+
+		[x, y] = [x - view.viewW / 2, y - view.viewH / 2];
+
+		const a = -view.angle * Math.PI/180;
+		const cos = Math.cos(a);
+		const sin = -Math.sin(a);
+		[x, y] = [cos*x - sin*y, sin*x + cos*y];
+
+		[x, y] = [x + view.viewW / 2, y + view.viewH / 2];
+
+		return {x, y};
 	}
 
 	static codeToWhichMap = {

@@ -264,11 +264,11 @@ export default class BuiltInGlobals {
 	// User Interaction / The Mouse
 
 	static mouse_x = {readOnly: true,
-		get() { return this.input.mouseX; },
+		get() { return this.input.mouseXInCurrentView; },
 	};
 
 	static mouse_y = {readOnly: true,
-		get() { return this.input.mouseY; },
+		get() { return this.input.mouseYInCurrentView; },
 	};
 
 	static mouse_button = {type: "integer",

@@ -363,13 +363,13 @@ export default class Game {
 
 					if (execute && !eventInfo.global) {
 						// check if mouse is hovering over instance
-						execute = this.collision.instanceOnPoint(instance, {x: this.input.mouseX, y: this.input.mouseY});
+						execute = this.collision.instanceOnPoint(instance, {x: this.input.mouseXInCurrentView, y: this.input.mouseYInCurrentView});
 					}
 				} else
 				if (eventInfo.kind == "enter-leave") {
 					// TODO check when this check is done
 					if (instance.mouseInChanged == null) {
-						const mouseIn = this.collision.instanceOnPoint(instance, {x: this.input.mouseX, y: this.input.mouseY});
+						const mouseIn = this.collision.instanceOnPoint(instance, {x: this.input.mouseXInCurrentView, y: this.input.mouseYInCurrentView});
 
 						instance.mouseInChanged = (instance.mouseIn != mouseIn);
 						instance.mouseIn = mouseIn;
@@ -478,6 +478,9 @@ export default class Game {
 			if (!instance.exists) continue;
 			await this.doEvent(event, instance);
 		}
+
+		// Update mouse position in view
+		this.input.updateMousePositionInCurrentView();
 
 		// Draw
 		await this.render.drawViews();
@@ -875,6 +878,9 @@ export default class Game {
 			const OTHER_ROOM_START = 4;
 			await this.doEventOfInstance("other", OTHER_ROOM_START, instance);
 		}
+
+		// Update mouse position in view
+		this.input.updateMousePositionInCurrentView();
 
 		await this.render.drawViews();
 	}

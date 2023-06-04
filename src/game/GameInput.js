@@ -199,6 +199,7 @@ export default class GameInput {
 		let firstVisibleView = null;
 
 		for (const view of [...this.game.room.views].reverse()) {
+			if (!view) continue;
 			if (view.visible) {
 				if (this.mouseX >= view.portX && this.mouseX < view.portX + view.portW
 					&& this.mouseY >= view.portY && this.mouseY < view.portY + view.portH) {

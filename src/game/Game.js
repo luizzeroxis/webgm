@@ -487,6 +487,7 @@ export default class Game {
 
 		// Update some global variables
 		for (const roomBackground of this.room.backgrounds) {
+			if (!roomBackground) continue;
 			roomBackground.x += roomBackground.horizontalSpeed;
 			roomBackground.y += roomBackground.verticalSpeed;
 		}
@@ -788,6 +789,8 @@ export default class Game {
 			viewsEnabled: room.enableViews,
 
 			backgrounds: room.backgrounds.map(roomBackground => {
+				if (!roomBackground) return null;
+
 				let xScale = 1;
 				let yScale = 1;
 				if (roomBackground.stretch) {
@@ -817,30 +820,35 @@ export default class Game {
 
 			// TODO tiles
 
-			views: room.views.map(view => ({
-				visible: view.visibleAtStart,
-				viewX: view.viewX,
-				viewY: view.viewY,
-				viewW: view.viewW,
-				viewH: view.viewH,
-				portX: view.portX,
-				portY: view.portY,
-				portW: view.portW,
-				portH: view.portH,
-				objectFollowIndex: view.objectFollowIndex, // TODO
-				objectFollowHorizontalBorder: view.objectFollowHorizontalBorder,
-				objectFollowVerticalBorder: view.objectFollowVerticalBorder,
-				objectFollowHorizontalSpeed: view.objectFollowHorizontalSpeed,
-				objectFollowVerticalSpeed: view.objectFollowVerticalSpeed,
+			views: room.views.map(view => {
+				if (!view) return null;
 
-				angle: 0,
-			})),
+				return {
+					visible: view.visibleAtStart,
+					viewX: view.viewX,
+					viewY: view.viewY,
+					viewW: view.viewW,
+					viewH: view.viewH,
+					portX: view.portX,
+					portY: view.portY,
+					portW: view.portW,
+					portH: view.portH,
+					objectFollowIndex: view.objectFollowIndex, // TODO
+					objectFollowHorizontalBorder: view.objectFollowHorizontalBorder,
+					objectFollowVerticalBorder: view.objectFollowVerticalBorder,
+					objectFollowHorizontalSpeed: view.objectFollowHorizontalSpeed,
+					objectFollowVerticalSpeed: view.objectFollowVerticalSpeed,
+
+					angle: 0,
+				};
+			}),
 		};
 
 		if (room.enableViews) {
 			let w = 0;
 			let h = 0;
 			for (const view of room.views) {
+				if (!view) continue;
 				w = Math.max(w, view.portX + view.portW);
 				h = Math.max(h, view.portY + view.portH);
 			}

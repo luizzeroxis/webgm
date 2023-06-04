@@ -86,6 +86,7 @@ export default class GameRender {
 			this.currentView = 0;
 
 			for (const view of this.game.room.views) {
+				if (!view) continue;
 				if (view.visible) {
 					this.offscreenCanvas.width = view.viewW;
 					this.offscreenCanvas.height = view.viewH;

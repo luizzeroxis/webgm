@@ -65,51 +65,12 @@ export default class HWindowRoom extends HWindow {
 						this.inputDrawBackgroundColor = add( new HCheckBoxInput("Draw background color", room.drawBackgroundColor) );
 						this.inputBackgroundColor = add( new HColorInput("Color:", room.backgroundColor) );
 
-						const getBackground = (index) => {
-							const currentBackground = this.paramBackgrounds[index];
-							if (currentBackground == null) {
-								return new ProjectRoomBackground(); // default values used
-							}
-							return currentBackground;
-						};
-
-						const getOrCreateBackground = (index) => {
-							if (this.paramBackgrounds[index] == null) {
-								this.paramBackgrounds[index] = new ProjectRoomBackground(); // default values used
-							}
-							return this.paramBackgrounds[index];
-						};
-
-						const getOrCreateCurrentBackground = () => {
-							const currentBackgroundId = this.selectBackgrounds.getValue();
-							if (this.paramBackgrounds[currentBackgroundId] == null) {
-								this.paramBackgrounds[currentBackgroundId] = new ProjectRoomBackground();
-							}
-							return this.paramBackgrounds[currentBackgroundId];
-						};
-
-						const updateBackgroundProperties = () => {
-							const currentBackgroundId = this.selectBackgrounds.getValue();
-							const currentBackground = getBackground(currentBackgroundId);
-
-							this.inputBackgroundVisibleAtStart.setChecked(currentBackground.visibleAtStart);
-							this.inputForeground.setChecked(currentBackground.isForeground);
-							this.selectResourceBackground.setValue(currentBackground.backgroundIndex);
-							this.inputTileHorizontally.setChecked(currentBackground.tileHorizontally);
-							this.inputTileVertically.setChecked(currentBackground.tileVertically);
-							this.inputStretch.setChecked(currentBackground.stretch);
-							this.inputX.setValue(currentBackground.x);
-							this.inputY.setValue(currentBackground.y);
-							this.inputHorizontalSpeed.setValue(currentBackground.horizontalSpeed);
-							this.inputVerticalSpeed.setValue(currentBackground.verticalSpeed);
-						};
-
 						this.selectBackgrounds = add( new HSelect(null, "backgrounds") );
 						this.selectBackgroundsOptions = [];
 
 						parent(this.selectBackgrounds.select);
 							for (let i=0; i<8; ++i) {
-								const background = getBackground(i);
+								const background = this.getBackground(i);
 								const _class = (background.visibleAtStart ? "bold" : null);
 								this.selectBackgroundsOptions[i] = add( new HOption("Background "+i.toString(), i, _class) );
 							}
@@ -118,13 +79,13 @@ export default class HWindowRoom extends HWindow {
 						this.selectBackgrounds.select.html.size = 8;
 
 						this.selectBackgrounds.setOnChange(() => {
-							updateBackgroundProperties();
+							this.updateBackgroundProperties();
 						});
 
 						this.inputBackgroundVisibleAtStart = add( new HCheckBoxInput("Visible when room starts") );
 						this.inputBackgroundVisibleAtStart.setOnChange(() => {
 							const currentBackgroundId = this.selectBackgrounds.getValue();
-							const currentBackground = getOrCreateBackground(currentBackgroundId);
+							const currentBackground = this.getOrCreateBackground(currentBackgroundId);
 
 							currentBackground.visibleAtStart = this.inputBackgroundVisibleAtStart.getChecked();
 
@@ -139,57 +100,57 @@ export default class HWindowRoom extends HWindow {
 
 						this.inputForeground = add( new HCheckBoxInput("Foreground image") );
 						this.inputForeground.setOnChange(() => {
-							getOrCreateCurrentBackground().isForeground = this.inputForeground.getChecked();
+							this.getOrCreateCurrentBackground().isForeground = this.inputForeground.getChecked();
 							this.updateCanvasPreview();
 						});
 
 						this.selectResourceBackground = add( new HResourceSelect(this.editor, null, ProjectBackground) );
 						this.selectResourceBackground.setOnChange(() => {
-							getOrCreateCurrentBackground().backgroundIndex = this.selectResourceBackground.getValue();
+							this.getOrCreateCurrentBackground().backgroundIndex = this.selectResourceBackground.getValue();
 							this.updateCanvasPreview();
 						});
 
 						this.inputTileHorizontally = add( new HCheckBoxInput("Tile Hor.") );
 						this.inputTileHorizontally.setOnChange(() => {
-							getOrCreateCurrentBackground().tileHorizontally = this.inputTileHorizontally.getChecked();
+							this.getOrCreateCurrentBackground().tileHorizontally = this.inputTileHorizontally.getChecked();
 							this.updateCanvasPreview();
 						});
 
 						this.inputTileVertically = add( new HCheckBoxInput("Tile Vert.") );
 						this.inputTileVertically.setOnChange(() => {
-							getOrCreateCurrentBackground().tileVertically = this.inputTileVertically.getChecked();
+							this.getOrCreateCurrentBackground().tileVertically = this.inputTileVertically.getChecked();
 							this.updateCanvasPreview();
 						});
 
 						this.inputStretch = add( new HCheckBoxInput("Stretch") );
 						this.inputStretch.setOnChange(() => {
-							getOrCreateCurrentBackground().stretch = this.inputStretch.getChecked();
+							this.getOrCreateCurrentBackground().stretch = this.inputStretch.getChecked();
 							this.updateCanvasPreview();
 						});
 
 						this.inputX = add( new HNumberInput("X:") );
 						this.inputX.setOnChange(() => {
-							getOrCreateCurrentBackground().x = this.inputX.getFloatValue();
+							this.getOrCreateCurrentBackground().x = this.inputX.getFloatValue();
 							this.updateCanvasPreview();
 						});
 
 						this.inputY = add( new HNumberInput("Y:") );
 						this.inputY.setOnChange(() => {
-							getOrCreateCurrentBackground().y = this.inputY.getFloatValue();
+							this.getOrCreateCurrentBackground().y = this.inputY.getFloatValue();
 							this.updateCanvasPreview();
 						});
 
 						this.inputHorizontalSpeed = add( new HNumberInput("Hor. Speed:") );
 						this.inputHorizontalSpeed.setOnChange(() => {
-							getOrCreateCurrentBackground().horizontalSpeed = this.inputHorizontalSpeed.getFloatValue();
+							this.getOrCreateCurrentBackground().horizontalSpeed = this.inputHorizontalSpeed.getFloatValue();
 						});
 
 						this.inputVerticalSpeed = add( new HNumberInput("Vert. Speed:") );
 						this.inputVerticalSpeed.setOnChange(() => {
-							getOrCreateCurrentBackground().verticalSpeed = this.inputVerticalSpeed.getFloatValue();
+							this.getOrCreateCurrentBackground().verticalSpeed = this.inputVerticalSpeed.getFloatValue();
 						});
 
-						updateBackgroundProperties();
+						this.updateBackgroundProperties();
 
 						endparent();
 
@@ -409,26 +370,7 @@ export default class HWindowRoom extends HWindow {
 		});
 	}
 
-	getMousePosition(e) {
-		const x = e.offsetX;
-		const y = e.offsetY;
-		return {x: x, y: y};
-	}
-
-	snapMousePosition(pos) {
-		let x = pos.x;
-		let y = pos.y;
-
-		if (this.inputSnapToGrid.getChecked()) {
-			const snapX = Math.max(1, parseInt(this.inputSnapX.getValue()) || 0);
-			const snapY = Math.max(1, parseInt(this.inputSnapY.getValue()) || 0);
-
-			x = Math.floor(x / snapX) * snapX;
-			y = Math.floor(y / snapY) * snapY;
-		}
-
-		return {x: x, y: y};
-	}
+	// Objects
 
 	addInstance() {
 		if (this.selectObject.getValue() == -1) return null;
@@ -494,6 +436,70 @@ export default class HWindowRoom extends HWindow {
 		} else {
 			return false;
 		}
+	}
+
+	// Backgrounds
+
+	getBackground(index) {
+		const currentBackground = this.paramBackgrounds[index];
+		if (currentBackground == null) {
+			return new ProjectRoomBackground(); // default values used
+		}
+		return currentBackground;
+	}
+
+	getOrCreateBackground(index) {
+		if (this.paramBackgrounds[index] == null) {
+			this.paramBackgrounds[index] = new ProjectRoomBackground(); // default values used
+		}
+		return this.paramBackgrounds[index];
+	}
+
+	getOrCreateCurrentBackground() {
+		const currentBackgroundId = this.selectBackgrounds.getValue();
+		if (this.paramBackgrounds[currentBackgroundId] == null) {
+			this.paramBackgrounds[currentBackgroundId] = new ProjectRoomBackground();
+		}
+		return this.paramBackgrounds[currentBackgroundId];
+	}
+
+	updateBackgroundProperties() {
+		const currentBackgroundId = this.selectBackgrounds.getValue();
+		const currentBackground = this.getBackground(currentBackgroundId);
+
+		this.inputBackgroundVisibleAtStart.setChecked(currentBackground.visibleAtStart);
+		this.inputForeground.setChecked(currentBackground.isForeground);
+		this.selectResourceBackground.setValue(currentBackground.backgroundIndex);
+		this.inputTileHorizontally.setChecked(currentBackground.tileHorizontally);
+		this.inputTileVertically.setChecked(currentBackground.tileVertically);
+		this.inputStretch.setChecked(currentBackground.stretch);
+		this.inputX.setValue(currentBackground.x);
+		this.inputY.setValue(currentBackground.y);
+		this.inputHorizontalSpeed.setValue(currentBackground.horizontalSpeed);
+		this.inputVerticalSpeed.setValue(currentBackground.verticalSpeed);
+	}
+
+	// Preview
+
+	getMousePosition(e) {
+		const x = e.offsetX;
+		const y = e.offsetY;
+		return {x: x, y: y};
+	}
+
+	snapMousePosition(pos) {
+		let x = pos.x;
+		let y = pos.y;
+
+		if (this.inputSnapToGrid.getChecked()) {
+			const snapX = Math.max(1, parseInt(this.inputSnapX.getValue()) || 0);
+			const snapY = Math.max(1, parseInt(this.inputSnapY.getValue()) || 0);
+
+			x = Math.floor(x / snapX) * snapX;
+			y = Math.floor(y / snapY) * snapY;
+		}
+
+		return {x: x, y: y};
 	}
 
 	async updateCanvasPreview() {

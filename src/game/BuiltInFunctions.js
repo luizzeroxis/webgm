@@ -3783,42 +3783,39 @@ export default class BuiltInFunctions {
 	// ## Views
 
 	static window_set_region_size = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function window_set_region_size is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "bool"}],
+		func: function([w, h, adaptwindow]) { // eslint-disable-line no-unused-vars
+			// TODO adaptwindow
+			this.game.render.setSize(w, h);
+			return 0;
 		},
 	};
 
 	static window_get_region_width = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function window_get_region_width is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			return this.game.render.canvas.width;
 		},
 	};
 
 	static window_get_region_height = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function window_get_region_height is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			return this.game.render.canvas.height;
 		},
 	};
 
 	static window_view_mouse_get_x = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function window_view_mouse_get_x is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.input.getMousePositionOnView(this.game.getRoomView(id)).x;
 		},
 	};
 
 	static window_view_mouse_get_y = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function window_view_mouse_get_y is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.input.getMousePositionOnView(this.game.getRoomView(id)).y;
 		},
 	};
 
@@ -3831,18 +3828,16 @@ export default class BuiltInFunctions {
 	};
 
 	static window_views_mouse_get_x = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function window_views_mouse_get_x is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			return this.game.input.mouseXInCurrentView;
 		},
 	};
 
 	static window_views_mouse_get_y = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function window_views_mouse_get_y is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			return this.game.input.mouseYInCurrentView;
 		},
 	};
 

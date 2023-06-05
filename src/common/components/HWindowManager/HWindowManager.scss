@@ -101,9 +101,19 @@
 			}
 		}
 
+		&.minimized {
+			> .contents {
+				> .client {
+					display: none;
+				}
+			}
+		}
+
 		&.maximized {
 			display: flex;
 			flex-direction: column;
+			width: 100%;
+			height: 100%;
 
 			> .border {
 				display: none;

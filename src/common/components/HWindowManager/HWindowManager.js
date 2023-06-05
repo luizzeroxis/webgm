@@ -8,6 +8,7 @@ export default class HWindowManager extends HElement {
 
 		this.windows = [];
 		this.cascadeDiff = 24;
+		this.minimizedSize = 250;
 	}
 
 	// Opens or focus on a window. idFunc(window) will be called for each window; it should return a bool that determines if it's the same window as the one you're tryng to open. If window doesn't exist yet, a new windowClass(manager, ...args) will be created. If window exists, it will be focused on.

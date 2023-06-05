@@ -15,6 +15,7 @@ export default class HWindow extends HElement {
 		this.h = 0;
 
 		this.restore = {x: 0, y: 0, w: 0, h: 0};
+		this.isMinimized = false;
 		this.isMaximized = false;
 
 		this.windowChildren = [];
@@ -44,7 +45,7 @@ export default class HWindow extends HElement {
 					setDraggable(this.titleBar,
 						e => { // mousedown
 							if (e.target != this.titleBar.html && e.target != this.title.html) return false;
-							if (this.isMaximized) return false;
+							if (this.isMaximized && !this.isMinimized) return false;
 
 							// Pos relative to window
 							const rect = this.html.getBoundingClientRect();
@@ -68,8 +69,15 @@ export default class HWindow extends HElement {
 					);
 
 					this.title = add( new HElement("div", {class: "title"}) );
-					this.restoreMaximizeButton = add( new HButton("Maximize", () => this.restoreMaximize(), "restore-maximize") );
-					this.closeButton = add( new HButton("Close", () => this.close(), "close") );
+
+					this.minimizeButton = add( new HButton("🗕", () => this.minimize(), "minimize") );
+					this.minimizeButton.html.title = "Minimize";
+
+					this.maximizeButton = add( new HButton("🗖", () => this.maximize(), "maximize") );
+					this.maximizeButton.html.title = "Maximize";
+
+					this.closeButton = add( new HButton("🗙", () => this.close(), "close") );
+					this.closeButton.html.title = "Close";
 					endparent();
 
 				this.client = add( new HElement("div", {class: "client"}) );
@@ -141,26 +149,100 @@ export default class HWindow extends HElement {
 		this.setSize(w, h);
 	}
 
-	restoreMaximize() {
-		if (!this.isMaximized) {
+	minimize() {
+		if (!this.isMinimized) {
+			this.html.classList.add("minimized");
+
+			if (!this.isMaximized) {
+				this.restore = {x: this.x, y: this.y, w: this.w, h: this.h};
+			} else {
+				this.html.classList.remove("maximized");
+
+				this.maximizeButton.html.textContent = "🗖";
+				this.maximizeButton.html.title = "Maximize";
+			}
+
+			this.setSizeToDefault();
+			this.setSize(this.manager.minimizedSize, this.h);
+
+			const pos = this.getNextMinimizePosition();
+			this.setPosition(pos.x, pos.y );
+
+			this.minimizeButton.html.textContent = "🗗";
+			this.minimizeButton.html.title = "Restore";
+
+			this.isMinimized = true;
+		} else {
+			this.html.classList.remove("minimized");
+
+			if (!this.isMaximized) {
+				this.setSize(this.restore.w, this.restore.h);
+				this.setPosition(this.restore.x, this.restore.y);
+			} else {
+				this.html.classList.add("maximized");
+
+				this.html.style.removeProperty("width");
+				this.html.style.removeProperty("height");
+
+				this.setPosition(0, 0);
+
+				this.maximizeButton.html.textContent = "🗗";
+				this.maximizeButton.html.title = "Restore";
+			}
+
+			this.minimizeButton.html.textContent = "🗕";
+			this.minimizeButton.html.title = "Minimize";
+
+			this.isMinimized = false;
+		}
+	}
+
+	maximize() {
+		if (this.isMinimized) {
+			this.html.classList.remove("minimized");
+
+			this.minimizeButton.html.textContent = "🗕";
+			this.minimizeButton.html.title = "Minimize";
+
+			this.isMinimized = false;
+
 			this.html.classList.add("maximized");
 
-			this.restore = {x: this.x, y: this.y, w: this.w, h: this.h};
+			this.html.style.removeProperty("width");
+			this.html.style.removeProperty("height");
 
-			const {w, h} = this.getMaxSize();
-			this.setSize(w, h);
 			this.setPosition(0, 0);
 
-			this.restoreMaximizeButton.html.textContent = "Restore";
+			this.maximizeButton.html.textContent = "🗗";
+			this.maximizeButton.html.title = "Restore";
+
 			this.isMaximized = true;
 		} else {
-			this.html.classList.remove("maximized");
+			if (!this.isMaximized) {
+				this.html.classList.add("maximized");
 
-			this.setSize(this.restore.w, this.restore.h);
-			this.setPosition(this.restore.x, this.restore.y);
+				this.restore = {x: this.x, y: this.y, w: this.w, h: this.h};
 
-			this.restoreMaximizeButton.html.textContent = "Maximize";
-			this.isMaximized = false;
+				this.html.style.removeProperty("width");
+				this.html.style.removeProperty("height");
+
+				this.setPosition(0, 0);
+
+				this.maximizeButton.html.textContent = "🗗";
+				this.maximizeButton.html.title = "Restore";
+
+				this.isMaximized = true;
+			} else {
+				this.html.classList.remove("maximized");
+
+				this.setSize(this.restore.w, this.restore.h);
+				this.setPosition(this.restore.x, this.restore.y);
+
+				this.maximizeButton.html.textContent = "🗖";
+				this.maximizeButton.html.title = "Maximize";
+
+				this.isMaximized = false;
+			}
 		}
 	}
 
@@ -171,6 +253,19 @@ export default class HWindow extends HElement {
 		const h = parseFloat(style.height);
 
 		return {w, h};
+	}
+
+	getNextMinimizePosition() {
+		let x = 0;
+		let y = this.getMaxSize().h - this.h;
+
+		for (const w of [...this.manager.windows].reverse()) {
+			if (w.isMinimized && w.x == x && w.y == y) {
+				x += this.manager.minimizedSize;
+			}
+		}
+
+		return {x, y};
 	}
 
 	openAsChild(windowClass, idFunc, ...args) {

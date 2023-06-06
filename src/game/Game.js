@@ -1,6 +1,7 @@
 import seedrandom from "seedrandom";
 
 import HMenuManager from "~/common/components/HMenuManager/HMenuManager.js";
+import HWindowManager from "~/common/components/HWindowManager/HWindowManager.js";
 import Dispatcher from "~/common/Dispatcher.js";
 import Events from "~/common/Events.js";
 import {HElement, parent, endparent, add} from "~/common/h";
@@ -95,6 +96,7 @@ export default class Game {
 		this.div = parent( new HElement("div", {class: "game"}) );
 			add(this.render.canvasHElement);
 
+			this.windowManager = add(new HWindowManager()); // TODO should this be here?
 			this.menuManager = add(new HMenuManager());
 			endparent(this.div);
 	}

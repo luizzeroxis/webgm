@@ -27,17 +27,21 @@ export default class HWindowManager extends HElement {
 		return w;
 	}
 
-	openModal(windowClass, ...args) {
+	addModal(w) {
 		parent(this);
 			const modal = parent( add( new HElement("div", {class: "modal"}) ) );
-				const w = add( new windowClass(this, ...args) );
+				add(w);
 				w.setModal(modal);
 				endparent();
 			endparent();
 
 		this.windows.unshift(w);
 		this.organize();
+	}
 
+	openModal(windowClass, ...args) {
+		const w = new windowClass(this, ...args);
+		this.addModal(w);
 		return w;
 	}
 

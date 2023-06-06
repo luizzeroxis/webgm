@@ -14,7 +14,8 @@
 	}
 
 	.h-window {
-		--border-size: 8px;
+		--border-size: 2px;
+		--resizable-border-size: 8px;
 
 		position: absolute;
 		display: grid;
@@ -22,41 +23,48 @@
 		grid-template-rows: var(--border-size) 1fr var(--border-size);
 		pointer-events: auto;
 
+		&.resizable {
+			grid-template-columns: var(--resizable-border-size) 1fr var(--resizable-border-size);
+			grid-template-rows: var(--resizable-border-size) 1fr var(--resizable-border-size);
+
+			> .border {
+				&.top-left {
+					cursor: nw-resize;
+				}
+
+				&.top {
+					cursor: n-resize;
+				}
+
+				&.top-right {
+					cursor: ne-resize;
+				}
+
+				&.left {
+					cursor: w-resize;
+				}
+
+				&.right {
+					cursor: e-resize;
+				}
+
+				&.bottom-left {
+					cursor: sw-resize;
+				}
+
+				&.bottom {
+					cursor: s-resize;
+				}
+
+				&.bottom-right {
+					cursor: se-resize;
+				}
+			}
+		}
+
 		> .border {
 			background-color: lightgray;
 			user-select: none;
-
-			&.top-left {
-				cursor: nw-resize;
-			}
-
-			&.top {
-				cursor: n-resize;
-			}
-
-			&.top-right {
-				cursor: ne-resize;
-			}
-
-			&.left {
-				cursor: w-resize;
-			}
-
-			&.right {
-				cursor: e-resize;
-			}
-
-			&.bottom-left {
-				cursor: sw-resize;
-			}
-
-			&.bottom {
-				cursor: s-resize;
-			}
-
-			&.bottom-right {
-				cursor: se-resize;
-			}
 
 			&.top-left, &.top, &.top-right {
 				border-top: 1px solid black;

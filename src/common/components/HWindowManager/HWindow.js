@@ -17,6 +17,7 @@ export default class HWindow extends HElement {
 		this.restore = {x: 0, y: 0, w: 0, h: 0};
 		this.isMinimized = false;
 		this.isMaximized = false;
+		this.isResizable = true;
 
 		this.windowChildren = [];
 		this.windowParent = null;
@@ -34,6 +35,8 @@ export default class HWindow extends HElement {
 		});
 
 		parent(this);
+
+			this.html.classList.add("resizable");
 
 			add( new HWindowBorder(this, "top-left") );
 			add( new HWindowBorder(this, "top") );
@@ -151,9 +154,35 @@ export default class HWindow extends HElement {
 		this.setSize(w, h);
 	}
 
+	setResizable(value) {
+		this.isResizable = value;
+		if (value) {
+			this.html.classList.add("resizable");
+		} else {
+			this.html.classList.remove("resizable");
+		}
+	}
+
+	setMinimizeButton(value) {
+		if (value) {
+			this.minimizeButton.html.style.removeProperty("display");
+		} else {
+			this.minimizeButton.html.style.setProperty("display", "none");
+		}
+	}
+
+	setMaximizeButton(value) {
+		if (value) {
+			this.maximizeButton.html.style.removeProperty("display");
+		} else {
+			this.maximizeButton.html.style.setProperty("display", "none");
+		}
+	}
+
 	minimize() {
 		if (!this.isMinimized) {
 			this.html.classList.add("minimized");
+			this.html.classList.remove("resizable");
 
 			if (!this.isMaximized) {
 				this.restore = {x: this.x, y: this.y, w: this.w, h: this.h};
@@ -176,6 +205,7 @@ export default class HWindow extends HElement {
 			this.isMinimized = true;
 		} else {
 			this.html.classList.remove("minimized");
+			this.setResizable(this.isResizable);
 
 			if (!this.isMaximized) {
 				this.setSize(this.restore.w, this.restore.h);
@@ -202,6 +232,7 @@ export default class HWindow extends HElement {
 	maximize() {
 		if (this.isMinimized) {
 			this.html.classList.remove("minimized");
+			this.setResizable(this.isResizable);
 
 			this.minimizeButton.html.textContent = "🗕";
 			this.minimizeButton.html.title = "Minimize";

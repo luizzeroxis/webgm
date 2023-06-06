@@ -7,12 +7,14 @@ export default class HWindowBorder extends HElement {
 
 		setDraggable(this,
 			e => { // mousedown
+				if (!win.isResizable) return false;
 				const rect = win.html.getBoundingClientRect();
 				this.offX = rect.width - (e.clientX - rect.left);
 				this.offY = rect.height - (e.clientY - rect.top);
 
 				this.offLeft = e.clientX - rect.left;
 				this.offTop = e.clientY - rect.top;
+				return true;
 			},
 			e => { // mousemove
 				let x = win.x;

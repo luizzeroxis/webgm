@@ -51,7 +51,7 @@
 }
 
 .h-window-manager {
-	> .h-window {
+	.h-window {
 		> .border {
 			background-color: var(--title-bar-background);
 			border-color: var(--window-border) !important;

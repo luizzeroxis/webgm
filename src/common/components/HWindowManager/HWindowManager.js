@@ -27,6 +27,20 @@ export default class HWindowManager extends HElement {
 		return w;
 	}
 
+	openModal(windowClass, ...args) {
+		parent(this);
+			const modal = parent( add( new HElement("div", {class: "modal"}) ) );
+				const w = add( new windowClass(this, ...args) );
+				w.setModal(modal);
+				endparent();
+			endparent();
+
+		this.windows.unshift(w);
+		this.organize();
+
+		return w;
+	}
+
 	find(windowClass, idFunc) {
 		return this.windows.find(w => w.constructor == windowClass && (idFunc?.(w) ?? true));
 	}
@@ -46,6 +60,9 @@ export default class HWindowManager extends HElement {
 	organize() {
 		this.windows.forEach((w, i) => {
 			w.html.style.zIndex = this.windows.length - i;
+			if (w.modal) {
+				w.modal.html.style.zIndex = w.html.style.zIndex;
+			}
 		});
 	}
 
@@ -53,6 +70,7 @@ export default class HWindowManager extends HElement {
 	delete(w) {
 		const index = this.windows.findIndex(x => x == w);
 		if (index >= 0) {
+			this.windows[index].modal?.remove();
 			this.windows[index].remove();
 			this.windows.splice(index, 1);
 			this.organize();
@@ -75,9 +93,7 @@ export default class HWindowManager extends HElement {
 
 	// Remove all windows.
 	clear() {
-		for (const w of this.windows) {
-			w.remove();
-		}
+		this.removeChildren();
 		this.windows = [];
 	}
 }

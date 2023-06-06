@@ -8,7 +8,12 @@
 	height: 100%;
 	pointer-events: none;
 
-	> .h-window {
+	> .modal {
+		background-color: rgba(0, 0, 0, 0.25);
+		height: 100%;
+	}
+
+	.h-window {
 		--border-size: 8px;
 
 		position: absolute;

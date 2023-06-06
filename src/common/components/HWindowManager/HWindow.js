@@ -24,6 +24,8 @@ export default class HWindow extends HElement {
 		this.offX = 0;
 		this.offY = 0;
 
+		this.modal = null;
+
 		this.html.addEventListener("focusin", () => {
 			this.manager.focus(this);
 		});
@@ -257,7 +259,7 @@ export default class HWindow extends HElement {
 
 	getNextMinimizePosition() {
 		let x = 0;
-		let y = this.getMaxSize().h - this.h;
+		const y = this.getMaxSize().h - this.h;
 
 		for (const w of [...this.manager.windows].reverse()) {
 			if (w.isMinimized && w.x == x && w.y == y) {
@@ -266,6 +268,14 @@ export default class HWindow extends HElement {
 		}
 
 		return {x, y};
+	}
+
+	setModal(modal) {
+		this.modal = modal;
+
+		// center
+		const maxSize = this.getMaxSize();
+		this.setPosition(maxSize.w / 2 - this.w / 2, maxSize.h / 2 - this.h / 2);
 	}
 
 	openAsChild(windowClass, idFunc, ...args) {

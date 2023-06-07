@@ -7,8 +7,40 @@ export default class HWindowManager extends HElement {
 		super("div", {class: "h-window-manager"});
 
 		this.windows = [];
+		this.focused = null;
+
 		this.cascadeDiff = 24;
 		this.minimizedSize = 250;
+
+		this.mouseDownHandler = null;
+		this.focusInHandler = null;
+	}
+
+	onAdd() {
+		this.mouseDownHandler = e => {
+			this.focusElement(e.target);
+		};
+		document.addEventListener("mousedown", this.mouseDownHandler);
+
+		this.focusInHandler = e => {
+			this.focusElement(e.target);
+		};
+		document.addEventListener("focusin", this.focusInHandler);
+	}
+
+	focusElement(element) {
+		let focus = null;
+		for (const w of this.windows) {
+			if (element == w.html || w.html.contains(element)) {
+				focus = w;
+			}
+		}
+
+		this.focus(focus);
+	}
+
+	onRemove() {
+		document.removeEventListener("mousedown", this.mouseDownHandler);
 	}
 
 	// Opens or focus on a window. idFunc(window) will be called for each window; it should return a bool that determines if it's the same window as the one you're tryng to open. If window doesn't exist yet, a new windowClass(manager, ...args) will be created. If window exists, it will be focused on.
@@ -22,6 +54,7 @@ export default class HWindowManager extends HElement {
 				endparent();
 
 			this.windows.unshift(w);
+			this.focus(w);
 			this.organize();
 		}
 		return w;
@@ -36,6 +69,7 @@ export default class HWindowManager extends HElement {
 			endparent();
 
 		this.windows.unshift(w);
+		this.focus(w);
 		this.organize();
 	}
 
@@ -51,6 +85,15 @@ export default class HWindowManager extends HElement {
 
 	// Move window to the top.
 	focus(w) {
+		if (this.focused) {
+			this.focused.html.classList.remove("focused");
+		}
+		this.focused = w;
+
+		if (w == null) return;
+
+		this.focused.html.classList.add("focused");
+
 		const index = this.windows.findIndex(x => x == w);
 		if (index >= 0) {
 			// Move the window to the top of the array.

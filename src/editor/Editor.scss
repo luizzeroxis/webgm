@@ -13,6 +13,7 @@
 	--menu-text: #222;
 	--resources-area-background: #fff;
 	--text-selected: #fff;
+	--text-unfocused: #666;
 	--text: #000;
 	--title-bar-background: #fff;
 	--warning-background: #fb0;
@@ -37,6 +38,7 @@
 	--menu-text: #eee;
 	--resources-area-background: #000;
 	--text-selected: #fff;
+	--text-unfocused: #999;
 	--text: #fff;
 	--title-bar-background: #555;
 	--warning-background: #740;
@@ -52,10 +54,13 @@
 
 .h-window-manager {
 	.h-window {
+		color: var(--text-unfocused);
+
 		> .border {
 			background-color: var(--title-bar-background);
 			border-color: var(--window-border) !important;
 		}
+		
 		> .contents {
 			> .title-bar {
 				background-color: var(--title-bar-background);
@@ -63,6 +68,10 @@
 			> .client {
 				background-color: var(--window-client-background);
 			}
+		}
+
+		&.focused {
+			color: var(--text);
 		}
 	}
 }

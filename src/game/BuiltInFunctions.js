@@ -5251,10 +5251,9 @@ export default class BuiltInFunctions {
 	};
 
 	static object_is_ancestor = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function object_is_ancestor is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind1, ind2]) {
+			return this.game.objectIsAncestorByIndex(ind2, ind1) ? 1 : 0;
 		},
 	};
 

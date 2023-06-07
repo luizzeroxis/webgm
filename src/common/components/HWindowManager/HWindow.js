@@ -18,6 +18,7 @@ export default class HWindow extends HElement {
 		this.isMinimized = false;
 		this.isMaximized = false;
 		this.isResizable = true;
+		this.escCloses = false;
 
 		this.windowChildren = [];
 		this.windowParent = null;
@@ -27,12 +28,7 @@ export default class HWindow extends HElement {
 
 		this.modal = null;
 
-		this.html.addEventListener("focusin", () => {
-			this.manager.focus(this);
-		});
-		this.html.addEventListener("mousedown", () => {
-			this.manager.focus(this);
-		});
+		this.keyDownHandler = null;
 
 		parent(this);
 
@@ -98,8 +94,19 @@ export default class HWindow extends HElement {
 	}
 
 	onAdd() {
+		this.keyDownHandler = e => {
+			if (this.escCloses && this.manager.focused == this && e.code == "Escape") {
+				this.close();
+			}
+		};
+		document.addEventListener("keydown", this.keyDownHandler);
+
 		this.setPositionToDefault();
 		this.setSizeToDefault();
+	}
+
+	onRemove() {
+		document.removeEventListener("keydown", this.keyDownHandler);
 	}
 
 	setPosition(x, y) {

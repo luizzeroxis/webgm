@@ -83,7 +83,7 @@ export default class HAreaWindows extends HElement {
 
 	// Remove all windows related to the project (that is, not of the global editor).
 	clearProject() {
-		for (const w of this.manager.windows) {
+		for (const w of [...this.manager.windows]) {
 			if (!([HWindowGame, HWindowPreferences].includes(w.constructor))) {
 				w.close();
 			}

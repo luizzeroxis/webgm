@@ -17,6 +17,7 @@
 	--text: #000;
 	--title-bar-background: #fff;
 	--warning-background: #fb0;
+	--window-border-unfocused: #666;
 	--window-border: #000;
 	--window-client-background: #eee;
 	--window-client-horizontal-border: #ccc;
@@ -42,6 +43,7 @@
 	--text: #fff;
 	--title-bar-background: #555;
 	--warning-background: #740;
+	--window-border-unfocused: #999;
 	--window-border: #aaa;
 	--window-client-background: #000;
 	--window-client-horizontal-border: #333;
@@ -57,14 +59,15 @@
 		color: var(--text-unfocused);
 
 		> .border {
+			border-color: var(--window-border-unfocused) !important;
 			background-color: var(--title-bar-background);
-			border-color: var(--window-border) !important;
 		}
 		
 		> .contents {
 			> .title-bar {
 				background-color: var(--title-bar-background);
 			}
+
 			> .client {
 				background-color: var(--window-client-background);
 			}
@@ -72,6 +75,10 @@
 
 		&.focused {
 			color: var(--text);
+
+			> .border {
+				border-color: var(--window-border) !important;
+			}
 		}
 	}
 }

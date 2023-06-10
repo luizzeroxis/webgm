@@ -8,135 +8,137 @@
 	height: 100%;
 	pointer-events: none;
 
+	> .windows, > .modal {
+		> .h-window {
+			--border-size: 2px;
+			--resizable-border-size: 8px;
+
+			position: absolute;
+			display: grid;
+			grid-template-columns: var(--border-size) 1fr var(--border-size);
+			grid-template-rows: var(--border-size) 1fr var(--border-size);
+			pointer-events: auto;
+
+			> .border {
+				background-color: lightgray;
+				user-select: none;
+
+				&.top-left, &.top, &.top-right {
+					border-top: 1px solid black;
+				}
+
+				&.bottom-left, &.bottom, &.bottom-right {
+					border-bottom: 1px solid black;
+				}
+
+				&.top-left, &.left, &.bottom-left {
+					border-left: 1px solid black;
+				}
+
+				&.top-right, &.right, &.bottom-right {
+					border-right: 1px solid black;
+				}
+			}
+
+			> .contents {
+				display: flex;
+				overflow: auto;
+				flex-direction: column;
+
+				> .title-bar {
+					display: flex;
+					align-items: center;
+					padding: 2px;
+					background-color: gray;
+					user-select: none;
+
+					> .title {
+						overflow: hidden;
+						width: 0;
+						flex: 1;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+					}
+				}
+
+				> .client {
+					display: flex;
+					overflow: auto;
+					flex: 1;
+					flex-direction: column;
+					padding: 8px;
+					background-color: lightgray;
+				}
+			}
+
+			&.resizable {
+				grid-template-columns: var(--resizable-border-size) 1fr var(--resizable-border-size);
+				grid-template-rows: var(--resizable-border-size) 1fr var(--resizable-border-size);
+
+				> .border {
+					&.top-left {
+						cursor: nw-resize;
+					}
+
+					&.top {
+						cursor: n-resize;
+					}
+
+					&.top-right {
+						cursor: ne-resize;
+					}
+
+					&.left {
+						cursor: w-resize;
+					}
+
+					&.right {
+						cursor: e-resize;
+					}
+
+					&.bottom-left {
+						cursor: sw-resize;
+					}
+
+					&.bottom {
+						cursor: s-resize;
+					}
+
+					&.bottom-right {
+						cursor: se-resize;
+					}
+				}
+			}
+
+			&.minimized {
+				> .contents {
+					> .client {
+						display: none;
+					}
+				}
+			}
+
+			&.maximized {
+				display: flex;
+				width: 100%;
+				height: 100%;
+				flex-direction: column;
+
+				> .border {
+					display: none;
+				}
+
+				> .contents {
+					flex: 1;
+				}
+			}
+		}
+	}
+
 	> .modal {
 		position: relative;
 		height: 100%;
 		background-color: rgb(0 0 0 / 25%);
 		pointer-events: auto;
-	}
-
-	.h-window {
-		--border-size: 2px;
-		--resizable-border-size: 8px;
-
-		position: absolute;
-		display: grid;
-		grid-template-columns: var(--border-size) 1fr var(--border-size);
-		grid-template-rows: var(--border-size) 1fr var(--border-size);
-		pointer-events: auto;
-
-		> .border {
-			background-color: lightgray;
-			user-select: none;
-
-			&.top-left, &.top, &.top-right {
-				border-top: 1px solid black;
-			}
-
-			&.bottom-left, &.bottom, &.bottom-right {
-				border-bottom: 1px solid black;
-			}
-
-			&.top-left, &.left, &.bottom-left {
-				border-left: 1px solid black;
-			}
-
-			&.top-right, &.right, &.bottom-right {
-				border-right: 1px solid black;
-			}
-		}
-
-		> .contents {
-			display: flex;
-			overflow: auto;
-			flex-direction: column;
-
-			> .title-bar {
-				display: flex;
-				align-items: center;
-				padding: 2px;
-				background-color: gray;
-				user-select: none;
-
-				> .title {
-					overflow: hidden;
-					width: 0;
-					flex: 1;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-				}
-			}
-
-			> .client {
-				display: flex;
-				overflow: auto;
-				flex: 1;
-				flex-direction: column;
-				padding: 8px;
-				background-color: lightgray;
-			}
-		}
-
-		&.resizable {
-			grid-template-columns: var(--resizable-border-size) 1fr var(--resizable-border-size);
-			grid-template-rows: var(--resizable-border-size) 1fr var(--resizable-border-size);
-
-			> .border {
-				&.top-left {
-					cursor: nw-resize;
-				}
-
-				&.top {
-					cursor: n-resize;
-				}
-
-				&.top-right {
-					cursor: ne-resize;
-				}
-
-				&.left {
-					cursor: w-resize;
-				}
-
-				&.right {
-					cursor: e-resize;
-				}
-
-				&.bottom-left {
-					cursor: sw-resize;
-				}
-
-				&.bottom {
-					cursor: s-resize;
-				}
-
-				&.bottom-right {
-					cursor: se-resize;
-				}
-			}
-		}
-
-		&.minimized {
-			> .contents {
-				> .client {
-					display: none;
-				}
-			}
-		}
-
-		&.maximized {
-			display: flex;
-			width: 100%;
-			height: 100%;
-			flex-direction: column;
-
-			> .border {
-				display: none;
-			}
-
-			> .contents {
-				flex: 1;
-			}
-		}
 	}
 }

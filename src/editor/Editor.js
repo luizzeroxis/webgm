@@ -50,23 +50,24 @@ export default class Editor {
 		// Libraries
 		this.libraries = BuiltInLibraries.list;
 
-		this.windowManager = new HWindowManager();
 		this.menuManager = new HMenuManager();
 
 		// Areas
 		this.div = parent( new HElement("div", {class: "editor"}) );
+			this.mainDiv = parent( add( new HElement("div", {class: "main"}) ) );
+				this.wipWarning = add( new HWIPWarning(this) );
+				this.menuBarArea = add( new HAreaMenuBar(this) );
+				this.toolBarArea = add( new HAreaToolBar(this) );
 
-			this.wipWarning = add( new HWIPWarning(this) );
+				this.resourcesArea = new HAreaResources(this);
+				this.windowsArea = new HAreaWindows(this);
 
-			this.menuBarArea = add( new HAreaMenuBar(this) );
+				add( new HSplitter(this.resourcesArea, this.windowsArea) );
 
-			this.toolBarArea = add( new HAreaToolBar(this) );
+				add( this.menuManager );
+				endparent();
 
-			this.resourcesArea = new HAreaResources(this);
-			this.windowsArea = new HAreaWindows(this);
-			add( new HSplitter(this.resourcesArea, this.windowsArea) );
-
-			add( this.menuManager );
+			this.windowManager = new HWindowManager(this.mainDiv);
 			add( this.windowManager );
 
 			endparent();

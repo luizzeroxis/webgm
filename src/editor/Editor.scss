@@ -55,29 +55,31 @@
 }
 
 .h-window-manager {
-	.h-window {
-		color: var(--text-unfocused);
+	> .windows, > .modal {
+		> .h-window {
+			color: var(--text-unfocused);
 
-		> .border {
-			border-color: var(--window-border-unfocused) !important;
-			background-color: var(--title-bar-background);
-		}
-		
-		> .contents {
-			> .title-bar {
+			> .border {
+				border-color: var(--window-border-unfocused) !important;
 				background-color: var(--title-bar-background);
 			}
 
-			> .client {
-				background-color: var(--window-client-background);
+			> .contents {
+				> .title-bar {
+					background-color: var(--title-bar-background);
+				}
+
+				> .client {
+					background-color: var(--window-client-background);
+				}
 			}
-		}
 
-		&.focused {
-			color: var(--text);
+			&.focused {
+				color: var(--text);
 
-			> .border {
-				border-color: var(--window-border) !important;
+				> .border {
+					border-color: var(--window-border) !important;
+				}
 			}
 		}
 	}
@@ -189,6 +191,10 @@ body, button, input, select {
 	flex-direction: column;
 	color: var(--text);
 
+	> .main {
+		display: contents;
+	}
+
 	div > .warning {
 		padding: 2px;
 		background-color: var(--warning-background);
@@ -229,7 +235,7 @@ body, button, input, select {
 	background-color: var(--windows-area-background);
 	gap: 4px;
 
-	.h-window-manager {
+	> .h-window-manager {
 		overflow-x: auto;
 		overflow-y: scroll;
 		pointer-events: auto;

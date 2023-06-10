@@ -3,8 +3,12 @@ import {parent, endparent, add, HElement} from "~/common/h";
 import "./HWindowManager.scss";
 
 export default class HWindowManager extends HElement {
-	constructor() {
-		super("div", {class: "h-window-manager"});
+	constructor(mainElement) {
+		parent(super("div", {class: "h-window-manager"}));
+			this.windowsDiv = add( new HElement("div", {class: "windows"}) );
+			endparent();
+
+		this.mainElement = mainElement;
 
 		this.windows = [];
 		this.focused = null;
@@ -49,7 +53,7 @@ export default class HWindowManager extends HElement {
 		if (w) {
 			this.focus(w);
 		} else {
-			parent(this);
+			parent(this.windowsDiv);
 				w = add( new windowClass(this, ...args) );
 				endparent();
 
@@ -60,7 +64,9 @@ export default class HWindowManager extends HElement {
 		return w;
 	}
 
-	addModal(w) {
+	openModal(windowClass, ...args) {
+		const w = new windowClass(this, ...args);
+
 		parent(this);
 			const modal = parent( add( new HElement("div", {class: "modal"}) ) );
 				add(w);
@@ -71,11 +77,11 @@ export default class HWindowManager extends HElement {
 		this.windows.unshift(w);
 		this.focus(w);
 		this.organize();
-	}
 
-	openModal(windowClass, ...args) {
-		const w = new windowClass(this, ...args);
-		this.addModal(w);
+		if (this.mainElement) this.mainElement.html.inert = true;
+		this.windowsDiv.html.inert = true;
+		// TODO Make previous modals inert
+
 		return w;
 	}
 
@@ -117,8 +123,14 @@ export default class HWindowManager extends HElement {
 	delete(w) {
 		const index = this.windows.findIndex(x => x == w);
 		if (index >= 0) {
-			this.windows[index].modal?.remove();
 			this.windows[index].remove();
+			if (this.windows[index].modal) {
+				this.windows[index].modal.remove();
+
+				// TODO multiple modals
+				if (this.mainElement) this.mainElement.html.inert = false;
+				this.windowsDiv.html.inert = false;
+			}
 			this.windows.splice(index, 1);
 			this.organize();
 			return true;
@@ -140,7 +152,7 @@ export default class HWindowManager extends HElement {
 
 	// Remove all windows.
 	clear() {
-		this.removeChildren();
+		this.windowsDiv.removeChildren();
 		this.windows = [];
 	}
 }

@@ -94,10 +94,12 @@ export default class Game {
 
 		// HTML
 		this.div = parent( new HElement("div", {class: "game"}) );
-			add(this.render.canvasHElement);
+			this.mainDiv = parent( new HElement("div", {class: "main"}) );
+				add(this.render.canvasHElement);
+				this.menuManager = add(new HMenuManager());
+				endparent();
 
-			this.windowManager = add(new HWindowManager()); // TODO should this be here?
-			this.menuManager = add(new HMenuManager());
+			this.windowManager = add(new HWindowManager(this.mainDiv)); // TODO should this be here?
 			endparent(this.div);
 	}
 

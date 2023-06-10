@@ -161,6 +161,10 @@ export default class HWindow extends HElement {
 		this.setSize(w, h);
 	}
 
+	setTitle(title) {
+		this.title.html.textContent = title;
+	}
+
 	setResizable(value) {
 		this.isResizable = value;
 		if (value) {

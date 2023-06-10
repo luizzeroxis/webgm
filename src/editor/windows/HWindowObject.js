@@ -1,6 +1,6 @@
 import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import Events from "~/common/Events.js";
-import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HOption, HSelectWithOptions, HImage} from "~/common/h";
+import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HOption, HImage} from "~/common/h";
 import {
 	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline,
 	ProjectEvent, ProjectAction, ProjectActionArg,
@@ -8,6 +8,7 @@ import {
 import HTabControl from "~/editor/components/HTabControl/HTabControl.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
 
+import HEventChooserWindow from "./HEventChooserWindow.js";
 import HWindowAction from "./HWindowAction.js";
 import HWindowCode from "./HWindowCode.js";
 
@@ -72,25 +73,27 @@ export default class HWindowObject extends HWindow {
 
 					parent( add( new HElement("div") ) );
 
-						// Event type select
-
-						this.selectEventType = add( new HSelectWithOptions("Event type:", Events.listEventTypes) );
-
-						this.selectEventType.setOnChange(() => {
-							this.updateDivEventSubtype();
-						});
-
-						// Event subtype div
-
-						this.selectCollisionObject = null;
-						this.divEventSubtype = add( new HElement("div") );
-
 						// Add event button
-						this.buttonEventAdd = add( new HButton("Add Event", () => {
-							const eventType = this.selectEventType.getValue();
-							const eventSubtype = this.subtypeValueFunction?.() ?? 0;
+						this.buttonEventAdd = add( new HButton("Add Event", async () => {
+							const newEvent = await this.editor.windowManager.openModal(HEventChooserWindow, this.editor).promise;
+							if (!newEvent) return;
 
-							this.addEvent(eventType, eventSubtype);
+							// Don't continue if there's an event with the exact same type and subtype
+							if (this.paramEvents.find(x => x.type == newEvent.type && x.subtype == newEvent.subtype))
+								return;
+
+							const event = new ProjectEvent();
+							event.type = newEvent.type;
+							event.subtype = newEvent.subtype;
+							this.paramEvents.push(event);
+
+							this.sortEvents();
+
+							this.updateSelectEvents();
+							this.selectEvents.setValue(event.getNameId());
+							this.updateEventsMenu();
+							this.updateSelectActions();
+							this.updateActionsMenu();
 						}) );
 
 						// Delete event button
@@ -117,19 +120,18 @@ export default class HWindowObject extends HWindow {
 
 						// Change event button
 
-						this.buttonEventChange = add( new HButton("Change", () => {
+						this.buttonEventChange = add( new HButton("Change", async () => {
+							const newEvent = await this.editor.windowManager.openModal(HEventChooserWindow, this.editor).promise;
+
 							const event = this.getSelectedEvent();
 							if (!event) return;
 
-							const eventType = this.selectEventType.getValue();
-							const eventSubtype = this.subtypeValueFunction?.() ?? 0;
-
 							// Don't continue if there's an event with the exact same type and subtype
-							if (this.paramEvents.find(x => x.type == eventType && x.subtype == eventSubtype))
+							if (this.paramEvents.find(x => x.type == newEvent.type && x.subtype == newEvent.subtype))
 								return;
 
-							event.type = eventType;
-							event.subtype = eventSubtype;
+							event.type = newEvent.type;
+							event.subtype = newEvent.subtype;
 
 							this.sortEvents();
 
@@ -348,9 +350,6 @@ export default class HWindowObject extends HWindow {
 			this.selectEvents.setSelectedIndex(0);
 			this.updateEventsMenu();
 
-			// Add initial subtypes
-			this.updateDivEventSubtype();
-
 			// Select first event
 			this.updateSelectActions();
 			this.updateActionsMenu();
@@ -407,25 +406,6 @@ export default class HWindowObject extends HWindow {
 		this.paramEvents = this.object.events.map(event => new ProjectEvent(event));
 	}
 
-	addEvent(type, subtype) {
-		// Don't continue if there's an event with the exact same type and subtype
-		if (this.paramEvents.find(x => x.type == type && x.subtype == subtype))
-			return;
-
-		const event = new ProjectEvent();
-		event.type = type;
-		event.subtype = subtype;
-		this.paramEvents.push(event);
-
-		this.sortEvents();
-
-		this.updateSelectEvents();
-		this.selectEvents.setValue(event.getNameId());
-		this.updateEventsMenu();
-		this.updateSelectActions();
-		this.updateActionsMenu();
-	}
-
 	sortEvents() {
 		this.paramEvents.sort((a, b) => {
 			const aTypeId = Events.listEventTypes.find(x => x.value == a.type).id;
@@ -463,48 +443,6 @@ export default class HWindowObject extends HWindow {
 			this.buttonEventChange.setDisabled(false);
 			this.buttonEventDelete.setDisabled(false);
 		}
-	}
-
-	updateDivEventSubtype() {
-		this.divEventSubtype.removeChildren();
-
-		const eventType = this.selectEventType.getValue();
-
-		parent(this.divEventSubtype);
-
-			this.subtypeValueFunction = null;
-
-			if (eventType == "step") {
-				const subtypeElement = add( new HSelectWithOptions("Step:", Events.listStepSubtypes));
-				this.subtypeValueFunction = () => subtypeElement.getValue();
-			} else
-
-			if (eventType == "alarm") {
-				const subtypeElement = add( new HNumberInput("Alarm:", 0, 1, 0, 11) );
-				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
-			} else
-
-			if (eventType == "keyboard" || eventType == "keypress" || eventType == "keyrelease") {
-				const subtypeElement = add( new HSelectWithOptions("Key:", Events.listKeyboardSubtypes) );
-				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
-			} else
-
-			if (eventType == "mouse") {
-				const subtypeElement = add( new HSelectWithOptions("Mouse:", Events.listMouseSubtypes));
-				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
-			} else
-
-			if (eventType == "collision") {
-				this.selectCollisionObject = add( new HResourceSelect(this.editor, "Object:", ProjectObject, true) );
-				this.subtypeValueFunction = () => (parseInt(this.selectCollisionObject.getValue()));
-			} else
-
-			if (eventType == "other") {
-				const subtypeElement = add( new HSelectWithOptions("Other:", Events.listOtherSubtypes));
-				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
-			}
-
-			endparent();
 	}
 
 	updateSelectActions() {

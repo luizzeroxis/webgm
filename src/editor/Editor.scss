@@ -520,7 +520,10 @@ body, button, input, select {
 	}
 }
 
-.h-window > .contents > .client:has(> .game) {
-	padding: 0;
-	resize: none;
+.h-window-manager {
+	> .windows, > .modal {
+		> .h-window > .contents > .client:has(> .game) {
+			padding: 0;
+		}
+	}
 }

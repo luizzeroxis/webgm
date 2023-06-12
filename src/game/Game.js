@@ -94,7 +94,7 @@ export default class Game {
 
 		// HTML
 		this.div = parent( new HElement("div", {class: "game"}) );
-			this.mainDiv = parent( new HElement("div", {class: "main"}) );
+			this.mainDiv = parent( add( new HElement("div", {class: "main"}) ) );
 				add(this.render.canvasHElement);
 				this.menuManager = add(new HMenuManager());
 				endparent();

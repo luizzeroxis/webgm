@@ -30,6 +30,16 @@ export function saveFile(blob, name) {
 	a.html.click();
 }
 
+// Dates
+
+export function toGMDate(jsDate) {
+	return (jsDate - Date.UTC(1899, 11, 30)) / 1000 / 60 / 60 / 24;
+}
+
+export function toJSDate(gmDate) {
+	return new Date((gmDate * 24 * 60 * 60 * 1000) + Date.UTC(1899, 11, 30));
+}
+
 // decimal -> rgb
 export function decimalToRGB(color) {
 	return {

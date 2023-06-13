@@ -1,4 +1,4 @@
-import {decimalToHSV, hsvToDecimal, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, forceInteger, toInteger, parseNewLineHash} from "~/common/tools.js";
+import {toGMDate, toJSDate, decimalToHSV, hsvToDecimal, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, forceInteger, toInteger, parseNewLineHash} from "~/common/tools.js";
 
 import {EngineException} from "./Game.js";
 import GameCollision from "./GameCollision.js";
@@ -502,378 +502,384 @@ export default class BuiltInFunctions {
 	// ## Dealing with dates and time
 
 	static date_current_datetime = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_current_datetime is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			return toGMDate(Date.now());
 		},
 	};
 
 	static date_current_date = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_current_date is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			return Math.floor(toGMDate(Date.now()));
 		},
 	};
 
 	static date_current_time = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_current_time is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			return toGMDate(Date.now()) % 1;
 		},
 	};
 
 	static date_create_datetime = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_create_datetime is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([year, month, day, hour, minute, second]) {
+			return toGMDate(Date.UTC(year, month-1, day, hour, minute, second));
 		},
 	};
 
 	static date_create_date = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_create_date is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([year, month, day]) {
+			return toGMDate(Date.UTC(year, month-1, day));
 		},
 	};
 
 	static date_create_time = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_create_time is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([hour, minute, second]) {
+			return toGMDate(Date.UTC(1899, 11, 30, hour, minute, second)); // % 1
 		},
 	};
 
 	static date_valid_datetime = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_valid_datetime is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([year, month, day, hour, minute, second]) {
+			return (!(year <= 0 || year > 9999
+				|| month < 1 || month > 12
+				|| day < 1 || day > new Date(Date.UTC(year, month-1+1, 0)).getUTCDate()
+				|| hour < 0 || hour > 24
+				|| minute < 0 || minute >= 60
+				|| second < 0 || second >= 60
+			)) ? 1 : 0;
 		},
 	};
 
 	static date_valid_date = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_valid_date is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([year, month, day]) {
+			return (!(year <= 0 || year > 9999
+				|| month < 1 || month > 12
+				|| day < 1 || day > new Date(Date.UTC(year, month-1+1, 0)).getUTCDate()
+			)) ? 1 : 0;
 		},
 	};
 
 	static date_valid_time = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_valid_time is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([hour, minute, second]) {
+			return (!(hour < 0 || hour > 24
+				|| minute < 0 || minute >= 60
+				|| second < 0 || second >= 60
+			)) ? 1 : 0;
 		},
 	};
 
 	static date_inc_year = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_inc_year is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "integer"}],
+		func: function([date, amount]) {
+			const d = toJSDate(date);
+			d.setUTCFullYear(d.getUTCFullYear() + amount);
+			return toGMDate(d);
 		},
 	};
 
 	static date_inc_month = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_inc_month is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "integer"}],
+		func: function([date, amount]) {
+			const d = toJSDate(date);
+			d.setUTCMonth(d.getUTCMonth() + amount);
+			return toGMDate(d);
 		},
 	};
 
 	static date_inc_week = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_inc_week is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "integer"}],
+		func: function([date, amount]) {
+			const d = toJSDate(date);
+			d.setUTCDate(d.getUTCDate() + (amount * 7));
+			return toGMDate(d);
 		},
 	};
 
 	static date_inc_day = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_inc_day is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "integer"}],
+		func: function([date, amount]) {
+			const d = toJSDate(date);
+			d.setUTCDate(d.getUTCDate() + amount);
+			return toGMDate(d);
 		},
 	};
 
 	static date_inc_hour = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_inc_hour is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "integer"}],
+		func: function([date, amount]) {
+			const d = toJSDate(date);
+			d.setUTCHours(d.getUTCHours() + amount);
+			return toGMDate(d);
 		},
 	};
 
 	static date_inc_minute = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_inc_minute is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "integer"}],
+		func: function([date, amount]) {
+			const d = toJSDate(date);
+			d.setUTCMinutes(d.getUTCMinutes() + amount);
+			return toGMDate(d);
 		},
 	};
 
 	static date_inc_second = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_inc_second is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "integer"}],
+		func: function([date, amount]) {
+			const d = toJSDate(date);
+			d.setUTCSeconds(d.getUTCSeconds() + amount);
+			return toGMDate(d);
 		},
 	};
 
 	static date_get_year = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_get_year is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return d.getUTCFullYear();
 		},
 	};
 
 	static date_get_month = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_get_month is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return d.getUTCMonth() + 1;
 		},
 	};
 
 	static date_get_week = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_get_week is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+
+			const tempDate = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+			tempDate.setUTCDate(tempDate.getUTCDate() - (tempDate.getUTCDay() || 7) + 4);
+			const yearStart = new Date(Date.UTC(tempDate.getUTCFullYear(), 0, 1));
+			return Math.ceil((((tempDate - yearStart) / 1000 / 60 / 60 / 24) + 1) / 7);
 		},
 	};
 
 	static date_get_day = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_get_day is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return d.getUTCDate();
 		},
 	};
 
 	static date_get_hour = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_get_hour is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return d.getUTCHours();
 		},
 	};
 
 	static date_get_minute = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_get_minute is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return d.getUTCMinutes();
 		},
 	};
 
 	static date_get_second = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_get_second is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return d.getUTCSeconds();
 		},
 	};
 
 	static date_get_weekday = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_get_weekday is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return d.getUTCDay() + 1;
 		},
 	};
 
 	static date_get_day_of_year = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_get_day_of_year is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return Math.round((d - Date.UTC(d.getUTCFullYear(), 0, 1)) / 1000 / 60 / 60 / 24);
 		},
 	};
 
 	static date_get_hour_of_year = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_get_hour_of_year is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return Math.round((d - Date.UTC(d.getUTCFullYear(), 0, 1)) / 1000 / 60 / 60);
 		},
 	};
 
 	static date_get_minute_of_year = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_get_minute_of_year is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return Math.round((d - Date.UTC(d.getUTCFullYear(), 0, 1)) / 1000 / 60);
 		},
 	};
 
 	static date_get_second_of_year = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_get_second_of_year is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return Math.round((d - Date.UTC(d.getUTCFullYear(), 0, 1)) / 1000);
 		},
 	};
 
 	static date_year_span = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_year_span is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}],
+		func: function([date1, date2]) {
+			return Math.abs((date2 - date1) / 365.25); // Note: that's completely wrong.
 		},
 	};
 
 	static date_month_span = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_month_span is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}],
+		func: function([date1, date2]) {
+			return Math.abs((date2 - date1) / 30.4375);
 		},
 	};
 
 	static date_week_span = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_week_span is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}],
+		func: function([date1, date2]) {
+			return Math.abs((date2 - date1) / 7);
 		},
 	};
 
 	static date_day_span = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_day_span is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}],
+		func: function([date1, date2]) {
+			return Math.abs(date2 - date1);
 		},
 	};
 
 	static date_hour_span = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_hour_span is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}],
+		func: function([date1, date2]) {
+			return Math.abs((date2 - date1) * 24);
 		},
 	};
 
 	static date_minute_span = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_minute_span is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}],
+		func: function([date1, date2]) {
+			return Math.abs((date2 - date1) * 24 * 60);
 		},
 	};
 
 	static date_second_span = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_second_span is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}],
+		func: function([date1, date2]) {
+			return Math.abs((date2 - date1) * 24 * 60 * 60);
 		},
 	};
 
 	static date_compare_datetime = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_compare_datetime is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}],
+		func: function([date1, date2]) {
+			return Math.sign(date1 - date2);
 		},
 	};
 
 	static date_compare_date = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_compare_date is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}],
+		func: function([date1, date2]) {
+			return Math.sign(Math.floor(date1) - Math.floor(date2));
 		},
 	};
 
 	static date_compare_time = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_compare_time is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}],
+		func: function([date1, date2]) {
+			return Math.sign((date1 % 1) - (date2 % 1));
 		},
 	};
 
 	static date_date_of = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_date_of is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			return Math.floor(date);
 		},
 	};
 
 	static date_time_of = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_time_of is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			return date % 1;
 		},
 	};
 
 	static date_datetime_string = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_datetime_string is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return d.toLocaleString();
 		},
 	};
 
 	static date_date_string = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_date_string is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return d.toLocaleDateString();
 		},
 	};
 
 	static date_time_string = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_time_string is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return d.toLocaleTimeString();
 		},
 	};
 
 	static date_days_in_month = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_days_in_month is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth()+1, 0)).getUTCDate();
 		},
 	};
 
 	static date_days_in_year = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_days_in_year is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			return (Date.UTC(d.getUTCFullYear()+1, 0, 1) - Date.UTC(d.getUTCFullYear(), 0, 1)) / 1000 / 60 / 60 / 24;
 		},
 	};
 
 	static date_leap_year = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_leap_year is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			const year = d.getUTCFullYear();
+			return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
 		},
 	};
 
 	static date_is_today = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function date_is_today is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([date]) {
+			const d = toJSDate(date);
+			const today = new Date();
+			return (d.getUTCFullYear() == today.getUTCFullYear()
+				&& d.getUTCMonth() == today.getUTCMonth()
+				&& d.getUTCDate() == today.getUTCDate());
 		},
 	};
 

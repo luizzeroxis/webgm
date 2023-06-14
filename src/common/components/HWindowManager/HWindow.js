@@ -322,7 +322,7 @@ export default class HWindow extends HElement {
 
 	openAsChild(windowClass, idFunc, ...args) {
 		const w = this.manager.open(windowClass, idFunc, ...args);
-		w.parent = this;
+		w.windowParent = this;
 		this.windowChildren.push(w);
 	}
 
@@ -334,7 +334,19 @@ export default class HWindow extends HElement {
 		this.manager.delete(this);
 
 		if (this.windowParent) {
-			this.windowParent.children.splice(this.windowParent.children.indexOf(this), 1);
+			this.windowParent.windowChildren.splice(this.windowParent.windowChildren.indexOf(this), 1);
+		}
+	}
+
+	forceClose() {
+		for (const child of this.windowChildren) {
+			child.forceClose();
+		}
+
+		this.manager.delete(this);
+
+		if (this.windowParent) {
+			this.windowParent.windowChildren.splice(this.windowParent.windowChildren.indexOf(this), 1);
 		}
 	}
 

@@ -184,6 +184,10 @@ body, button, input, select {
 	font-size: 9pt;
 }
 
+input[type=text], input[type=number], select {
+	width: 96px;
+}
+
 .editor {
 	display: flex;
 	min-height: 0;

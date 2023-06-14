@@ -40,6 +40,8 @@ export function toJSDate(gmDate) {
 	return new Date((gmDate * 24 * 60 * 60 * 1000) + Date.UTC(1899, 11, 30));
 }
 
+// Colors
+
 // decimal -> rgb
 export function decimalToRGB(color) {
 	return {
@@ -69,6 +71,19 @@ export function hexToDecimal(hex) {
 	const g = parseInt(hex.substr(1+2*1, 2), 16);
 	const b = parseInt(hex.substr(1+2*2, 2), 16);
 	return rgbToDecimal({r, g, b});
+}
+
+// decimal, alpha -> hexalpha
+export function decimalToHexAlpha(color, alpha) {
+	return decimalToHex(color) + Math.round(alpha * 255).toString(16).padStart(2, "0");
+}
+
+// hexalpha -> decimal, alpha
+export function hexAlphaToDecimal(hex) {
+	return {
+		color: hexToDecimal(hex),
+		alpha: (parseInt(hex.substr(1+2*3, 2), 16) / 255),
+	};
 }
 
 // decimal -> hsv
@@ -143,22 +158,13 @@ export function hsvToRGB({h, s, v}) {
 	};
 }
 
-// rgb string stuff
-
-export function decimalToHexAlpha(color, alpha) {
-	return decimalToHex(color) + Math.round(alpha * 255).toString(16).padStart(2, "0");
-}
-
-export function hexAlphaToDecimal(hex) {
-	return {
-		color: hexToDecimal(hex),
-		alpha: (parseInt(hex.substr(1+2*3, 2), 16) / 255),
-	};
-}
+// CSS font string
 
 export function makeCSSFont(family, size, bold, italic) {
 	return (italic ? "italic " : "") + (bold ? "bold " : "") + size + "pt \"" + family + "\"";
 }
+
+// Arrow strings
 
 export function parseArrowString(string) {
 	const values = [];
@@ -187,6 +193,8 @@ export function stringifyArrowValues(values) {
 
 	return string;
 }
+
+// Value type convertion
 
 export function asString(value) {
 	if (typeof value != "string") {
@@ -238,6 +246,8 @@ export function toInteger(value) {
 		return Math.round(value);
 	}
 }
+
+// Text
 
 export function parseNewLineHash(string) {
 	// Replace # without backslash before and \r with \n, then replace \# with #.

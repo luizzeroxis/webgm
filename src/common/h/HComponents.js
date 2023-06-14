@@ -76,9 +76,9 @@ export class HMultilineTextInput extends HElement {
 export class HNumberInput extends HLabelAndInput {
 	constructor(label, value, step, min, max, _class) {
 		super("number", label, value, _class);
-		if (this.input.html.step != null) this.input.html.step = step;
-		if (this.input.html.min != null) this.input.html.min = min;
-		if (this.input.html.max != null) this.input.html.max = max;
+		if (step != null) this.input.html.step = step;
+		if (min != null) this.input.html.min = min;
+		if (max != null) this.input.html.max = max;
 	}
 
 	getIntValue(def=0) {
@@ -97,9 +97,9 @@ export class HNumberInput extends HLabelAndInput {
 export class HRangeInput extends HLabelAndInput {
 	constructor(label, value, step, min, max, _class) {
 		super("range", label, value, _class);
-		this.input.html.step = step;
-		this.input.html.min = min;
-		this.input.html.max = max;
+		if (step != null) this.input.html.step = step;
+		if (min != null) this.input.html.min = min;
+		if (max != null) this.input.html.max = max;
 	}
 }
 

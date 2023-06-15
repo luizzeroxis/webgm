@@ -18,10 +18,6 @@ export default class HTabControl extends HElement {
 	}
 
 	addTab(name, isSelected) {
-		if (isSelected == null) {
-			isSelected = (this.currentTabContent == null);
-		}
-
 		const tabContent = new HElement("div", {class: "content"});
 
 		if (isSelected) {

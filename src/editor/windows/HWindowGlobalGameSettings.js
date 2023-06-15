@@ -16,7 +16,7 @@ export default class HWindowGlobalGameSettings extends HWindow {
 
 				this.tabControl = add( new HTabControl() );
 
-				parent( this.tabControl.addTab("Graphics") );
+				const tabGraphics = parent( this.tabControl.addTab("Graphics") );
 
 					this.inputFullScreen = add( new HCheckBoxInput("Start in full-screen mode", globalGameSettings.startInFullScreen) );
 					this.inputColor = add( new HColorInput("Color outside the room region:", globalGameSettings.colorOutsideRoom) );
@@ -65,5 +65,7 @@ export default class HWindowGlobalGameSettings extends HWindow {
 				() => this.close(),
 			);
 			endparent();
+
+		this.tabControl.showTabContent(tabGraphics);
 	}
 }

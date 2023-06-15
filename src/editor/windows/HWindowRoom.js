@@ -1,22 +1,22 @@
 import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HButton, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from "~/common/h";
 import ImageWrapper from "~/common/ImageWrapper.js";
-import {ProjectBackground, ProjectObject, ProjectInstance, ProjectRoomBackground, ProjectRoomView} from "~/common/project/ProjectProperties.js";
+import {ProjectBackground, ProjectObject, ProjectRoom, ProjectInstance, ProjectRoomBackground, ProjectRoomView} from "~/common/project/ProjectProperties.js";
+import {setDeepOnUpdateOnElement} from "~/common/tools.js";
 import HTabControl from "~/editor/components/HTabControl/HTabControl.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
 import DefaultInstanceIcon from "~/editor/img/default-instance-icon.png";
 
 export default class HWindowRoom extends HWindow {
-	constructor(manager, editor, room) {
+	constructor(manager, editor, resource) {
 		super(manager);
 		this.editor = editor;
-		this.resource = room;
-		this.room = room;
+		this.resource = resource;
+
+		this.modified = false;
+		this.copyData();
 
 		this.updateTitle();
-
-		// Create paramInstances, paramBackgrounds and paramViews as copies
-		this.copyProperties();
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "panel-container window-room"}) ) );
@@ -24,10 +24,16 @@ export default class HWindowRoom extends HWindow {
 
 					// left area
 
+					add( new HButton("OK", () => {
+						this.modified = false;
+						this.close();
+					}) );
+
 					this.buttonClear = add( new HButton("Clear all", () => {
 						if (!confirm("Are you sure you want to delete all object instances?")) return;
-						this.paramInstances = [];
+						this.resource.instances = [];
 						this.updateCanvasPreview();
+						this.onUpdate();
 					}) );
 
 					this.inputSnapX = add( new HNumberInput("Snap X:", 16, 1, 1) );
@@ -36,7 +42,7 @@ export default class HWindowRoom extends HWindow {
 
 					this.tabControl = add( new HTabControl("properties-tabs") );
 
-					parent( this.tabControl.addTab("Instances") );
+					const tabInstances = parent( this.tabControl.addTab("Instances") );
 
 						this.selectObject = add( new HResourceSelect(this.editor, "Object:", ProjectObject, true) );
 
@@ -49,21 +55,23 @@ export default class HWindowRoom extends HWindow {
 						this.inputSnapToGrid = add( new HCheckBoxInput("Snap to grid", true) );
 						this.inputDeleteUnderlying = add( new HCheckBoxInput("Delete underlying", false) );
 
+						setDeepOnUpdateOnElement(tabInstances, () => this.onUpdate());
 						endparent();
 
-					parent( this.tabControl.addTab("Settings") );
+					const tabSettings = parent( this.tabControl.addTab("Settings") );
 
-						this.inputName = add( new HTextInput("Name:", room.name) );
-						this.inputWidth = add( new HNumberInput("Width:", room.width, 1, 1) );
-						this.inputHeight = add( new HNumberInput("Height:", room.height, 1, 1) );
-						this.inputSpeed = add( new HNumberInput("Speed:", room.speed, 1, 1) );
+						this.inputName = add( new HTextInput("Name:", this.resource.name) );
+						this.inputWidth = add( new HNumberInput("Width:", this.resource.width, 1, 1) );
+						this.inputHeight = add( new HNumberInput("Height:", this.resource.height, 1, 1) );
+						this.inputSpeed = add( new HNumberInput("Speed:", this.resource.speed, 1, 1) );
 
+						setDeepOnUpdateOnElement(tabSettings, () => this.onUpdate());
 						endparent();
 
-					parent( this.tabControl.addTab("Backgrounds") );
+					const tabBackgrounds = parent( this.tabControl.addTab("Backgrounds") );
 
-						this.inputDrawBackgroundColor = add( new HCheckBoxInput("Draw background color", room.drawBackgroundColor) );
-						this.inputBackgroundColor = add( new HColorInput("Color:", room.backgroundColor) );
+						this.inputDrawBackgroundColor = add( new HCheckBoxInput("Draw background color", this.resource.drawBackgroundColor) );
+						this.inputBackgroundColor = add( new HColorInput("Color:", this.resource.backgroundColor) );
 
 						this.selectBackgrounds = add( new HSelect(null, "backgrounds") );
 						this.selectBackgroundsOptions = [];
@@ -152,10 +160,11 @@ export default class HWindowRoom extends HWindow {
 
 						this.updateBackgroundProperties();
 
+						setDeepOnUpdateOnElement(tabBackgrounds, () => this.onUpdate());
 						endparent();
 
-					parent( this.tabControl.addTab("Views") );
-						this.inputEnableViews = add( new HCheckBoxInput("Enable the use of Views", room.enableViews) );
+					const tabViews = parent( this.tabControl.addTab("Views") );
+						this.inputEnableViews = add( new HCheckBoxInput("Enable the use of Views", this.resource.enableViews) );
 
 						this.selectViews = add( new HSelect(null, "views") );
 						this.selectViewsOptions = [];
@@ -240,6 +249,7 @@ export default class HWindowRoom extends HWindow {
 
 						this.updateViewProperties();
 
+						setDeepOnUpdateOnElement(tabViews, () => this.onUpdate());
 						endparent();
 
 					// updates
@@ -261,7 +271,7 @@ export default class HWindowRoom extends HWindow {
 
 						// actual room area
 
-						this.canvasPreview = add( new HCanvas(room.width, room.height) );
+						this.canvasPreview = add( new HCanvas(this.resource.width, this.resource.height) );
 						this.ctx = this.canvasPreview.html.getContext("2d", {alpha: false});
 						this.ctx.imageSmoothingEnabled = false;
 
@@ -274,11 +284,13 @@ export default class HWindowRoom extends HWindow {
 
 							if (this.radioAdd.getChecked()) {
 								this.movingInstance = this.addInstance();
+								this.onUpdate();
 							} else
 
 							if (this.radioMultiple.getChecked()) {
 								this.movingInstance = this.addInstance();
 								this.deleteUnderlying();
+								this.onUpdate();
 							} else
 
 							if (this.radioMove.getChecked()) {
@@ -291,7 +303,8 @@ export default class HWindowRoom extends HWindow {
 							if (this.radioDelete.getChecked()) {
 								const hover = this.getInstanceAtPosition(pos);
 								if (hover) {
-									this.paramInstances = this.paramInstances.filter(i => i != hover);
+									this.resource.instances = this.resource.instances.filter(i => i != hover);
+									this.onUpdate();
 								}
 							}
 
@@ -307,6 +320,7 @@ export default class HWindowRoom extends HWindow {
 									if (this.movingInstance) {
 										this.movingInstance.x = snappedPos.x;
 										this.movingInstance.y = snappedPos.y;
+										this.onUpdate();
 									}
 								} else
 
@@ -316,13 +330,15 @@ export default class HWindowRoom extends HWindow {
 										this.currentPos = snappedPos;
 										this.movingInstance = this.addInstance();
 										this.deleteUnderlying();
+										this.onUpdate();
 									}
 								} else
 
 								if (this.radioDelete.getChecked()) {
 									const hover = this.getInstanceAtPosition(pos);
 									if (hover) {
-										this.paramInstances = this.paramInstances.filter(i => i != hover);
+										this.resource.instances = this.resource.instances.filter(i => i != hover);
+										this.onUpdate();
 									}
 								}
 
@@ -372,44 +388,11 @@ export default class HWindowRoom extends HWindow {
 				this.defaultInstanceImage = new ImageWrapper(DefaultInstanceIcon);
 				this.updateCanvasPreview();
 
-			this.makeApplyOkButtons(
-				() => {
-					this.editor.project.changeResourceName(room, this.inputName.getValue());
-
-					room.width = parseInt(this.inputWidth.getValue());
-					room.height = parseInt(this.inputHeight.getValue());
-					room.speed = parseInt(this.inputSpeed.getValue());
-
-					room.drawBackgroundColor = this.inputDrawBackgroundColor.getChecked();
-					room.backgroundColor = this.inputBackgroundColor.getValue();
-
-					room.backgrounds = this.paramBackgrounds;
-
-					room.enableViews = this.inputEnableViews.getChecked();
-
-					room.views = this.paramViews;
-
-					// In GM, these ids are saved instantly. Even if you close and don't save the room, it still uses the ids. In this project, ideally resource editors would only change the project when you press ok or apply. Because of that, we create the ProjectInstances without ids, and only when saving we fill in the ids.
-
-					for (const instance of this.paramInstances) {
-						if (instance.id == null) {
-							this.editor.project.lastId += 1;
-							instance.id = this.editor.project.lastId;
-						}
-					}
-
-					room.instances = this.paramInstances;
-
-					// Make sure that paramInstances, paramBackgrounds and paramViews are copies
-					this.copyProperties();
-
-					this.updateTitle();
-				},
-				() => {
-					this.close();
-				},
-			);
 			endparent();
+
+		setDeepOnUpdateOnElement(this.client, () => this.onUpdate());
+
+		this.tabControl.showTabContent(tabInstances);
 	}
 
 	onAdd() {
@@ -421,6 +404,7 @@ export default class HWindowRoom extends HWindow {
 			if (this.movingInstance) {
 				if (this.radioAdd.getChecked()) {
 					this.deleteUnderlying();
+					this.onUpdate();
 				}
 				this.movingInstance = null;
 				this.updateCanvasPreview();
@@ -447,23 +431,48 @@ export default class HWindowRoom extends HWindow {
 		this.editor.project.dispatcher.stopListening(this.listeners);
 	}
 
-	updateTitle() {
-		this.setTitle("Room Properties: "+this.room.name);
+	copyData() {
+		this.resourceCopy = new ProjectRoom(this.resource);
 	}
 
-	// Make a copy of every property of the resource so we can change it at will without changing the original resource.
-	copyProperties() {
-		this.paramBackgrounds = this.room.backgrounds.map(background => {
-			if (background == null) return null;
-			return new ProjectRoomBackground(background);
-		});
-		this.paramViews = this.room.views.map(view => {
-			if (view == null) return null;
-			return new ProjectRoomView(view);
-		});
-		this.paramInstances = this.room.instances.map(instance => {
-			return new ProjectInstance(instance);
-		});
+	saveData() {
+		this.editor.project.changeResourceName(this.resource, this.inputName.getValue());
+		this.updateTitle();
+
+		this.resource.width = parseInt(this.inputWidth.getValue());
+		this.resource.height = parseInt(this.inputHeight.getValue());
+		this.resource.speed = parseInt(this.inputSpeed.getValue());
+
+		this.resource.drawBackgroundColor = this.inputDrawBackgroundColor.getChecked();
+		this.resource.backgroundColor = this.inputBackgroundColor.getValue();
+
+		this.resource.enableViews = this.inputEnableViews.getChecked();
+
+		// In GM, these ids are saved instantly. Even if you close and don't save the room, it still uses the ids. In this project, ideally resource editors would only change the project when you press ok or apply. Because of that, we create the ProjectInstances without ids, and only when saving we fill in the ids.
+		// lol ignore this its all saved babye
+
+		for (const instance of this.resource.instances) {
+			if (instance.id == null) {
+				this.editor.project.lastId += 1;
+				instance.id = this.editor.project.lastId;
+			}
+		}
+	}
+
+	restoreData() {
+		Object.assign(this.resource, this.resourceCopy);
+
+		this.editor.project.changeResourceName(this.resource, this.resource.name);
+		this.updateTitle();
+	}
+
+	onUpdate() {
+		this.modified = true;
+		this.saveData();
+	}
+
+	updateTitle() {
+		this.setTitle("Room Properties: "+this.resource.name);
 	}
 
 	// Objects
@@ -476,24 +485,24 @@ export default class HWindowRoom extends HWindow {
 		i.y = this.currentPos.y;
 		i.object_index = this.selectObject.getValue();
 
-		this.paramInstances.push(i);
+		this.resource.instances.push(i);
 		return i;
 	}
 
 	deleteUnderlying() {
 		if (this.inputDeleteUnderlying.getChecked()) {
-			for (let i = this.paramInstances.length - 1; i >= 0; i--) {
-				const instance = this.paramInstances[i];
+			for (let i = this.resource.instances.length - 1; i >= 0; i--) {
+				const instance = this.resource.instances[i];
 				if (instance != this.movingInstance && this.isInstanceAtPosition(instance, this.currentPos)) {
-					this.paramInstances.splice(i, 1);
+					this.resource.instances.splice(i, 1);
 				}
 			}
 		}
 	}
 
 	getInstanceAtPosition(pos) {
-		for (let i = this.paramInstances.length - 1; i >= 0; i--) {
-			const instance = this.paramInstances[i];
+		for (let i = this.resource.instances.length - 1; i >= 0; i--) {
+			const instance = this.resource.instances[i];
 			if (this.isInstanceAtPosition(instance, pos)) {
 				return instance;
 			}
@@ -527,36 +536,28 @@ export default class HWindowRoom extends HWindow {
 		const x2 = x1 + w;
 		const y2 = y1 + h;
 
-		if (pos.x >= x1 && pos.x < x2 && pos.y >= y1 && pos.y < y2) {
-			return true;
-		} else {
-			return false;
-		}
+		return (pos.x >= x1 && pos.x < x2 && pos.y >= y1 && pos.y < y2);
 	}
 
 	// Backgrounds
 
 	getBackground(index) {
-		const currentBackground = this.paramBackgrounds[index];
-		if (currentBackground == null) {
-			return new ProjectRoomBackground(); // default values used
-		}
-		return currentBackground;
+		return this.resource.backgrounds[index] ?? new ProjectRoomBackground();
 	}
 
 	getOrCreateBackground(index) {
-		if (this.paramBackgrounds[index] == null) {
-			this.paramBackgrounds[index] = new ProjectRoomBackground(); // default values used
+		if (this.resource.backgrounds[index] == null) {
+			this.resource.backgrounds[index] = new ProjectRoomBackground(); // default values used
 		}
-		return this.paramBackgrounds[index];
+		return this.resource.backgrounds[index];
 	}
 
 	getOrCreateCurrentBackground() {
 		const currentBackgroundId = this.selectBackgrounds.getValue();
-		if (this.paramBackgrounds[currentBackgroundId] == null) {
-			this.paramBackgrounds[currentBackgroundId] = new ProjectRoomBackground();
+		if (this.resource.backgrounds[currentBackgroundId] == null) {
+			this.resource.backgrounds[currentBackgroundId] = new ProjectRoomBackground();
 		}
-		return this.paramBackgrounds[currentBackgroundId];
+		return this.resource.backgrounds[currentBackgroundId];
 	}
 
 	updateBackgroundProperties() {
@@ -577,18 +578,14 @@ export default class HWindowRoom extends HWindow {
 	// Views
 
 	getView(index) {
-		const currentView = this.paramViews[index];
-		if (currentView == null) {
-			return new ProjectRoomView(); // default values used
-		}
-		return currentView;
+		return this.resource.views[index] ?? new ProjectRoomView();
 	}
 
 	getOrCreateView(index) {
-		if (this.paramViews[index] == null) {
-			this.paramViews[index] = new ProjectRoomView(); // default values used
+		if (this.resource.views[index] == null) {
+			this.resource.views[index] = new ProjectRoomView(); // default values used
 		}
-		return this.paramViews[index];
+		return this.resource.views[index];
 	}
 
 	getOrCreateCurrentView() {
@@ -645,19 +642,19 @@ export default class HWindowRoom extends HWindow {
 		}
 
 		// backgrounds
-		for (const roomBackground of this.paramBackgrounds) {
+		for (const roomBackground of this.resource.backgrounds) {
 			if (!roomBackground) continue;
 			if (roomBackground.isForeground == true) continue;
 			await this.drawRoomBackground(roomBackground);
 		}
 
 		// instance
-		for (const roomInstance of this.paramInstances) {
+		for (const roomInstance of this.resource.instances) {
 			await this.drawRoomInstance(roomInstance);
 		}
 
 		// foregrounds
-		for (const roomBackground of this.paramBackgrounds) {
+		for (const roomBackground of this.resource.backgrounds) {
 			if (!roomBackground) continue;
 			if (roomBackground.isForeground == false) continue;
 			await this.drawRoomBackground(roomBackground);
@@ -767,5 +764,14 @@ export default class HWindowRoom extends HWindow {
 		this.ctx.stroke();
 
 		this.ctx.restore();
+	}
+
+	close() {
+		if (this.modified) {
+			if (!confirm(`Close without saving the changes to ${this.resource.name}?`)) return;
+			this.restoreData();
+		}
+
+		super.close();
 	}
 }

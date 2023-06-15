@@ -5,6 +5,7 @@ import {
 	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline,
 	ProjectEvent, ProjectAction, ProjectActionArg,
 } from "~/common/project/ProjectProperties.js";
+import {setDeepOnUpdateOnElement} from "~/common/tools.js";
 import HTabControl from "~/editor/components/HTabControl/HTabControl.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
 
@@ -25,37 +26,41 @@ export default class HWindowObject extends HWindow {
 		"timeline": ProjectTimeline,
 	};
 
-	constructor(manager, editor, object) {
+	constructor(manager, editor, resource) {
 		super(manager);
 		this.editor = editor;
-		this.resource = object;
-		this.object = object;
+		this.resource = resource;
+
+		this.modified = false;
+		this.copyData();
 
 		this.updateTitle();
-
-		// Create paramEvents as copy
-		this.copyProperties();
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "panel-container window-object"}) ) );
 
-				parent( add( new HElement("div", {class: "properties"}) ) );
+				this.divProperties = parent( add( new HElement("div", {class: "properties"}) ) );
 
-					const inputName = add( new HTextInput("Name:", object.name) );
+					this.inputName = add( new HTextInput("Name:", this.resource.name) );
 
 					this.selectSprite = add( new HResourceSelect(this.editor, "Sprite:", ProjectSprite) );
-					this.selectSprite.setValue(object.sprite_index);
+					this.selectSprite.setValue(this.resource.sprite_index);
 
-					const inputVisible = add( new HCheckBoxInput("Visible", object.visible) );
-					const inputSolid = add( new HCheckBoxInput("Solid", object.solid) );
-					const inputDepth = add( new HNumberInput("Depth:", object.depth, 1) );
-					const inputPersistent = add( new HCheckBoxInput("Persistent", object.persistent) );
+					this.inputVisible = add( new HCheckBoxInput("Visible", this.resource.visible) );
+					this.inputSolid = add( new HCheckBoxInput("Solid", this.resource.solid) );
+					this.inputDepth = add( new HNumberInput("Depth:", this.resource.depth, 1) );
+					this.inputPersistent = add( new HCheckBoxInput("Persistent", this.resource.persistent) );
 
 					this.selectParent = add( new HResourceSelect(this.editor, "Parent:", ProjectObject) );
-					this.selectParent.setValue(object.parent_index);
+					this.selectParent.setValue(this.resource.parent_index);
 
 					this.selectMask = add( new HResourceSelect(this.editor, "Mask:", ProjectSprite) );
-					this.selectMask.setValue(object.mask_index);
+					this.selectMask.setValue(this.resource.mask_index);
+
+					add( new HButton("OK", () => {
+						this.modified = false;
+						this.close();
+					}) );
 
 					endparent();
 
@@ -79,13 +84,13 @@ export default class HWindowObject extends HWindow {
 							if (!newEvent) return;
 
 							// Don't continue if there's an event with the exact same type and subtype
-							if (this.paramEvents.find(x => x.type == newEvent.type && x.subtype == newEvent.subtype))
+							if (this.resource.events.find(x => x.type == newEvent.type && x.subtype == newEvent.subtype))
 								return;
 
 							const event = new ProjectEvent();
 							event.type = newEvent.type;
 							event.subtype = newEvent.subtype;
-							this.paramEvents.push(event);
+							this.resource.events.push(event);
 
 							this.sortEvents();
 
@@ -94,28 +99,32 @@ export default class HWindowObject extends HWindow {
 							this.updateEventsMenu();
 							this.updateSelectActions();
 							this.updateActionsMenu();
+
+							this.onUpdate();
 						}) );
 
 						// Delete event button
 						this.buttonEventDelete = add( new HButton("Delete", () => {
-							const index = this.paramEvents.findIndex(event => this.selectEvents.getValue() == event.getNameId());
+							const index = this.resource.events.findIndex(event => this.selectEvents.getValue() == event.getNameId());
 							if (index < 0) return;
 
-							if (this.paramEvents[index].actions.length > 0)
+							if (this.resource.events[index].actions.length > 0)
 							if (!confirm("Are you sure you want to remove the event with all its actions?"))
 								return;
 
 							// Close action windows related to event
-							this.paramEvents[index].actions.forEach(action => {
-								this.deleteActionWindow(action);
+							this.resource.events[index].actions.forEach(action => {
+								this.closeActionWindow(action);
 							});
 
-							this.paramEvents.splice(index, 1);
+							this.resource.events.splice(index, 1);
 
 							this.updateSelectEvents();
 							this.updateEventsMenu();
 							this.updateSelectActions();
 							this.updateActionsMenu();
+
+							this.onUpdate();
 						}) );
 
 						// Change event button
@@ -127,7 +136,7 @@ export default class HWindowObject extends HWindow {
 							if (!event) return;
 
 							// Don't continue if there's an event with the exact same type and subtype
-							if (this.paramEvents.find(x => x.type == newEvent.type && x.subtype == newEvent.subtype))
+							if (this.resource.events.find(x => x.type == newEvent.type && x.subtype == newEvent.subtype))
 								return;
 
 							event.type = newEvent.type;
@@ -140,6 +149,8 @@ export default class HWindowObject extends HWindow {
 							// this.updateEventsMenu();
 							// this.updateSelectActions();
 							// this.updateActionsMenu();
+
+							this.onUpdate();
 						}) );
 
 						endparent();
@@ -199,6 +210,8 @@ export default class HWindowObject extends HWindow {
 								this.updateSelectActions();
 								this.selectActions.setSelectedIndexes(pastedActionIndexes);
 								this.updateActionsMenu();
+
+								this.onUpdate();
 							}
 						}) );
 
@@ -209,13 +222,15 @@ export default class HWindowObject extends HWindow {
 							const actionIndexes = this.selectActions.getSelectedIndexes();
 
 							for (const index of actionIndexes) {
-								this.deleteActionWindow(event.actions[index]);
+								this.closeActionWindow(event.actions[index]);
 							}
 
 							event.actions = event.actions.filter((action, index) => !actionIndexes.includes(index));
 
 							this.updateSelectActions();
 							this.updateActionsMenu();
+
+							this.onUpdate();
 						}) );
 
 						this.buttonActionUp = add( new HButton("↑", () => {
@@ -230,6 +245,8 @@ export default class HWindowObject extends HWindow {
 							this.updateSelectActions();
 							this.selectActions.setSelectedIndex(actionIndex-1);
 							this.updateActionsMenu();
+
+							this.onUpdate();
 						}) );
 
 						this.buttonActionDown = add( new HButton("↓", () => {
@@ -244,6 +261,8 @@ export default class HWindowObject extends HWindow {
 							this.updateSelectActions();
 							this.selectActions.setSelectedIndex(actionIndex+1);
 							this.updateActionsMenu();
+
+							this.onUpdate();
 						}) );
 
 						endparent();
@@ -315,6 +334,8 @@ export default class HWindowObject extends HWindow {
 											this.updateSelectActions();
 											this.selectActions.setSelectedIndex(event.actions.length-1);
 											this.updateActionsMenu();
+
+											this.onUpdate();
 										}, "action-type") );
 
 										if (nextClass) {
@@ -354,32 +375,9 @@ export default class HWindowObject extends HWindow {
 			this.updateSelectActions();
 			this.updateActionsMenu();
 
-			this.makeApplyOkButtons(
-				() => {
-					for (const w of this.windowChildren) {
-						w.apply?.();
-					}
-
-					this.editor.project.changeResourceName(object, inputName.getValue());
-					this.editor.project.changeObjectSprite(object, this.selectSprite.getValue());
-					object.visible = inputVisible.getChecked();
-					object.solid = inputSolid.getChecked();
-					object.depth = parseInt(inputDepth.getValue());
-					object.persistent = inputPersistent.getChecked();
-					object.parent_index = this.selectParent.getValue();
-					object.mask_index = this.selectMask.getValue();
-					object.events = this.paramEvents;
-
-					// Make sure that paramEvents is a copy
-					this.copyProperties();
-
-					this.updateTitle();
-				},
-				() => {
-					this.close();
-				},
-			);
 			endparent();
+
+		setDeepOnUpdateOnElement(this.divProperties, () => this.onUpdate());
 	}
 
 	onAdd() {
@@ -397,17 +395,43 @@ export default class HWindowObject extends HWindow {
 		this.editor.project.dispatcher.stopListening(this.listeners);
 	}
 
-	updateTitle() {
-		this.setTitle("Object Properties: "+this.object.name);
+	copyData() {
+		this.resourceCopy = new ProjectObject(this.resource);
 	}
 
-	// Make a copy of every property of the resource so we can change it at will without changing the original resource.
-	copyProperties() {
-		this.paramEvents = this.object.events.map(event => new ProjectEvent(event));
+	saveData() {
+		this.editor.project.changeResourceName(this.resource, this.inputName.getValue());
+		this.updateTitle();
+
+		this.editor.project.changeObjectSprite(this.resource, this.selectSprite.getValue());
+		this.resource.visible = this.inputVisible.getChecked();
+		this.resource.solid = this.inputSolid.getChecked();
+		this.resource.depth = parseInt(this.inputDepth.getValue());
+		this.resource.persistent = this.inputPersistent.getChecked();
+		this.resource.parent_index = this.selectParent.getValue();
+		this.resource.mask_index = this.selectMask.getValue();
+	}
+
+	restoreData() {
+		Object.assign(this.resource, this.resourceCopy);
+
+		this.editor.project.changeResourceName(this.resource, this.resource.name);
+		this.updateTitle();
+
+		this.editor.project.changeObjectSprite(this.resource, this.resource.sprite_index);
+	}
+
+	onUpdate() {
+		this.modified = true;
+		this.saveData();
+	}
+
+	updateTitle() {
+		this.setTitle("Object Properties: "+this.resource.name);
 	}
 
 	sortEvents() {
-		this.paramEvents.sort((a, b) => {
+		this.resource.events.sort((a, b) => {
 			const aTypeId = Events.listEventTypes.find(x => x.value == a.type).id;
 			const bTypeId = Events.listEventTypes.find(x => x.value == b.type).id;
 
@@ -427,12 +451,12 @@ export default class HWindowObject extends HWindow {
 		this.selectEvents.removeOptions();
 
 		parent( this.selectEvents.select );
-			this.paramEvents.forEach(event => {
+			this.resource.events.forEach(event => {
 				add( new HOption(Events.getEventName(event, this.editor.project), event.getNameId()) );
 			});
 			endparent();
 
-		this.selectEvents.setSelectedIndex(Math.min(index, this.paramEvents.length-1));
+		this.selectEvents.setSelectedIndex(Math.min(index, this.resource.events.length-1));
 	}
 
 	updateEventsMenu() {
@@ -503,7 +527,7 @@ export default class HWindowObject extends HWindow {
 	}
 
 	getSelectedEvent() {
-		return this.paramEvents.find(event => this.selectEvents.getValue() == event.getNameId());
+		return this.resource.events.find(event => this.selectEvents.getValue() == event.getNameId());
 	}
 
 	getActionTypeInfo() {
@@ -605,7 +629,23 @@ export default class HWindowObject extends HWindow {
 		}
 	}
 
-	deleteActionWindow(id) {
-		this.windowChildren.find(x => x.id == id)?.close();
+	closeActionWindow(action) {
+		this.windowChildren.find(x => x.action == action)?.forceClose();
+	}
+
+	close() {
+		if (this.modified) {
+			if (!confirm(`Close without saving the changes to ${this.resource.name}?`)) return;
+		}
+
+		for (const child of this.windowChildren) {
+			child.forceClose();
+		}
+
+		if (this.modified) {
+			this.restoreData();
+		}
+
+		super.close();
 	}
 }

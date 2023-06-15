@@ -65,7 +65,7 @@ export default class HWindowSpriteImages extends HWindow {
 	}
 
 	copyData() {
-		this.copyImages = [...this.spriteWindow.resource.images];
+		this.imagesCopy = [...this.spriteWindow.resource.images];
 	}
 
 	saveData() {
@@ -74,7 +74,7 @@ export default class HWindowSpriteImages extends HWindow {
 	}
 
 	restoreData() {
-		this.spriteWindow.resource.images = this.copyImages;
+		this.spriteWindow.resource.images = this.imagesCopy;
 
 		this.spriteWindow.updateImageInfo();
 		this.spriteWindow.onUpdate();

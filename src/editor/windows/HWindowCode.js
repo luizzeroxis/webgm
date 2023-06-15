@@ -1,6 +1,7 @@
 import HWindow from "~/common/components/HWindowManager/HWindow.js";
-import {parent, endparent, add, HElement, HRadioInput, uniqueID} from "~/common/h";
-import {ProjectObject} from "~/common/project/ProjectProperties.js";
+import {parent, endparent, add, HElement, HButton, HRadioInput, uniqueID} from "~/common/h";
+import {ProjectObject, ProjectAction} from "~/common/project/ProjectProperties.js";
+import {setDeepOnUpdateOnElement} from "~/common/tools.js";
 import HCodeEditor from "~/editor/components/HCodeEditor/HCodeEditor.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
 
@@ -11,6 +12,9 @@ export default class HWindowCode extends HWindow {
 		this.action = action;
 		this.windowObject = windowObject;
 
+		this.modified = false;
+		this.copyData();
+
 		this.actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
 
 		this.setTitle(this.actionType.description);
@@ -19,7 +23,12 @@ export default class HWindowCode extends HWindow {
 
 			parent( add( new HElement("div", {class: "window-code"}) ) );
 
-				parent( add( new HElement("div", {class: "applies-to"}) ) );
+				parent( add( new HElement("div", {class: "tool-bar"}) ) );
+
+					add( new HButton("OK", () => {
+						this.modified = false;
+						this.close();
+					}) );
 
 					const appliesToGroup = "_radio_"+uniqueID();
 
@@ -37,22 +46,18 @@ export default class HWindowCode extends HWindow {
 
 				endparent();
 
-			this.makeApplyOkButtons(
-				() => {
-					this.apply();
-				},
-				() => {
-					this.windowObject.deleteActionWindow(this.id);
-					this.close();
-				},
-			);
-
 			this.codeEditor.nextElem = this.applyButton;
 
 			endparent();
+
+		setDeepOnUpdateOnElement(this.client, () => this.onUpdate());
 	}
 
-	apply() {
+	copyData() {
+		this.actionCopy = new ProjectAction(this.action);
+	}
+
+	saveData() {
 		this.action.args[0].value = this.codeEditor.getValue();
 		this.action.appliesTo = (
 			this.radioAppliesToSelf.getChecked() ? -1
@@ -63,5 +68,27 @@ export default class HWindowCode extends HWindow {
 
 		// Update action in event in object
 		this.windowObject.updateSelectActions();
+		this.windowObject.onUpdate();
+	}
+
+	restoreData() {
+		Object.assign(this.action, this.actionCopy);
+
+		// Update action in event in object
+		this.windowObject.updateSelectActions();
+		this.windowObject.onUpdate();
+	}
+
+	onUpdate() {
+		this.modified = true;
+		this.saveData();
+	}
+
+	close() {
+		if (this.modified) {
+			if (!confirm("Close without saving the changes to the code?")) return;
+			this.restoreData();
+		}
+		super.close();
 	}
 }

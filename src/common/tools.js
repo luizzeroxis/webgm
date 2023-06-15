@@ -258,12 +258,12 @@ export function parseNewLineHash(string) {
 
 // Add an input event to element and its children if it's an input element.
 export function setDeepOnUpdateOnElement(element, fn) {
-	if (element.html.tagName == "INPUT" || element.html.tagName == "TEXTAREA") {
+	if (["INPUT", "TEXTAREA", "SELECT"].includes(element.html.tagName)) {
 		element.html.addEventListener("input", () => {
 			console.log("*", element);
 			fn();
 		});
-		console.log("setDeepOnUpdateOnElement", element);
+		console.log("setDeepOnUpdateOnElement", element.html);
 	}
 	for (const child of element.children) {
 		setDeepOnUpdateOnElement(child, fn);

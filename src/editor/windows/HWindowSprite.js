@@ -228,13 +228,16 @@ export default class HWindowSprite extends HWindow {
 	close() {
 		if (this.modified) {
 			if (!confirm(`Close without saving the changes to ${this.resource.name}?`)) return;
+		}
 
-			for (const child of this.windowChildren) {
-				child.forceClose();
-			}
+		for (const child of this.windowChildren) {
+			child.forceClose();
+		}
 
+		if (this.modified) {
 			this.restoreData();
 		}
+
 		super.close();
 	}
 }

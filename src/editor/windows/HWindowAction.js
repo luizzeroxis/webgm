@@ -1,7 +1,7 @@
 import HWindow from "~/common/components/HWindowManager/HWindow.js";
-import {parent, endparent, add, HElement, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, uniqueID} from "~/common/h";
-import {ProjectObject, ProjectActionArg} from "~/common/project/ProjectProperties.js";
-import {parseArrowString, stringifyArrowValues, decimalToHex, hexToDecimal} from "~/common/tools.js";
+import {parent, endparent, add, HElement, HButton, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, uniqueID} from "~/common/h";
+import {ProjectObject, ProjectAction, ProjectActionArg} from "~/common/project/ProjectProperties.js";
+import {setDeepOnUpdateOnElement, parseArrowString, stringifyArrowValues, decimalToHex, hexToDecimal} from "~/common/tools.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
 
 import HWindowObject from "./HWindowObject.js";
@@ -13,7 +13,10 @@ export default class HWindowAction extends HWindow {
 		this.action = action;
 		this.windowObject = windowObject;
 
-		this.actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
+		this.modified = false;
+		this.copyData();
+
+		this.actionType = this.editor.getActionType(this.action.typeLibrary, this.action.typeId);
 
 		this.setTitle(this.actionType.description);
 
@@ -23,10 +26,7 @@ export default class HWindowAction extends HWindow {
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-action"}) ) );
 
-				this.actionTypeHasApplyTo = this.actionType.hasApplyTo;
-				if (this.actionType.hasApplyTo == undefined) {
-					this.actionTypeHasApplyTo = actionTypeInfoItem.hasApplyTo;
-				}
+				this.actionTypeHasApplyTo = this.actionType.hasApplyTo ?? actionTypeInfoItem.hasApplyTo;
 
 				if (this.actionTypeHasApplyTo) {
 					parent( add( new HElement("fieldset") ) );
@@ -35,22 +35,19 @@ export default class HWindowAction extends HWindow {
 
 						const appliesToGroup = "_radio_"+uniqueID();
 
-						this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, "Self", (action.appliesTo == -1)) );
-						this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, "Other", (action.appliesTo == -2)) );
-						this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, "Object:", (action.appliesTo >= 0)) );
+						this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, "Self", (this.action.appliesTo == -1)) );
+						this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, "Other", (this.action.appliesTo == -2)) );
+						this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, "Object:", (this.action.appliesTo >= 0)) );
 
 						this.selectObject = add( new HResourceSelect(this.editor, null, ProjectObject) );
 
-						if (action.appliesTo >= 0)
-							this.selectObject.setValue(action.appliesTo);
+						if (this.action.appliesTo >= 0)
+							this.selectObject.setValue(this.action.appliesTo);
 
 						endparent();
 				}
 
-				this.actionTypeArgs = this.actionType.args;
-				if (this.actionType.args == undefined) {
-					this.actionTypeArgs = actionTypeInfoItem.args;
-				}
+				this.actionTypeArgs = this.actionType.args ?? actionTypeInfoItem.args;
 
 				this.argsInterfaces = [];
 
@@ -60,22 +57,22 @@ export default class HWindowAction extends HWindow {
 						case "string":
 						case "both":
 							if (this.actionType.interfaceKind == "arrows" && i == 0) {
-								this.argsInterfaces[i] = this.makeDirectionInterface(argType.name, action.args[i].value);
+								this.argsInterfaces[i] = this.makeDirectionInterface(argType.name, this.action.args[i].value);
 							} else {
-								this.argsInterfaces[i] = this.makeTextInterface(argType.name, action.args[i].value);
+								this.argsInterfaces[i] = this.makeTextInterface(argType.name, this.action.args[i].value);
 							}
 							break;
 
 						case "boolean":
-							this.argsInterfaces[i] = this.makeMenuInterface(argType.name, ["false", "true"], action.args[i].value);
+							this.argsInterfaces[i] = this.makeMenuInterface(argType.name, ["false", "true"], this.action.args[i].value);
 							break;
 
 						case "menu":
-							this.argsInterfaces[i] = this.makeMenuInterface(argType.name, argType.menu, action.args[i].value);
+							this.argsInterfaces[i] = this.makeMenuInterface(argType.name, argType.menu, this.action.args[i].value);
 							break;
 
 						case "color":
-							this.argsInterfaces[i] = this.makeColorInterface(argType.name, action.args[i].value);
+							this.argsInterfaces[i] = this.makeColorInterface(argType.name, this.action.args[i].value);
 							break;
 
 						case "sprite":
@@ -87,42 +84,82 @@ export default class HWindowAction extends HWindow {
 						case "room":
 						case "font":
 						case "timeline":
-							this.argsInterfaces[i] = this.makeResourceInterface(argType.name, argType.kind, action.args[i].value);
+							this.argsInterfaces[i] = this.makeResourceInterface(argType.name, argType.kind, this.action.args[i].value);
 							break;
 					}
 				});
 
-				this.actionTypeHasRelative = this.actionType.hasRelative;
-				if (this.actionTypeHasRelative == undefined) {
-					this.actionTypeHasRelative = actionTypeInfoItem.hasRelative;
-				}
+				this.actionTypeHasRelative = this.actionType.hasRelative ?? actionTypeInfoItem.hasRelative;
 
 				if (this.actionTypeHasRelative) {
-					this.inputRelative = add( new HCheckBoxInput("Relative", action.relative) );
+					this.inputRelative = add( new HCheckBoxInput("Relative", this.action.relative) );
 				}
 
-				this.actionTypeIsQuestion = this.actionType.isQuestion;
-				if (this.actionTypeIsQuestion == undefined) {
-					this.actionTypeIsQuestion = actionTypeInfoItem.isQuestion;
-				}
+				this.actionTypeIsQuestion = this.actionType.isQuestion ?? actionTypeInfoItem.isQuestion;
 
 				if (this.actionTypeIsQuestion) {
-					this.inputNot = add( new HCheckBoxInput("NOT", action.not) );
+					this.inputNot = add( new HCheckBoxInput("NOT", this.action.not) );
 				}
 
 				endparent();
 
-			this.makeApplyOkButtons(
-				() => {
-					this.apply();
-				},
-				() => {
-					this.windowObject.deleteActionWindow(this.id);
-					this.close();
-				},
-			);
+			add( new HButton("OK", () => {
+				this.modified = false;
+				this.close();
+			}) );
+
+			add( new HButton("Cancel", () => {
+				this.close();
+			}) );
 
 			endparent();
+
+		setDeepOnUpdateOnElement(this.client, () => this.onUpdate());
+	}
+
+	copyData() {
+		this.actionCopy = new ProjectAction(this.action);
+	}
+
+	saveData() {
+		for (let i = 0; i < this.action.args.length; i++) {
+			const actionArg = new ProjectActionArg();
+			actionArg.kind = this.actionTypeArgs[i].kind;
+			actionArg.value = this.argsInterfaces[i].getValue();
+			this.action.args[i] = actionArg;
+		}
+
+		if (this.actionTypeHasApplyTo) {
+			this.action.appliesTo = (
+				this.radioAppliesToSelf.getChecked() ? -1
+				: this.radioAppliesToOther.getChecked() ? -2
+				: this.radioAppliesToObject.getChecked() ? this.selectObject.getValue()
+				: null
+			);
+		}
+
+		if (this.actionTypeHasRelative)
+			this.action.relative = this.inputRelative.getChecked();
+
+		if (this.actionTypeIsQuestion)
+			this.action.not = this.inputNot.getChecked();
+
+		// Update action in event in object
+		this.windowObject.updateSelectActions();
+		this.windowObject.onUpdate();
+	}
+
+	restoreData() {
+		Object.assign(this.action, this.actionCopy);
+
+		// Update action in event in object
+		this.windowObject.updateSelectActions();
+		this.windowObject.onUpdate();
+	}
+
+	onUpdate() {
+		this.modified = true;
+		this.saveData();
 	}
 
 	makeTextInterface(name, value) {
@@ -184,30 +221,10 @@ export default class HWindowAction extends HWindow {
 		};
 	}
 
-	apply() {
-		for (let i = 0; i < this.action.args.length; i++) {
-			const actionArg = new ProjectActionArg();
-			actionArg.kind = this.actionTypeArgs[i].kind;
-			actionArg.value = this.argsInterfaces[i].getValue();
-			this.action.args[i] = actionArg;
+	close() {
+		if (this.modified) {
+			this.restoreData();
 		}
-
-		if (this.actionTypeHasApplyTo) {
-			this.action.appliesTo = (
-				this.radioAppliesToSelf.getChecked() ? -1
-				: this.radioAppliesToOther.getChecked() ? -2
-				: this.radioAppliesToObject.getChecked() ? this.selectObject.getValue()
-				: null
-			);
-		}
-
-		if (this.actionTypeHasRelative)
-			this.action.relative = this.inputRelative.getChecked();
-
-		if (this.actionTypeIsQuestion)
-			this.action.not = this.inputNot.getChecked();
-
-		// Update action in event in object
-		this.windowObject.updateSelectActions();
+		super.close();
 	}
 }

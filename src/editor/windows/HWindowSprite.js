@@ -1,16 +1,19 @@
 import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HImage, HCheckBoxInput} from "~/common/h";
 import ImageWrapper from "~/common/ImageWrapper.js";
-import {openFile, setOnFileDrop} from "~/common/tools.js";
+import {ProjectSprite} from "~/common/project/ProjectProperties.js";
+import {openFile, setDeepOnUpdateOnElement, setOnFileDrop} from "~/common/tools.js";
 
 import HWindowSpriteImages from "./HWindowSpriteImages.js";
 
 export default class HWindowSprite extends HWindow {
-	constructor(manager, editor, sprite) {
+	constructor(manager, editor, resource) {
 		super(manager);
 		this.editor = editor;
-		this.resource = sprite;
-		this.sprite = sprite;
+		this.resource = resource;
+
+		this.modified = false;
+		this.copyData();
 
 		this.updateTitle();
 
@@ -18,12 +21,7 @@ export default class HWindowSprite extends HWindow {
 			parent( add( new HElement("div", {class: "panel-container window-sprite"}) ) );
 				parent( add( new HElement("div", {class: "properties"}) ) );
 
-					const paramName = sprite.name;
-					this.paramImages = sprite.images;
-					const paramOriginX = sprite.originx;
-					const paramOriginY = sprite.originy;
-
-					const inputName = add( new HTextInput("Name:", paramName) );
+					this.inputName = add( new HTextInput("Name:", this.resource.name) );
 
 					parent( add( new HElement("div") ) );
 						this.buttonLoadSprite = add( new HButton("Load Sprite", async () => {
@@ -71,21 +69,27 @@ export default class HWindowSprite extends HWindow {
 						add( new HElement("legend", {}, "Origin") );
 
 						parent( add( new HElement("div", {class: "origin-x-y"})) );
-							const inputOriginX = add( new HNumberInput("X:", paramOriginX, 1, 0) );
-							const inputOriginY = add( new HNumberInput("Y:", paramOriginY, 1, 0) );
+							this.inputOriginX = add( new HNumberInput("X:", this.resource.originx, 1, 0) );
+							this.inputOriginY = add( new HNumberInput("Y:", this.resource.originy, 1, 0) );
 							endparent();
 
 						add( new HButton("Center", () => {
 							let w=16, h=16;
-							if (this.paramImages.length > 0) {
-								w = Math.floor(this.paramImages[0].width / 2);
-								h = Math.floor(this.paramImages[0].height / 2);
+							if (this.resource.images.length > 0) {
+								w = Math.floor(this.resource.images[0].width / 2);
+								h = Math.floor(this.resource.images[0].height / 2);
 							}
-							inputOriginX.setValue(w);
-							inputOriginY.setValue(h);
+							this.inputOriginX.setValue(w);
+							this.inputOriginY.setValue(h);
+							this.onUpdate();
 						}) );
 
 						endparent();
+
+					add( new HButton("OK", () => {
+						this.modified = false;
+						this.close();
+					}) );
 
 					endparent();
 
@@ -93,8 +97,8 @@ export default class HWindowSprite extends HWindow {
 					parent( add( new HElement("fieldset") ) );
 						add( new HElement("legend", {}, "Collision Checking") );
 
-						const inputPreciseCollisionChecking = add( new HCheckBoxInput("Precise collision checking", (sprite.shape == "precise")) );
-						const inputSeparateCollisionMasks = add( new HCheckBoxInput("Separate collision masks", sprite.separateCollisionMasks) );
+						this.inputPreciseCollisionChecking = add( new HCheckBoxInput("Precise collision checking", (this.resource.shape == "precise")) );
+						this.inputSeparateCollisionMasks = add( new HCheckBoxInput("Separate collision masks", this.resource.separateCollisionMasks) );
 
 						endparent();
 					endparent();
@@ -107,39 +111,57 @@ export default class HWindowSprite extends HWindow {
 
 				endparent();
 
-			this.makeApplyOkButtons(
-				() => {
-					this.editor.project.changeResourceName(sprite, inputName.getValue());
-					this.editor.project.changeSpriteImages(sprite, this.paramImages);
-					this.editor.project.changeSpriteOrigin(sprite, parseInt(inputOriginX.getValue()), parseInt(inputOriginY.getValue()));
-
-					sprite.shape = inputPreciseCollisionChecking.getChecked() ? "precise" : "rectangle";
-					sprite.separateCollisionMasks = inputSeparateCollisionMasks.getChecked();
-
-					sprite.alphaTolerance = 0;
-					sprite.boundingBox = "automatic";
-					sprite.bbLeft = 0;
-					sprite.bbTop = 0;
-					sprite.bbRight = 0;
-					sprite.bbBottom = 0;
-					if (this.paramImages.length > 0) {
-						sprite.bbRight = this.paramImages[0].width - 1;
-						sprite.bbBottom = this.paramImages[0].height - 1;
-					}
-
-					this.updateTitle();
-				},
-				() => this.close(),
-			);
-
 			endparent();
+
+		setDeepOnUpdateOnElement(this.client, () => this.onUpdate());
 
 		// Open file if dropped in the window body
 		setOnFileDrop(this.html, files => this.setImagesFromFiles(files), true);
 	}
 
+	copyData() {
+		this.resourceCopy = new ProjectSprite(this.resource);
+	}
+
+	saveData() {
+		this.editor.project.changeResourceName(this.resource, this.inputName.getValue());
+		this.updateTitle();
+
+		this.editor.project.changeSpriteImages(this.resource, this.resource.images);
+		this.editor.project.changeSpriteOrigin(this.resource, parseInt(this.inputOriginX.getValue()), parseInt(this.inputOriginY.getValue()));
+
+		this.resource.shape = this.inputPreciseCollisionChecking.getChecked() ? "precise" : "rectangle";
+		this.resource.separateCollisionMasks = this.inputSeparateCollisionMasks.getChecked();
+
+		this.resource.alphaTolerance = 0;
+		this.resource.boundingBox = "automatic";
+		this.resource.bbLeft = 0;
+		this.resource.bbTop = 0;
+		this.resource.bbRight = 0;
+		this.resource.bbBottom = 0;
+		if (this.resource.images.length > 0) {
+			this.resource.bbRight = this.resource.images[0].width - 1;
+			this.resource.bbBottom = this.resource.images[0].height - 1;
+		}
+	}
+
+	restoreData() {
+		Object.assign(this.resource, this.resourceCopy);
+
+		this.editor.project.changeResourceName(this.resource, this.resourceCopy.name);
+		this.updateTitle();
+
+		this.editor.project.changeSpriteImages(this.resource, this.resourceCopy.images);
+		this.editor.project.changeSpriteOrigin(this.resource, this.resourceCopy.originx, this.resourceCopy.originy);
+	}
+
+	onUpdate() {
+		this.modified = true;
+		this.saveData();
+	}
+
 	updateTitle() {
-		this.title.html.textContent = "Sprite Properties: "+this.sprite.name;
+		this.setTitle("Sprite Properties: "+this.resource.name);
 	}
 
 	loadImagesFromFiles(files) {
@@ -161,8 +183,9 @@ export default class HWindowSprite extends HWindow {
 
 		this.loadImagesFromFiles(files)
 		.then(images => {
-			this.paramImages = images;
+			this.resource.images = images;
 			this.updateImageInfo();
+			this.onUpdate();
 		})
 		.catch(() => {
 			// this.updateImageInfo();
@@ -176,10 +199,10 @@ export default class HWindowSprite extends HWindow {
 	updateImageInfo() {
 		this.showSubimage = 0;
 
-		if (this.paramImages.length > 0) {
-			this.paramImages[0].promise.then(() => {
-				this.divWidth.html.textContent = this.paramImages[0].width;
-				this.divHeight.html.textContent = this.paramImages[0].height;
+		if (this.resource.images.length > 0) {
+			this.resource.images[0].promise.then(() => {
+				this.divWidth.html.textContent = this.resource.images[0].width;
+				this.divHeight.html.textContent = this.resource.images[0].height;
 			});
 		} else {
 			this.imgSprite.setSrc(null);
@@ -187,18 +210,31 @@ export default class HWindowSprite extends HWindow {
 			this.divHeight.html.textContent = "32";
 		}
 
-		this.divSubimages.html.textContent = this.paramImages.length.toString();
+		this.divSubimages.html.textContent = this.resource.images.length.toString();
 
 		this.updateShow();
 	}
 
 	updateShow() {
-		if (this.paramImages.length > 0) {
-			this.imgSprite.setSrc(this.paramImages[this.showSubimage].src);
+		if (this.resource.images.length > 0) {
+			this.imgSprite.setSrc(this.resource.images[this.showSubimage].src);
 		}
 
 		this.divShowSubimage.html.textContent = this.showSubimage.toString();
 		this.buttonShowSubimageLeft.setDisabled(this.showSubimage == 0);
-		this.buttonShowSubimageRight.setDisabled(this.showSubimage >= this.paramImages.length - 1);
+		this.buttonShowSubimageRight.setDisabled(this.showSubimage >= this.resource.images.length - 1);
+	}
+
+	close() {
+		if (this.modified) {
+			if (!confirm(`Close without saving the changes to ${this.resource.name}?`)) return;
+
+			for (const child of this.windowChildren) {
+				child.forceClose();
+			}
+
+			this.restoreData();
+		}
+		super.close();
 	}
 }

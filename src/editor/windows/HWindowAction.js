@@ -15,7 +15,7 @@ export default class HWindowAction extends HWindow {
 
 		this.actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
 
-		this.title.html.textContent = this.actionType.description;
+		this.setTitle(this.actionType.description);
 
 		const actionTypeInfo = this.windowObject.getActionTypeInfo();
 		const actionTypeInfoItem = actionTypeInfo.find(x => x.kind == this.actionType.kind && x.interfaceKind == this.actionType.interfaceKind);

@@ -8,7 +8,7 @@ export default class HWindowGlobalGameSettings extends HWindow {
 		this.editor = editor;
 		this.globalGameSettings = globalGameSettings;
 
-		this.title.html.textContent = "Global Game Settings";
+		this.setTitle("Global Game Settings");
 
 		parent(this.client);
 

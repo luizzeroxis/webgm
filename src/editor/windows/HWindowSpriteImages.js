@@ -7,14 +7,22 @@ export default class HWindowSpriteImages extends HWindow {
 	constructor(manager, spriteWindow) {
 		super(manager);
 		this.spriteWindow = spriteWindow;
+		this.images = spriteWindow.resource.images;
 
-		this.title.html.textContent = "Sprite Editor: "+spriteWindow.sprite.name;
+		this.modified = false;
+		this.copyData();
 
-		this.images = [...spriteWindow.paramImages];
+		this.updateTitle();
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-sprite-images"}) ) );
 				parent( add( new HElement("div") ) );
+
+					add( new HButton("OK", () => {
+						this.modified = false;
+						this.close();
+					}) );
+
 					add( new HButton("Add", () => {
 						this.addImage();
 					}) );
@@ -23,12 +31,14 @@ export default class HWindowSpriteImages extends HWindow {
 						this.images.splice(this.imageList.selected-1, 0, ...this.images.splice(this.imageList.selected, 1));
 						this.updateImageListItems();
 						this.imageList.setSelected(this.imageList.selected-1);
+						this.onUpdate();
 					}) );
 
 					this.buttonMoveRight = add( new HButton("Move right", () => {
 						this.images.splice(this.imageList.selected+1, 0, ...this.images.splice(this.imageList.selected, 1));
 						this.updateImageListItems();
 						this.imageList.setSelected(this.imageList.selected+1);
+						this.onUpdate();
 					}) );
 
 					this.buttonDelete = add( new HButton("Delete", () => {
@@ -41,6 +51,7 @@ export default class HWindowSpriteImages extends HWindow {
 						if (this.imageList.selected >= this.images.length) {
 							this.imageList.setSelected(this.images.length - 1);
 						}
+						this.onUpdate();
 					}) );
 
 					endparent();
@@ -50,16 +61,32 @@ export default class HWindowSpriteImages extends HWindow {
 				this.updateImageListItems();
 
 				endparent();
-
-			this.makeApplyOkButtons(
-				() => {
-					spriteWindow.paramImages = this.images;
-					spriteWindow.updateImageInfo();
-				},
-				() => this.close(),
-			);
-
 			endparent();
+	}
+
+	copyData() {
+		this.copyImages = [...this.spriteWindow.resource.images];
+	}
+
+	saveData() {
+		this.spriteWindow.updateImageInfo();
+		this.spriteWindow.onUpdate();
+	}
+
+	restoreData() {
+		this.spriteWindow.resource.images = this.copyImages;
+
+		this.spriteWindow.updateImageInfo();
+		this.spriteWindow.onUpdate();
+	}
+
+	onUpdate() {
+		this.modified = true;
+		this.saveData();
+	}
+
+	updateTitle() {
+		this.setTitle("Sprite Editor: "+this.spriteWindow.resource.name);
 	}
 
 	async addImage(position) {
@@ -74,6 +101,7 @@ export default class HWindowSpriteImages extends HWindow {
 			}
 			this.updateImageListItems();
 			this.imageList.setSelected(null);
+			this.onUpdate();
 		})
 		.catch(() => {
 			alert("Error when opening image");
@@ -91,5 +119,13 @@ export default class HWindowSpriteImages extends HWindow {
 		this.buttonMoveLeft.setDisabled(this.imageList.selected == null ? true : (this.imageList.selected == 0));
 		this.buttonMoveRight.setDisabled(this.imageList.selected == null ? true : (this.imageList.selected == this.images.length-1));
 		this.buttonDelete.setDisabled(this.imageList.selected == null);
+	}
+
+	close() {
+		if (this.modified) {
+			if (!confirm("Close without saving the changes to the sprite?")) return;
+			this.restoreData();
+		}
+		super.close();
 	}
 }

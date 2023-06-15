@@ -13,7 +13,7 @@ export default class HWindowCode extends HWindow {
 
 		this.actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
 
-		this.title.html.textContent = this.actionType.description;
+		this.setTitle(this.actionType.description);
 
 		parent(this.client);
 
@@ -47,7 +47,7 @@ export default class HWindowCode extends HWindow {
 				},
 			);
 
-			this.codeEditor.setNextElem(this.applyButton);
+			this.codeEditor.nextElem = this.applyButton;
 
 			endparent();
 	}

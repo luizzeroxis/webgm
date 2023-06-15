@@ -256,6 +256,20 @@ export function parseNewLineHash(string) {
 
 // Elements
 
+// Add an input event to element and its children if it's an input element.
+export function setDeepOnUpdateOnElement(element, fn) {
+	if (element.html.tagName == "INPUT" || element.html.tagName == "TEXTAREA") {
+		element.html.addEventListener("input", () => {
+			console.log("*", element);
+			fn();
+		});
+		console.log("setDeepOnUpdateOnElement", element);
+	}
+	for (const child of element.children) {
+		setDeepOnUpdateOnElement(child, fn);
+	}
+}
+
 // Make a element be able to receive drops of files from anywhere, but returns a file handle
 export function setOnFileDropAsFileHandle(element, onSelectFile, multiple=false) {
 	return setOnFileDrop(element, onSelectFile, multiple, true);

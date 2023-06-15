@@ -7,7 +7,7 @@ export default class HWindowGame extends HWindow {
 
 		this.userClosed = false;
 
-		this.title.html.textContent = "Game";
+		this.setTitle("Game");
 	}
 
 	close() {

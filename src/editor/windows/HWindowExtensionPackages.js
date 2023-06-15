@@ -5,7 +5,7 @@ export default class HWindowExtensionPackages extends HWindow {
 	constructor(manager, editor) {
 		super(manager);
 		this.editor = editor;
-		this.title.html.textContent = "Extension Packages";
+		this.setTitle("Extension Packages");
 
 		parent(this.client);
 

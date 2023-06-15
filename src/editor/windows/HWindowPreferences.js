@@ -5,7 +5,7 @@ export default class HWindowPreferences extends HWindow {
 	constructor(manager, editor) {
 		super(manager);
 		this.editor = editor;
-		this.title.html.textContent = "Preferences";
+		this.setTitle("Preferences");
 
 		parent(this.client);
 

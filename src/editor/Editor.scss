@@ -262,6 +262,10 @@ input[type=text], input[type=number], select {
 	}
 }
 
+.inline-flex {
+	display: inline-flex;
+}
+
 .window-sprite {
 	min-height: 0;
 	flex: 1;

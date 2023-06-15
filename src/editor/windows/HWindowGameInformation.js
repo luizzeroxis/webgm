@@ -7,7 +7,7 @@ export default class HGameInformationWindow extends HWindow {
 		this.editor = editor;
 		this.gameInformation = gameInformation;
 
-		this.title.html.textContent = "Game Information";
+		this.setTitle("Game Information");
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-game-information"}) ) );

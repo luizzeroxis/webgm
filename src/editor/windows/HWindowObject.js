@@ -398,7 +398,7 @@ export default class HWindowObject extends HWindow {
 	}
 
 	updateTitle() {
-		this.title.html.textContent = "Object Properties: "+this.object.name;
+		this.setTitle("Object Properties: "+this.object.name);
 	}
 
 	// Make a copy of every property of the resource so we can change it at will without changing the original resource.

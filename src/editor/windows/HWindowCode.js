@@ -15,7 +15,7 @@ export default class HWindowCode extends HWindow {
 		this.modified = false;
 		this.copyData();
 
-		this.actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
+		this.actionType = this.editor.getActionType(this.action.typeLibrary, this.action.typeId);
 
 		this.setTitle(this.actionType.description);
 
@@ -32,17 +32,17 @@ export default class HWindowCode extends HWindow {
 
 					const appliesToGroup = "_radio_"+uniqueID();
 
-					this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, "Self", (action.appliesTo == -1)) );
-					this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, "Other", (action.appliesTo == -2)) );
-					this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, "Object:", (action.appliesTo >= 0)) );
+					this.radioAppliesToSelf = add( new HRadioInput(appliesToGroup, "Self", (this.action.appliesTo == -1)) );
+					this.radioAppliesToOther = add( new HRadioInput(appliesToGroup, "Other", (this.action.appliesTo == -2)) );
+					this.radioAppliesToObject = add( new HRadioInput(appliesToGroup, "Object:", (this.action.appliesTo >= 0)) );
 
 					this.selectObject = add( new HResourceSelect(this.editor, null, ProjectObject) );
-					if (action.appliesTo >= 0)
-						this.selectObject.setValue(action.appliesTo);
+					if (this.action.appliesTo >= 0)
+						this.selectObject.setValue(this.action.appliesTo);
 
 					endparent();
 
-				this.codeEditor = add( new HCodeEditor(action.args[0].value) );
+				this.codeEditor = add( new HCodeEditor(this.action.args[0].value) );
 
 				endparent();
 

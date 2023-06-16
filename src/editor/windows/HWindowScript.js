@@ -31,8 +31,6 @@ export default class HWindowScript extends HWindow {
 
 				endparent();
 
-			// this.codeEditor.setNextElem(this.applyButton); // TODO better system
-
 			endparent();
 
 		setDeepOnUpdateOnElement(this.client, () => this.onUpdate());

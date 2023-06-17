@@ -7,7 +7,6 @@ export default class HCodeEditor extends HElement {
 		super("div", {class: "h-code-editor"});
 
 		this.tabEnabled = false;
-		this.nextElem = null;
 
 		parent(this);
 

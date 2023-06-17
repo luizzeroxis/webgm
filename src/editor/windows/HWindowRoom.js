@@ -19,10 +19,9 @@ export default class HWindowRoom extends HWindow {
 		this.updateTitle();
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "panel-container window-room"}) ) );
-				parent( add( new HElement("div", {class: "properties"}) ) );
+			parent( add( new HElement("div", {class: "window-room"}) ) );
 
-					// left area
+				parent( add( new HElement("div", {class: "tool-bar"})) );
 
 					add( new HButton("OK", () => {
 						this.modified = false;
@@ -40,297 +39,272 @@ export default class HWindowRoom extends HWindow {
 					this.inputSnapY = add( new HNumberInput("Snap Y:", 16, 1, 1) );
 					this.inputShowGrid = add( new HCheckBoxInput("Show grid", true) );
 
-					this.tabControl = add( new HTabControl("properties-tabs") );
-
-					const tabInstances = parent( this.tabControl.addTab("Instances") );
-
-						this.selectObject = add( new HResourceSelect(this.editor, "Object:", ProjectObject, true) );
-
-						const toolGroup = "_radio_"+uniqueID();
-						this.radioAdd = add( new HRadioInput(toolGroup, "Add instance", true) );
-						this.radioMultiple = add( new HRadioInput(toolGroup, "Add multiple instances") );
-						this.radioMove = add( new HRadioInput(toolGroup, "Move instance") );
-						this.radioDelete = add( new HRadioInput(toolGroup, "Delete instance") );
-
-						this.inputSnapToGrid = add( new HCheckBoxInput("Snap to grid", true) );
-						this.inputDeleteUnderlying = add( new HCheckBoxInput("Delete underlying", false) );
-
-						setDeepOnUpdateOnElement(tabInstances, () => this.onUpdate());
-						endparent();
-
-					const tabSettings = parent( this.tabControl.addTab("Settings") );
-
-						this.inputName = add( new HTextInput("Name:", this.resource.name) );
-						this.inputWidth = add( new HNumberInput("Width:", this.resource.width, 1, 1) );
-						this.inputHeight = add( new HNumberInput("Height:", this.resource.height, 1, 1) );
-						this.inputSpeed = add( new HNumberInput("Speed:", this.resource.speed, 1, 1) );
-
-						setDeepOnUpdateOnElement(tabSettings, () => this.onUpdate());
-						endparent();
-
-					const tabBackgrounds = parent( this.tabControl.addTab("Backgrounds") );
-
-						this.inputDrawBackgroundColor = add( new HCheckBoxInput("Draw background color", this.resource.drawBackgroundColor) );
-						this.inputBackgroundColor = add( new HColorInput("Color:", this.resource.backgroundColor) );
-
-						this.selectBackgrounds = add( new HSelect(null, "backgrounds") );
-						this.selectBackgroundsOptions = [];
-
-						parent(this.selectBackgrounds.select);
-							for (let i=0; i<8; ++i) {
-								const background = this.getBackground(i);
-								const _class = (background.visibleAtStart ? "bold" : null);
-								this.selectBackgroundsOptions[i] = add( new HOption("Background "+i.toString(), i, _class) );
-							}
-							endparent();
-
-						this.selectBackgrounds.select.html.size = 8;
-
-						this.selectBackgrounds.setOnChange(() => {
-							this.updateBackgroundProperties();
-						});
-
-						this.inputBackgroundVisibleAtStart = add( new HCheckBoxInput("Visible when room starts") );
-						this.inputBackgroundVisibleAtStart.setOnChange(() => {
-							const currentBackgroundId = this.selectBackgrounds.getValue();
-							const currentBackground = this.getOrCreateBackground(currentBackgroundId);
-
-							currentBackground.visibleAtStart = this.inputBackgroundVisibleAtStart.getChecked();
-
-							if (currentBackground.visibleAtStart) {
-								this.selectBackgroundsOptions[currentBackgroundId].html.classList.add("bold");
-							} else {
-								this.selectBackgroundsOptions[currentBackgroundId].html.classList.remove("bold");
-							}
-
-							this.updateCanvasPreview();
-						});
-
-						this.inputForeground = add( new HCheckBoxInput("Foreground image") );
-						this.inputForeground.setOnChange(() => {
-							this.getOrCreateCurrentBackground().isForeground = this.inputForeground.getChecked();
-							this.updateCanvasPreview();
-						});
-
-						this.selectResourceBackground = add( new HResourceSelect(this.editor, null, ProjectBackground) );
-						this.selectResourceBackground.setOnChange(() => {
-							this.getOrCreateCurrentBackground().backgroundIndex = this.selectResourceBackground.getValue();
-							this.updateCanvasPreview();
-						});
-
-						this.inputTileHorizontally = add( new HCheckBoxInput("Tile Hor.") );
-						this.inputTileHorizontally.setOnChange(() => {
-							this.getOrCreateCurrentBackground().tileHorizontally = this.inputTileHorizontally.getChecked();
-							this.updateCanvasPreview();
-						});
-
-						this.inputTileVertically = add( new HCheckBoxInput("Tile Vert.") );
-						this.inputTileVertically.setOnChange(() => {
-							this.getOrCreateCurrentBackground().tileVertically = this.inputTileVertically.getChecked();
-							this.updateCanvasPreview();
-						});
-
-						this.inputStretch = add( new HCheckBoxInput("Stretch") );
-						this.inputStretch.setOnChange(() => {
-							this.getOrCreateCurrentBackground().stretch = this.inputStretch.getChecked();
-							this.updateCanvasPreview();
-						});
-
-						this.inputX = add( new HNumberInput("X:") );
-						this.inputX.setOnChange(() => {
-							this.getOrCreateCurrentBackground().x = this.inputX.getFloatValue();
-							this.updateCanvasPreview();
-						});
-
-						this.inputY = add( new HNumberInput("Y:") );
-						this.inputY.setOnChange(() => {
-							this.getOrCreateCurrentBackground().y = this.inputY.getFloatValue();
-							this.updateCanvasPreview();
-						});
-
-						this.inputHorizontalSpeed = add( new HNumberInput("Hor. Speed:") );
-						this.inputHorizontalSpeed.setOnChange(() => {
-							this.getOrCreateCurrentBackground().horizontalSpeed = this.inputHorizontalSpeed.getFloatValue();
-						});
-
-						this.inputVerticalSpeed = add( new HNumberInput("Vert. Speed:") );
-						this.inputVerticalSpeed.setOnChange(() => {
-							this.getOrCreateCurrentBackground().verticalSpeed = this.inputVerticalSpeed.getFloatValue();
-						});
-
-						this.updateBackgroundProperties();
-
-						setDeepOnUpdateOnElement(tabBackgrounds, () => this.onUpdate());
-						endparent();
-
-					const tabViews = parent( this.tabControl.addTab("Views") );
-						this.inputEnableViews = add( new HCheckBoxInput("Enable the use of Views", this.resource.enableViews) );
-
-						this.selectViews = add( new HSelect(null, "views") );
-						this.selectViewsOptions = [];
-
-						parent(this.selectViews.select);
-							for (let i=0; i<8; ++i) {
-								const view = this.getView(i);
-								const _class = (view.visibleAtStart ? "bold" : null);
-								this.selectViewsOptions[i] = add( new HOption("View "+i.toString(), i, _class) );
-							}
-							endparent();
-
-						this.selectViews.select.html.size = 8;
-
-						this.selectViews.setOnChange(() => {
-							this.updateViewProperties();
-						});
-
-						this.inputViewVisibleAtStart = add( new HCheckBoxInput("Visible when room starts") );
-						this.inputViewVisibleAtStart.setOnChange(() => {
-							const currentViewId = this.selectViews.getValue();
-							const currentView = this.getOrCreateView(currentViewId);
-
-							currentView.visibleAtStart = this.inputViewVisibleAtStart.getChecked();
-
-							if (currentView.visibleAtStart) {
-								this.selectViewsOptions[currentViewId].html.classList.add("bold");
-							} else {
-								this.selectViewsOptions[currentViewId].html.classList.remove("bold");
-							}
-						});
-
-						parent( add( new HElement("fieldset") ) );
-							add( new HElement("legend", {}, "View in room") );
-
-							this.inputViewX = add( new HNumberInput("X:") );
-							this.inputViewX.setOnChange(() => {
-								this.getOrCreateCurrentView().viewX = this.inputViewX.getFloatValue();
-							});
-
-							this.inputViewY = add( new HNumberInput("Y:") );
-							this.inputViewY.setOnChange(() => {
-								this.getOrCreateCurrentView().viewY = this.inputViewY.getFloatValue();
-							});
-
-							this.inputViewW = add( new HNumberInput("W:") );
-							this.inputViewW.setOnChange(() => {
-								this.getOrCreateCurrentView().viewW = this.inputViewW.getFloatValue();
-							});
-
-							this.inputViewH = add( new HNumberInput("H:") );
-							this.inputViewH.setOnChange(() => {
-								this.getOrCreateCurrentView().viewH = this.inputViewH.getFloatValue();
-							});
-
-							endparent();
-
-						parent( add( new HElement("fieldset") ) );
-							add( new HElement("legend", {}, "Port on screen") );
-
-							this.inputPortX = add( new HNumberInput("X:") );
-							this.inputPortX.setOnChange(() => {
-								this.getOrCreateCurrentView().portX = this.inputPortX.getFloatValue();
-							});
-
-							this.inputPortY = add( new HNumberInput("Y:") );
-							this.inputPortY.setOnChange(() => {
-								this.getOrCreateCurrentView().portY = this.inputPortY.getFloatValue();
-							});
-
-							this.inputPortW = add( new HNumberInput("W:") );
-							this.inputPortW.setOnChange(() => {
-								this.getOrCreateCurrentView().portW = this.inputPortW.getFloatValue();
-							});
-
-							this.inputPortH = add( new HNumberInput("H:") );
-							this.inputPortH.setOnChange(() => {
-								this.getOrCreateCurrentView().portH = this.inputPortH.getFloatValue();
-							});
-
-							endparent();
-
-						this.updateViewProperties();
-
-						setDeepOnUpdateOnElement(tabViews, () => this.onUpdate());
-						endparent();
-
-					// updates
-					this.inputSnapX.setOnChange(() => this.updateCanvasPreview());
-					this.inputSnapY.setOnChange(() => this.updateCanvasPreview());
-					this.inputShowGrid.setOnChange(() => this.updateCanvasPreview());
-
-					this.inputWidth.setOnChange(() => this.updateCanvasPreview());
-					this.inputHeight.setOnChange(() => this.updateCanvasPreview());
-
-					this.inputDrawBackgroundColor.setOnChange(() => this.updateCanvasPreview());
-					this.inputBackgroundColor.setOnChange(() => this.updateCanvasPreview());
-
 					endparent();
 
-				parent( add( new HElement("div", {class: "room"}) ) );
+				parent( add( new HElement("div", {class: "panel-container"})) );
 
-					parent( add( new HElement("div", {class: "preview"}) ) );
+					parent( add( new HElement("div", {class: "properties"}) ) );
 
-						// actual room area
+						this.tabControl = add( new HTabControl("properties-tabs") );
 
-						this.canvasPreview = add( new HCanvas(this.resource.width, this.resource.height) );
-						this.ctx = this.canvasPreview.html.getContext("2d", {alpha: false});
-						this.ctx.imageSmoothingEnabled = false;
+						const tabInstances = parent( this.tabControl.addTab("objects") );
 
-						this.canvasPreview.html.onmousedown = (e) => {
-							this.mouseIsDown = true;
-							const pos = this.getMousePosition(e);
-							const snappedPos = this.snapMousePosition(pos);
+							this.selectObject = add( new HResourceSelect(this.editor, "Object:", ProjectObject, true) );
 
-							this.currentPos = snappedPos;
+							const toolGroup = "_radio_"+uniqueID();
+							this.radioAdd = add( new HRadioInput(toolGroup, "Add instance", true) );
+							this.radioMultiple = add( new HRadioInput(toolGroup, "Add multiple instances") );
+							this.radioMove = add( new HRadioInput(toolGroup, "Move instance") );
+							this.radioDelete = add( new HRadioInput(toolGroup, "Delete instance") );
 
-							if (this.radioAdd.getChecked()) {
-								this.movingInstance = this.addInstance();
-								this.onUpdate();
-							} else
+							this.inputSnapToGrid = add( new HCheckBoxInput("Snap to grid", true) );
+							this.inputDeleteUnderlying = add( new HCheckBoxInput("Delete underlying", false) );
 
-							if (this.radioMultiple.getChecked()) {
-								this.movingInstance = this.addInstance();
-								this.deleteUnderlying();
-								this.onUpdate();
-							} else
+							setDeepOnUpdateOnElement(tabInstances, () => this.onUpdate());
+							endparent();
 
-							if (this.radioMove.getChecked()) {
-								const hover = this.getInstanceAtPosition(pos);
-								if (hover) {
-									this.movingInstance = hover;
+						const tabSettings = parent( this.tabControl.addTab("settings") );
+
+							this.inputName = add( new HTextInput("Name:", this.resource.name) );
+							this.inputWidth = add( new HNumberInput("Width:", this.resource.width, 1, 1) );
+							this.inputHeight = add( new HNumberInput("Height:", this.resource.height, 1, 1) );
+							this.inputSpeed = add( new HNumberInput("Speed:", this.resource.speed, 1, 1) );
+
+							setDeepOnUpdateOnElement(tabSettings, () => this.onUpdate());
+							endparent();
+
+						const tabTiles = parent( this.tabControl.addTab("tiles") );
+
+							setDeepOnUpdateOnElement(tabTiles, () => this.onUpdate());
+							endparent();
+
+						const tabBackgrounds = parent( this.tabControl.addTab("backgrounds") );
+
+							this.inputDrawBackgroundColor = add( new HCheckBoxInput("Draw background color", this.resource.drawBackgroundColor) );
+							this.inputBackgroundColor = add( new HColorInput("Color:", this.resource.backgroundColor) );
+
+							this.selectBackgrounds = add( new HSelect(null, "backgrounds") );
+							this.selectBackgroundsOptions = [];
+
+							parent(this.selectBackgrounds.select);
+								for (let i=0; i<8; ++i) {
+									const background = this.getBackground(i);
+									const _class = (background.visibleAtStart ? "bold" : null);
+									this.selectBackgroundsOptions[i] = add( new HOption("Background "+i.toString(), i, _class) );
 								}
-							} else
+								endparent();
 
-							if (this.radioDelete.getChecked()) {
-								const hover = this.getInstanceAtPosition(pos);
-								if (hover) {
-									this.resource.instances = this.resource.instances.filter(i => i != hover);
+							this.selectBackgrounds.select.html.size = 8;
+
+							this.selectBackgrounds.setOnChange(() => {
+								this.updateBackgroundProperties();
+							});
+
+							this.inputBackgroundVisibleAtStart = add( new HCheckBoxInput("Visible when room starts") );
+							this.inputBackgroundVisibleAtStart.setOnChange(() => {
+								const currentBackgroundId = this.selectBackgrounds.getValue();
+								const currentBackground = this.getOrCreateBackground(currentBackgroundId);
+
+								currentBackground.visibleAtStart = this.inputBackgroundVisibleAtStart.getChecked();
+
+								if (currentBackground.visibleAtStart) {
+									this.selectBackgroundsOptions[currentBackgroundId].html.classList.add("bold");
+								} else {
+									this.selectBackgroundsOptions[currentBackgroundId].html.classList.remove("bold");
+								}
+
+								this.updateCanvasPreview();
+							});
+
+							this.inputForeground = add( new HCheckBoxInput("Foreground image") );
+							this.inputForeground.setOnChange(() => {
+								this.getOrCreateCurrentBackground().isForeground = this.inputForeground.getChecked();
+								this.updateCanvasPreview();
+							});
+
+							this.selectResourceBackground = add( new HResourceSelect(this.editor, null, ProjectBackground) );
+							this.selectResourceBackground.setOnChange(() => {
+								this.getOrCreateCurrentBackground().backgroundIndex = this.selectResourceBackground.getValue();
+								this.updateCanvasPreview();
+							});
+
+							this.inputTileHorizontally = add( new HCheckBoxInput("Tile Hor.") );
+							this.inputTileHorizontally.setOnChange(() => {
+								this.getOrCreateCurrentBackground().tileHorizontally = this.inputTileHorizontally.getChecked();
+								this.updateCanvasPreview();
+							});
+
+							this.inputTileVertically = add( new HCheckBoxInput("Tile Vert.") );
+							this.inputTileVertically.setOnChange(() => {
+								this.getOrCreateCurrentBackground().tileVertically = this.inputTileVertically.getChecked();
+								this.updateCanvasPreview();
+							});
+
+							this.inputStretch = add( new HCheckBoxInput("Stretch") );
+							this.inputStretch.setOnChange(() => {
+								this.getOrCreateCurrentBackground().stretch = this.inputStretch.getChecked();
+								this.updateCanvasPreview();
+							});
+
+							this.inputX = add( new HNumberInput("X:") );
+							this.inputX.setOnChange(() => {
+								this.getOrCreateCurrentBackground().x = this.inputX.getFloatValue();
+								this.updateCanvasPreview();
+							});
+
+							this.inputY = add( new HNumberInput("Y:") );
+							this.inputY.setOnChange(() => {
+								this.getOrCreateCurrentBackground().y = this.inputY.getFloatValue();
+								this.updateCanvasPreview();
+							});
+
+							this.inputHorizontalSpeed = add( new HNumberInput("Hor. Speed:") );
+							this.inputHorizontalSpeed.setOnChange(() => {
+								this.getOrCreateCurrentBackground().horizontalSpeed = this.inputHorizontalSpeed.getFloatValue();
+							});
+
+							this.inputVerticalSpeed = add( new HNumberInput("Vert. Speed:") );
+							this.inputVerticalSpeed.setOnChange(() => {
+								this.getOrCreateCurrentBackground().verticalSpeed = this.inputVerticalSpeed.getFloatValue();
+							});
+
+							this.updateBackgroundProperties();
+
+							setDeepOnUpdateOnElement(tabBackgrounds, () => this.onUpdate());
+							endparent();
+
+						const tabViews = parent( this.tabControl.addTab("views") );
+							this.inputEnableViews = add( new HCheckBoxInput("Enable the use of Views", this.resource.enableViews) );
+
+							this.selectViews = add( new HSelect(null, "views") );
+							this.selectViewsOptions = [];
+
+							parent(this.selectViews.select);
+								for (let i=0; i<8; ++i) {
+									const view = this.getView(i);
+									const _class = (view.visibleAtStart ? "bold" : null);
+									this.selectViewsOptions[i] = add( new HOption("View "+i.toString(), i, _class) );
+								}
+								endparent();
+
+							this.selectViews.select.html.size = 8;
+
+							this.selectViews.setOnChange(() => {
+								this.updateViewProperties();
+							});
+
+							this.inputViewVisibleAtStart = add( new HCheckBoxInput("Visible when room starts") );
+							this.inputViewVisibleAtStart.setOnChange(() => {
+								const currentViewId = this.selectViews.getValue();
+								const currentView = this.getOrCreateView(currentViewId);
+
+								currentView.visibleAtStart = this.inputViewVisibleAtStart.getChecked();
+
+								if (currentView.visibleAtStart) {
+									this.selectViewsOptions[currentViewId].html.classList.add("bold");
+								} else {
+									this.selectViewsOptions[currentViewId].html.classList.remove("bold");
+								}
+							});
+
+							parent( add( new HElement("fieldset") ) );
+								add( new HElement("legend", {}, "View in room") );
+
+								this.inputViewX = add( new HNumberInput("X:") );
+								this.inputViewX.setOnChange(() => {
+									this.getOrCreateCurrentView().viewX = this.inputViewX.getFloatValue();
+								});
+
+								this.inputViewY = add( new HNumberInput("Y:") );
+								this.inputViewY.setOnChange(() => {
+									this.getOrCreateCurrentView().viewY = this.inputViewY.getFloatValue();
+								});
+
+								this.inputViewW = add( new HNumberInput("W:") );
+								this.inputViewW.setOnChange(() => {
+									this.getOrCreateCurrentView().viewW = this.inputViewW.getFloatValue();
+								});
+
+								this.inputViewH = add( new HNumberInput("H:") );
+								this.inputViewH.setOnChange(() => {
+									this.getOrCreateCurrentView().viewH = this.inputViewH.getFloatValue();
+								});
+
+								endparent();
+
+							parent( add( new HElement("fieldset") ) );
+								add( new HElement("legend", {}, "Port on screen") );
+
+								this.inputPortX = add( new HNumberInput("X:") );
+								this.inputPortX.setOnChange(() => {
+									this.getOrCreateCurrentView().portX = this.inputPortX.getFloatValue();
+								});
+
+								this.inputPortY = add( new HNumberInput("Y:") );
+								this.inputPortY.setOnChange(() => {
+									this.getOrCreateCurrentView().portY = this.inputPortY.getFloatValue();
+								});
+
+								this.inputPortW = add( new HNumberInput("W:") );
+								this.inputPortW.setOnChange(() => {
+									this.getOrCreateCurrentView().portW = this.inputPortW.getFloatValue();
+								});
+
+								this.inputPortH = add( new HNumberInput("H:") );
+								this.inputPortH.setOnChange(() => {
+									this.getOrCreateCurrentView().portH = this.inputPortH.getFloatValue();
+								});
+
+								endparent();
+
+							this.updateViewProperties();
+
+							setDeepOnUpdateOnElement(tabViews, () => this.onUpdate());
+							endparent();
+
+						// updates
+						this.inputSnapX.setOnChange(() => this.updateCanvasPreview());
+						this.inputSnapY.setOnChange(() => this.updateCanvasPreview());
+						this.inputShowGrid.setOnChange(() => this.updateCanvasPreview());
+
+						this.inputWidth.setOnChange(() => this.updateCanvasPreview());
+						this.inputHeight.setOnChange(() => this.updateCanvasPreview());
+
+						this.inputDrawBackgroundColor.setOnChange(() => this.updateCanvasPreview());
+						this.inputBackgroundColor.setOnChange(() => this.updateCanvasPreview());
+
+						endparent();
+
+					parent( add( new HElement("div", {class: "room"}) ) );
+
+						parent( add( new HElement("div", {class: "preview"}) ) );
+
+							this.canvasPreview = add( new HCanvas(this.resource.width, this.resource.height) );
+							this.ctx = this.canvasPreview.html.getContext("2d", {alpha: false});
+							this.ctx.imageSmoothingEnabled = false;
+
+							this.canvasPreview.html.onmousedown = (e) => {
+								this.mouseIsDown = true;
+								const pos = this.getMousePosition(e);
+								const snappedPos = this.snapMousePosition(pos);
+
+								this.currentPos = snappedPos;
+
+								if (this.radioAdd.getChecked()) {
+									this.movingInstance = this.addInstance();
 									this.onUpdate();
-								}
-							}
-
-							this.updateCanvasPreview();
-						};
-
-						this.canvasPreview.html.onmousemove = (e) => {
-							const pos = this.getMousePosition(e);
-							const snappedPos = this.snapMousePosition(pos);
-
-							if (this.mouseIsDown) {
-								if (this.radioAdd.getChecked() || this.radioMove.getChecked()) {
-									if (this.movingInstance) {
-										this.movingInstance.x = snappedPos.x;
-										this.movingInstance.y = snappedPos.y;
-										this.onUpdate();
-									}
 								} else
 
 								if (this.radioMultiple.getChecked()) {
+									this.movingInstance = this.addInstance();
+									this.deleteUnderlying();
+									this.onUpdate();
+								} else
+
+								if (this.radioMove.getChecked()) {
 									const hover = this.getInstanceAtPosition(pos);
-									if (hover != this.movingInstance) {
-										this.currentPos = snappedPos;
-										this.movingInstance = this.addInstance();
-										this.deleteUnderlying();
-										this.onUpdate();
+									if (hover) {
+										this.movingInstance = hover;
 									}
 								} else
 
@@ -343,41 +317,77 @@ export default class HWindowRoom extends HWindow {
 								}
 
 								this.updateCanvasPreview();
-							}
+							};
 
-							this.spanX.html.textContent = snappedPos.x;
-							this.spanY.html.textContent = snappedPos.y;
-							this.spanObject.html.textContent = "";
-							this.spanId.html.textContent = "";
+							this.canvasPreview.html.onmousemove = (e) => {
+								const pos = this.getMousePosition(e);
+								const snappedPos = this.snapMousePosition(pos);
 
-							{
-								const hover = this.getInstanceAtPosition(pos);
-								if (hover) {
-									this.spanObject.html.textContent = this.editor.project.getResourceById("ProjectObject", hover.object_index).name;
-									if (hover.id != null) {
-										this.spanId.html.textContent = hover.id;
-									} else {
-										this.spanId.html.textContent = "(not applied)";
+								if (this.mouseIsDown) {
+									if (this.radioAdd.getChecked() || this.radioMove.getChecked()) {
+										if (this.movingInstance) {
+											this.movingInstance.x = snappedPos.x;
+											this.movingInstance.y = snappedPos.y;
+											this.onUpdate();
+										}
+									} else
+
+									if (this.radioMultiple.getChecked()) {
+										const hover = this.getInstanceAtPosition(pos);
+										if (hover != this.movingInstance) {
+											this.currentPos = snappedPos;
+											this.movingInstance = this.addInstance();
+											this.deleteUnderlying();
+											this.onUpdate();
+										}
+									} else
+
+									if (this.radioDelete.getChecked()) {
+										const hover = this.getInstanceAtPosition(pos);
+										if (hover) {
+											this.resource.instances = this.resource.instances.filter(i => i != hover);
+											this.onUpdate();
+										}
+									}
+
+									this.updateCanvasPreview();
+								}
+
+								this.spanX.html.textContent = snappedPos.x;
+								this.spanY.html.textContent = snappedPos.y;
+								this.spanObject.html.textContent = "";
+								this.spanId.html.textContent = "";
+
+								{
+									const hover = this.getInstanceAtPosition(pos);
+									if (hover) {
+										this.spanObject.html.textContent = this.editor.project.getResourceById("ProjectObject", hover.object_index).name;
+										if (hover.id != null) {
+											this.spanId.html.textContent = hover.id;
+										} else {
+											this.spanId.html.textContent = "(not applied)";
+										}
 									}
 								}
-							}
-						};
+							};
 
-						endparent();
+							endparent();
 
-					parent( add( new HElement("div", {class: "status-bar"}) ) );
+						parent( add( new HElement("div", {class: "status-bar"}) ) );
 
-						parent( add( new HElement("div", {class: "x"}, "x: ") ) );
-							this.spanX = add( new HElement("span", {}, "0") );
-							endparent();
-						parent( add( new HElement("div", {class: "y"}, "y: ") ) );
-							this.spanY = add( new HElement("span", {}, "0") );
-							endparent();
-						parent( add( new HElement("div", {class: "object"}, "object: ") ) );
-							this.spanObject = add( new HElement("span") );
-							endparent();
-						parent( add( new HElement("div", {class: "id"}, "id: ") ) );
-							this.spanId = add( new HElement("span") );
+							parent( add( new HElement("div", {class: "x"}, "x: ") ) );
+								this.spanX = add( new HElement("span", {}, "0") );
+								endparent();
+							parent( add( new HElement("div", {class: "y"}, "y: ") ) );
+								this.spanY = add( new HElement("span", {}, "0") );
+								endparent();
+							parent( add( new HElement("div", {class: "object"}, "object: ") ) );
+								this.spanObject = add( new HElement("span") );
+								endparent();
+							parent( add( new HElement("div", {class: "id"}, "id: ") ) );
+								this.spanId = add( new HElement("span") );
+								endparent();
+
 							endparent();
 
 						endparent();

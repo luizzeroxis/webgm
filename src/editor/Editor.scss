@@ -443,53 +443,71 @@ input[type="text"], input[type="number"], select {
 }
 
 .window-room {
+	display: flex;
 	min-height: 0;
 	flex: 1;
+	flex-direction: column;
 
-	> .properties {
-		width: 250px;
-		flex: none;
-		overflow-y: auto;
+	> .tool-bar {
+		display: flex;
 
-		> .properties-tabs > .content {
-			> .backgrounds, > .views {
-				> select {
-					overflow: auto;
+		> .h-label-and-input > input {
+			width: 32px;
+		}
+	}
 
-					> option.bold {
-						font-weight: bold;
+	> .panel-container {
+		min-height: 0;
+		flex: 1;
+
+		> .properties {
+			overflow: auto;
+			width: 200px;
+			min-height: 0;
+			flex: none;
+
+			> .properties-tabs > .content {
+				> .backgrounds, > .views {
+					> select {
+						overflow: auto;
+
+						> option.bold {
+							font-weight: bold;
+						}
 					}
 				}
 			}
 		}
-	}
 
-	> .room {
-		display: flex;
-		min-width: 250px;
-		min-height: 0;
-		flex: 1;
-		flex-direction: column;
-		justify-content: space-between;
-
-		> .preview {
-			overflow: auto;
-		}
-
-		> .status-bar {
+		> .room {
 			display: flex;
+			min-width: 32px;
+			min-height: 0;
+			flex: 1;
+			flex-direction: column;
+			justify-content: space-between;
 
-			> .x, > .y {
-				width: 60px;
+			> .preview {
+				overflow: auto;
+				flex: 1;
 			}
 
-			.object {
-				width: 160px;
-			}
+			> .status-bar {
+				display: flex;
+				overflow: auto;
 
-			.id {
-				width: 60px;
-				flex: 1 1 60px;
+				> .x, > .y {
+					width: 60px;
+				}
+
+				.object {
+					width: 160px;
+				}
+
+				.id {
+					width: 60px;
+					flex: 1 1 60px;
+				}
 			}
 		}
 	}

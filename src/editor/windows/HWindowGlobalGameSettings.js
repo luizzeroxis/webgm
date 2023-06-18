@@ -1,12 +1,17 @@
 import HWindow from "~/common/components/HWindowManager/HWindow.js";
-import {parent, endparent, add, HElement, HTextInput, HMultilineTextInput, HCheckBoxInput, HColorInput} from "~/common/h";
+import {parent, endparent, add, HElement, HButton, HTextInput, HMultilineTextInput, HCheckBoxInput, HColorInput} from "~/common/h";
+import {ProjectGlobalGameSettings} from "~/common/project/ProjectProperties.js";
+import {setDeepOnUpdateOnElement} from "~/common/tools.js";
 import HTabControl from "~/editor/components/HTabControl/HTabControl.js";
 
 export default class HWindowGlobalGameSettings extends HWindow {
-	constructor(manager, editor, globalGameSettings) {
+	constructor(manager, editor, resource) {
 		super(manager);
 		this.editor = editor;
-		this.globalGameSettings = globalGameSettings;
+		this.resource = resource;
+
+		this.modified = false;
+		this.copyData();
 
 		this.setTitle("Global Game Settings");
 
@@ -18,54 +23,83 @@ export default class HWindowGlobalGameSettings extends HWindow {
 
 				const tabGraphics = parent( this.tabControl.addTab("Graphics") );
 
-					this.inputFullScreen = add( new HCheckBoxInput("Start in full-screen mode", globalGameSettings.startInFullScreen) );
-					this.inputColor = add( new HColorInput("Color outside the room region:", globalGameSettings.colorOutsideRoom) );
-					this.inputDisplayCursor = add( new HCheckBoxInput("Display the cursor", globalGameSettings.displayCursor) );
+					this.inputFullScreen = add( new HCheckBoxInput("Start in full-screen mode", this.resource.startInFullScreen) );
+					this.inputColor = add( new HColorInput("Color outside the room region:", this.resource.colorOutsideRoom) );
+					this.inputDisplayCursor = add( new HCheckBoxInput("Display the cursor", this.resource.displayCursor) );
 
+					setDeepOnUpdateOnElement(tabGraphics, () => this.onUpdate());
 					endparent();
 
-				// parent( this.tabControl.addTab('Resolution') )
+				// const tabResolution = parent( this.tabControl.addTab('Resolution') )
 				// 	endparent()
 
-				parent( this.tabControl.addTab("Other") );
+				const tabOther = parent( this.tabControl.addTab("Other") );
 
-					this.inputKeyEscEndsGame = add( new HCheckBoxInput("Let <Esc> end the game", globalGameSettings.keyEscEndsGame) );
-					this.inputKeyF4SwitchesFullscreen = add( new HCheckBoxInput("Let <F4> switch between screen modes", globalGameSettings.keyF4SwitchesFullscreen) );
+					this.inputKeyEscEndsGame = add( new HCheckBoxInput("Let <Esc> end the game", this.resource.keyEscEndsGame) );
+					this.inputKeyF4SwitchesFullscreen = add( new HCheckBoxInput("Let <F4> switch between screen modes", this.resource.keyF4SwitchesFullscreen) );
 
+					setDeepOnUpdateOnElement(tabOther, () => this.onUpdate());
 					endparent();
 
-				// parent( this.tabControl.addTab('Loading') )
+				// const tabLoading = parent( this.tabControl.addTab('Loading') )
 				// 	endparent()
 
-				// parent( this.tabControl.addTab('Errors') )
+				// const tabErrors = parent( this.tabControl.addTab('Errors') )
 				// 	endparent()
 
-				parent( this.tabControl.addTab("Info") );
+				const tabInfo = parent( this.tabControl.addTab("Info") );
 
-					this.inputAuthor = add( new HTextInput("Author:", globalGameSettings.author) );
-					this.inputVersion = add( new HTextInput("Version:", globalGameSettings.version) );
-					this.inputInformation = add( new HMultilineTextInput("Information:", globalGameSettings.information) );
+					this.inputAuthor = add( new HTextInput("Author:", this.resource.author) );
+					this.inputVersion = add( new HTextInput("Version:", this.resource.version) );
+					this.inputInformation = add( new HMultilineTextInput("Information:", this.resource.information) );
 
+					setDeepOnUpdateOnElement(tabInfo, () => this.onUpdate());
 					endparent();
+
+					add( new HButton("OK", () => {
+						this.modified = false;
+						this.close();
+					}) );
 
 				endparent();
-
-			this.makeApplyOkButtons(
-				() => {
-					globalGameSettings.startInFullScreen = this.inputFullScreen.getChecked();
-					globalGameSettings.colorOutsideRoom = this.inputColor.getValue();
-					globalGameSettings.displayCursor = this.inputDisplayCursor.getChecked();
-					globalGameSettings.keyEscEndsGame = this.inputKeyEscEndsGame.getChecked();
-					globalGameSettings.keyF4SwitchesFullscreen = this.inputKeyF4SwitchesFullscreen.getChecked();
-
-					globalGameSettings.author = this.inputAuthor.getValue();
-					globalGameSettings.version = this.inputVersion.getValue();
-					globalGameSettings.information = this.inputInformation.getValue();
-				},
-				() => this.close(),
-			);
 			endparent();
 
+		setDeepOnUpdateOnElement(this.client, () => this.onUpdate());
+
 		this.tabControl.showTabContent(tabGraphics);
+	}
+
+	copyData() {
+		this.resourceCopy = new ProjectGlobalGameSettings(this.resource);
+	}
+
+	saveData() {
+		this.resource.startInFullScreen = this.inputFullScreen.getChecked();
+		this.resource.colorOutsideRoom = this.inputColor.getValue();
+		this.resource.displayCursor = this.inputDisplayCursor.getChecked();
+
+		this.resource.keyEscEndsGame = this.inputKeyEscEndsGame.getChecked();
+		this.resource.keyF4SwitchesFullscreen = this.inputKeyF4SwitchesFullscreen.getChecked();
+
+		this.resource.author = this.inputAuthor.getValue();
+		this.resource.version = this.inputVersion.getValue();
+		this.resource.information = this.inputInformation.getValue();
+	}
+
+	restoreData() {
+		Object.assign(this.resource, this.resourceCopy);
+	}
+
+	onUpdate() {
+		this.modified = true;
+		this.saveData();
+	}
+
+	close() {
+		if (this.modified) {
+			if (!confirm("Close without saving the changes to global game settings?")) return;
+			this.restoreData();
+		}
+		super.close();
 	}
 }

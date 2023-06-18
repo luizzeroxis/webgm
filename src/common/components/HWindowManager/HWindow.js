@@ -349,20 +349,4 @@ export default class HWindow extends HElement {
 			this.windowParent.windowChildren.splice(this.windowParent.windowChildren.indexOf(this), 1);
 		}
 	}
-
-	// DEPRECATED: delete this later
-	makeApplyOkButtons(applyOkFunc, okFunc) {
-		parent( add( new HElement("div") ) );
-
-			this.applyButton = add( new HButton("Apply", () => {
-				applyOkFunc();
-			}) );
-
-			this.okButton = add( new HButton("Ok", () => {
-				if (applyOkFunc() != false)
-					okFunc();
-			}) );
-
-			endparent();
-	}
 }

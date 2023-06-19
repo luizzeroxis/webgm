@@ -264,6 +264,9 @@ export default class Editor {
 	}
 
 	async runGame() {
+		this.toolBarArea.runButton.setDisabled(true);
+		this.toolBarArea.stopButton.setDisabled(true);
+
 		await this.stopGame();
 
 		if (this.project.resources.ProjectRoom.length <= 0) {
@@ -271,15 +274,11 @@ export default class Editor {
 			return;
 		}
 
-		this.gameWindow = this.windowsArea.openGame();
-
-		this.toolBarArea.runButton.setDisabled(true);
-		this.toolBarArea.stopButton.setDisabled(false);
-
 		this.game = new Game({
 			project: this.project,
 		});
 
+		this.gameWindow = this.windowsArea.openGame();
 		this.gameWindow.client.removeChildren();
 
 		parent(this.gameWindow.client);
@@ -297,12 +296,11 @@ export default class Editor {
 
 		const gameListeners = this.game.dispatcher.listen({
 			close: e => {
+				this.toolBarArea.stopButton.setDisabled(true);
+
 				if (e instanceof WebGMException) {
 					alert("An error has ocurred when trying to run the game:\n" + e.message);
 				}
-
-				this.toolBarArea.runButton.setDisabled(false);
-				this.toolBarArea.stopButton.setDisabled(true);
 
 				if (this.preferences.get("clearCanvasOnStop")) {
 					const h = this.game.render.canvas.height;
@@ -310,13 +308,11 @@ export default class Editor {
 					this.game.render.canvas.height = h;
 				}
 
-				if (this.gameWindow.userClosed) {
-					this.windowsArea.manager.delete(this.gameWindow); // TODO wth is going on here
-				}
-
 				this.game.dispatcher.stopListening(gameListeners);
 
 				this.game = null;
+
+				this.toolBarArea.runButton.setDisabled(false);
 
 				if (e) {
 					throw e;
@@ -325,6 +321,8 @@ export default class Editor {
 		});
 
 		this.game.start();
+
+		this.toolBarArea.stopButton.setDisabled(false);
 	}
 
 	stopGame() {

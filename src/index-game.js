@@ -32,7 +32,7 @@ async function main() {
 
 	add(game.div);
 
-	game.canvas.focus({preventScroll: true});
+	game.render.canvas.focus({preventScroll: true});
 
 	game.start();
 

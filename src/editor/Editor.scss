@@ -536,7 +536,7 @@ input[type="text"], input[type="number"], select {
 	align-items: center;
 	justify-content: center;
 
-	> canvas {
+	> .main > canvas {
 		display: block;
 		image-rendering: pixelated;
 

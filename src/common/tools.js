@@ -260,10 +260,8 @@ export function parseNewLineHash(string) {
 export function setDeepOnUpdateOnElement(element, fn) {
 	if (["INPUT", "TEXTAREA", "SELECT"].includes(element.html.tagName)) {
 		element.html.addEventListener("input", () => {
-			console.log("*", element);
 			fn();
 		});
-		console.log("setDeepOnUpdateOnElement", element.html);
 	}
 	for (const child of element.children) {
 		setDeepOnUpdateOnElement(child, fn);

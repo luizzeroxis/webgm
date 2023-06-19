@@ -5,17 +5,14 @@ export default class HWindowGame extends HWindow {
 		super(manager);
 		this.editor = editor;
 
-		this.userClosed = false;
-
 		this.setTitle("Game");
 	}
 
 	close() {
-		this.userClosed = true;
 		if (this.editor.game) {
 			this.editor.stopGame();
-		} else {
-			super.close();
 		}
+
+		super.close();
 	}
 }

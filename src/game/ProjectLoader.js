@@ -1,7 +1,7 @@
 import {makeCSSFont} from "~/common/tools.js";
 
 import ActionsParser from "./ActionsParser.js";
-import {EngineException, FatalErrorException} from "./Game.js";
+import {EngineException} from "./Game.js";
 
 
 export default class ProjectLoader {
@@ -192,15 +192,12 @@ export default class ProjectLoader {
 	loadGMLScripts() {
 		this.project.resources.ProjectScript.every(script => {
 			return this.compileGMLAndCache(script.code, script, matchResult => {
-				throw new FatalErrorException({
-					type: "compilation",
-					location: "script",
-					locationScript: script,
-					matchResult: matchResult,
-					text:
-						"\n___________________________________________\n"
-						+ "COMPILATION ERROR in Script: " + script.name + "\n\n"
-						+ matchResult.message + "\n",
+				throw this.game.makeError({fatal: true, header: false, text:
+					`\n`
+					+ `___________________________________________\n`
+					+ `COMPILATION ERROR in Script: ${script.name}\n`
+					+ `\n`
+					+ `${matchResult.message}\n`,
 				});
 			});
 		});
@@ -216,23 +213,17 @@ export default class ProjectLoader {
 				return event.actions.every((action, actionNumber) => {
 					if (action.typeKind == "code") {
 						return this.compileGMLAndCache(action.args[0].value, action, matchResult => {
-							throw this.game.makeFatalError({
-									type: "compilation",
-									matchResult: matchResult,
-								},
-								"COMPILATION ERROR in code action:\n" + matchResult.message + "\n",
-								object, event, actionNumber,
-							);
+							throw this.game.makeError({fatal: true, actionNumber, event, object, text:
+								`COMPILATION ERROR in code action:\n`
+								+ `${matchResult.message}\n`,
+							});
 						});
 					} else if (action.typeKind == "normal" && action.typeExecution == "code") {
 						return this.compileGMLAndCache(action.args[0].value, action, matchResult => {
-							throw this.game.makeFatalError({
-									type: "compilation",
-									matchResult: matchResult,
-								},
-								"COMPILATION ERROR in code action (in action type in a library):\n" + matchResult.message + "\n",
-								object, event, actionNumber,
-							);
+							throw this.game.makeError({fatal: true, actionNumber, event, object, text:
+								`COMPILATION ERROR in code action (in action type in a library):\n`
+								+ `${matchResult.message}\n`,
+							});
 						});
 					} else if (action.typeKind == "variable") {
 						const name = action.args[0].value;
@@ -241,13 +232,10 @@ export default class ProjectLoader {
 						const code = name + assignSymbol + value;
 
 						return this.compileGMLAndCache(code, action, matchResult => {
-							throw this.game.makeFatalError({
-									type: "compilation",
-									matchResult: matchResult,
-								},
-								"COMPILATION ERROR in code action (in variable set):\n" + matchResult.message + "\n",
-								object, event, actionNumber,
-							);
+							throw this.game.makeError({fatal: true, actionNumber, event, object, text:
+								`COMPILATION ERROR in code action (in variable set):\n`
+								+ `${matchResult.message}\n`,
+							});
 						});
 					}
 					return true;
@@ -261,30 +249,23 @@ export default class ProjectLoader {
 		this.project.resources.ProjectRoom.every(room => {
 			if (!room.instances.every(instance => {
 				return this.compileGMLAndCache(instance.creationCode, instance, matchResult => {
-					throw new FatalErrorException({
-						type: "compilation",
-						location: "instanceCreationCode",
-						locationInstance: instance,
-						locationRoom: room,
-						matchResult: matchResult,
-						text:
-							"\n___________________________________________\n"
-							+ "COMPILATION ERROR in creation code for instance " + instance.id + " in room " + room.name + "\n\n"
-							+ matchResult.message + "\n",
+					throw this.game.makeError({fatal: true, header: false, text:
+						`\n`
+						+ `___________________________________________\n`
+						+ `COMPILATION ERROR in creation code for instance ${instance.id} in room ${room.name}\n`
+						+ `\n`
+						+ `${matchResult.message}\n`,
 					});
 				});
 			})) return false;
 
 			return this.compileGMLAndCache(room.creationCode, room, matchResult => {
-				throw new FatalErrorException({
-					type: "compilation",
-					location: "roomCreationCode",
-					locationRoom: room,
-					matchResult: matchResult,
-					text:
-						"\n___________________________________________\n"
-						+ "COMPILATION ERROR in creation code of room " + room.name + "\n\n"
-						+ matchResult.message + "\n",
+				throw this.game.makeError({fatal: true, header: false, text:
+					`\n`
+					+ `___________________________________________\n`
+					+ `COMPILATION ERROR in creation code of room ${room.name}\n`
+					+ `\n`
+					+ `${matchResult.message}\n`,
 				});
 			});
 		});

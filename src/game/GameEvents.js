@@ -189,12 +189,10 @@ export default class GameEvents {
 
 			const result = this.game.gml.compile(arg.value, "Expression");
 			if (!result.succeeded) {
-				throw this.game.makeFatalError({
-						type: "compilation",
-						matchResult: result.matchResult,
-					},
-					"COMPILATION ERROR in argument "+ argNumber.toString() +"\n" + result.matchResult.message + "\n",
-				);
+				throw this.game.makeError({fatal: true, text:
+					`COMPILATION ERROR in argument ${argNumber}\n`
+					+ `${result.matchResult.message}\n`,
+				});
 			}
 
 			return await this.game.gml.execute(result.ast, instance, other);

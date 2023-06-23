@@ -737,10 +737,7 @@ export default class Game {
 	loadRoomAtStepStop(roomIndex) {
 		const room = this.project.getResourceById("ProjectRoom", roomIndex);
 		if (room == null) {
-			throw this.makeFatalError({
-				type: "unexisting_room_number",
-				numb: roomIndex,
-			}, "Unexisting room number: " + roomIndex.toString());
+			throw this.makeError({fatal: true, text: `Unexisting room number: ${roomIndex}`});
 		}
 		this.stepStopAction = async () => {
 			await this.loadRoom(room);
@@ -878,57 +875,34 @@ export default class Game {
 
 	// // Game error checking and throwing
 
-	// TODO put all info in the exception itself, then show error on catch
-	// TODO make the message more like the one from GM
+	// options {text, fatal: false, header: true, actionNumber, event, object}
+	makeError(options) {
+		const args = {
+			text:
+				((options.header !== false) ? (
+					`\n`
+					+ `___________________________________________\n`
+					+ `${options.fatal ? "FATAL " : ""} ERROR in\n`
+					+ `action number ${options.actionNumber ?? this.events.actionNumber}\n`
+					+ `of ${Events.getEventName(options.event ?? this.events.event, this.project)}\n`
+					+ `for object ${options.object.name ?? this.events.object.name}:\n`
+					+ `\n`
+				) : "")
+				+ options.text,
+		};
 
-	// Make a fatal error exception.
-	makeFatalError(...args) {
-		return new FatalErrorException(this.makeErrorOptions(true, ...args));
-	}
-
-	// Make a non fatal error exception.
-	makeNonFatalError(...args) {
-		return new NonFatalErrorException(this.makeErrorOptions(false, ...args));
-	}
-
-	// Make a fatal or non fatal error exception.
-	makeError(isFatal, ...args) {
-		if (isFatal) {
-			return this.makeFatalError(...args);
+		if (options.fatal) {
+			return new FatalErrorException(args);
 		} else {
-			return this.makeNonFatalError(...args);
+			return new NonFatalErrorException(args);
 		}
 	}
 
-	// Make the object to be sent to a ProjectErrorException to be the exception's properties.
-	// options can be an object to add additional properties to the exception.
-	// extraText will be added after the main information.
-	// object, event and actionNumber can be null to use the current values.
-	makeErrorOptions(isFatal, options, extraText, object=null, event=null, actionNumber=null) {
-		const _object = object ?? this.events.object;
-		const _event = event ?? this.events.event;
-		const _actionNumber = actionNumber ?? this.events.actionNumber;
-
-		const base = {text:
-			"\n___________________________________________\n"
-			+ (isFatal ? "FATAL " : "") + "ERROR in\n"
-			+ "action number " + _actionNumber.toString() + "\n"
-			+ "of " + Events.getEventName(_event, this.project) + " Event\n"
-			+ "for object " + _object.name + ":\n\n"
-			+ extraText,
-
-			location: "object",
-			locationActionNumber: _actionNumber,
-			locationEvent: _event,
-			locationObject: _object,
-		};
-
-		return Object.assign(base, options);
-	}
+	// TODO make the message more like the one from GM
 
 	// Display a error messsage using the text property.
 	showError(exception) {
-		console.log(exception.text);
+		console.error(exception.text);
 		alert(exception.text);
 	}
 }

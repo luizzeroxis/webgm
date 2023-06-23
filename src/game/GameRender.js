@@ -232,10 +232,9 @@ export default class GameRender {
 	getSprite(spriteIndex) {
 		const sprite = this.game.project.getResourceById("ProjectSprite", spriteIndex);
 		if (!sprite) {
-			throw this.game.makeNonFatalError({
-				type: "trying_to_draw_non_existing_sprite",
-				sprite: spriteIndex,
-			}, "Trying to draw non-existing sprite. (" + spriteIndex.toString() +")");
+			throw this.game.makeError({text:
+				`Trying to draw non-existing sprite. (${spriteIndex})`,
+			});
 		}
 		return sprite;
 	}
@@ -243,10 +242,9 @@ export default class GameRender {
 	getBackground(backgroundIndex) {
 		const background = this.game.project.getResourceById("ProjectBackground", backgroundIndex);
 		if (!background) {
-			throw this.game.makeNonFatalError({
-				type: "trying_to_draw_non_existing_background",
-				background: backgroundIndex,
-			}, "Trying to draw non-existing background. (" + backgroundIndex.toString() +")");
+			throw this.game.makeError({text:
+				`Trying to draw non-existing background. (${backgroundIndex})`,
+			});
 		}
 		return background;
 	}

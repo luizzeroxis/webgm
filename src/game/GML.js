@@ -5,7 +5,7 @@ import {toInteger, forceString, forceReal, forceInteger, asString, forceBool} fr
 import WebGMException from "~/common/WebGMException.js";
 
 import BuiltInFunctions from "./BuiltInFunctions.js";
-import {NonFatalErrorException, ExitException} from "./Game.js";
+import {ExitException} from "./Game.js";
 import GMLGrammar from "./GMLGrammar.js";
 import VariableHolder, {VariableException} from "./VariableHolder.js";
 
@@ -561,13 +561,10 @@ export default class GML {
 	async executeString(gml, instance, other, args) {
 		const result = this.compile(gml);
 		if (!result.succeeded) {
-			throw new NonFatalErrorException({
-					type: "compilation",
-					location: "executeString",
-					matchResult: result.matchResult,
-					text: "COMPILATION ERROR in string to be executed\n" + result.matchResult.message + "\n",
-				},
-			);
+			throw this.game.makeError({header: false, text:
+				`COMPILATION ERROR in string to be executed\n`
+				+ `${result.matchResult.message}\n`,
+			});
 		}
 
 		return await this.execute(result.ast, instance, other, args);
@@ -599,12 +596,9 @@ export default class GML {
 
 			return result;
 		} else {
-			throw this.game.makeNonFatalError({
-					type: "unknown_function_or_script",
-					functionOrScriptName: name,
-				},
-				"Unknown function or script: "+name,
-			);
+			throw this.game.makeError({text:
+				`Unknown function or script: ${name}`,
+			});
 		}
 	}
 
@@ -620,7 +614,10 @@ export default class GML {
 						break;
 					} else {
 						// TODO wrong
-						throw this.game.makeFatalError({}, "Wrong number of arguments to function or script. (too few arguments)");
+						throw this.game.makeError({fatal: true, text:
+							`COMPILATION ERROR\n`
+							+ `Wrong number of arguments to function or script. (too few arguments)`,
+						});
 					}
 				}
 
@@ -647,7 +644,10 @@ export default class GML {
 
 		if (i < args.length) {
 			// TODO wrong
-			throw this.game.makeFatalError({}, "Wrong number of arguments to function or script. (too many arguments)");
+			throw this.game.makeError({fatal: true, text:
+				`COMPILATION ERROR\n`
+				+ `Wrong number of arguments to function or script. (too many arguments)`,
+			});
 		}
 
 		return properArgs;
@@ -855,15 +855,13 @@ export default class GML {
 			}
 		}
 
-		return this.game.makeError(isFatal, {
-				type: "error_in_code",
-				node: node,
-				subType: message,
-			},
-			"Error in code at line " + lineNumber + ":\n"
-			+ gmlLine + "\n" + arrowString + "\n"
-			+ "at position " + position + ": " + message + "\n",
-		);
+		return this.game.makeError({
+			fatal: isFatal,
+			text: `Error in code at line ${lineNumber}:\n`
+			+ `${gmlLine}\n`
+			+ `${arrowString}\n`
+			+ `at position ${position}: ${message}\n`,
+		});
 	}
 }
 

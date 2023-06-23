@@ -1511,10 +1511,9 @@ export default class BuiltInFunctions {
 		func: async function([x, y, obj]) {
 			const object = this.game.project.getResourceById("ProjectObject", obj);
 			if (object == null) {
-				throw this.game.makeNonFatalError({
-					type: "creating_instance_for_non_existing_object",
-					objectIndex: obj,
-				}, "Creating instance for non-existing object: " + obj.toString());
+				throw this.game.makeError({text:
+					`Creating instance for non-existing object: ${obj}`,
+				});
 			}
 
 			return await this.game.instanceCreate(null, x, y, obj);
@@ -3906,10 +3905,7 @@ export default class BuiltInFunctions {
 		func: function([index]) {
 			const sound = this.game.project.getResourceById("ProjectSound", index);
 			if (!sound) {
-				throw this.game.makeNonFatalError({
-					type: "sound_does_not_exist",
-					soundIndex: index,
-				}, "Sound does not exist. (" + index.toString() +")");
+				throw this.game.makeError({text: `Sound does not exist. ${index})`});
 			}
 
 			this.game.audio.playSound(sound, false);
@@ -3922,10 +3918,7 @@ export default class BuiltInFunctions {
 		func: function([index]) {
 			const sound = this.game.project.getResourceById("ProjectSound", index);
 			if (!sound) {
-				throw this.game.makeNonFatalError({
-					type: "sound_does_not_exist",
-					soundIndex: index,
-				}, "Sound does not exist. (" + index.toString() +")");
+				throw this.game.makeError({text: `Sound does not exist. (${index})`});
 			}
 
 			this.game.audio.playSound(sound, true);
@@ -3938,10 +3931,7 @@ export default class BuiltInFunctions {
 		func: function([index]) {
 			const sound = this.game.project.getResourceById("ProjectSound", index);
 			if (!sound) {
-				throw this.game.makeNonFatalError({
-					type: "sound_does_not_exist",
-					soundIndex: index,
-				}, "Sound does not exist. (" + index.toString() +")");
+				throw this.game.makeError({text: `Sound does not exist. (${index})`});
 			}
 
 			this.game.audio.stopSound(sound);
@@ -5750,10 +5740,7 @@ export default class BuiltInFunctions {
 			if (script) {
 				return this.execute(this.game.loadedProject.gmlCache.get(script), this.currentInstance, this.currentOther, args);
 			} else {
-				throw this.game.makeNonFatalError({
-					type: "trying_to_execute_non_existing_script",
-					scriptIndex: scr,
-				}, "Trying to execute non-existing script. (" + scr.toString() +")");
+				throw this.game.makeError({text: `Trying to execute non-existing script. (${scr})`});
 			}
 		},
 	};
@@ -9318,10 +9305,7 @@ export default class BuiltInFunctions {
 
 			const objectResource = this.game.project.getResourceById("ProjectObject", object);
 			if (objectResource == null) {
-				throw this.game.makeNonFatalError({
-					type: "creating_instance_for_non_existing_object",
-					objectIndex: object,
-				}, "Creating instance for non-existing object: " + object.toString());
+				throw this.game.makeError({text: `Creating instance for non-existing object: ${object}`});
 			}
 
 			const instance = this.game.instanceCreateNoEvents(null, x, y, object);
@@ -9826,11 +9810,7 @@ export default class BuiltInFunctions {
 		args: null,
 		func: function([variable, value, operation]) {
 			if (typeof variable !== typeof value) {
-				throw this.game.makeNonFatalError({
-					type: "cannot_compare_arguments",
-					a: variable,
-					b: value,
-				}, "Cannot compare arguments. (" + variable.toString() +" has a different type than " + value.toString() + ")");
+				throw this.game.makeError({text: `Cannot compare arguments. (${variable} has a different type than ${value})`});
 			}
 
 			switch (operation) {

@@ -271,6 +271,7 @@ export default class Editor {
 
 		if (this.project.resources.ProjectRoom.length <= 0) {
 			alert("A game must have at least one room to run.");
+			this.toolBarArea.runButton.setDisabled(false);
 			return;
 		}
 
@@ -320,9 +321,9 @@ export default class Editor {
 			},
 		});
 
-		this.game.start();
-
 		this.toolBarArea.stopButton.setDisabled(false);
+
+		this.game.start();
 	}
 
 	stopGame() {

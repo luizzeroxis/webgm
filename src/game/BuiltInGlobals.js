@@ -1,8 +1,6 @@
 import Events from "~/common/Events.js";
 import {hexToDecimal, decimalToHex} from "~/common/tools.js";
 
-import {NonFatalErrorException} from "./Game.js";
-
 export default class BuiltInGlobals {
 	// this = Game
 
@@ -53,12 +51,11 @@ export default class BuiltInGlobals {
 		set(value) {
 			if (value <= 0) {
 				// TODO So, in GM you get 2 errors right after another. I have no idea how to replicate this.
-				throw new NonFatalErrorException({
-						type: "trying_to_set_the_room_speed_to_a_value_less_or_equal_than_0",
-						text: "\n___________________________________________\n"
-							+ "Trying to set the room speed to a value <= 0. (" + value.toString() + ")\n",
-					},
-				);
+				throw this.makeError({header: false, text:
+					`\n`
+					+ `___________________________________________\n`
+					+ `Trying to set the room speed to a value <= 0. (${value})\n`,
+				});
 			}
 			this.room.speed = value;
 		},

@@ -1760,7 +1760,7 @@ export default class BuiltInFunctions {
 		func: async function([numb]) {
 			if (numb >= 0 && numb <= 15) {
 			// User 0 has id of 10
-				await this.game.doEventOfInstance("other", numb + 10, this.currentInstance);
+				await this.game.events.runEventOfInstance("other", numb + 10, this.currentInstance);
 			}
 			return 0;
 		},
@@ -1769,10 +1769,10 @@ export default class BuiltInFunctions {
 	static event_inherited = {
 		args: [],
 		func: async function([]) {
-			const parent = this.game.project.getResourceById("ProjectObject", this.game.currentEvent.object.parent_index);
+			const parent = this.game.project.getResourceById("ProjectObject", this.game.events.object.parent_index);
 			if (parent) {
-				const event = this.game.getEventOfObject(parent, this.game.currentEvent.event.type, this.game.currentEvent.event.subtype);
-				await this.game.doEvent(event, this.currentInstance, this.currentOther);
+				const event = this.game.events.getEventOfObject(parent, this.game.events.event.type, this.game.events.event.subtype);
+				await this.game.events.runEvent(event, this.currentInstance, this.currentOther);
 			}
 			return 0;
 		},
@@ -9327,7 +9327,7 @@ export default class BuiltInFunctions {
 			const instance = this.game.instanceCreateNoEvents(null, x, y, object);
 			instance.setDirectionAndSpeed(direction, speed);
 
-			await this.game.doEventOfInstance("create", null, instance);
+			await this.game.events.runEventOfInstance("create", null, instance);
 
 			return 0;
 		},
@@ -9478,7 +9478,7 @@ export default class BuiltInFunctions {
 		args: null,
 		func: function([newRoom, transition]) { // eslint-disable-line no-unused-vars
 			// TODO transition
-			this.loadRoomAtStepStop(newRoom);
+			this.game.loadRoomAtStepStop(newRoom);
 			return 0;
 		},
 	};

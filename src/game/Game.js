@@ -12,6 +12,7 @@ import BuiltInConstants from "./BuiltInConstants.js";
 import BuiltInGlobals from "./BuiltInGlobals.js";
 import GameAudio from "./GameAudio.js";
 import GameCollision from "./GameCollision.js";
+import GameEvents from "./GameEvents.js";
 import GameInput from "./GameInput.js";
 import GameRender from "./GameRender.js";
 import GML from "./GML.js";
@@ -30,6 +31,7 @@ export default class Game {
 		this.input = new GameInput(this, this.render.canvas);
 		this.audio = new GameAudio(this);
 		this.collision = new GameCollision(this);
+		this.events = new GameEvents(this);
 
 		// Project
 		this.loadedProject = new ProjectLoader(this, this.project);
@@ -43,18 +45,11 @@ export default class Game {
 
 		this.lastId = null;
 
-		// Events and actions
-		this.currentEvent = null;
-		this.currentEventInstance = null;
-		this.currentEventOther = null;
-		this.currentEventActionNumber = null;
-
 		// GML
 		this.gml = new GML(this);
 
 		// Main loop
 		this.timeout = null;
-		this.mapEvents = null;
 		this.stepStopAction = null;
 
 		// FPS
@@ -134,13 +129,13 @@ export default class Game {
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
 				const OTHER_ROOM_END = 5;
-				await this.doEventOfInstance("other", OTHER_ROOM_END, instance);
+				await this.events.runEventOfInstance("other", OTHER_ROOM_END, instance);
 			}
 
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
 				const OTHER_GAME_END = 3;
-				await this.doEventOfInstance("other", OTHER_GAME_END, instance);
+				await this.events.runEventOfInstance("other", OTHER_GAME_END, instance);
 			}
 		} catch (e) {
 			if (e instanceof StepStopException) {
@@ -291,16 +286,16 @@ export default class Game {
 		*/
 
 		// Get all events
-		this.mapEvents = this.getMapOfEvents();
+		this.events.makeMapOfEvents();
 
 		// Begin step
-		for (const {event, instance} of this.getEventsOfTypeAndSubtype("step", "begin")) {
+		for (const {event, instance} of this.events.getEventsOfTypeAndSubtype("step", "begin")) {
 			if (!instance.exists) continue;
-			await this.doEvent(event, instance);
+			await this.events.runEvent(event, instance);
 		}
 
 		// Alarm
-		for (const [subtype, list] of this.getEventsOfType("alarm")) {
+		for (const [subtype, list] of this.events.getEventsOfType("alarm")) {
 			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 
@@ -311,35 +306,35 @@ export default class Game {
 					instance.alarms[subtype] -= 1;
 				}
 				if (instance.alarms[subtype] == 0) {
-					await this.doEvent(event, instance);
+					await this.events.runEvent(event, instance);
 				}
 			}
 		}
 
 		// Keyboard
-		for (const [subtype, list] of this.getEventsOfType("keyboard")) {
+		for (const [subtype, list] of this.events.getEventsOfType("keyboard")) {
 			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 				if (this.input.getKey(subtype, this.input.key)) {
-					await this.doEvent(event, instance);
+					await this.events.runEvent(event, instance);
 				}
 			}
 		}
 
-		for (const [subtype, list] of this.getEventsOfType("keypress")) {
+		for (const [subtype, list] of this.events.getEventsOfType("keypress")) {
 			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 				if (this.input.getKey(subtype, this.input.keyPressed)) {
-					await this.doEvent(event, instance);
+					await this.events.runEvent(event, instance);
 				}
 			}
 		}
 
-		for (const [subtype, list] of this.getEventsOfType("keyrelease")) {
+		for (const [subtype, list] of this.events.getEventsOfType("keyrelease")) {
 			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 				if (this.input.getKey(subtype, this.input.keyReleased)) {
-					await this.doEvent(event, instance);
+					await this.events.runEvent(event, instance);
 				}
 			}
 		}
@@ -348,7 +343,7 @@ export default class Game {
 
 		// TODO other mouse events
 
-		for (const [subtype, list] of this.getEventsOfType("mouse")) {
+		for (const [subtype, list] of this.events.getEventsOfType("mouse")) {
 			for (const {event, instance} of list) {
 				if (!instance.exists) continue;
 
@@ -389,15 +384,15 @@ export default class Game {
 				}
 
 				if (execute) {
-					await this.doEvent(event, instance);
+					await this.events.runEvent(event, instance);
 				}
 			}
 		}
 
 		// Step
-		for (const {event, instance} of this.getEventsOfTypeAndSubtype("step", "normal")) {
+		for (const {event, instance} of this.events.getEventsOfTypeAndSubtype("step", "normal")) {
 			if (!instance.exists) continue;
-			await this.doEvent(event, instance);
+			await this.events.runEvent(event, instance);
 		}
 
 		// Update instance variables and positions
@@ -413,7 +408,7 @@ export default class Game {
 
 		// Outside room and intersect boundary
 		const OTHER_OUTSIDE = 0;
-		for (const {event, instance} of this.getEventsOfTypeAndSubtype("other", OTHER_OUTSIDE)) {
+		for (const {event, instance} of this.events.getEventsOfTypeAndSubtype("other", OTHER_OUTSIDE)) {
 			if (!instance.exists) continue;
 
 			const boundingBox = instance.getBoundingBox();
@@ -422,12 +417,12 @@ export default class Game {
 				|| boundingBox.x2 < 0
 				|| boundingBox.y1 >= this.room.height
 				|| boundingBox.y2 < 0) {
-				await this.doEvent(event, instance);
+				await this.events.runEvent(event, instance);
 			}
 		}
 
 		const OTHER_BOUNDARY = 1;
-		for (const {event, instance} of this.getEventsOfTypeAndSubtype("other", OTHER_BOUNDARY)) {
+		for (const {event, instance} of this.events.getEventsOfTypeAndSubtype("other", OTHER_BOUNDARY)) {
 			if (!instance.exists) continue;
 
 			const boundingBox = instance.getBoundingBox();
@@ -436,12 +431,12 @@ export default class Game {
 				|| boundingBox.x2 >= this.room.width
 				|| boundingBox.y1 < 0
 				|| boundingBox.y2 >= this.room.height) {
-				await this.doEvent(event, instance);
+				await this.events.runEvent(event, instance);
 			}
 		}
 
 		// Collisions
-		for (const [subtype, list] of this.getEventsOfType("collision")) {
+		for (const [subtype, list] of this.events.getEventsOfType("collision")) {
 			for (const {event, instance} of list) {
 				// TODO test what happens when colliding with multiple instances at once
 				for (const other of this.instances) {
@@ -456,7 +451,7 @@ export default class Game {
 							instance.y = instance.yPrevious;
 						}
 
-						await this.doEvent(event, instance, other);
+						await this.events.runEvent(event, instance, other);
 
 						// Yes, the event can change solid variable
 						if (other.solid) {
@@ -478,9 +473,9 @@ export default class Game {
 
 		// End step
 
-		for (const {event, instance} of this.getEventsOfTypeAndSubtype("step", "end")) {
+		for (const {event, instance} of this.events.getEventsOfTypeAndSubtype("step", "end")) {
 			if (!instance.exists) continue;
-			await this.doEvent(event, instance);
+			await this.events.runEvent(event, instance);
 		}
 
 		// Update mouse position in view
@@ -596,165 +591,6 @@ export default class Game {
 		// TODO paths?
 	}
 
-	// Execute a event.
-	async doEvent(event, instance, other=null) {
-		if (event == null) return;
-
-		const previousEvent = this.currentEvent;
-		const previousInstance = this.currentEventInstance;
-		const previousOther = this.currentEventOther;
-
-		this.currentEvent = event;
-		this.currentEventInstance = instance;
-		this.currentEventOther = other;
-
-		const parsedActions = this.loadedProject.actionsCache.get(event.event);
-
-		for (const treeAction of parsedActions) {
-			try {
-				await this.doTreeAction(treeAction);
-
-				if (this.stepStopAction != null) {
-					throw new StepStopException(this.stepStopAction);
-				}
-			} catch (e) {
-				if (e instanceof ExitException) {
-					break;
-				} if (e instanceof NonFatalErrorException) {
-					this.showError(e);
-					this.errorOccurred = true;
-					this.errorLast = e.text;
-				} else {
-					throw e;
-				}
-			}
-		}
-
-		this.currentEvent = previousEvent;
-		this.currentEventInstance = previousInstance;
-		this.currentEventOther = previousOther;
-	}
-
-	// Execute a node of the parsed actions tree.
-	async doTreeAction(treeAction) {
-		if (treeAction == null) return null;
-
-		this.currentEventActionNumber = treeAction.actionNumber;
-
-		let applyToInstances;
-		let otherInstance;
-
-		if (treeAction.appliesTo != undefined) {
-			applyToInstances = this.getApplyToInstances(treeAction.appliesTo);
-			otherInstance = this.currentEventOther || this.currentEventInstance;
-			if (treeAction.appliesTo == -2) { // other
-				otherInstance = this.currentEventInstance;
-			}
-		}
-
-		switch (treeAction.type) {
-			case "executeFunction":
-			case "executeCode":
-
-				{
-					let result = true;
-					for (const applyToInstance of applyToInstances) {
-						if (!applyToInstance.exists) continue;
-
-						const args = [];
-						for (const [i, x] of treeAction.args.entries()) {
-							args.push(await this.parseActionArg(x, i));
-						}
-
-						let currentResult;
-						if (treeAction.type == "executeFunction") {
-							currentResult = await this.gml.builtInFunction(treeAction.function, applyToInstance, otherInstance, args, treeAction.relative);
-						} else {
-							currentResult = await this.gml.execute(this.loadedProject.gmlCache.get(treeAction.action), applyToInstance, otherInstance, args, treeAction.relative);
-						}
-
-						if (typeof currentResult !== "number" || currentResult < 0.5) {
-							result = false;
-						}
-					}
-
-					return result;
-				}
-
-			case "if":
-				{
-					const result = await this.doTreeAction(treeAction.condition);
-					if (result) {
-						await this.doTreeAction(treeAction.ifTrue);
-					} else {
-						await this.doTreeAction(treeAction.ifFalse);
-					}
-					break;
-				}
-
-			case "block":
-				for (const blockTreeAction of treeAction.actions) {
-					await this.doTreeAction(blockTreeAction);
-				}
-				break;
-
-			case "exit":
-				throw new ExitException();
-
-			case "repeat":
-				{
-					const times = await this.parseActionArg(treeAction.times, 0);
-					for (let i=0; i<times; i++) {
-						await this.doTreeAction(treeAction.treeAction);
-					}
-					break;
-				}
-
-			case "variable":
-				for (const applyToInstance of applyToInstances) {
-					if (!applyToInstance.exists) continue;
-					await this.gml.execute(this.loadedProject.gmlCache.get(treeAction.action), applyToInstance, otherInstance);
-				}
-				break;
-
-			case "code":
-				for (const applyToInstance of applyToInstances) {
-					if (!applyToInstance.exists) continue;
-					await this.gml.execute(this.loadedProject.gmlCache.get(treeAction.action), applyToInstance, otherInstance);
-				}
-				break;
-		}
-
-		return null;
-	}
-
-	// Interpret a action argument to it's final value.
-	async parseActionArg(arg, argNumber) {
-		if (arg.kind == "both") {
-			if (arg.value[0] != "'" && arg.value[0] != "\"") {
-				return arg.value;
-			}
-		}
-		if (arg.kind == "both" || arg.kind == "expression") {
-			// TODO check if this is really what gm is doing
-			// TODO maybe compile all these codes beforehand
-
-			const result = this.gml.compile(arg.value, "Expression");
-			if (!result.succeeded) {
-				throw this.makeFatalError({
-						type: "compilation",
-						matchResult: result.matchResult,
-					},
-					"COMPILATION ERROR in argument "+ argNumber.toString() +"\n" + result.matchResult.message + "\n",
-				);
-			}
-
-			// Using currentEventInstance instead of currentInstance is technically okay here, because to get here you get to run doEvent which is always (hopefully) setting the right instance.
-			return await this.gml.execute(result.ast, this.currentEventInstance, this.currentEventOther || this.currentEventInstance);
-		}
-		return arg.value;
-	}
-
 	// // Actions execution
 
 	// Loads a room. Only use this inside the stepStopAction function, or at the beginning of the game.
@@ -766,7 +602,7 @@ export default class Game {
 				for (const instance of this.instances) {
 					if (!instance.exists) continue;
 					const OTHER_ROOM_END = 5;
-					await this.doEventOfInstance("other", OTHER_ROOM_END, instance);
+					await this.events.runEventOfInstance("other", OTHER_ROOM_END, instance);
 				}
 			} catch (e) {
 				if (e instanceof StepStopException) {
@@ -872,14 +708,14 @@ export default class Game {
 
 		for (const instance of createdInstances) {
 			// TODO run instance creation code
-			await this.doEventOfInstance("create", null, instance);
+			await this.events.runEventOfInstance("create", null, instance);
 		}
 
 		if (isGameStart) {
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
 				const OTHER_GAME_START = 2;
-				await this.doEventOfInstance("other", OTHER_GAME_START, instance);
+				await this.events.runEventOfInstance("other", OTHER_GAME_START, instance);
 			}
 		}
 
@@ -888,7 +724,7 @@ export default class Game {
 		for (const instance of this.instances) {
 			if (!instance.exists) continue;
 			const OTHER_ROOM_START = 4;
-			await this.doEventOfInstance("other", OTHER_ROOM_START, instance);
+			await this.events.runEventOfInstance("other", OTHER_ROOM_START, instance);
 		}
 
 		// Update mouse position in view
@@ -916,7 +752,7 @@ export default class Game {
 	async instanceCreate(id, x, y, object) {
 		const instance = this.instanceCreateNoEvents(id, x, y, object);
 
-		await this.doEventOfInstance("create", null, instance);
+		await this.events.runEventOfInstance("create", null, instance);
 
 		return instance.id;
 	}
@@ -935,7 +771,7 @@ export default class Game {
 
 	// Destroy an instance in the room.
 	async instanceDestroy(instance) {
-		await this.doEventOfInstance("destroy", null, instance);
+		await this.events.runEventOfInstance("destroy", null, instance);
 		instance.exists = false;
 	}
 
@@ -1001,7 +837,7 @@ export default class Game {
 			const OTHER_NO_MORE_LIVES = 6;
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
-				await this.doEventOfInstance("other", OTHER_NO_MORE_LIVES, instance);
+				await this.events.runEventOfInstance("other", OTHER_NO_MORE_LIVES, instance);
 			}
 		}
 	}
@@ -1015,107 +851,12 @@ export default class Game {
 			const OTHER_NO_MORE_HEALTH = 9;
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
-				await this.doEventOfInstance("other", OTHER_NO_MORE_HEALTH, instance);
+				await this.events.runEventOfInstance("other", OTHER_NO_MORE_HEALTH, instance);
 			}
 		}
 	}
 
 	// // Helper functions
-
-	// Do the event of a type and subtype (optional) of an instance.
-	doEventOfInstance(type, subtype, instance) {
-		return this.doEvent(this.getEventOfInstance(instance, type, subtype), instance);
-	}
-
-	// Get event of type and subtype (optional) of an instance.
-	getEventOfInstance(instance, type, subtype) {
-		return this.getEventOfObject(instance.object, type, subtype);
-	}
-
-	// Get an event that is in an object or its parents. Returns {event, object}
-	getEventOfObject(object, type, subtype) {
-		const event = object.events.find(x => (x.type == type) && (subtype ? (x.subtype == subtype) : true));
-		if (event) return {event, object};
-
-		const parent = this.project.getResourceById("ProjectObject", object.parent_index);
-		if (parent) {
-			return this.getEventOfObject(parent, type, subtype);
-		}
-		return null;
-	}
-
-	// Returns a map containg all event-instance pairs that exist currently. It is structured like so:
-	// Map(<event type>, Map(<event subtype>, {event, instance}))
-	getMapOfEvents() {
-		const map = new Map();
-
-		for (const instance of this.instances) {
-			if (!instance.exists) continue;
-
-			// outside: map, instance
-			const findEvents = (object) => {
-				object.events.forEach(event => {
-					let subtypes = map.get(event.type);
-					if (subtypes == undefined) {
-						subtypes = new Map();
-						map.set(event.type, subtypes);
-					}
-
-					let eventInstancePairs = subtypes.get(event.subtype);
-					if (eventInstancePairs == undefined) {
-						eventInstancePairs = [];
-						subtypes.set(event.subtype, eventInstancePairs);
-					}
-
-					// maybe this is slow
-					if (eventInstancePairs.find(x => x.instance == instance
-						&& x.event.type == event.type && x.event.subtype == event.subtype)) {
-						return;
-					}
-					eventInstancePairs.push({event: {event, object}, instance: instance});
-				});
-
-				const parent = this.project.getResourceById("ProjectObject", object.parent_index);
-				if (parent) {
-					findEvents(parent);
-				}
-			};
-
-			findEvents(instance.object);
-		}
-
-		return map;
-	}
-
-	// From the map of events, get a list of event-instance pairs of that type and subtype.
-	getEventsOfTypeAndSubtype(type, subtype) {
-		const subtypes = this.mapEvents.get(type);
-		if (!subtypes) return [];
-		const list = subtypes.get(subtype);
-		if (!list) return [];
-		return list;
-	}
-
-	// From the map of events, get a list of event-instance pairs of that type, regardless of subtype.
-	getEventsOfType(type) {
-		const subtypes = this.mapEvents.get(type);
-		if (!subtypes) return [];
-		return [...subtypes.entries()];
-	}
-
-	// Interpret apply to option, returns a list of instances that should be applied to.
-	getApplyToInstances(appliesTo) {
-		// -1 = self, -2 = other, 0>= = object index
-		switch (appliesTo) {
-			case -1:
-				return [this.currentEventInstance];
-			case -2:
-				return [this.currentEventOther || this.currentEventInstance];
-			default:
-				return this.instances.filter(x => x.exists
-					&& (x.objectIndex == appliesTo || this.objectIsAncestorByIndex(appliesTo, x.objectIndex)));
-		}
-	}
 
 	// If parent is an ancenstor of child, by index.
 	objectIsAncestorByIndex(parentIndex, childIndex) {
@@ -1164,9 +905,9 @@ export default class Game {
 	// extraText will be added after the main information.
 	// object, event and actionNumber can be null to use the current values.
 	makeErrorOptions(isFatal, options, extraText, object=null, event=null, actionNumber=null) {
-		const _object = object==null ? this.currentEvent.object : object;
-		const _event = event==null ? this.currentEvent.event : event;
-		const _actionNumber = actionNumber==null ? this.currentEventActionNumber : actionNumber;
+		const _object = object ?? this.events.object;
+		const _event = event ?? this.events.event;
+		const _actionNumber = actionNumber ?? this.events.actionNumber;
 
 		const base = {text:
 			"\n___________________________________________\n"
@@ -1207,7 +948,7 @@ export class NonFatalErrorException extends ProjectErrorException {}
 export class ExitException extends WebGMException {}
 
 // Used when calling functions that require stopping the current step
-class StepStopException extends WebGMException {
+export class StepStopException extends WebGMException {
 	constructor(fn, ...args) {
 		super(...args);
 		this.fn = fn;

@@ -148,10 +148,10 @@ export default class GameRender {
 
 			// Only draw if visible
 			if (instance.visible) {
-				const drawEvent = this.game.getEventOfInstance(instance, "draw");
+				const drawEvent = this.game.events.getEventOfObject(instance.object, "draw");
 
 				if (drawEvent) {
-					await this.game.doEvent(drawEvent, instance);
+					await this.game.events.runEvent(drawEvent, instance);
 				} else {
 					// No draw event, draw sprite if it has one.
 					if (instance.sprite) {

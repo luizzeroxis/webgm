@@ -73,7 +73,7 @@ export default class HAreaWindows extends HElement {
 
 	// Open or focus on the preferences window.
 	openPreferences() {
-		return this.manager.open(HWindowPreferences, null, this.editor);
+		return this.editor.windowManager.open(HWindowPreferences, null, this.editor);
 	}
 
 	// Open or focus on the game window.
@@ -83,9 +83,10 @@ export default class HAreaWindows extends HElement {
 
 	// Remove all windows related to the project (that is, not of the global editor).
 	clearProject() {
+		// this.manager.clear();
 		for (const w of [...this.manager.windows]) {
-			if (!([HWindowGame, HWindowPreferences].includes(w.constructor))) {
-				w.close();
+			if (!([HWindowPreferences].includes(w.constructor))) {
+				w.forceClose();
 			}
 		}
 	}

@@ -86,6 +86,7 @@ export default class Game {
 		// Errors
 		this.errorOccurred = false;
 		this.errorLast = "";
+		this.errorMessages = "";
 
 		// HTML
 		this.div = parent( new HElement("div", {class: "game"}) );
@@ -154,8 +155,7 @@ export default class Game {
 	async catch(e) {
 		if (e instanceof EngineException) {
 			this.close(e);
-		} else if (e instanceof ProjectErrorException) {
-			this.showError(e);
+		} else if (e instanceof AbortException) {
 			this.close();
 		} else if (e instanceof StepStopException) {
 			this.stepStopAction = null;
@@ -885,7 +885,7 @@ export default class Game {
 					+ `${options.fatal ? "FATAL " : ""} ERROR in\n`
 					+ `action number ${options.actionNumber ?? this.events.actionNumber}\n`
 					+ `of ${Events.getEventName(options.event ?? this.events.event, this.project)}\n`
-					+ `for object ${options.object.name ?? this.events.object.name}:\n`
+					+ `for object ${options.object?.name ?? this.events.object.name}:\n`
 					+ `\n`
 				) : "")
 				+ options.text,
@@ -901,9 +901,19 @@ export default class Game {
 	// TODO make the message more like the one from GM
 
 	// Display a error messsage using the text property.
-	showError(exception) {
-		console.error(exception.text);
-		alert(exception.text);
+	async showError(e) {
+		console.error(e.text);
+
+		this.errorOccurred = true;
+		this.errorLast = e.text;
+		this.errorMessages += e.text + "\n";
+
+		alert(e.text);
+		const result = {abort: (e instanceof FatalErrorException)};
+
+		if (result.abort == true) {
+			throw new AbortException();
+		}
 	}
 }
 
@@ -911,7 +921,7 @@ export default class Game {
 export class EngineException extends WebGMException {}
 
 // Errors in the user project
-class ProjectErrorException extends WebGMException {}
+export class ProjectErrorException extends WebGMException {}
 
 // Errors in the game that are fatal
 export class FatalErrorException extends ProjectErrorException {}
@@ -928,3 +938,6 @@ export class StepStopException extends WebGMException {
 		this.fn = fn;
 	}
 }
+
+// Used when aborting errors
+export class AbortException extends WebGMException {}

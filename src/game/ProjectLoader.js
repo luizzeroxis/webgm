@@ -1,8 +1,7 @@
 import {makeCSSFont} from "~/common/tools.js";
 
 import ActionsParser from "./ActionsParser.js";
-import {EngineException} from "./Game.js";
-
+import {EngineException, ProjectErrorException} from "./Game.js";
 
 export default class ProjectLoader {
 	constructor(game, project) {
@@ -28,12 +27,11 @@ export default class ProjectLoader {
 			this.loadSprites(),
 			this.loadSounds(),
 			this.loadBackgrounds(),
+			this.loadGML(),
 		];
 
 		this.loadFonts();
-
 		this.loadActions();
-		this.loadGML();
 
 		return Promise.all(promises);
 	}
@@ -181,11 +179,17 @@ export default class ProjectLoader {
 	}
 
 	// Compile all GML code, parsing it and checking for errors.
-	loadGML() {
-		this.loadGMLScripts();
-		this.loadGMLTimelines(); // TODO
-		this.loadGMLObjects();
-		this.loadGMLRooms();
+	async loadGML() {
+		try {
+			this.loadGMLScripts();
+			this.loadGMLTimelines(); // TODO
+			this.loadGMLObjects();
+			this.loadGMLRooms();
+		} catch (e) {
+			if (e instanceof ProjectErrorException) {
+				await this.game.showError(e);
+			}
+		}
 	}
 
 	// Compile all GML inside of scripts.

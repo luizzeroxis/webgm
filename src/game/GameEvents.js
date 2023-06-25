@@ -1,4 +1,4 @@
-import {StepStopException, ExitException, NonFatalErrorException} from "./Game.js";
+import {StepStopException, ExitException, ProjectErrorException} from "./Game.js";
 
 export default class GameEvents {
 	constructor(game) {
@@ -42,10 +42,8 @@ export default class GameEvents {
 				} catch (e) {
 					if (e instanceof ExitException) {
 						break;
-					} if (e instanceof NonFatalErrorException) {
-						this.game.showError(e);
-						this.game.errorOccurred = true;
-						this.game.errorLast = e.text;
+					} if (e instanceof ProjectErrorException) {
+						await this.game.showError(e);
 					} else {
 						throw e;
 					}

@@ -20,8 +20,7 @@ export default class HWindowAction extends HWindow {
 
 		this.setTitle(this.actionType.description);
 
-		const actionTypeInfo = this.windowObject.getActionTypeInfo();
-		const actionTypeInfoItem = actionTypeInfo.find(x => x.kind == this.actionType.kind && x.interfaceKind == this.actionType.interfaceKind);
+		const actionTypeInfoItem = ProjectAction.typeInfo.find(x => x.kind == this.actionType.kind && x.interfaceKind == this.actionType.interfaceKind);
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-action"}) ) );

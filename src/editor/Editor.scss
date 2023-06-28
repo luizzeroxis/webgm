@@ -358,7 +358,7 @@ input[type="text"], input[type="number"], select {
 
 	> .events {
 		display: flex;
-		min-width: 200px;
+		min-width: 150px;
 		flex: none;
 		flex-direction: column;
 	}
@@ -385,7 +385,9 @@ input[type="text"], input[type="number"], select {
 		flex: 1;
 		flex-direction: column;
 	}
+}
 
+.window-timeline, .window-object {
 	> .libraries {
 		flex: none;
 

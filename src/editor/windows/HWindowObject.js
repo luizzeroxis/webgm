@@ -1,12 +1,11 @@
 import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import Events from "~/common/Events.js";
-import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HOption, HImage} from "~/common/h";
+import {parent, endparent, add, HElement, HButton, HTextInput, HNumberInput, HCheckBoxInput, HSelect, HOption} from "~/common/h";
 import {
-	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline,
-	ProjectEvent, ProjectAction, ProjectActionArg,
+	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline, ProjectEvent, ProjectAction,
 } from "~/common/project/ProjectProperties.js";
 import {setDeepOnUpdateOnElement} from "~/common/tools.js";
-import HTabControl from "~/editor/components/HTabControl/HTabControl.js";
+import HActionLibraries from "~/editor/HActionLibraries.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
 
 import HEventChooserWindow from "./HEventChooserWindow.js";
@@ -103,55 +102,57 @@ export default class HWindowObject extends HWindow {
 							this.onUpdate();
 						}) );
 
-						// Delete event button
-						this.buttonEventDelete = add( new HButton("Delete", () => {
-							const index = this.resource.events.findIndex(event => this.selectEvents.getValue() == event.getNameId());
-							if (index < 0) return;
+						parent( add( new HElement("div") ) );
+							// Delete event button
+							this.buttonEventDelete = add( new HButton("Delete", () => {
+								const index = this.resource.events.findIndex(event => this.selectEvents.getValue() == event.getNameId());
+								if (index < 0) return;
 
-							if (this.resource.events[index].actions.length > 0)
-							if (!confirm("Are you sure you want to remove the event with all its actions?"))
-								return;
+								if (this.resource.events[index].actions.length > 0)
+								if (!confirm("Are you sure you want to remove the event with all its actions?"))
+									return;
 
-							// Close action windows related to event
-							this.resource.events[index].actions.forEach(action => {
-								this.closeActionWindow(action);
-							});
+								// Close action windows related to event
+								this.resource.events[index].actions.forEach(action => {
+									this.closeActionWindow(action);
+								});
 
-							this.resource.events.splice(index, 1);
+								this.resource.events.splice(index, 1);
 
-							this.updateSelectEvents();
-							this.updateEventsMenu();
-							this.updateSelectActions();
-							this.updateActionsMenu();
+								this.updateSelectEvents();
+								this.updateEventsMenu();
+								this.updateSelectActions();
+								this.updateActionsMenu();
 
-							this.onUpdate();
-						}) );
+								this.onUpdate();
+							}) );
 
-						// Change event button
+							// Change event button
 
-						this.buttonEventChange = add( new HButton("Change", async () => {
-							const newEvent = await this.editor.windowManager.openModal(HEventChooserWindow, this.editor).promise;
+							this.buttonEventChange = add( new HButton("Change", async () => {
+								const newEvent = await this.editor.windowManager.openModal(HEventChooserWindow, this.editor).promise;
 
-							const event = this.getSelectedEvent();
-							if (!event) return;
+								const event = this.getSelectedEvent();
+								if (!event) return;
 
-							// Don't continue if there's an event with the exact same type and subtype
-							if (this.resource.events.find(x => x.type == newEvent.type && x.subtype == newEvent.subtype))
-								return;
+								// Don't continue if there's an event with the exact same type and subtype
+								if (this.resource.events.find(x => x.type == newEvent.type && x.subtype == newEvent.subtype))
+									return;
 
-							event.type = newEvent.type;
-							event.subtype = newEvent.subtype;
+								event.type = newEvent.type;
+								event.subtype = newEvent.subtype;
 
-							this.sortEvents();
+								this.sortEvents();
 
-							this.updateSelectEvents();
-							this.selectEvents.setValue(event.getNameId());
-							// this.updateEventsMenu();
-							// this.updateSelectActions();
-							// this.updateActionsMenu();
+								this.updateSelectEvents();
+								this.selectEvents.setValue(event.getNameId());
+								// this.updateEventsMenu();
+								// this.updateSelectActions();
+								// this.updateActionsMenu();
 
-							this.onUpdate();
-						}) );
+								this.onUpdate();
+							}) );
+							endparent();
 
 						endparent();
 
@@ -271,95 +272,23 @@ export default class HWindowObject extends HWindow {
 
 				parent( add( new HElement("div", {class: "libraries"}) ) );
 
-					this.librariesTabControl = add( new HTabControl("libraries-tabs", "right") );
+					add( new HActionLibraries(this.editor, action => {
+						const event = this.getSelectedEvent();
+						if (!event) {
+							alert("You need to select or add an event before you can add actions.");
+							return;
+						}
 
-					this.editor.libraries.forEach(library => {
-						parent( this.librariesTabControl.addTab(library.name, (library.name == this.editor.preferences.get("defaultActionLibraryTab"))) );
+						this.openActionWindow(action);
 
-							let nextClass = null;
+						event.actions.push(action);
 
-							parent( add( new HElement("div", {class: "action-types"}) ) );
+						this.updateSelectActions();
+						this.selectActions.setSelectedIndex(event.actions.length-1);
+						this.updateActionsMenu();
 
-								library.items.forEach(actionType => {
-									if (actionType.kind == "label") {
-										add( new HElement("div", {class: "label"}, actionType.name) );
-									} else if (actionType.kind == "separator") {
-										nextClass = "new-row";
-									} else {
-										// TODO add images to the buttons
-										const actionTypeButton = add( new HButton(null, () => {
-											const event = this.getSelectedEvent();
-											if (!event) {
-												alert("You need to select or add an event before you can add actions.");
-												return;
-											}
-
-											const action = new ProjectAction();
-											action.typeLibrary = library.name;
-											action.typeId = actionType.id;
-											action.typeKind = actionType.kind;
-											action.typeExecution = actionType.execution;
-											action.typeExecutionFunction = actionType.executionFunction;
-											action.typeExecutionCode = actionType.executionCode;
-											action.typeIsQuestion = actionType.isQuestion;
-
-											action.appliesTo = -1;
-											action.relative = false;
-											action.not = false;
-
-											if (actionType.kind == "normal" && actionType.interfaceKind == "normal") {
-												// If kind and interface are normal, arguments come from the action type itself
-												action.args = actionType.args.map(typeArg => {
-													const actionArg = new ProjectActionArg();
-													actionArg.kind = typeArg.kind;
-													actionArg.value = typeArg.default;
-													return actionArg;
-												});
-											} else {
-												// Otherwise, the arguments come from a predefined list
-												action.args = this.getActionTypeInfo()
-													.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind)
-													.args.map(typeArg => {
-														const actionArg = new ProjectActionArg();
-														actionArg.kind = typeArg.kind;
-														actionArg.value = typeArg.default;
-														return actionArg;
-													});
-											}
-
-											this.openActionWindow(action);
-
-											event.actions.push(action);
-
-											this.updateSelectActions();
-											this.selectActions.setSelectedIndex(event.actions.length-1);
-											this.updateActionsMenu();
-
-											this.onUpdate();
-										}, "action-type") );
-
-										if (nextClass) {
-											actionTypeButton.html.classList.add(nextClass);
-											nextClass = null;
-										}
-
-										actionTypeButton.html.title = actionType.description;
-
-										if (actionType.image) {
-											actionTypeButton.html.classList.add("image-button");
-											parent(actionTypeButton);
-												add( new HImage(actionType.image) );
-												endparent();
-										} else {
-											actionTypeButton.html.textContent = actionType.description;
-										}
-									}
-								});
-
-								endparent();
-
-							endparent();
-					});
+						this.onUpdate();
+					}) );
 
 					endparent();
 
@@ -530,37 +459,6 @@ export default class HWindowObject extends HWindow {
 		return this.resource.events.find(event => this.selectEvents.getValue() == event.getNameId());
 	}
 
-	getActionTypeInfo() {
-		return [
-			{kind: "normal", interfaceKind: "none", args: []},
-			{kind: "normal", interfaceKind: "normal", windowClass: HWindowAction},
-			{kind: "normal", interfaceKind: "arrows", windowClass: HWindowAction, args: [
-				{name: "Directions:", kind: "string", default: "000000000"},
-				{name: "Speed:", kind: "expression", default: "0"},
-			]},
-			{kind: "normal", interfaceKind: "code", windowClass: HWindowCode, args: [
-				{kind: "string", default: ""},
-			]},
-			{kind: "normal", interfaceKind: "text", windowClass: HWindowCode, args: [
-				{kind: "string", default: ""},
-			]},
-			{kind: "repeat", windowClass: HWindowAction, hasApplyTo: false, args: [
-				{name: "times:", kind: "expression", default: "1"},
-			]},
-			{kind: "variable", windowClass: HWindowAction, hasApplyTo: true, hasRelative: true, args: [
-				{name: "variable:", kind: "string", default: ""},
-				{name: "value:", kind: "expression", default: "0"},
-			]},
-			{kind: "code", windowClass: HWindowCode, hasApplyTo: true, args: [
-				{kind: "string", default: ""},
-			]},
-			{kind: "begin", args: []},
-			{kind: "end", args: []},
-			{kind: "else", args: []},
-			{kind: "exit", args: []},
-		];
-	}
-
 	getActionListText(action, actionType) {
 		return this.parseActionListOrHintText(actionType.listText, action, actionType);
 	}
@@ -621,11 +519,21 @@ export default class HWindowObject extends HWindow {
 	openActionWindow(action) {
 		const actionType = this.editor.getActionType(action.typeLibrary, action.typeId);
 
-		const actionTypeInfo = this.getActionTypeInfo();
-		const actionTypeInfoItem = actionTypeInfo.find(x => x.kind == actionType.kind && x.interfaceKind == actionType.interfaceKind);
+		let windowClass;
 
-		if (actionTypeInfoItem.windowClass) {
-			this.openAsChild(actionTypeInfoItem.windowClass, w => w.action == action, this.editor, action, this);
+		if ((actionType.kind == "normal" && actionType.interfaceKind == "normal")
+			|| (actionType.kind == "normal" && actionType.interfaceKind == "arrows")
+			|| (actionType.kind == "repeat")
+			|| (actionType.kind == "variable")) {
+			windowClass = HWindowAction;
+		} else if ((actionType.kind == "normal" && actionType.interfaceKind == "code")
+			|| (actionType.kind == "normal" && actionType.interfaceKind == "text")
+			|| (actionType.kind == "code")) {
+			windowClass = HWindowCode;
+		}
+
+		if (windowClass) {
+			this.openAsChild(windowClass, w => w.action == action, this.editor, action, this);
 		}
 	}
 

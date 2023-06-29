@@ -46,7 +46,7 @@ export default class HMenu extends HElement {
 					e.preventDefault();
 					if (this.selectedIndex != null) {
 						if (items[this.selectedIndex].enabled !== false) {
-							items[this.selectedIndex].onClick?.();
+							items[this.selectedIndex].onClick?.(this);
 						}
 						this.close(this.selectedIndex);
 					} else {
@@ -90,7 +90,7 @@ export default class HMenu extends HElement {
 
 				menuItem.html.addEventListener("click", () => {
 					if (item.enabled !== false) {
-						item.onClick?.();
+						item.onClick?.(this);
 					}
 					this.close(index);
 				});

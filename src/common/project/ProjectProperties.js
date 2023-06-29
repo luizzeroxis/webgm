@@ -299,10 +299,6 @@ export class ProjectEvent {
 	getNameId() {
 		return JSON.stringify({type: this.type, subtype: this.subtype});
 	}
-
-	getName() {
-		return this.type + " " + this.subtype;
-	}
 }
 
 export class ProjectObject {

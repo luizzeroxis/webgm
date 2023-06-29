@@ -170,69 +170,120 @@ export default class HWindowObject extends HWindow {
 						this.updateActionsMenu();
 					});
 
-					parent( add( new HElement("div") ) );
+					this.selectActions.setEvent("contextmenu", e => {
+						e.preventDefault();
+						this.editor.menuManager.openMenu([
+							{text: "Edit Values...", onClick: e => {
+								e.focusedBefore = null;
 
-						this.buttonActionEdit = add( new HButton("Edit action", () => {
-							const event = this.getSelectedEvent();
-							if (!event) return;
+								const event = this.getSelectedEvent();
+								if (!event) return;
 
-							const actionIndex = this.selectActions.getSelectedIndex();
-							if (actionIndex < 0) return;
+								const actionIndex = this.selectActions.getSelectedIndex();
+								if (actionIndex < 0) return;
 
-							const action = event.actions[actionIndex];
-							if (!action) return;
+								const action = event.actions[actionIndex];
+								if (!action) return;
 
-							this.openActionWindow(action);
-						}) );
+								this.openActionWindow(action);
+							}},
 
-						this.buttonActionCopy = add( new HButton("Copy", () => {
-							const event = this.getSelectedEvent();
-							if (!event) return;
-
-							const actionIndexes = this.selectActions.getSelectedIndexes();
-							if (actionIndexes.length == 0) return;
-
-							this.editor.clipboard.actions = actionIndexes.map(index => new ProjectAction(event.actions[index]));
-						}) );
-
-						this.buttonActionPaste = add( new HButton("Paste", () => {
-							if (this.editor.clipboard.actions) {
+							{text: "Cut", onClick: () => {
 								const event = this.getSelectedEvent();
 								if (!event) return;
 
 								const actionIndexes = this.selectActions.getSelectedIndexes();
-								const insertIndex = (actionIndexes.length == 0) ? event.actions.length : actionIndexes[actionIndexes.length-1]+1;
+								if (actionIndexes.length == 0) return;
 
-								const actions = this.editor.clipboard.actions.map(action => new ProjectAction(action));
-								event.actions.splice(insertIndex, 0, ...actions);
+								this.editor.clipboard.actions = actionIndexes.map(index => new ProjectAction(event.actions[index]));
 
-								const pastedActionIndexes = Array.from({length: actions.length}, (x, i) => i+insertIndex);
+								for (const index of actionIndexes) {
+									this.closeActionWindow(event.actions[index]);
+								}
+
+								event.actions = event.actions.filter((action, index) => !actionIndexes.includes(index));
 
 								this.updateSelectActions();
-								this.selectActions.setSelectedIndexes(pastedActionIndexes);
 								this.updateActionsMenu();
 
 								this.onUpdate();
-							}
-						}) );
+							}},
 
-						this.buttonActionDelete = add( new HButton("Delete", () => {
-							const event = this.getSelectedEvent();
-							if (!event) return;
+							{text: "Copy", onClick: () => {
+								const event = this.getSelectedEvent();
+								if (!event) return;
 
-							const actionIndexes = this.selectActions.getSelectedIndexes();
+								const actionIndexes = this.selectActions.getSelectedIndexes();
+								if (actionIndexes.length == 0) return;
 
-							for (const index of actionIndexes) {
-								this.closeActionWindow(event.actions[index]);
-							}
+								this.editor.clipboard.actions = actionIndexes.map(index => new ProjectAction(event.actions[index]));
+							}},
 
-							event.actions = event.actions.filter((action, index) => !actionIndexes.includes(index));
+							{text: "Paste", onClick: () => {
+								if (this.editor.clipboard.actions) {
+									const event = this.getSelectedEvent();
+									if (!event) return;
 
-							this.updateSelectActions();
-							this.updateActionsMenu();
+									const actionIndexes = this.selectActions.getSelectedIndexes();
+									const insertIndex = (actionIndexes.length == 0) ? event.actions.length : actionIndexes[actionIndexes.length-1]+1;
 
-							this.onUpdate();
-						}) );
+									const actions = this.editor.clipboard.actions.map(action => new ProjectAction(action));
+									event.actions.splice(insertIndex, 0, ...actions);
+
+									const pastedActionIndexes = Array.from({length: actions.length}, (x, i) => i+insertIndex);
+
+									this.updateSelectActions();
+									this.selectActions.setSelectedIndexes(pastedActionIndexes);
+									this.updateActionsMenu();
+
+									this.onUpdate();
+								}
+							}},
+
+							{text: "Delete", onClick: () => {
+								const event = this.getSelectedEvent();
+								if (!event) return;
+
+								const actionIndexes = this.selectActions.getSelectedIndexes();
+
+								for (const index of actionIndexes) {
+									this.closeActionWindow(event.actions[index]);
+								}
+
+								event.actions = event.actions.filter((action, index) => !actionIndexes.includes(index));
+
+								this.updateSelectActions();
+								this.updateActionsMenu();
+
+								this.onUpdate();
+							}},
+
+							{text: "Select All", onClick: () => {
+								for (const option of this.selectActions.select.html.options) {
+									option.selected = true;
+								}
+								this.updateActionsMenu();
+							}},
+
+							{text: "Clear", onClick: () => {
+								const event = this.getSelectedEvent();
+								if (!event) return;
+
+								for (const action of event.actions) {
+									this.closeActionWindow(action);
+								}
+
+								event.actions = [];
+
+								this.updateSelectActions();
+								this.updateActionsMenu();
+
+								this.onUpdate();
+							}},
+						], {returnFocus: false, x: e.clientX, y: e.clientY});
+					});
+
+					parent( add( new HElement("div") ) );
 
 						this.buttonActionUp = add( new HButton("↑", () => {
 							const event = this.getSelectedEvent();
@@ -417,6 +468,7 @@ export default class HWindowObject extends HWindow {
 						[...(listText.bold ? ["bold"] : []), ...(listText.italic ? ["italic"] : [])], // class
 					) );
 					option.html.title = hintText.text;
+
 					option.setEvent("dblclick", () => {
 						this.openActionWindow(action);
 					});
@@ -431,25 +483,13 @@ export default class HWindowObject extends HWindow {
 		const event = this.getSelectedEvent();
 
 		if (this.selectActions.select.html.selectedOptions.length == 0) {
-			this.buttonActionEdit.setDisabled(true);
-			this.buttonActionCopy.setDisabled(true);
-			this.buttonActionPaste.setDisabled(!event);
-			this.buttonActionDelete.setDisabled(true);
 			this.buttonActionUp.setDisabled(true);
 			this.buttonActionDown.setDisabled(true);
 		} else
 		if (this.selectActions.select.html.selectedOptions.length == 1) {
-			this.buttonActionEdit.setDisabled(false);
-			this.buttonActionCopy.setDisabled(false);
-			this.buttonActionPaste.setDisabled(false);
-			this.buttonActionDelete.setDisabled(false);
 			this.buttonActionUp.setDisabled(this.selectActions.getSelectedIndex() == 0);
 			this.buttonActionDown.setDisabled(this.selectActions.getSelectedIndex() == event.actions.length-1);
 		} else {
-			this.buttonActionEdit.setDisabled(true);
-			this.buttonActionCopy.setDisabled(false);
-			this.buttonActionPaste.setDisabled(false);
-			this.buttonActionDelete.setDisabled(false);
 			this.buttonActionUp.setDisabled(true);
 			this.buttonActionDown.setDisabled(true);
 		}

@@ -347,6 +347,40 @@ input[type="text"], input[type="number"], select {
 
 .window-timeline {
 	flex: 1;
+
+	> .properties {
+		flex: none;
+	}
+
+	> .moments {
+		display: flex;
+		min-width: 150px;
+		flex: none;
+		flex-direction: column;
+	}
+
+	> .actions {
+		display: flex;
+		min-width: 200px;
+		flex: 1;
+		flex-direction: column;
+
+		> .actions-list > select > option {
+			&.bold {
+				font-weight: bold;
+			}
+
+			&.italic {
+				font-style: italic;
+			}
+		}
+	}
+
+	> .moments .moments-list,
+	> .actions .actions-list {
+		flex: 1;
+		flex-direction: column;
+	}
 }
 
 .window-object {

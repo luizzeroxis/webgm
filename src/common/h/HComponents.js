@@ -71,6 +71,14 @@ export class HMultilineTextInput extends HElement {
 	getValue() {
 		return this.textarea.html.value;
 	}
+
+	setValue(value) {
+		this.textarea.html.value = value;
+	}
+
+	setReadOnly(value) {
+		this.textarea.html.readOnly = value;
+	}
 }
 
 export class HNumberInput extends HLabelAndInput {

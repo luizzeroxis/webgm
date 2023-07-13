@@ -4,6 +4,7 @@ export default class HMenu extends HElement {
 	constructor(manager, items, options) {
 		parent( super("div", {class: "h-menu"}) );
 
+			this.manager = manager;
 			this.items = items;
 
 			this.promise = new Promise(resolve => {
@@ -26,12 +27,13 @@ export default class HMenu extends HElement {
 			x -= managerRect.left;
 			y -= managerRect.top;
 
+			this.x = x;
+			this.y = y;
+
 			this.selectedIndex = null;
 			this.focusedBefore = document.activeElement;
 
 			this.html.tabIndex = 0;
-			this.html.style.left = x.toString() + "px";
-			this.html.style.top = y.toString() + "px";
 
 			this.html.addEventListener("blur", () => {
 				if (this.closeOnBlur) {
@@ -82,9 +84,18 @@ export default class HMenu extends HElement {
 			});
 
 			for (const [index, item] of items.entries()) {
-				const menuItem = add( new HElement("div", {class: "h-menu-item"}, item.text) );
+				let text = item.text;
+				if (typeof text == "function") {
+					text = text();
+				}
 
-				if (item.enabled === false) {
+				const menuItem = add( new HElement("div", {class: "h-menu-item"}, text) );
+
+				let enabled = item.enabled;
+				if (typeof enabled == "function") {
+					enabled = enabled();
+				}
+				if (enabled === false) {
 					menuItem.html.classList.add("disabled");
 				}
 
@@ -110,10 +121,26 @@ export default class HMenu extends HElement {
 				item.menuItemElement = menuItem;
 			}
 
+			this.html.style.left = x.toString() + "px";
+			this.html.style.top = y.toString() + "px";
+
 			endparent();
 	}
 
 	onAdd() {
+		const rect = this.html.getBoundingClientRect();
+		const managerRect = this.manager.html.getBoundingClientRect();
+
+		if (this.x + rect.width > managerRect.width) {
+			this.x = managerRect.width - rect.width;
+		}
+		if (this.y + rect.height > managerRect.height) {
+			this.y = managerRect.height - rect.height;
+		}
+
+		this.html.style.left = this.x.toString() + "px";
+		this.html.style.top = this.y.toString() + "px";
+
 		this.html.focus({preventScroll: true});
 	}
 

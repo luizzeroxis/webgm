@@ -372,6 +372,8 @@ export default class HWindowObject extends HWindow {
 	}
 
 	onRemove() {
+		super.onRemove();
+
 		this.editor.project.dispatcher.stopListening(this.listeners);
 	}
 

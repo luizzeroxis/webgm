@@ -436,6 +436,8 @@ export default class HWindowRoom extends HWindow {
 	}
 
 	onRemove() {
+		super.onRemove();
+
 		document.removeEventListener("mouseup", this.mouseUpHandler);
 
 		this.editor.project.dispatcher.stopListening(this.listeners);

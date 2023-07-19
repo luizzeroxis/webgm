@@ -328,7 +328,76 @@ input[type="text"], input[type="number"], select {
 }
 
 .window-path {
+	display: flex;
+	min-height: 0;
 	flex: 1;
+	flex-direction: column;
+
+	> .tool-bar {
+		display: flex;
+
+		> .h-label-and-input > input {
+			width: 32px;
+		}
+	}
+
+	> .panel-container {
+		min-height: 0;
+		flex: 1;
+
+		> .properties {
+			overflow: auto;
+			width: 200px;
+			min-height: 0;
+			flex: none;
+
+			> .points > select {
+				height: 150px;
+			}
+
+			> .columns {
+				display: flex;
+				flex-direction: row;
+
+				> div > :is(.x, .y, .sp) > input {
+					// width: 48px;
+				}
+
+				> .buttons {
+					display: flex;
+					flex-direction: column;
+				}
+			}
+		}
+
+		> .path {
+			display: flex;
+			min-width: 32px;
+			min-height: 0;
+			flex: 1;
+			flex-direction: column;
+			justify-content: space-between;
+
+			> .preview {
+				overflow: hidden;
+				flex: 1;
+			}
+
+			> .status-bar {
+				display: flex;
+				overflow: auto;
+
+				> .x, > .y {
+					width: 60px;
+				}
+
+				> .area {
+					width: 60px;
+					flex: 1 1 60px;
+				}
+			}
+		}
+	}
 }
 
 .window-script {

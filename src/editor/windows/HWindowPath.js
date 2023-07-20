@@ -48,6 +48,29 @@ export default class HWindowPath extends HWindow {
 						this.updateCanvasPreview();
 					}));
 
+					add( new HButton("Center", () => {
+						if (this.resource.points.length == 0) {
+							this.areaX = 0;
+							this.areaY = 0;
+						} else {
+							let l = Infinity;
+							let r = -Infinity;
+							let t = Infinity;
+							let b = -Infinity;
+
+							for (const point of this.resource.points) {
+								if (point.x < l) l = point.x;
+								if (point.x > r) r = point.x;
+								if (point.y < t) t = point.y;
+								if (point.y > b) b = point.y;
+							}
+
+							this.areaX = Math.floor(l + ((r-l)/2) - this.areaW/2);
+							this.areaY = Math.floor(t + ((b-t)/2) - this.areaH/2);
+						}
+						this.updateCanvasPreview();
+					}));
+
 					this.inputSnapX = add( new HNumberInput("Snap X:", 16, 1, 1) );
 					this.inputSnapX.setOnChange(() => this.updateCanvasPreview());
 
@@ -121,13 +144,11 @@ export default class HWindowPath extends HWindow {
 							this.ctx = this.canvasPreview.html.getContext("2d", {alpha: false});
 							this.ctx.imageSmoothingEnabled = false;
 
-							this.canvasPreview.html.onmousedown = (e) => {
-								//
-							};
+							this.canvasPreview.html.onmousedown = e => this.canvasMouseDown(e);
 
-							this.canvasPreview.html.onmousemove = (e) => {
-								//
-							};
+							this.canvasPreview.html.onmousemove = e => this.canvasMouseMove(e);
+
+							this.canvasPreview.html.oncontextmenu = e => e.preventDefault();
 
 							endparent();
 
@@ -154,9 +175,8 @@ export default class HWindowPath extends HWindow {
 	onAdd() {
 		super.onAdd();
 
-		this.mouseUpHandler = () => {
+		this.mouseUpHandler = () => this.canvasMouseUp();
 
-		};
 		document.addEventListener("mouseup", this.mouseUpHandler);
 	}
 
@@ -444,6 +464,75 @@ export default class HWindowPath extends HWindow {
 			this.ctx.stroke();
 			this.ctx.closePath();
 		}
+	}
+
+	canvasMouseDown(e) {
+		let x = e.offsetX + this.areaX;
+		let y = e.offsetY + this.areaY;
+
+		// Check if on top of current point
+		const pointIndex = this.resource.points.findIndex(p => p.x >= x-8 && p.x < x+8 && p.y >= y-8 && p.y < y+8);
+		const point = this.resource.points[pointIndex];
+
+		if (e.button == 0) {
+			if (point) {
+				// move point
+				this.movingPoint = point;
+			} else {
+				if (!e.altKey) {
+					const snapX = this.inputSnapX.getIntValue();
+					const snapY = this.inputSnapY.getIntValue();
+
+					x = Math.floor(x / snapX) * snapX;
+					y = Math.floor(y / snapY) * snapY;
+				}
+
+				// create new point and move
+				const point = new ProjectPathPoint();
+				point.x = x;
+				point.y = y;
+				point.sp = this.resource.points[this.resource.points.length - 1]?.sp ?? 100;
+
+				this.resource.points.push(point);
+				this.movingPoint = point;
+
+				this.updatePointList();
+			}
+		} else if (e.button == 2) {
+			if (point) {
+				// delete point
+				this.resource.points.splice(pointIndex, 1);
+				this.movingPoint = null;
+
+				this.updatePointList();
+			}
+		}
+	}
+
+	canvasMouseMove(e) {
+		let x = e.offsetX + this.areaX;
+		let y = e.offsetY + this.areaY;
+
+		if (!e.altKey) {
+			const snapX = this.inputSnapX.getIntValue();
+			const snapY = this.inputSnapY.getIntValue();
+
+			x = Math.floor(x / snapX) * snapX;
+			y = Math.floor(y / snapY) * snapY;
+		}
+
+		this.divX.html.textContent = `x: ${x}`;
+		this.divY.html.textContent = `y: ${y}`;
+
+		if (this.movingPoint) {
+			this.movingPoint.x = x;
+			this.movingPoint.y = y;
+			this.updatePointList();
+		}
+	}
+
+	canvasMouseUp() {
+		this.movingPoint = null;
 	}
 
 	close() {

@@ -265,6 +265,7 @@ export default class HWindowPath extends HWindow {
 		this.resource.points.push(point);
 
 		this.updatePointList();
+		this.onUpdate();
 	}
 
 	insertPoint() {
@@ -279,6 +280,7 @@ export default class HWindowPath extends HWindow {
 		this.resource.points.splice(index, 0, point);
 
 		this.updatePointList();
+		this.onUpdate();
 	}
 
 	updatePoint() {
@@ -290,6 +292,7 @@ export default class HWindowPath extends HWindow {
 		point.sp = this.inputSp.getFloatValue();
 
 		this.updatePointList();
+		this.onUpdate();
 	}
 
 	deletePoint() {
@@ -299,6 +302,7 @@ export default class HWindowPath extends HWindow {
 		this.resource.points.splice(index, 1);
 
 		this.updatePointList();
+		this.onUpdate();
 	}
 
 	updateCanvasPreview() {
@@ -497,6 +501,7 @@ export default class HWindowPath extends HWindow {
 				this.movingPoint = point;
 
 				this.updatePointList();
+				this.onUpdate();
 			}
 		} else if (e.button == 2) {
 			if (point) {
@@ -505,6 +510,7 @@ export default class HWindowPath extends HWindow {
 				this.movingPoint = null;
 
 				this.updatePointList();
+				this.onUpdate();
 			}
 		}
 	}
@@ -527,7 +533,9 @@ export default class HWindowPath extends HWindow {
 		if (this.movingPoint) {
 			this.movingPoint.x = x;
 			this.movingPoint.y = y;
+
 			this.updatePointList();
+			this.onUpdate();
 		}
 	}
 

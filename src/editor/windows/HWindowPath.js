@@ -14,6 +14,11 @@ export default class HWindowPath extends HWindow {
 
 		this.updateTitle();
 
+		this.areaX = 0;
+		this.areaY = 0;
+		this.areaW = 0;
+		this.arawH = 0;
+
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-path"}) ) );
 
@@ -22,6 +27,35 @@ export default class HWindowPath extends HWindow {
 						this.modified = false;
 						this.close();
 					}) );
+
+					add( new HButton("←", () => {
+						this.areaX -= Math.floor(this.areaW / 4);
+						this.updateCanvasPreview();
+					}));
+
+					add( new HButton("→", () => {
+						this.areaX += Math.floor(this.areaW / 4);
+						this.updateCanvasPreview();
+					}));
+
+					add( new HButton("↑", () => {
+						this.areaY -= Math.floor(this.areaH / 4);
+						this.updateCanvasPreview();
+					}));
+
+					add( new HButton("↓", () => {
+						this.areaY += Math.floor(this.areaH / 4);
+						this.updateCanvasPreview();
+					}));
+
+					this.inputSnapX = add( new HNumberInput("Snap X:", 16, 1, 1) );
+					this.inputSnapX.setOnChange(() => this.updateCanvasPreview());
+
+					this.inputSnapY = add( new HNumberInput("Snap Y:", 16, 1, 1) );
+					this.inputSnapY.setOnChange(() => this.updateCanvasPreview());
+
+					this.inputShowGrid = add( new HCheckBoxInput("Show grid", true) );
+					this.inputShowGrid.setOnChange(() => this.updateCanvasPreview());
 					endparent();
 
 				parent( add( new HElement("div", {class: "panel-container"})) );
@@ -43,14 +77,17 @@ export default class HWindowPath extends HWindow {
 
 						this.selectPoints.setOnChange(() => {
 							this.updatePointProperties();
+							this.updateCanvasPreview();
 						});
 
 						parent( add( new HElement("div", {class: "columns"})) );
-							parent( add( new HElement("div")) );
+							const inputs = parent( add( new HElement("div")) );
 								this.inputX = add( new HNumberInput("X:", 0, 1, null, null, "x") );
 								this.inputY = add( new HNumberInput("Y:", 0, 1, null, null, "y") );
 								this.inputSp = add( new HNumberInput("sp:", 100, 1, null, null, "sp") );
 								endparent();
+
+							setDeepOnUpdateOnElement(inputs, () => this.updatePoint());
 
 							parent( add( new HElement("div", {class: "buttons"})) );
 								add( new HButton("Add", () => this.addPoint()) );
@@ -73,23 +110,23 @@ export default class HWindowPath extends HWindow {
 								endparent();
 							endparent();
 
-						this.inputPrecision = add( new HNumberInput("Precision:", this.resource.precision) );
+						// this.inputPrecision = add( new HNumberInput("Precision:", this.resource.precision) );
 						endparent();
 
 					parent( add( new HElement("div", {class: "path"}) ) );
 
 						this.divPreview = parent( add( new HElement("div", {class: "preview"}) ) );
 
-							this.canvasPreview = add( new HCanvas(200, 200) );
+							this.canvasPreview = add( new HCanvas(404, 383) );
 							this.ctx = this.canvasPreview.html.getContext("2d", {alpha: false});
 							this.ctx.imageSmoothingEnabled = false;
 
 							this.canvasPreview.html.onmousedown = (e) => {
-
+								//
 							};
 
 							this.canvasPreview.html.onmousemove = (e) => {
-
+								//
 							};
 
 							endparent();
@@ -108,7 +145,10 @@ export default class HWindowPath extends HWindow {
 
 		this.updatePointList();
 
-		setDeepOnUpdateOnElement(this.client, () => this.onUpdate());
+		setDeepOnUpdateOnElement(this.client, () => {
+			this.onUpdate();
+			this.updateCanvasPreview();
+		});
 	}
 
 	onAdd() {
@@ -141,7 +181,7 @@ export default class HWindowPath extends HWindow {
 		);
 
 		this.resource.closed = this.inputClosed.getChecked();
-		this.resource.precision = this.inputPrecision.getFloatValue();
+		// this.resource.precision = this.inputPrecision.getFloatValue();
 	}
 
 	restoreData() {
@@ -184,6 +224,8 @@ export default class HWindowPath extends HWindow {
 
 		this.selectPoints.setSelectedIndex(prevIndex);
 		this.updatePointProperties();
+
+		this.updateCanvasPreview();
 	}
 
 	updatePointProperties() {
@@ -219,6 +261,17 @@ export default class HWindowPath extends HWindow {
 		this.updatePointList();
 	}
 
+	updatePoint() {
+		const point = this.getCurrentPoint();
+		if (!point) return;
+
+		point.x = this.inputX.getFloatValue();
+		point.y = this.inputY.getFloatValue();
+		point.sp = this.inputSp.getFloatValue();
+
+		this.updatePointList();
+	}
+
 	deletePoint() {
 		const index = this.selectPoints.getSelectedIndex();
 		if (index < 0) return;
@@ -230,46 +283,52 @@ export default class HWindowPath extends HWindow {
 
 	updateCanvasPreview() {
 		const rect = this.divPreview.html.getBoundingClientRect();
-		this.canvasPreview.html.width = rect.width;
-		this.canvasPreview.html.height = rect.height;
+		if (rect.width == 0 || rect.height == 0) return;
+
+		this.areaW = rect.width;
+		this.areaH = rect.height;
+		this.canvasPreview.html.width = this.areaW;
+		this.canvasPreview.html.height = this.areaH;
+
+		this.divArea.html.textContent = `Area: (${this.areaX},${this.areaY})->(${this.areaW},${this.areaH})`;
 
 		this.ctx.imageSmoothingEnabled = false;
 
 		this.ctx.fillStyle = "#ffffff";
-		this.ctx.fillRect(0, 0, this.canvasPreview.html.width, this.canvasPreview.html.height);
-
-		for (const point of this.resource.points) {
-			//
-		}
+		this.ctx.fillRect(0, 0, this.areaW, this.areaH);
 
 		this.drawGrid();
+
+		this.ctx.save();
+		this.ctx.translate(-this.areaX, -this.areaY);
+		this.drawPath();
+		this.drawPoints();
+		this.ctx.restore();
 	}
 
 	drawGrid() {
-		// if (this.inputShowGrid.getChecked()) {
+		if (this.inputShowGrid.getChecked()) {
 			this.ctx.globalCompositeOperation = "difference";
 			this.ctx.fillStyle = "white";
 			this.ctx.strokeStyle = "white";
 
-			// const snapx = parseInt(this.inputSnapX.getValue());
-			// const snapy = parseInt(this.inputSnapY.getValue());
-			const snapx = 16;
-			const snapy = 16;
+			const snapX = this.inputSnapX.getIntValue();
+			const snapY = this.inputSnapY.getIntValue();
 
-			if (snapx > 0) {
-				for (let x = 0; x < this.canvasPreview.html.width; x += snapx) {
+			if (snapX > 0) {
+				for (let x = -(this.areaX % snapX); x < this.canvasPreview.html.width; x += snapX) {
 					this.drawLine(x, 0, x, this.canvasPreview.html.height);
 				}
 			}
 
-			if (snapy > 0) {
-				for (let y = 0; y < this.canvasPreview.html.height; y += snapy) {
+			if (snapY > 0) {
+				for (let y = -(this.areaY % snapY); y < this.canvasPreview.html.height; y += snapY) {
 					this.drawLine(0, y, this.canvasPreview.html.width, y);
 				}
 			}
 
 			this.ctx.globalCompositeOperation = "source-over";
-		// }
+		}
 	}
 
 	drawLine(x1, y1, x2, y2) {
@@ -283,6 +342,108 @@ export default class HWindowPath extends HWindow {
 		this.ctx.stroke();
 
 		this.ctx.restore();
+	}
+
+	drawPath() {
+		const points = this.resource.points;
+
+		if (points.length < 2) return;
+
+		this.ctx.beginPath();
+
+		let xs = points[0].x;
+		let ys = points[0].y;
+
+		if (this.resource.connectionKind == "curve") {
+			if (!this.resource.closed) {
+				this.ctx.moveTo(xs, ys);
+
+				for (let i=1; i<points.length-2; i++) {
+					const x = (points[i].x + points[i + 1].x) / 2;
+					const y = (points[i].y + points[i + 1].y) / 2;
+					this.ctx.quadraticCurveTo(points[i].x, points[i].y, x, y);
+				}
+
+				const pointA = points[points.length-2];
+				const pointB = points[points.length-1];
+				this.ctx.quadraticCurveTo(pointA.x, pointA.y, pointB.x, pointB.y);
+			} else {
+				xs = (points[0].x + points[1].x) / 2;
+				ys = (points[0].y + points[1].y) / 2;
+				this.ctx.moveTo(xs, ys);
+
+				for (let i=1; i<points.length; i++) {
+					let x, y;
+					if (i == points.length - 1) {
+						x = (points[i].x + points[0].x) / 2;
+						y = (points[i].y + points[0].y) / 2;
+					} else {
+						x = (points[i].x + points[i + 1].x) / 2;
+						y = (points[i].y + points[i + 1].y) / 2;
+					}
+					this.ctx.quadraticCurveTo(points[i].x, points[i].y, x, y);
+				}
+
+				this.ctx.quadraticCurveTo(points[0].x, points[0].y, xs, ys);
+			}
+		} else if (this.resource.connectionKind == "lines") {
+			this.ctx.moveTo(xs, ys);
+
+			for (let i=1; i<points.length; ++i) {
+				this.ctx.lineTo(points[i].x, points[i].y);
+			}
+
+			if (this.resource.closed) {
+				this.ctx.lineTo(points[0].x, points[0].y);
+			}
+		}
+
+		this.ctx.strokeStyle = "#000000";
+		this.ctx.lineWidth = 4;
+		this.ctx.stroke();
+
+		this.ctx.strokeStyle = "#ffff00";
+		this.ctx.lineWidth = 2;
+		this.ctx.stroke();
+
+		this.ctx.closePath();
+	}
+
+	drawPoints() {
+		this.ctx.strokeStyle = "#000000";
+		this.ctx.lineWidth = 1;
+
+		// Start point
+		let sx = 0;
+		let sy = 0;
+
+		if (this.resource.points.length > 0) {
+			sx = this.resource.points[0].x;
+			sy = this.resource.points[0].y;
+			if (this.resource.points.length > 1 && this.resource.closed && this.resource.connectionKind == "curve") {
+				sx = (this.resource.points[0].x + this.resource.points[1].x) / 2;
+				sy = (this.resource.points[0].y + this.resource.points[1].y) / 2;
+			}
+		}
+
+		this.ctx.fillStyle = "#008800";
+
+		this.ctx.fillRect(sx-4, sy-4, 8, 8);
+		this.ctx.strokeRect(sx-4 + 0.5, sy-4 + 0.5, 8, 8);
+
+		for (const point of this.resource.points) {
+			if (point == this.getCurrentPoint()) {
+				this.ctx.fillStyle = "#ff0000";
+			} else {
+				this.ctx.fillStyle = "#0000ff";
+			}
+
+			this.ctx.beginPath();
+			this.ctx.arc(point.x, point.y, 3, 0, Math.PI * 2);
+			this.ctx.fill();
+			this.ctx.stroke();
+			this.ctx.closePath();
+		}
 	}
 
 	close() {

@@ -403,7 +403,7 @@ export default class Game {
 			instance.xPrevious = instance.x;
 			instance.yPrevious = instance.y;
 
-			this.updateInstancePosition(instance);
+			await this.updateInstancePosition(instance);
 		}
 
 		// Outside room and intersect boundary
@@ -457,7 +457,7 @@ export default class Game {
 						if (other.solid) {
 							// Move to new position
 							if (!instance.exists) continue;
-							this.updateInstancePosition(instance);
+							await this.updateInstancePosition(instance);
 
 							// Check collision again, if still collides, keep previous position.
 							if (!other.exists) continue;
@@ -553,7 +553,7 @@ export default class Game {
 	}
 
 	//
-	updateInstancePosition(instance) {
+	async updateInstancePosition(instance) {
 		if (instance.path == null) {
 			const hspeedOld = instance.hSpeed;
 			const vspeedOld = instance.vSpeed;
@@ -619,12 +619,13 @@ export default class Game {
 						instance.pathStartPosition = {x: instance.x, y: instance.y};
 						break;
 					case 3: // reverse
+						instance.pathPosition = 1;
+						instance.pathSpeed *= -1;
 						break;
 				}
-				if (instance.pathEndAction == 0) {
-					instance.path = null;
-				}
-				// TODO
+
+				const OTHER_END_OF_PATH = 8;
+				await this.events.runEventOfInstance("other", OTHER_END_OF_PATH, instance);
 			}
 		}
 	}

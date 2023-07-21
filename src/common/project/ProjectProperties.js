@@ -126,7 +126,25 @@ export class ProjectPath {
 	}
 
 	getEndPosition() {
-		// TODO
+		if (this.points.length > 0) {
+			if (this.points.length > 1 && this.closed && this.connectionKind == "curve") {
+				return {
+					x: (this.points[0].x + this.points[1].x) / 2,
+					y: (this.points[0].y + this.points[1].y) / 2,
+				};
+			}
+			if (!this.closed) {
+				return {
+					x: this.points[this.points.length-1].x,
+					y: this.points[this.points.length-1].y,
+				};
+			} else {
+				return {
+					x: this.points[0].x,
+					y: this.points[0].y,
+				};
+			}
+		}
 		return {x: 0, y: 0};
 	}
 

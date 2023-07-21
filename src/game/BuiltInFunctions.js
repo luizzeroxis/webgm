@@ -1134,7 +1134,7 @@ export default class BuiltInFunctions {
 					// TODO
 					const start = pathResource.getStartPosition();
 					const end = pathResource.getEndPosition();
-					this.currentInstance.pathStartPosition = {x: this.currentInstance.x, y: this.currentInstance.y};
+					this.currentInstance.pathStartPosition = {x: this.currentInstance.x - (end.x - start.x), y: this.currentInstance.y - (end.y - start.y)};
 				}
 			}
 

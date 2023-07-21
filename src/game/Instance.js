@@ -51,6 +51,7 @@ export default class Instance {
 		this.pathOrientation = 0;
 		this.pathScale = 1;
 		this.pathEndAction = 0;
+		this.pathStartPosition = {x: 0, y: 0};
 
 		this.alarms = [];
 

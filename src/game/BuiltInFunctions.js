@@ -1113,10 +1113,34 @@ export default class BuiltInFunctions {
 	// ## Paths
 
 	static path_start = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function path_start is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}, {type: "integer"}, {type: "bool"}],
+		func: function([path, speed, endaction, absolute]) {
+			// TODO error check
+			const pathResource = this.game.project.getResourceById("ProjectPath", path);
+			this.currentInstance.path = pathResource;
+			this.currentInstance.pathPosition = (speed >= 0 ? 0 : 1);
+			this.currentInstance.pathPreviousPosition = this.currentInstance.pathPosition;
+			this.currentInstance.pathSpeed = speed;
+			this.currentInstance.pathOrientation = 0;
+			this.currentInstance.pathScale = 1;
+			this.currentInstance.pathEndAction = endaction;
+
+			if (absolute) {
+				this.currentInstance.pathStartPosition = pathResource.getStartPosition();
+			} else {
+				if (speed >= 0) {
+					this.currentInstance.pathStartPosition = {x: this.currentInstance.x, y: this.currentInstance.y};
+				} else {
+					// TODO
+					const start = pathResource.getStartPosition();
+					const end = pathResource.getEndPosition();
+					this.currentInstance.pathStartPosition = {x: this.currentInstance.x, y: this.currentInstance.y};
+				}
+			}
+
+			this.currentInstance.x = this.currentInstance.pathStartPosition.x;
+			this.currentInstance.y = this.currentInstance.pathStartPosition.y;
+			return 0;
 		},
 	};
 

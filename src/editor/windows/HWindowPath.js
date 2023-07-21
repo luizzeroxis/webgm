@@ -438,22 +438,12 @@ export default class HWindowPath extends HWindow {
 		this.ctx.lineWidth = 1;
 
 		// Start point
-		let sx = 0;
-		let sy = 0;
-
-		if (this.resource.points.length > 0) {
-			sx = this.resource.points[0].x;
-			sy = this.resource.points[0].y;
-			if (this.resource.points.length > 1 && this.resource.closed && this.resource.connectionKind == "curve") {
-				sx = (this.resource.points[0].x + this.resource.points[1].x) / 2;
-				sy = (this.resource.points[0].y + this.resource.points[1].y) / 2;
-			}
-		}
+		const start = this.resource.getStartPosition();
 
 		this.ctx.fillStyle = "#008800";
 
-		this.ctx.fillRect(sx-4, sy-4, 8, 8);
-		this.ctx.strokeRect(sx-4 + 0.5, sy-4 + 0.5, 8, 8);
+		this.ctx.fillRect(start.x-4, start.y-4, 8, 8);
+		this.ctx.strokeRect(start.x-4 + 0.5, start.y-4 + 0.5, 8, 8);
 
 		for (const point of this.resource.points) {
 			if (point == this.getCurrentPoint()) {
@@ -479,29 +469,35 @@ export default class HWindowPath extends HWindow {
 		const point = this.resource.points[pointIndex];
 
 		if (e.button == 0) {
-			if (point) {
-				// move point
-				this.movingPoint = point;
-			} else {
-				if (!e.altKey) {
-					const snapX = this.inputSnapX.getIntValue();
-					const snapY = this.inputSnapY.getIntValue();
-
-					x = Math.floor(x / snapX) * snapX;
-					y = Math.floor(y / snapY) * snapY;
+			if (e.shiftKey) {
+				if (point) {
+					// TODO Insert point before current one
 				}
+			} else {
+				if (point) {
+					// move point
+					this.movingPoint = point;
+				} else {
+					if (!e.altKey) {
+						const snapX = this.inputSnapX.getIntValue();
+						const snapY = this.inputSnapY.getIntValue();
 
-				// create new point and move
-				const point = new ProjectPathPoint();
-				point.x = x;
-				point.y = y;
-				point.sp = this.resource.points[this.resource.points.length - 1]?.sp ?? 100;
+						x = Math.floor(x / snapX) * snapX;
+						y = Math.floor(y / snapY) * snapY;
+					}
 
-				this.resource.points.push(point);
-				this.movingPoint = point;
+					// create new point and move
+					const point = new ProjectPathPoint();
+					point.x = x;
+					point.y = y;
+					point.sp = this.resource.points[this.resource.points.length - 1]?.sp ?? 100;
 
-				this.updatePointList();
-				this.onUpdate();
+					this.resource.points.push(point);
+					this.movingPoint = point;
+
+					this.updatePointList();
+					this.onUpdate();
+				}
 			}
 		} else if (e.button == 2) {
 			if (point) {

@@ -109,6 +109,80 @@ export class ProjectPath {
 		Serializer.initProperties(this, args);
 	}
 
+	getStartPosition() {
+		if (this.points.length > 0) {
+			if (this.points.length > 1 && this.closed && this.connectionKind == "curve") {
+				return {
+					x: (this.points[0].x + this.points[1].x) / 2,
+					y: (this.points[0].y + this.points[1].y) / 2,
+				};
+			}
+			return {
+				x: this.points[0].x,
+				y: this.points[0].y,
+			};
+		}
+		return {x: 0, y: 0};
+	}
+
+	getEndPosition() {
+		// TODO
+		return {x: 0, y: 0};
+	}
+
+	getLength() {
+		let length = 0;
+		// if (this.connectionKind == "lines") {
+			for (let i=0; i<this.points.length; ++i) {
+				let p = this.points[i];
+				let np = this.points[i+1];
+
+				if (i == this.points.length - 1) {
+					if (!this.closed) break;
+					np = this.points[0];
+				}
+				length += Math.hypot(np.x - p.x, np.y - p.y);
+			}
+		// }
+		// TODO cuve
+		return length;
+	}
+
+	getPosInfo(pos) {
+		const totalLength = this.getLength();
+		const posLength = totalLength * pos;
+		let length = 0;
+		const start = this.getStartPosition();
+
+		// TODO curve
+		for (let i=0; i<this.points.length; ++i) {
+			let p = this.points[i];
+			let np = this.points[i+1];
+
+			if (i == this.points.length - 1) {
+				if (!this.closed) break;
+				np = this.points[0];
+			}
+
+			const segmentLength = Math.hypot(np.x - p.x, np.y - p.y);
+			length += segmentLength;
+
+			if (length >= posLength) {
+				const perc = (posLength - (length - segmentLength)) / segmentLength;
+
+				return {
+					x: (p.x + ((np.x - p.x) * perc)) - start.x,
+					y: (p.y + ((np.y - p.y) * perc)) - start.y,
+					sp: p.sp + ((np.sp - p.sp) * perc),
+					direction: Math.atan2(-(np.y - p.y), np.x - p.x) * (180 / Math.PI),
+					length: totalLength,
+				};
+			}
+		}
+
+		return {x: 0, y: 0, sp: 0, direction: 0, length: totalLength};
+	}
+
 	static getName() { return "path"; }
 	static getScreenName() { return "Path"; }
 	static getScreenGroupName() { return "Paths"; }

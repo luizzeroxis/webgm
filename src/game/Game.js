@@ -554,41 +554,79 @@ export default class Game {
 
 	//
 	updateInstancePosition(instance) {
-		const hspeedOld = instance.hSpeed;
-		const vspeedOld = instance.vSpeed;
+		if (instance.path == null) {
+			const hspeedOld = instance.hSpeed;
+			const vspeedOld = instance.vSpeed;
 
-		let hspeedNew = hspeedOld;
-		let vspeedNew = vspeedOld;
+			let hspeedNew = hspeedOld;
+			let vspeedNew = vspeedOld;
 
-		instance.x += hspeedOld;
-		instance.y += vspeedOld;
+			instance.x += hspeedOld;
+			instance.y += vspeedOld;
 
-		if (instance.friction != 0) {
-			const direction = instance.direction * (Math.PI / 180);
+			if (instance.friction != 0) {
+				const direction = instance.direction * (Math.PI / 180);
 
-			if (hspeedOld != 0) {
-				hspeedNew = hspeedOld - Math.cos(direction) * instance.friction;
-				if (Math.sign(hspeedNew) != Math.sign(hspeedOld)) { // If changed sign, that is, going in the opposite direction, don't do that
-					hspeedNew = 0;
+				if (hspeedOld != 0) {
+					hspeedNew = hspeedOld - Math.cos(direction) * instance.friction;
+					if (Math.sign(hspeedNew) != Math.sign(hspeedOld)) { // If changed sign, that is, going in the opposite direction, don't do that
+						hspeedNew = 0;
+					}
+				}
+
+				if (vspeedOld != 0) {
+					vspeedNew = vspeedOld - -Math.sin(direction) * instance.friction;
+					if (Math.sign(vspeedNew) != Math.sign(vspeedOld)) {
+						vspeedNew = 0;
+					}
 				}
 			}
 
-			if (vspeedOld != 0) {
-				vspeedNew = vspeedOld - -Math.sin(direction) * instance.friction;
-				if (Math.sign(vspeedNew) != Math.sign(vspeedOld)) {
-					vspeedNew = 0;
+			if (instance.gravity != 0) {
+				hspeedNew += Math.cos(instance.gravityDirection * (Math.PI / 180)) * instance.gravity;
+				vspeedNew += -Math.sin(instance.gravityDirection * (Math.PI / 180)) * instance.gravity;
+			}
+
+			instance.setHspeedAndVspeed(hspeedNew, vspeedNew);
+		} else {
+			let {x, y, sp, direction, length} = instance.path.getPosInfo(instance.pathPosition);
+
+			[x, y] = [x * instance.pathScale, y * instance.pathScale];
+
+			const a = instance.pathOrientation * Math.PI/180;
+			const cos = Math.cos(a);
+			const sin = -Math.sin(a);
+			[x, y] = [cos*x - sin*y, sin*x + cos*y];
+
+			instance.x = instance.pathStartPosition.x + x;
+			instance.y = instance.pathStartPosition.y + y;
+
+			instance.direction = direction;
+
+			instance.pathPreviousPosition = instance.pathPosition;
+			instance.pathPosition += (instance.pathSpeed * (sp / 100)) / length;
+
+			if (instance.pathPosition >= 1) {
+				switch (instance.pathEndAction) {
+					case 0: // stop
+						instance.path = null;
+						break;
+					case 1: // restart start
+						instance.pathPosition = 0;
+						break;
+					case 2: // restart current
+						instance.pathPosition = 0;
+						instance.pathStartPosition = {x: instance.x, y: instance.y};
+						break;
+					case 3: // reverse
+						break;
 				}
+				if (instance.pathEndAction == 0) {
+					instance.path = null;
+				}
+				// TODO
 			}
 		}
-
-		if (instance.gravity != 0) {
-			hspeedNew += Math.cos(instance.gravityDirection * (Math.PI / 180)) * instance.gravity;
-			vspeedNew += -Math.sin(instance.gravityDirection * (Math.PI / 180)) * instance.gravity;
-		}
-
-		instance.setHspeedAndVspeed(hspeedNew, vspeedNew);
-
-		// TODO paths?
 	}
 
 	// // Actions execution

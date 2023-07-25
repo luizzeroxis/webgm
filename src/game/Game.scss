@@ -1,0 +1,23 @@
+.game {
+	position: relative;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+
+	> .main > canvas {
+		display: block;
+		image-rendering: pixelated;
+
+		&.no-cursor {
+			cursor: none;
+		}
+	}
+
+	.error-messages > textarea {
+		font-family: monospace;
+		min-width: 480px;
+		min-height: 300px;
+	}
+}

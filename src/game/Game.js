@@ -16,9 +16,12 @@ import GameEvents from "./GameEvents.js";
 import GameInput from "./GameInput.js";
 import GameRender from "./GameRender.js";
 import GML from "./GML.js";
+import HErrorWindow from "./HErrorWindow.js";
 import Instance from "./Instance.js";
 import ProjectLoader from "./ProjectLoader.js";
 import VariableHolder from "./VariableHolder.js";
+
+import "./Game.scss";
 
 export default class Game {
 	constructor(options) {
@@ -947,8 +950,7 @@ export default class Game {
 		this.errorLast = e.text;
 		this.errorMessages += e.text + "\n";
 
-		alert(e.text);
-		const result = {abort: (e instanceof FatalErrorException)};
+		const result = await this.windowManager.openModal(HErrorWindow, this, e).promise;
 
 		if (result.abort == true) {
 			throw new AbortException();

@@ -2,9 +2,8 @@ import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HButton, HTextInput, HColorInput, HCheckBoxInput, HRadioInput, HSelectWithOptions, uniqueID} from "~/common/h";
 import {ProjectObject, ProjectAction, ProjectActionArg} from "~/common/project/ProjectProperties.js";
 import {setDeepOnUpdateOnElement, parseArrowString, stringifyArrowValues, decimalToHex, hexToDecimal} from "~/common/tools.js";
+import HActionsEditor from "~/editor/HActionsEditor.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
-
-import HWindowObject from "./HWindowObject.js";
 
 export default class HWindowAction extends HWindow {
 	constructor(manager, editor, action, windowObject) {
@@ -144,7 +143,7 @@ export default class HWindowAction extends HWindow {
 			this.action.not = this.inputNot.getChecked();
 
 		// Update action in event in object
-		this.windowObject.updateSelectActions();
+		this.windowObject.actionsEditor.updateActions();
 		this.windowObject.onUpdate();
 	}
 
@@ -152,7 +151,7 @@ export default class HWindowAction extends HWindow {
 		Object.assign(this.action, this.actionCopy);
 
 		// Update action in event in object
-		this.windowObject.updateSelectActions();
+		this.windowObject.actionsEditor.updateActions();
 		this.windowObject.onUpdate();
 	}
 
@@ -210,7 +209,7 @@ export default class HWindowAction extends HWindow {
 	}
 
 	makeResourceInterface(name, resourceTypeName, value) {
-		const resourceType = HWindowObject.actionArgResourceTypes[resourceTypeName];
+		const resourceType = HActionsEditor.actionArgResourceTypes[resourceTypeName];
 
 		const select = add( new HResourceSelect(this.editor, name, resourceType) );
 		select.setValue(value);

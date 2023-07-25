@@ -2,7 +2,7 @@ import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HButton, HTextInput, HSelect, HOption} from "~/common/h";
 import {ProjectTimeline, ProjectTimelineMoment} from "~/common/project/ProjectProperties.js";
 import {setDeepOnUpdateOnElement} from "~/common/tools.js";
-import HActionLibraries from "~/editor/HActionLibraries.js";
+import HActionsEditor from "~/editor/HActionsEditor.js";
 
 export default class HWindowTimeline extends HWindow {
 	constructor(manager, editor, resource) {
@@ -39,53 +39,85 @@ export default class HWindowTimeline extends HWindow {
 							this.updateSelectMoments();
 							this.selectMoments.setValue(step);
 
+							this.actionsEditor.updateActions(moment.actions);
+
 							this.onUpdate();
 						}) );
 
 						add( new HButton("Change", () => {
+							const moment = this.getSelectedMoment();
+							if (!moment) return;
 
-						}) );
-						endparent();
+							const step = parseInt(prompt("Indicate new moment:", moment.step));
+							if (Number.isNaN(step) || step < 0) return;
 
-					parent( add( new HElement("div") ) );
-						add( new HButton("Delete", () => {
-							const index = this.resource.moments.findIndex(moment => this.selectMoments.getValue() == moment.step);
-							if (index < 0) return;
-
-							// TODO check actions
-							// TODO close action windows
-
-							this.resource.events.splice(index, 1);
+							moment.step = step;
 
 							this.updateSelectMoments();
 
 							this.onUpdate();
 						}) );
+						endparent();
+
+					parent( add( new HElement("div") ) );
+						add( new HButton("Delete", () => {
+							const moment = this.getSelectedMoment();
+
+							const stepFrom = parseInt(prompt("From moment:", moment?.step ?? 0));
+							if (Number.isNaN(stepFrom) || stepFrom < 0) return;
+							const stepTill = parseInt(prompt("Till moment:", stepFrom));
+							if (Number.isNaN(stepTill) || stepTill < 0) return;
+
+							this.resource.moments = this.resource.moments.filter(moment => {
+								if (moment.step < stepFrom || moment.step > stepTill) {
+									return true;
+								} else {
+									moment.actions.forEach(action => {
+										this.actionsEditor.closeActionWindow(action);
+									});
+									return false;
+								}
+							});
+
+							this.updateSelectMoments();
+
+							this.actionsEditor.updateActions(this.getSelectedMoment()?.actions);
+
+							this.onUpdate();
+						}) );
 
 						add( new HButton("Clear", () => {
+							if (confirm("Are you sure you want to remove all moments?")) {
+								this.resource.moments = [];
 
+								this.updateSelectMoments();
+
+								this.actionsEditor.updateActions(this.getSelectedMoment()?.actions);
+
+								this.onUpdate();
+							}
 						}) );
 						endparent();
 
-					parent( add( new HElement("div") ) );
-						add( new HButton("Shift", () => {
+					// parent( add( new HElement("div") ) );
+					// 	add( new HButton("Shift", () => {
 
-						}) );
+					// 	}) );
 
-						add( new HButton("Duplicate", () => {
+					// 	add( new HButton("Duplicate", () => {
 
-						}) );
-						endparent();
+					// 	}) );
+					// 	endparent();
 
-					parent( add( new HElement("div") ) );
-						add( new HButton("Spread", () => {
+					// parent( add( new HElement("div") ) );
+					// 	add( new HButton("Spread", () => {
 
-						}) );
+					// 	}) );
 
-						add( new HButton("Merge", () => {
+					// 	add( new HButton("Merge", () => {
 
-						}) );
-						endparent();
+					// 	}) );
+					// 	endparent();
 
 					parent( add( new HElement("div") ) );
 						add( new HButton("OK", () => {
@@ -101,29 +133,47 @@ export default class HWindowTimeline extends HWindow {
 					this.selectMoments = add( new HSelect("Moments:", "moments-list") );
 					this.selectMoments.select.html.size = 2;
 
-					endparent();
+					this.selectMoments.setOnChange(() => {
+						this.actionsEditor.updateActions(this.getSelectedMoment()?.actions);
+					});
 
-				parent( add( new HElement("div", {class: "actions"}) ) );
-
-					this.selectActions = add( new HSelect("Actions:", "actions-list") );
-					this.selectActions.select.html.size = 2;
-					this.selectActions.select.html.multiple = true;
+					this.updateSelectMoments();
 
 					endparent();
 
-				parent( add( new HElement("div", {class: "libraries"}) ) );
+				this.actionsEditor = add(new HActionsEditor(this.editor, this, actions => {
+					const moment = this.getSelectedMoment();
+						if (!moment) return;
 
-					add( new HActionLibraries(this.editor, action => {
-
-					}) );
-
-					endparent();
+						moment.actions = actions;
+						this.onUpdate();
+				}, "a moment"));
 
 				endparent();
 
 			endparent();
 
+		this.updateSelectMoments();
+		this.selectMoments.setSelectedIndex(0);
+
+		this.actionsEditor.updateActions(this.getSelectedMoment()?.actions);
+
 		setDeepOnUpdateOnElement(this.divProperties, () => this.onUpdate());
+	}
+
+	onAdd() {
+		super.onAdd();
+
+		this.listeners = this.editor.project.dispatcher.listen({
+			changeResourceName: () => {
+				this.updateSelectMoments();
+				this.actionsEditor.updateActions();
+			},
+		});
+	}
+
+	onRemove() {
+		this.editor.project.dispatcher.stopListening(this.listeners);
 	}
 
 	copyData() {
@@ -152,7 +202,7 @@ export default class HWindowTimeline extends HWindow {
 	}
 
 	getSelectedMoment() {
-		return this.resource.moments.find(moment => this.selectMoments.getValue() == moment.step);
+		return this.resource.moments.find(moment => this.selectMoments.getValue() == moment.step.toString());
 	}
 
 	updateSelectMoments() {

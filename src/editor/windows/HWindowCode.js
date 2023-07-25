@@ -65,7 +65,7 @@ export default class HWindowCode extends HWindow {
 		);
 
 		// Update action in event in object
-		this.windowObject.updateSelectActions();
+		this.windowObject.actionsEditor.updateActions();
 		this.windowObject.onUpdate();
 	}
 
@@ -73,7 +73,7 @@ export default class HWindowCode extends HWindow {
 		Object.assign(this.action, this.actionCopy);
 
 		// Update action in event in object
-		this.windowObject.updateSelectActions();
+		this.windowObject.actionsEditor.updateActions();
 		this.windowObject.onUpdate();
 	}
 

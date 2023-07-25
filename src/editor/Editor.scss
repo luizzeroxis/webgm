@@ -428,25 +428,7 @@ input[type="text"], input[type="number"], select {
 		flex-direction: column;
 	}
 
-	> .actions {
-		display: flex;
-		min-width: 200px;
-		flex: 1;
-		flex-direction: column;
-
-		> .actions-list > select > option {
-			&.bold {
-				font-weight: bold;
-			}
-
-			&.italic {
-				font-style: italic;
-			}
-		}
-	}
-
-	> .moments .moments-list,
-	> .actions .actions-list {
+	> .moments .moments-list {
 		flex: 1;
 		flex-direction: column;
 	}
@@ -466,57 +448,65 @@ input[type="text"], input[type="number"], select {
 		flex-direction: column;
 	}
 
-	> .actions {
-		display: flex;
-		min-width: 200px;
-		flex: 1;
-		flex-direction: column;
-
-		> .actions-list > select > option {
-			&.bold {
-				font-weight: bold;
-			}
-
-			&.italic {
-				font-style: italic;
-			}
-		}
-	}
-
-	> .events .events-list,
-	> .actions .actions-list {
+	> .events .events-list {
 		flex: 1;
 		flex-direction: column;
 	}
 }
 
 .window-timeline, .window-object {
-	> .libraries {
-		flex: none;
-
-		> .libraries-tabs {
+	> .actions-editor {
+		display: contents;
+		
+		> .actions {
 			display: flex;
-			flex-direction: row-reverse;
+			min-width: 200px;
+			flex: 1;
+			flex-direction: column;
 
-			> .content > .action-types {
-				display: grid;
-				grid-template-columns: repeat(3, minmax(0, 1fr));
-				overflow-wrap: break-word;
+			> .actions-list {
+				flex: 1;
+				flex-direction: column;
 
-				> .label {
-					grid-column: 1 / -1;
-				}
-
-				> .action-type {
-					padding: 0;
-
-					&.new-row {
-						grid-column-start: 1;
+				> select > option {
+					&.bold {
+						font-weight: bold;
 					}
 
-					img {
-						display: block;
-						margin: auto;
+					&.italic {
+						font-style: italic;
+					}
+				}
+			}
+		}
+
+		> .libraries {
+			flex: none;
+
+			> .libraries-tabs {
+				display: flex;
+				flex-direction: row-reverse;
+
+				> .content > .action-types {
+					display: grid;
+					grid-template-columns: repeat(3, minmax(0, 1fr));
+					overflow-wrap: break-word;
+
+					> .label {
+						grid-column: 1 / -1;
+					}
+
+					> .action-type {
+						padding: 0;
+
+						&.new-row {
+							grid-column-start: 1;
+						}
+
+						img {
+							display: block;
+							margin: auto;
+						}
 					}
 				}
 			}

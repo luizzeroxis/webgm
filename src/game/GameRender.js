@@ -111,7 +111,7 @@ export default class GameRender {
 				this.currentView += 1;
 			}
 		} else {
-			this.drawRoom();
+			await this.drawRoom();
 		}
 	}
 

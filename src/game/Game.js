@@ -442,6 +442,7 @@ export default class Game {
 		for (const [subtype, list] of this.events.getEventsOfType("collision")) {
 			for (const {event, instance} of list) {
 				// TODO test what happens when colliding with multiple instances at once
+				// TODO paths
 				for (const other of this.instances) {
 					if (!instance.exists) continue;
 					if (!other.exists) continue;
@@ -592,7 +593,8 @@ export default class Game {
 
 			instance.setHspeedAndVspeed(hspeedNew, vspeedNew);
 		} else {
-			let {x, y, sp, direction, length} = instance.path.getPosInfo(instance.pathPosition);
+			const length = instance.path.getLength();
+			let {x, y, sp, direction} = instance.path.getPosInfo(instance.pathPosition);
 
 			[x, y] = [x * instance.pathScale, y * instance.pathScale];
 
@@ -609,20 +611,23 @@ export default class Game {
 			instance.pathPreviousPosition = instance.pathPosition;
 			instance.pathPosition += (instance.pathSpeed * (sp / 100)) / length;
 
-			if (instance.pathPosition >= 1) {
+			const stoppedForward = (instance.pathPosition >= 1) && (instance.pathSpeed > 0);
+			const stoppedReverse = (instance.pathPosition <= 0) && (instance.pathSpeed < 0);
+
+			if (stoppedForward || stoppedReverse) {
 				switch (instance.pathEndAction) {
 					case 0: // stop
 						instance.path = null;
 						break;
 					case 1: // restart start
-						instance.pathPosition = 0;
+						instance.pathPosition = (stoppedForward ? 0 : 1);
 						break;
 					case 2: // restart current
-						instance.pathPosition = 0;
+						instance.pathPosition = (stoppedForward ? 0 : 1);
 						instance.pathStartPosition = {x: instance.x, y: instance.y};
 						break;
 					case 3: // reverse
-						instance.pathPosition = 1;
+						instance.pathPosition = (stoppedForward ? 1 : 0);
 						instance.pathSpeed *= -1;
 						break;
 				}

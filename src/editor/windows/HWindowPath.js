@@ -133,7 +133,7 @@ export default class HWindowPath extends HWindow {
 								endparent();
 							endparent();
 
-						// this.inputPrecision = add( new HNumberInput("Precision:", this.resource.precision) );
+						this.inputPrecision = add( new HNumberInput("Precision:", this.resource.precision) );
 						endparent();
 
 					parent( add( new HElement("div", {class: "path"}) ) );
@@ -201,7 +201,7 @@ export default class HWindowPath extends HWindow {
 		);
 
 		this.resource.closed = this.inputClosed.getChecked();
-		// this.resource.precision = this.inputPrecision.getFloatValue();
+		this.resource.precision = this.inputPrecision.getFloatValue();
 	}
 
 	restoreData() {
@@ -370,48 +370,22 @@ export default class HWindowPath extends HWindow {
 
 	drawPath() {
 		const points = this.resource.points;
-
 		if (points.length < 2) return;
 
 		this.ctx.beginPath();
-
-		let xs = points[0].x;
-		let ys = points[0].y;
+		this.ctx.strokeStyle = "#000000";
+		this.ctx.lineWidth = 4;
 
 		if (this.resource.connectionKind == "curve") {
-			if (!this.resource.closed) {
-				this.ctx.moveTo(xs, ys);
+			const linePoints = this.resource.getLinePoints();
 
-				for (let i=1; i<points.length-2; i++) {
-					const x = (points[i].x + points[i + 1].x) / 2;
-					const y = (points[i].y + points[i + 1].y) / 2;
-					this.ctx.quadraticCurveTo(points[i].x, points[i].y, x, y);
-				}
+			this.ctx.moveTo(linePoints[0].x, linePoints[0].y);
 
-				const pointA = points[points.length-2];
-				const pointB = points[points.length-1];
-				this.ctx.quadraticCurveTo(pointA.x, pointA.y, pointB.x, pointB.y);
-			} else {
-				xs = (points[0].x + points[1].x) / 2;
-				ys = (points[0].y + points[1].y) / 2;
-				this.ctx.moveTo(xs, ys);
-
-				for (let i=1; i<points.length; i++) {
-					let x, y;
-					if (i == points.length - 1) {
-						x = (points[i].x + points[0].x) / 2;
-						y = (points[i].y + points[0].y) / 2;
-					} else {
-						x = (points[i].x + points[i + 1].x) / 2;
-						y = (points[i].y + points[i + 1].y) / 2;
-					}
-					this.ctx.quadraticCurveTo(points[i].x, points[i].y, x, y);
-				}
-
-				this.ctx.quadraticCurveTo(points[0].x, points[0].y, xs, ys);
+			for (let i=1; i<linePoints.length; ++i) {
+				this.ctx.lineTo(linePoints[i].x, linePoints[i].y);
 			}
 		} else if (this.resource.connectionKind == "lines") {
-			this.ctx.moveTo(xs, ys);
+			this.ctx.moveTo(points[0].x, points[0].y);
 
 			for (let i=1; i<points.length; ++i) {
 				this.ctx.lineTo(points[i].x, points[i].y);

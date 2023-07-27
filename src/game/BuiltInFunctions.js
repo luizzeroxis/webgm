@@ -1145,7 +1145,7 @@ export default class BuiltInFunctions {
 
 	static path_end = {
 		args: [],
-		func: function([]) {
+		func: async function([]) {
 			this.currentInstance.path = null;
 
 			const OTHER_END_OF_PATH = 8;

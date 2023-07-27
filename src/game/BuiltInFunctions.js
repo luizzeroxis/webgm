@@ -1131,7 +1131,6 @@ export default class BuiltInFunctions {
 				if (speed >= 0) {
 					this.currentInstance.pathStartPosition = {x: this.currentInstance.x, y: this.currentInstance.y};
 				} else {
-					// TODO
 					const start = pathResource.getStartPosition();
 					const end = pathResource.getEndPosition();
 					this.currentInstance.pathStartPosition = {x: this.currentInstance.x - (end.x - start.x), y: this.currentInstance.y - (end.y - start.y)};
@@ -1145,10 +1144,14 @@ export default class BuiltInFunctions {
 	};
 
 	static path_end = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function path_end is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			this.currentInstance.path = null;
+
+			const OTHER_END_OF_PATH = 8;
+			await this.game.events.runEventOfInstance("other", OTHER_END_OF_PATH, this.currentInstance);
+
+			return 0;
 		},
 	};
 
@@ -5065,10 +5068,10 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_length = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function path_get_length is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([ind]) {
+			const path = this.game.project.getResourceById("ProjectPath", ind);
+			return path?.getLength() ?? 0;
 		},
 	};
 
@@ -5129,26 +5132,26 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_x = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function path_get_x is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}],
+		func: function([ind, pos]) {
+			const path = this.game.project.getResourceById("ProjectPath", ind);
+			return path?.getPosInfo(pos).x;
 		},
 	};
 
 	static path_get_y = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function path_get_y is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}],
+		func: function([ind, pos]) {
+			const path = this.game.project.getResourceById("ProjectPath", ind);
+			return path?.getPosInfo(pos).y;
 		},
 	};
 
 	static path_get_speed = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function path_get_speed is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}],
+		func: function([ind, pos]) {
+			const path = this.game.project.getResourceById("ProjectPath", ind);
+			return path?.getPosInfo(pos).sp;
 		},
 	};
 

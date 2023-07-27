@@ -608,6 +608,10 @@ export default class Game {
 
 			instance.direction = direction;
 
+			instance.speed = 0;
+			instance.hSpeed = 0;
+			instance.vSpeed = 0;
+
 			instance.pathPreviousPosition = instance.pathPosition;
 			instance.pathPosition += (instance.pathSpeed * (sp / 100)) / length;
 

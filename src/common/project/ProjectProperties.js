@@ -225,7 +225,7 @@ export class ProjectPath {
 		// TODO Probably wrong
 		const curve = this.getCurvePath();
 
-		const steps = 1 + this.precision;
+		const steps = (2 ** this.precision);
 
 		const linePoints = [];
 

@@ -28,6 +28,15 @@ export default class HWindowPath extends HWindow {
 						this.close();
 					}) );
 
+					add( new HButton("Clear", () => this.clearPoints()));
+
+					add( new HButton("Reverse", () => this.reversePoints()));
+					add( new HButton("Shift", () => this.shiftPoints()));
+					add( new HButton("Mirror hor.", () => this.mirrorHPoints()));
+					add( new HButton("Mirror vert.", () => this.mirrorVPoints()));
+					add( new HButton("Rotate", () => this.rotatePoints()));
+					add( new HButton("Scale", () => this.scalePoints()));
+
 					add( new HButton("←", () => {
 						this.areaX -= Math.floor(this.areaW / 4);
 						this.updateCanvasPreview();
@@ -49,25 +58,10 @@ export default class HWindowPath extends HWindow {
 					}));
 
 					add( new HButton("Center", () => {
-						if (this.resource.points.length == 0) {
-							this.areaX = 0;
-							this.areaY = 0;
-						} else {
-							let l = Infinity;
-							let r = -Infinity;
-							let t = Infinity;
-							let b = -Infinity;
+						const center = this.getCenter();
+						this.areaX = center.x - this.areaW/2;
+						this.areaY = center.y - this.areaH/2;
 
-							for (const point of this.resource.points) {
-								if (point.x < l) l = point.x;
-								if (point.x > r) r = point.x;
-								if (point.y < t) t = point.y;
-								if (point.y > b) b = point.y;
-							}
-
-							this.areaX = Math.floor(l + ((r-l)/2) - this.areaW/2);
-							this.areaY = Math.floor(t + ((b-t)/2) - this.areaH/2);
-						}
 						this.updateCanvasPreview();
 					}));
 
@@ -303,6 +297,124 @@ export default class HWindowPath extends HWindow {
 
 		this.updatePointList();
 		this.onUpdate();
+	}
+
+	clearPoints() {
+		this.resource.points = [];
+
+		this.updatePointList();
+		this.onUpdate();
+	}
+
+	reversePoints() {
+		this.resource.points.reverse();
+
+		this.updatePointList();
+		this.onUpdate();
+	}
+
+	shiftPoints() {
+		const h = parseInt(prompt("horizontal:", 0));
+		if (Number.isNaN(h)) return;
+		const v = parseInt(prompt("vertical:", 0));
+		if (Number.isNaN(v)) return;
+
+		for (const point of this.resource.points) {
+			point.x += h;
+			point.y += v;
+		}
+
+		this.updatePointList();
+		this.onUpdate();
+	}
+
+	mirrorHPoints() {
+		const center = this.getCenter();
+
+		for (const point of this.resource.points) {
+			point.x = -(point.x - center.x) + center.x; // 2*c - x
+		}
+
+		this.updatePointList();
+		this.onUpdate();
+	}
+
+	mirrorVPoints() {
+		const center = this.getCenter();
+
+		for (const point of this.resource.points) {
+			point.y = -(point.y - center.y) + center.y;
+		}
+
+		this.updatePointList();
+		this.onUpdate();
+	}
+
+	rotatePoints() {
+		const angle = parseInt(prompt("angle:", 0));
+		if (Number.isNaN(angle)) return;
+
+		const center = this.getCenter();
+
+		const a = -angle * Math.PI / 180;
+		const cos = Math.cos(a);
+		const sin = -Math.sin(a);
+
+		for (const point of this.resource.points) {
+			point.x -= center.x;
+			point.y -= center.y;
+
+			const x = point.x;
+			const y = point.y;
+			point.x = Math.round((cos * x) + (sin * y));
+			point.y = Math.round((cos * y) - (sin * x));
+
+			point.x += center.x;
+			point.y += center.y;
+		}
+
+		this.updatePointList();
+		this.onUpdate();
+	}
+
+	scalePoints() {
+		const h = parseInt(prompt("horizontal:", 100));
+		if (Number.isNaN(h)) return;
+		const v = parseInt(prompt("vertical:", 100));
+		if (Number.isNaN(v)) return;
+
+		const center = this.getCenter();
+
+		for (const point of this.resource.points) {
+			point.x = Math.round(((point.x - center.x) * (h / 100)) + center.x);
+			point.y = Math.round(((point.y - center.y) * (v / 100)) + center.y);
+		}
+
+		this.updatePointList();
+		this.onUpdate();
+	}
+
+	getCenter() {
+		if (this.resource.points.length == 0) {
+			return {x: 0, y: 0};
+		}
+
+		let l = Infinity;
+		let r = -Infinity;
+		let t = Infinity;
+		let b = -Infinity;
+
+		for (const point of this.resource.points) {
+			if (point.x < l) l = point.x;
+			if (point.x > r) r = point.x;
+			if (point.y < t) t = point.y;
+			if (point.y > b) b = point.y;
+		}
+
+		return {
+			x: Math.round(l + ((r-l)/2)),
+			y: Math.round(t + ((b-t)/2)),
+		};
 	}
 
 	updateCanvasPreview() {

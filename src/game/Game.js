@@ -297,6 +297,36 @@ export default class Game {
 			await this.events.runEvent(event, instance);
 		}
 
+		// Time line
+		for (const instance of this.instances) {
+			if (!instance.timeline) continue;
+			if (!instance.timelineRunning) continue;
+
+			// Calculate which steps to execute
+			const from = instance.timelinePosition;
+			const till = instance.timelinePosition + instance.timelineSpeed;
+
+			if (instance.timelineSpeed > 0) {
+				for (const moment of instance.timeline.moments) {
+					if (moment.step >= from && moment.step < till) {
+						// await this.events.runMoment(moment, instance);
+					}
+				}
+				if (instance.timelineLoop && (till > (instance.timeline.moments[instance.timeline.moments.length-1]?.step ?? 0))) {
+					instance.timelinePosition = 0;
+				}
+			} else {
+				for (const moment of instance.timeline.moments.toReversed()) {
+					if (moment.step <= from && moment.step > till) {
+						// await this.events.runMoment(moment, instance);
+					}
+				}
+				if (instance.timelineLoop && till < 0) {
+					instance.timelinePosition = instance.timeline.moments[instance.timeline.moments.length-1]?.step ?? 0;
+				}
+			}
+		}
+
 		// Alarm
 		for (const [subtype, list] of this.events.getEventsOfType("alarm")) {
 			for (const {event, instance} of list) {
@@ -928,6 +958,9 @@ export default class Game {
 
 	// options {text, fatal: false, header: true, actionNumber, event, object}
 	makeError(options) {
+		const event = options.event ?? this.events.state.event;
+		const moment = options.moment ?? this.events.state.moment;
+
 		const args = {
 			text:
 				((options.header !== false) ? (
@@ -935,10 +968,15 @@ export default class Game {
 					+ `___________________________________________\n`
 					+ `${options.fatal ? "FATAL " : ""} ERROR in\n`
 					+ `action number ${options.actionNumber ?? this.events.actionNumber}\n`
-					+ `of ${Events.getEventName(options.event ?? this.events.event, this.project)}\n`
-					+ `for object ${options.object?.name ?? this.events.object.name}:\n`
+					+ event ? (
+						`of ${Events.getEventName(event.type, event.subtype, this.project)}\n`
+						+ `for object ${options.object?.name ?? this.events.state.object.name}:\n`
+					) : moment ? (
+						`at time step ${moment.step}\n`
+						+ `of time line ${options.timeline?.name ?? this.events.state.timeline.name}:\n`
+					) : ``
 					+ `\n`
-				) : "")
+				) : ``)
 				+ options.text,
 		};
 

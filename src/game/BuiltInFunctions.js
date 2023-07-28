@@ -1795,10 +1795,12 @@ export default class BuiltInFunctions {
 	static event_inherited = {
 		args: [],
 		func: async function([]) {
-			const parent = this.game.project.getResourceById("ProjectObject", this.game.events.object.parent_index);
-			if (parent) {
-				const event = this.game.events.getEventOfObject(parent, this.game.events.event.type, this.game.events.event.subtype);
-				await this.game.events.runEvent(event, this.currentInstance, this.currentOther);
+			if (this.game.events.state.event) {
+				const parent = this.game.project.getResourceById("ProjectObject", this.game.events.state.object.parent_index);
+				if (parent) {
+					const event = this.game.events.getEventOfObject(parent, this.game.events.state.event.type, this.game.events.state.event.subtype);
+					await this.game.events.runEvent(event, this.currentInstance, this.currentOther);
+				}
 			}
 			return 0;
 		},

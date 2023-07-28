@@ -238,7 +238,7 @@ export default class HWindowObject extends HWindow {
 
 		parent( this.selectEvents.select );
 			this.resource.events.forEach(event => {
-				add( new HOption(Events.getEventName(event, this.editor.project), event.getNameId()) );
+				add( new HOption(Events.getEventName(event.type, event.subtype, this.editor.project), event.getNameId()) );
 			});
 			endparent();
 

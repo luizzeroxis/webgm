@@ -51,6 +51,11 @@ export default class HWindowTimeline extends HWindow {
 							const step = parseInt(prompt("Indicate new moment:", moment.step));
 							if (Number.isNaN(step) || step < 0) return;
 
+							if (this.resource.moments.find(moment => moment.step == step)) {
+								alert("New moment already exists.");
+								return;
+							}
+
 							moment.step = step;
 
 							this.updateSelectMoments();
@@ -81,7 +86,7 @@ export default class HWindowTimeline extends HWindow {
 
 							this.updateSelectMoments();
 
-							this.actionsEditor.updateActions(this.getSelectedMoment()?.actions);
+							this.actionsEditor.updateActions(this.getSelectedMoment()?.actions ?? []);
 
 							this.onUpdate();
 						}) );
@@ -92,7 +97,7 @@ export default class HWindowTimeline extends HWindow {
 
 								this.updateSelectMoments();
 
-								this.actionsEditor.updateActions(this.getSelectedMoment()?.actions);
+								this.actionsEditor.updateActions(this.getSelectedMoment()?.actions ?? []);
 
 								this.onUpdate();
 							}
@@ -134,7 +139,7 @@ export default class HWindowTimeline extends HWindow {
 					this.selectMoments.select.html.size = 2;
 
 					this.selectMoments.setOnChange(() => {
-						this.actionsEditor.updateActions(this.getSelectedMoment()?.actions);
+						this.actionsEditor.updateActions(this.getSelectedMoment()?.actions ?? []);
 					});
 
 					this.updateSelectMoments();
@@ -156,7 +161,7 @@ export default class HWindowTimeline extends HWindow {
 		this.updateSelectMoments();
 		this.selectMoments.setSelectedIndex(0);
 
-		this.actionsEditor.updateActions(this.getSelectedMoment()?.actions);
+		this.actionsEditor.updateActions(this.getSelectedMoment()?.actions ?? []);
 
 		setDeepOnUpdateOnElement(this.divProperties, () => this.onUpdate());
 	}

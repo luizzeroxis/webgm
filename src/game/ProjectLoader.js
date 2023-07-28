@@ -160,12 +160,20 @@ export default class ProjectLoader {
 
 	// Parse all action lists in events and timeline moments into action trees.
 	loadActions() {
-		this.loadActionsTimelines(); // TODO
+		this.loadActionsTimelines();
 		this.loadActionsObjects();
 	}
 
 	// Parse all action lists in timelines.
-	loadActionsTimelines() {} // TODO
+	loadActionsTimelines() {
+		this.project.resources.ProjectTimeline.every(timeline => {
+			return timeline.moments.every(moment => {
+				const parsedActions = new ActionsParser().parse(moment.actions);
+				this.actionsCache.set(moment, parsedActions);
+				return true;
+			});
+		});
+	}
 
 	// Parse all action lists in objects.
 	loadActionsObjects() {
@@ -182,7 +190,7 @@ export default class ProjectLoader {
 	async loadGML() {
 		try {
 			this.loadGMLScripts();
-			this.loadGMLTimelines(); // TODO
+			this.loadGMLTimelines();
 			this.loadGMLObjects();
 			this.loadGMLRooms();
 		} catch (e) {
@@ -208,44 +216,57 @@ export default class ProjectLoader {
 	}
 
 	// Compile all GML inside time lines.
-	loadGMLTimelines() {} // TODO
+	loadGMLTimelines() {
+		this.project.resources.ProjectTimeline.every(timeline => {
+			return timeline.moments.every(moment => {
+				return moment.actions.every((action, actionNumber) => {
+					return this.loadGMLAction(action, actionNumber, {moment, timeline});
+				});
+			});
+		});
+	}
 
 	// Compile all GML inside objects.
 	loadGMLObjects() {
 		this.project.resources.ProjectObject.every(object => {
 			return object.events.every(event => {
 				return event.actions.every((action, actionNumber) => {
-					if (action.typeKind == "code") {
-						return this.compileGMLAndCache(action.args[0].value, action, matchResult => {
-							throw this.game.makeError({fatal: true, actionNumber, event, object, text:
-								`COMPILATION ERROR in code action:\n`
-								+ `${matchResult.message}\n`,
-							});
-						});
-					} else if (action.typeKind == "normal" && action.typeExecution == "code") {
-						return this.compileGMLAndCache(action.args[0].value, action, matchResult => {
-							throw this.game.makeError({fatal: true, actionNumber, event, object, text:
-								`COMPILATION ERROR in code action (in action type in a library):\n`
-								+ `${matchResult.message}\n`,
-							});
-						});
-					} else if (action.typeKind == "variable") {
-						const name = action.args[0].value;
-						const value = action.args[1].value;
-						const assignSymbol = action.relative ? " += " : " = ";
-						const code = name + assignSymbol + value;
-
-						return this.compileGMLAndCache(code, action, matchResult => {
-							throw this.game.makeError({fatal: true, actionNumber, event, object, text:
-								`COMPILATION ERROR in code action (in variable set):\n`
-								+ `${matchResult.message}\n`,
-							});
-						});
-					}
-					return true;
+					return this.loadGMLAction(action, actionNumber, {event, object});
 				});
 			});
 		});
+	}
+
+	// Compile this action
+	loadGMLAction(action, actionNumber, location) {
+		if (action.typeKind == "code") {
+			return this.compileGMLAndCache(action.args[0].value, action, matchResult => {
+				throw this.game.makeError({fatal: true, actionNumber, ...location, text:
+					`COMPILATION ERROR in code action:\n`
+					+ `${matchResult.message}\n`,
+				});
+			});
+		} else if (action.typeKind == "normal" && action.typeExecution == "code") {
+			return this.compileGMLAndCache(action.args[0].value, action, matchResult => {
+				throw this.game.makeError({fatal: true, actionNumber, ...location, text:
+					`COMPILATION ERROR in code action (in action type in a library):\n`
+					+ `${matchResult.message}\n`,
+				});
+			});
+		} else if (action.typeKind == "variable") {
+			const name = action.args[0].value;
+			const value = action.args[1].value;
+			const assignSymbol = action.relative ? " += " : " = ";
+			const code = name + assignSymbol + value;
+
+			return this.compileGMLAndCache(code, action, matchResult => {
+				throw this.game.makeError({fatal: true, actionNumber, ...location, text:
+					`COMPILATION ERROR in code action (in variable set):\n`
+					+ `${matchResult.message}\n`,
+				});
+			});
+		}
+		return true;
 	}
 
 	// Compile all GML inside rooms.

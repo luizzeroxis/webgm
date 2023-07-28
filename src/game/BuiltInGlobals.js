@@ -193,19 +193,26 @@ export default class BuiltInGlobals {
 	// Game play / Generating events
 
 	static event_type = {readOnly: true, get() {
-		return this.events.event ? Events.listEventTypes.find(x => x.value == this.events.event.type).id : 0;
+		return this.events.state.event ? Events.listEventTypes.find(x => x.value == this.events.state.event.type).id
+			: this.events.state.moment ? 100000
+			: 0;
 	}};
 
 	static event_number = {readOnly: true, get() {
-		return this.events.event ? this.events.event.subtype : 0;
+		return this.events.state.event ? this.events.state.event.subtype
+			: this.events.state.moment ? this.events.state.moment.step
+			: 0;
 	}};
 
 	static event_object = {readOnly: true, get() {
-		return this.events.object ? this.events.object.id : 0;
+		return this.events.state.object ? this.events.state.object.id
+			: this.events.state.timeline ? this.events.state.timeline.id
+			: 0;
 	}};
 
 	static event_action = {readOnly: true, get() {
-		return this.events.actionNumber ? this.events.actionNumber : 0;
+		return this.events.actionNumber ? this.events.actionNumber
+			: 0;
 	}};
 
 	// Game play / Miscellaneous variables and functions

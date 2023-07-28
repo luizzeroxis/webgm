@@ -55,6 +55,7 @@ export default class Instance {
 
 		this.alarms = [];
 
+		this.timeline = null;
 		this.timelineIndex = -1;
 		this.timelinePosition = 0;
 		this.timelineSpeed = 1;

@@ -149,7 +149,10 @@ export default class BuiltInLocals {
 
 	static timeline_index = {type: "integer",
 		get() { return this.timelineIndex; },
-		set(value) { this.timelineIndex = value; },
+		set(value) {
+			this.timelineIndex = value;
+			this.timeline = this.game.project.getResourceById("ProjectTimeline", value);
+		},
 	};
 
 	static timeline_position = {type: "real",

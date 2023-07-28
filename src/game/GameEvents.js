@@ -4,10 +4,8 @@ export default class GameEvents {
 	constructor(game) {
 		this.game = game;
 
-		this.event = null;
-		this.object = null;
-		this.instance = null;
-		this.other = null;
+		this.state = {};
+
 		this.actionNumber = null;
 
 		this.mapOfEvents = null;
@@ -17,20 +15,17 @@ export default class GameEvents {
 	async runEvent(event, instance, other=null) {
 		if (event == null) return;
 
-		const previous = {
-			event: this.event,
-			object: this.object,
-			instance: this.instance,
-			other: this.other,
+		const previousState = this.state;
+
+		this.state = {
+			event: event.event,
+			object: event.object,
+			instance: instance,
+			other: other ?? instance,
 		};
 
-		this.event = event.event;
-		this.object = event.object;
-		this.instance = instance;
-		this.other = other ?? instance;
-
 		try {
-			const parsedActions = this.game.loadedProject.actionsCache.get(this.event);
+			const parsedActions = this.game.loadedProject.actionsCache.get(this.state.event);
 
 			for (const actionAst of parsedActions) {
 				try {
@@ -50,10 +45,7 @@ export default class GameEvents {
 				}
 			}
 		} finally {
-			this.event = previous.event;
-			this.object = previous.object;
-			this.instance = previous.instance;
-			this.other = previous.other;
+			this.state = previousState;
 		}
 	}
 
@@ -75,9 +67,9 @@ export default class GameEvents {
 
 			if (actionAst.appliesTo != undefined) {
 				applyToInstances = this.getApplyToInstances(actionAst.appliesTo);
-				otherInstance = this.other;
+				otherInstance = this.state.other;
 				if (actionAst.appliesTo == -2) { // other
-					otherInstance = this.instance;
+					otherInstance = this.state.instance;
 				}
 			}
 
@@ -131,7 +123,7 @@ export default class GameEvents {
 
 				case "repeat":
 					{
-						const times = await this.parseActionArg(actionAst.times, 0, this.instance, this.other);
+						const times = await this.parseActionArg(actionAst.times, 0, this.state.instance, this.state.other);
 						for (let i=0; i<times; i++) {
 							await this.runAction(actionAst.actionAst);
 						}
@@ -164,9 +156,9 @@ export default class GameEvents {
 		// -1 = self, -2 = other, 0>= = object index
 		switch (appliesTo) {
 			case -1:
-				return [this.instance];
+				return [this.state.instance];
 			case -2:
-				return [this.other];
+				return [this.state.other];
 			default:
 				return this.game.instances.filter(x => x.exists
 					&& (x.objectIndex == appliesTo || this.game.objectIsAncestorByIndex(appliesTo, x.objectIndex)));

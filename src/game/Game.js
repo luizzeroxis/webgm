@@ -483,6 +483,9 @@ export default class Game {
 							// Move instance back
 							instance.x = instance.xPrevious;
 							instance.y = instance.yPrevious;
+							if (instance.path) {
+								instance.pathPosition = instance.pathPreviousPosition;
+							}
 						}
 
 						await this.events.runEvent(event, instance, other);
@@ -498,6 +501,9 @@ export default class Game {
 							if (this.collision.instanceOnInstance(instance, other)) {
 								instance.x = instance.xPrevious;
 								instance.y = instance.yPrevious;
+								if (instance.path) {
+									instance.pathPosition = instance.pathPreviousPosition;
+								}
 							}
 						}
 					}
@@ -624,7 +630,12 @@ export default class Game {
 			instance.setHspeedAndVspeed(hspeedNew, vspeedNew);
 		} else {
 			const length = instance.path.getLength();
-			let {x, y, sp, direction} = instance.path.getPosInfo(instance.pathPosition);
+			const sp = instance.path.getPosSp(instance.pathPosition);
+
+			instance.pathPreviousPosition = instance.pathPosition;
+			instance.pathPosition += (instance.pathSpeed * (sp / 100)) / length;
+
+			let {x, y, direction} = instance.path.getPosInfo(instance.pathPosition);
 
 			[x, y] = [x * instance.pathScale, y * instance.pathScale];
 
@@ -641,9 +652,6 @@ export default class Game {
 			instance.speed = 0;
 			instance.hSpeed = 0;
 			instance.vSpeed = 0;
-
-			instance.pathPreviousPosition = instance.pathPosition;
-			instance.pathPosition += (instance.pathSpeed * (sp / 100)) / length;
 
 			const stoppedForward = (instance.pathPosition >= 1) && (instance.pathSpeed > 0);
 			const stoppedReverse = (instance.pathPosition <= 0) && (instance.pathSpeed < 0);

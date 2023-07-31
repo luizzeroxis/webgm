@@ -263,11 +263,10 @@ export class ProjectPath {
 		};
 	}
 
-	getPosInfo(pos) {
+	getPosLocation(pos) {
 		const totalLength = this.getLength();
 		const posLength = totalLength * pos;
 		let currentLength = 0;
-		const start = this.getStartPosition();
 
 		const linePoints = this.getLinePoints();
 
@@ -281,16 +280,36 @@ export class ProjectPath {
 			if (currentLength >= posLength) {
 				const perc = (posLength - (currentLength - segmentLength)) / segmentLength;
 
-				return {
-					x: (p1.x + ((p2.x - p1.x) * perc)) - start.x,
-					y: (p1.y + ((p2.y - p1.y) * perc)) - start.y,
-					sp: p1.sp + ((p2.sp - p1.sp) * perc),
-					direction: Math.atan2(-(p2.y - p1.y), p2.x - p1.x) * (180 / Math.PI),
-				};
+				return {p1, p2, perc};
 			}
 		}
 
+		return null;
+	}
+
+	getPosInfo(pos) {
+		const location = this.getPosLocation(pos);
+		if (location) {
+			const {p1, p2, perc} = location;
+			const start = this.getStartPosition();
+
+			return {
+				x: (p1.x + ((p2.x - p1.x) * perc)) - start.x,
+				y: (p1.y + ((p2.y - p1.y) * perc)) - start.y,
+				sp: p1.sp + ((p2.sp - p1.sp) * perc),
+				direction: Math.atan2(-(p2.y - p1.y), p2.x - p1.x) * (180 / Math.PI),
+			};
+		}
 		return {x: 0, y: 0, sp: 0, direction: 0};
+	}
+
+	getPosSp(pos) {
+		const location = this.getPosLocation(pos);
+		if (location) {
+			const {p1, p2, perc} = location;
+			return p1.sp + ((p2.sp - p1.sp) * perc);
+		}
+		return 0;
 	}
 
 	static getName() { return "path"; }

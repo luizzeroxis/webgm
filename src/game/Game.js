@@ -132,14 +132,12 @@ export default class Game {
 		try {
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
-				const OTHER_ROOM_END = 5;
-				await this.events.runEventOfInstance("other", OTHER_ROOM_END, instance);
+				await this.events.runEventOfInstance("other", Events.OTHER_ROOM_END, instance);
 			}
 
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
-				const OTHER_GAME_END = 3;
-				await this.events.runEventOfInstance("other", OTHER_GAME_END, instance);
+				await this.events.runEventOfInstance("other", Events.OTHER_GAME_END, instance);
 			}
 		} catch (e) {
 			if (e instanceof StepStopException) {
@@ -440,8 +438,7 @@ export default class Game {
 		}
 
 		// Outside room and intersect boundary
-		const OTHER_OUTSIDE = 0;
-		for (const {event, instance} of this.events.getEventsOfTypeAndSubtype("other", OTHER_OUTSIDE)) {
+		for (const {event, instance} of this.events.getEventsOfTypeAndSubtype("other", Events.OTHER_OUTSIDE_ROOM)) {
 			if (!instance.exists) continue;
 
 			const boundingBox = instance.getBoundingBox();
@@ -454,8 +451,7 @@ export default class Game {
 			}
 		}
 
-		const OTHER_BOUNDARY = 1;
-		for (const {event, instance} of this.events.getEventsOfTypeAndSubtype("other", OTHER_BOUNDARY)) {
+		for (const {event, instance} of this.events.getEventsOfTypeAndSubtype("other", Events.OTHER_INTERSECT_BOUNDARY)) {
 			if (!instance.exists) continue;
 
 			const boundingBox = instance.getBoundingBox();
@@ -538,13 +534,14 @@ export default class Game {
 			instance.xPrevious = instance.x;
 			instance.yPrevious = instance.y;
 
-			const imageNumber = (instance.sprite ? instance.sprite.images.length : 0);
+			instance.imageIndex += instance.imageSpeed;
 
-			let i = instance.imageIndex + instance.imageSpeed;
-			if (i >= imageNumber) {
-				i -= imageNumber;
+			const imageNumber = instance.sprite?.images.length ?? 0;
+			if (instance.imageIndex >= imageNumber) {
+				instance.imageIndex -= imageNumber;
+
+				await this.events.runEventOfInstance("other", Events.OTHER_ANIMATION_END, instance);
 			}
-			instance.imageIndex = i;
 
 			instance.mouseInChanged = null;
 		}
@@ -674,8 +671,7 @@ export default class Game {
 						break;
 				}
 
-				const OTHER_END_OF_PATH = 8;
-				await this.events.runEventOfInstance("other", OTHER_END_OF_PATH, instance);
+				await this.events.runEventOfInstance("other", Events.OTHER_END_OF_PATH, instance);
 			}
 		}
 	}
@@ -690,8 +686,7 @@ export default class Game {
 			try {
 				for (const instance of this.instances) {
 					if (!instance.exists) continue;
-					const OTHER_ROOM_END = 5;
-					await this.events.runEventOfInstance("other", OTHER_ROOM_END, instance);
+					await this.events.runEventOfInstance("other", Events.OTHER_ROOM_END, instance);
 				}
 			} catch (e) {
 				if (e instanceof StepStopException) {
@@ -803,8 +798,7 @@ export default class Game {
 		if (isGameStart) {
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
-				const OTHER_GAME_START = 2;
-				await this.events.runEventOfInstance("other", OTHER_GAME_START, instance);
+				await this.events.runEventOfInstance("other", Events.OTHER_GAME_START, instance);
 			}
 		}
 
@@ -812,8 +806,7 @@ export default class Game {
 
 		for (const instance of this.instances) {
 			if (!instance.exists) continue;
-			const OTHER_ROOM_START = 4;
-			await this.events.runEventOfInstance("other", OTHER_ROOM_START, instance);
+			await this.events.runEventOfInstance("other", Events.OTHER_ROOM_START, instance);
 		}
 
 		// Update mouse position in view
@@ -920,10 +913,9 @@ export default class Game {
 		this.lives = value;
 
 		if (value <= 0 && previous > 0) {
-			const OTHER_NO_MORE_LIVES = 6;
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
-				await this.events.runEventOfInstance("other", OTHER_NO_MORE_LIVES, instance);
+				await this.events.runEventOfInstance("other", Events.OTHER_NO_MORE_LIVES, instance);
 			}
 		}
 	}
@@ -934,10 +926,9 @@ export default class Game {
 		this.health = value;
 
 		if (value <= 0 && previous > 0) {
-			const OTHER_NO_MORE_HEALTH = 9;
 			for (const instance of this.instances) {
 				if (!instance.exists) continue;
-				await this.events.runEventOfInstance("other", OTHER_NO_MORE_HEALTH, instance);
+				await this.events.runEventOfInstance("other", Events.OTHER_NO_MORE_HEALTH, instance);
 			}
 		}
 	}

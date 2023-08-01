@@ -1,3 +1,4 @@
+import Events from "~/common/Events.js";
 import {toGMDate, toJSDate, decimalToHSV, hsvToDecimal, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, forceInteger, toInteger, parseNewLineHash} from "~/common/tools.js";
 
 import {EngineException} from "./Game.js";
@@ -1148,8 +1149,7 @@ export default class BuiltInFunctions {
 		func: async function([]) {
 			this.currentInstance.path = null;
 
-			const OTHER_END_OF_PATH = 8;
-			await this.game.events.runEventOfInstance("other", OTHER_END_OF_PATH, this.currentInstance);
+			await this.game.events.runEventOfInstance("other", Events.OTHER_END_OF_PATH, this.currentInstance);
 
 			return 0;
 		},
@@ -1782,11 +1782,11 @@ export default class BuiltInFunctions {
 	};
 
 	static event_user = {
-		args: [{type: "real"}],
+		args: [{type: "integer"}],
 		func: async function([numb]) {
 			if (numb >= 0 && numb <= 15) {
 			// User 0 has id of 10
-				await this.game.events.runEventOfInstance("other", numb + 10, this.currentInstance);
+				await this.game.events.runEventOfInstance("other", Events.OTHER_USER + numb, this.currentInstance);
 			}
 			return 0;
 		},

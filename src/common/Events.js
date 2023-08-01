@@ -1,56 +1,88 @@
 export default class Events {
+	static CREATE = 0;
+	static DESTROY = 1;
+	static STEP = 3;
+	static ALARM = 2;
+	static KEYBOARD = 5;
+	static MOUSE = 6;
+	static COLLISION = 4;
+	static OTHER = 7;
+	static DRAW = 8;
+	static KEYPRESS = 9;
+	static KEYRELEASE = 10;
+	static TRIGGER = 11;
+
+	static STEP_NORMAL = 0;
+	static STEP_BEGIN = 1;
+	static STEP_END = 2;
+
+	static OTHER_OUTSIDE_ROOM = 0;
+	static OTHER_INTERSECT_BOUNDARY = 1;
+	static OTHER_OUTSIDE_VIEW = 40; // unused
+	static OTHER_BOUNDARY_VIEW = 50; // unused
+	static OTHER_GAME_START = 2;
+	static OTHER_GAME_END = 3;
+	static OTHER_ROOM_START = 4;
+	static OTHER_ROOM_END = 5;
+	static OTHER_NO_MORE_LIVES = 6;
+	static OTHER_NO_MORE_HEALTH = 9;
+	static OTHER_ANIMATION_END = 7;
+	static OTHER_END_OF_PATH = 8;
+	static OTHER_CLOSE_BUTTON = 30; // unused
+	static OTHER_USER = 10;
+
 	static listEventTypes = [
 		{
-			id: 0, value: "create", name: "Create",
+			id: Events.CREATE, value: "create", name: "Create",
 			getFullName: () => "Create",
 		},
 		{
-			id: 1, value: "destroy", name: "Destroy",
+			id: Events.DESTROY, value: "destroy", name: "Destroy",
 			getFullName: () => "Destroy",
 		},
 		{
-			id: 3, value: "step", name: "Step",
+			id: Events.STEP, value: "step", name: "Step",
 			getFullName: subtype => Events.listStepSubtypes.find(x => x.value == subtype).name,
 		},
 		{
-			id: 2, value: "alarm", name: "Alarm",
+			id: Events.ALARM, value: "alarm", name: "Alarm",
 			getFullName: subtype => "Alarm "+subtype,
 		},
 		{
-			id: 5, value: "keyboard", name: "Keyboard",
+			id: Events.KEYBOARD, value: "keyboard", name: "Keyboard",
 			getFullName: subtype => Events.listKeyboardSubtypes.find(x => x.value == subtype).name,
 		},
 		{
-			id: 6, value: "mouse", name: "Mouse",
+			id: Events.MOUSE, value: "mouse", name: "Mouse",
 			getFullName: subtype => Events.listMouseSubtypes.find(x => x.value == subtype).name,
 		},
 		{
-			id: 4, value: "collision", name: "Collision",
+			id: Events.COLLISION, value: "collision", name: "Collision",
 			getFullName: (subtype, project) => "Collision with "
 				+ (project.resources.ProjectObject.find(x => x.id == subtype)?.name ?? "<undefined>"),
 		},
 		{
-			id: 7, value: "other", name: "Other",
+			id: Events.OTHER, value: "other", name: "Other",
 			getFullName: subtype => Events.listOtherSubtypes.find(x => x.value == subtype).name,
 		},
 		{
-			id: 8, value: "draw", name: "Draw",
+			id: Events.DRAW, value: "draw", name: "Draw",
 			getFullName: () => "Draw",
 		},
 		{
-			id: 9, value: "keypress", name: "Key press",
+			id: Events.KEYPRESS, value: "keypress", name: "Key press",
 			getFullName: subtype => "press " + Events.listKeyboardSubtypes.find(x => x.value == subtype).name,
 		},
 		{
-			id: 10, value: "keyrelease", name: "Key release",
+			id: Events.KEYRELEASE, value: "keyrelease", name: "Key release",
 			getFullName: subtype => "release " + Events.listKeyboardSubtypes.find(x => x.value == subtype).name,
 		},
 	];
 
 	static listStepSubtypes = [
-		{id: 0, value: "normal", name: "Step"},
-		{id: 1, value: "begin", name: "Begin step"},
-		{id: 2, value: "end", name: "End step"},
+		{id: Events.STEP_NORMAL, value: "normal", name: "Step"},
+		{id: Events.STEP_BEGIN, value: "begin", name: "Begin step"},
+		{id: Events.STEP_END, value: "end", name: "End step"},
 	];
 
 	static listKeyboardSubtypes = [

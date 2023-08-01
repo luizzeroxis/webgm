@@ -232,8 +232,7 @@ export default class Game {
 		}
 
 		try {
-			this.mainLoopPromise = this.mainLoop();
-			await this.mainLoopPromise;
+			this.mainLoopPromise = await this.mainLoop();
 
 			++this.fpsFrameCount;
 		} catch (e) {
@@ -305,20 +304,21 @@ export default class Game {
 			// Calculate which steps to execute
 			const from = instance.timelinePosition;
 			const till = instance.timelinePosition + instance.timelineSpeed;
+			instance.timelinePosition = till;
 
 			if (instance.timelineSpeed > 0) {
 				for (const moment of instance.timeline.moments) {
 					if (moment.step >= from && moment.step < till) {
-						// await this.events.runMoment(moment, instance);
+						await this.events.runMoment(moment, instance.timeline, instance);
 					}
 				}
 				if (instance.timelineLoop && (till > (instance.timeline.moments[instance.timeline.moments.length-1]?.step ?? 0))) {
 					instance.timelinePosition = 0;
 				}
-			} else {
+			} else if (instance.timelineSpeed < 0) {
 				for (const moment of instance.timeline.moments.toReversed()) {
 					if (moment.step <= from && moment.step > till) {
-						// await this.events.runMoment(moment, instance);
+						await this.events.runMoment(moment, instance.timeline, instance);
 					}
 				}
 				if (instance.timelineLoop && till < 0) {
@@ -974,15 +974,17 @@ export default class Game {
 				((options.header !== false) ? (
 					`\n`
 					+ `___________________________________________\n`
-					+ `${options.fatal ? "FATAL " : ""} ERROR in\n`
+					+ `${options.fatal ? "FATAL " : ""}ERROR in\n`
 					+ `action number ${options.actionNumber ?? this.events.actionNumber}\n`
-					+ event ? (
-						`of ${Events.getEventName(event.type, event.subtype, this.project)}\n`
-						+ `for object ${options.object?.name ?? this.events.state.object.name}:\n`
-					) : moment ? (
-						`at time step ${moment.step}\n`
-						+ `of time line ${options.timeline?.name ?? this.events.state.timeline.name}:\n`
-					) : ``
+					+ (
+						event ? (
+							`of ${Events.getEventName(event.type, event.subtype, this.project)}\n`
+							+ `for object ${options.object?.name ?? this.events.state.object.name}:\n`
+						) : moment ? (
+							`at time step ${moment.step}\n`
+							+ `of time line ${options.timeline?.name ?? this.events.state.timeline.name}:\n`
+						) : ``
+					)
 					+ `\n`
 				) : ``)
 				+ options.text,

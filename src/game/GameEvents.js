@@ -25,33 +25,53 @@ export default class GameEvents {
 		};
 
 		try {
-			const parsedActions = this.game.loadedProject.actionsCache.get(this.state.event);
-
-			for (const actionAst of parsedActions) {
-				try {
-					await this.runAction(actionAst);
-
-					if (this.game.stepStopAction != null) {
-						throw new StepStopException(this.game.stepStopAction);
-					}
-				} catch (e) {
-					if (e instanceof ExitException) {
-						break;
-					} if (e instanceof ProjectErrorException) {
-						await this.game.showError(e);
-					} else {
-						throw e;
-					}
-				}
-			}
+			await this.runActionsOf(event.event);
 		} finally {
 			this.state = previousState;
 		}
 	}
 
-	// Do the event of a type and subtype (optional) of an instance.
-	runEventOfInstance(type, subtype, instance) {
-		return this.runEvent(this.getEventOfObject(instance.object, type, subtype), instance);
+	// Execute a moment on an instance.
+	async runMoment(moment, timeline, instance) {
+		if (moment == null) return;
+
+		const previousState = this.state;
+
+		this.state = {
+			moment: moment,
+			timeline: timeline,
+			instance: instance,
+			other: instance,
+		};
+
+		try {
+			await this.runActionsOf(moment);
+		} finally {
+			this.state = previousState;
+		}
+	}
+
+	// Executes the list of actions of an event or a moment.
+	async runActionsOf(key) {
+		const actions = this.game.loadedProject.actionsCache.get(key);
+
+		for (const action of actions) {
+			try {
+				await this.runAction(action);
+
+				if (this.game.stepStopAction != null) {
+					throw new StepStopException(this.game.stepStopAction);
+				}
+			} catch (e) {
+				if (e instanceof ExitException) {
+					break;
+				} if (e instanceof ProjectErrorException) {
+					await this.game.showError(e);
+				} else {
+					throw e;
+				}
+			}
+		}
 	}
 
 	// Executes an action.
@@ -201,6 +221,11 @@ export default class GameEvents {
 			return this.getEventOfObject(parent, type, subtype);
 		}
 		return null;
+	}
+
+	// Do the event of a type and subtype (optional) of an instance.
+	runEventOfInstance(type, subtype, instance) {
+		return this.runEvent(this.getEventOfObject(instance.object, type, subtype), instance);
 	}
 
 	// Generates this.mapOfEvents, a map containg all event-instance pairs that exist currently. It is structured like so:

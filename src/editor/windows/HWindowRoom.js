@@ -1,5 +1,5 @@
 import HWindow from "~/common/components/HWindowManager/HWindow.js";
-import {parent, endparent, add, HElement, HButton, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HRadioInput, HSelect, HOption, uniqueID} from "~/common/h";
+import {parent, endparent, add, HElement, HButton, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HSelect, HOption} from "~/common/h";
 import ImageWrapper from "~/common/ImageWrapper.js";
 import {ProjectBackground, ProjectObject, ProjectRoom, ProjectInstance, ProjectRoomBackground, ProjectRoomView} from "~/common/project/ProjectProperties.js";
 import {setDeepOnUpdateOnElement} from "~/common/tools.js";
@@ -399,6 +399,24 @@ export default class HWindowRoom extends HWindow {
 		return i;
 	}
 
+	moveInstance(instance, x, y) {
+		if (instance) {
+			instance.x = x;
+			instance.y = y;
+			this.onUpdate();
+		}
+	}
+
+	deleteInstance(instance) {
+		this.resource.instances = this.resource.instances.filter(i => i != instance);
+		this.onUpdate();
+	}
+
+	deleteAllInPosition(pos) {
+		this.resource.instances = this.resource.instances.filter(i => !this.isInstanceAtPosition(i, pos));
+		this.onUpdate();
+	}
+
 	deleteUnderlying() {
 		if (this.inputDeleteUnderlying.getChecked()) {
 			for (let i = this.resource.instances.length - 1; i >= 0; i--) {
@@ -447,6 +465,16 @@ export default class HWindowRoom extends HWindow {
 		const y2 = y1 + h;
 
 		return (pos.x >= x1 && pos.x < x2 && pos.y >= y1 && pos.y < y2);
+	}
+
+	snapPosition(pos) {
+		const snapX = Math.max(1, parseInt(this.inputSnapX.getValue()) || 0);
+		const snapY = Math.max(1, parseInt(this.inputSnapY.getValue()) || 0);
+
+		return {
+			x: Math.floor(pos.x / snapX) * snapX,
+			y: Math.floor(pos.y / snapY) * snapY,
+		};
 	}
 
 	// Backgrounds
@@ -517,6 +545,166 @@ export default class HWindowRoom extends HWindow {
 	}
 
 	// Preview
+
+	canvasMouseDown(e) {
+		const pos = this.getMousePosition(e);
+		const snappedPos = this.snapPosition(pos);
+
+		this.currentPos = e.altKey ? pos : snappedPos;
+		this.mouseButton = e.button;
+
+		if (this.mouseButton == 0) {
+			if (e.ctrlKey) {
+				// Move
+				const hover = this.getInstanceAtPosition(pos);
+				if (hover) {
+					this.movingInstance = hover;
+				}
+			} else
+			if (e.shiftKey) {
+				// Add multiple
+				this.movingInstance = this.addInstance();
+				this.deleteUnderlying();
+				this.onUpdate();
+			} else {
+				// Add
+				this.movingInstance = this.addInstance();
+				this.onUpdate();
+			}
+		} else if (this.mouseButton == 2) {
+			if (e.ctrlKey) {
+				// Menu
+				const hover = this.getInstanceAtPosition(pos);
+				if (hover) {
+					e.preventDefault();
+					const m = this.editor.menuManager.openMenu([
+						{text: "Delete", onClick: () => {
+							this.deleteInstance(hover);
+							this.updateCanvasPreview();
+						}},
+						{text: "Delete All", onClick: () => {
+							this.deleteAllInPosition(pos);
+							this.updateCanvasPreview();
+						}},
+						{text: "Change Position...", onClick: () => {
+							const x = parseInt(prompt("X:", hover.x));
+							if (Number.isNaN(x)) return;
+							const y = parseInt(prompt("Y:", hover.y));
+							if (Number.isNaN(y)) return;
+
+							this.moveInstance(hover, x, y);
+							this.updateCanvasPreview();
+						}},
+						{text: "Snap to Grid", onClick: () => {
+							const snapped = this.snapPosition({x: hover.x, y: hover.y});
+							this.moveInstance(hover, snapped.x, snapped.y);
+							this.updateCanvasPreview();
+						}},
+						{text: "Send to Back", onClick: () => {
+							this.resource.instances.splice(this.resource.instances.indexOf(hover), 1);
+							this.resource.instances.unshift(hover);
+							this.onUpdate();
+							this.updateCanvasPreview();
+						}},
+						{text: "Bring to Front", onClick: () => {
+							this.resource.instances.splice(this.resource.instances.indexOf(hover), 1);
+							this.resource.instances.push(hover);
+							this.onUpdate();
+							this.updateCanvasPreview();
+						}},
+					], {x: e.clientX, y: e.clientY});
+					m.html.onfocus = e => console.log(m, "onfocus", e);
+				}
+			} else
+			if (e.shiftKey) {
+				// Delete all
+				this.deleteAllInPosition(pos);
+			} else {
+				// Delete
+				this.movingInstance = null;
+				const hover = this.getInstanceAtPosition(pos);
+				if (hover) {
+					this.deleteInstance(hover);
+				}
+			}
+		}
+
+		this.updateCanvasPreview();
+	}
+
+	canvasMouseMove(e) {
+		const pos = this.getMousePosition(e);
+		const snappedPos = this.snapPosition(pos);
+
+		this.currentPos = e.altKey ? pos : snappedPos;
+
+		if (this.mouseButton == 0) {
+			if (e.ctrlKey) {
+				// Move
+				this.moveInstance(this.movingInstance, this.currentPos.x, this.currentPos.y);
+			} else
+			if (e.shiftKey) {
+				// Add multiple
+				const hover = this.getInstanceAtPosition(pos);
+				if (hover != this.movingInstance) {
+					this.movingInstance = this.addInstance();
+					this.deleteUnderlying();
+					this.onUpdate();
+				}
+			} else {
+				// Add
+				this.moveInstance(this.movingInstance, this.currentPos.x, this.currentPos.y);
+			}
+		} else if (this.mouseButton == 2) {
+			if (e.ctrlKey) {
+				// Menu
+			} else
+			if (e.shiftKey) {
+				// Delete all
+				this.deleteAllInPosition(pos);
+			} else {
+				// Delete
+				this.movingInstance = null;
+				const hover = this.getInstanceAtPosition(pos);
+				if (hover) {
+					this.deleteInstance(hover);
+				}
+			}
+		}
+
+		this.updateCanvasPreview();
+
+		this.spanX.html.textContent = this.currentPos.x;
+		this.spanY.html.textContent = this.currentPos.y;
+		this.spanObject.html.textContent = "";
+		this.spanId.html.textContent = "";
+
+		const hover = this.getInstanceAtPosition(pos);
+		if (hover) {
+			this.spanObject.html.textContent = this.editor.project.getResourceById("ProjectObject", hover.object_index).name;
+			if (hover.id != null) {
+				this.spanId.html.textContent = hover.id;
+			} else {
+				this.spanId.html.textContent = "(not applied)";
+			}
+		}
+	}
+
+	canvasMouseUp() {
+		this.mouseButton = null;
+
+		if (this.movingInstance) {
+			this.deleteUnderlying();
+			this.onUpdate();
+
+			this.movingInstance = null;
+			this.updateCanvasPreview();
+		}
+	}
+
+	getMousePosition(e) {
+		return {x: e.offsetX, y: e.offsetY};
+	}
 
 	async updateCanvasPreview() {
 		// Setting the size resets the background to black, in case 'draw background color' isn't on.
@@ -653,147 +841,6 @@ export default class HWindowRoom extends HWindow {
 		this.ctx.stroke();
 
 		this.ctx.restore();
-	}
-
-	canvasMouseDown(e) {
-		const pos = this.getMousePosition(e);
-		const snappedPos = this.snapMousePosition(pos);
-
-		this.currentPos = e.altKey ? pos : snappedPos;
-		this.mouseButton = e.button;
-
-		if (this.mouseButton == 0) {
-			if (e.ctrlKey) {
-				// Move
-				const hover = this.getInstanceAtPosition(pos);
-				if (hover) {
-					this.movingInstance = hover;
-				}
-			} else
-			if (e.shiftKey) {
-				// Add multiple
-				this.movingInstance = this.addInstance();
-				this.deleteUnderlying();
-				this.onUpdate();
-			} else {
-				// Add
-				this.movingInstance = this.addInstance();
-				this.onUpdate();
-			}
-		} else if (this.mouseButton == 2) {
-			if (e.ctrlKey) {
-				// Menu
-			} else
-			if (e.shiftKey) {
-				// Delete all
-				this.resource.instances = this.resource.instances.filter(instance => !this.isInstanceAtPosition(instance, pos));
-				this.onUpdate();
-			} else {
-				// Delete
-				this.movingInstance = null;
-				const hover = this.getInstanceAtPosition(pos);
-				if (hover) {
-					this.resource.instances = this.resource.instances.filter(i => i != hover);
-					this.onUpdate();
-				}
-			}
-		}
-
-		this.updateCanvasPreview();
-	}
-
-	canvasMouseMove(e) {
-		const pos = this.getMousePosition(e);
-		const snappedPos = this.snapMousePosition(pos);
-
-		this.currentPos = e.altKey ? pos : snappedPos;
-
-		if (this.mouseButton == 0) {
-			if (e.ctrlKey) {
-				// Move
-				if (this.movingInstance) {
-					this.movingInstance.x = this.currentPos.x;
-					this.movingInstance.y = this.currentPos.y;
-					this.onUpdate();
-				}
-			} else
-			if (e.shiftKey) {
-				// Add multiple
-				const hover = this.getInstanceAtPosition(pos);
-				if (hover != this.movingInstance) {
-					this.movingInstance = this.addInstance();
-					this.deleteUnderlying();
-					this.onUpdate();
-				}
-			} else {
-				// Add
-				if (this.movingInstance) {
-					this.movingInstance.x = this.currentPos.x;
-					this.movingInstance.y = this.currentPos.y;
-					this.onUpdate();
-				}
-			}
-		} else if (this.mouseButton == 2) {
-			if (e.ctrlKey) {
-				// Menu
-			} else
-			if (e.shiftKey) {
-				// Delete all
-				this.resource.instances = this.resource.instances.filter(instance => !this.isInstanceAtPosition(instance, pos));
-				this.onUpdate();
-			} else {
-				// Delete
-				this.movingInstance = null;
-				const hover = this.getInstanceAtPosition(pos);
-				if (hover) {
-					this.resource.instances = this.resource.instances.filter(i => i != hover);
-					this.onUpdate();
-				}
-			}
-		}
-
-		this.updateCanvasPreview();
-
-		this.spanX.html.textContent = this.currentPos.x;
-		this.spanY.html.textContent = this.currentPos.y;
-		this.spanObject.html.textContent = "";
-		this.spanId.html.textContent = "";
-
-		const hover = this.getInstanceAtPosition(pos);
-		if (hover) {
-			this.spanObject.html.textContent = this.editor.project.getResourceById("ProjectObject", hover.object_index).name;
-			if (hover.id != null) {
-				this.spanId.html.textContent = hover.id;
-			} else {
-				this.spanId.html.textContent = "(not applied)";
-			}
-		}
-	}
-
-	canvasMouseUp() {
-		this.mouseButton = null;
-
-		if (this.movingInstance) {
-			this.deleteUnderlying();
-			this.onUpdate();
-
-			this.movingInstance = null;
-			this.updateCanvasPreview();
-		}
-	}
-
-	getMousePosition(e) {
-		return {x: e.offsetX, y: e.offsetY};
-	}
-
-	snapMousePosition(pos) {
-		const snapX = Math.max(1, parseInt(this.inputSnapX.getValue()) || 0);
-		const snapY = Math.max(1, parseInt(this.inputSnapY.getValue()) || 0);
-
-		return {
-			x: Math.floor(pos.x / snapX) * snapX,
-			y: Math.floor(pos.y / snapY) * snapY,
-		};
 	}
 
 	close() {

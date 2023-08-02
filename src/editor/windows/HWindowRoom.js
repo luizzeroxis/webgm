@@ -51,13 +51,6 @@ export default class HWindowRoom extends HWindow {
 
 							this.selectObject = add( new HResourceSelect(this.editor, "Object:", ProjectObject, true) );
 
-							const toolGroup = "_radio_"+uniqueID();
-							this.radioAdd = add( new HRadioInput(toolGroup, "Add instance", true) );
-							this.radioMultiple = add( new HRadioInput(toolGroup, "Add multiple instances") );
-							this.radioMove = add( new HRadioInput(toolGroup, "Move instance") );
-							this.radioDelete = add( new HRadioInput(toolGroup, "Delete instance") );
-
-							this.inputSnapToGrid = add( new HCheckBoxInput("Snap to grid", true) );
 							this.inputDeleteUnderlying = add( new HCheckBoxInput("Delete underlying", false) );
 
 							setDeepOnUpdateOnElement(tabInstances, () => this.onUpdate());
@@ -283,93 +276,9 @@ export default class HWindowRoom extends HWindow {
 							this.ctx = this.canvasPreview.html.getContext("2d", {alpha: false});
 							this.ctx.imageSmoothingEnabled = false;
 
-							this.canvasPreview.html.onmousedown = (e) => {
-								this.mouseIsDown = true;
-								const pos = this.getMousePosition(e);
-								const snappedPos = this.snapMousePosition(pos);
-
-								this.currentPos = snappedPos;
-
-								if (this.radioAdd.getChecked()) {
-									this.movingInstance = this.addInstance();
-									this.onUpdate();
-								} else
-
-								if (this.radioMultiple.getChecked()) {
-									this.movingInstance = this.addInstance();
-									this.deleteUnderlying();
-									this.onUpdate();
-								} else
-
-								if (this.radioMove.getChecked()) {
-									const hover = this.getInstanceAtPosition(pos);
-									if (hover) {
-										this.movingInstance = hover;
-									}
-								} else
-
-								if (this.radioDelete.getChecked()) {
-									const hover = this.getInstanceAtPosition(pos);
-									if (hover) {
-										this.resource.instances = this.resource.instances.filter(i => i != hover);
-										this.onUpdate();
-									}
-								}
-
-								this.updateCanvasPreview();
-							};
-
-							this.canvasPreview.html.onmousemove = (e) => {
-								const pos = this.getMousePosition(e);
-								const snappedPos = this.snapMousePosition(pos);
-
-								if (this.mouseIsDown) {
-									if (this.radioAdd.getChecked() || this.radioMove.getChecked()) {
-										if (this.movingInstance) {
-											this.movingInstance.x = snappedPos.x;
-											this.movingInstance.y = snappedPos.y;
-											this.onUpdate();
-										}
-									} else
-
-									if (this.radioMultiple.getChecked()) {
-										const hover = this.getInstanceAtPosition(pos);
-										if (hover != this.movingInstance) {
-											this.currentPos = snappedPos;
-											this.movingInstance = this.addInstance();
-											this.deleteUnderlying();
-											this.onUpdate();
-										}
-									} else
-
-									if (this.radioDelete.getChecked()) {
-										const hover = this.getInstanceAtPosition(pos);
-										if (hover) {
-											this.resource.instances = this.resource.instances.filter(i => i != hover);
-											this.onUpdate();
-										}
-									}
-
-									this.updateCanvasPreview();
-								}
-
-								this.spanX.html.textContent = snappedPos.x;
-								this.spanY.html.textContent = snappedPos.y;
-								this.spanObject.html.textContent = "";
-								this.spanId.html.textContent = "";
-
-								{
-									const hover = this.getInstanceAtPosition(pos);
-									if (hover) {
-										this.spanObject.html.textContent = this.editor.project.getResourceById("ProjectObject", hover.object_index).name;
-										if (hover.id != null) {
-											this.spanId.html.textContent = hover.id;
-										} else {
-											this.spanId.html.textContent = "(not applied)";
-										}
-									}
-								}
-							};
+							this.canvasPreview.html.onmousedown = e => this.canvasMouseDown(e);
+							this.canvasPreview.html.onmousemove = e => this.canvasMouseMove(e);
+							this.canvasPreview.html.oncontextmenu = e => e.preventDefault();
 
 							endparent();
 
@@ -408,18 +317,7 @@ export default class HWindowRoom extends HWindow {
 	onAdd() {
 		super.onAdd();
 
-		this.mouseUpHandler = () => {
-			this.mouseIsDown = false;
-
-			if (this.movingInstance) {
-				if (this.radioAdd.getChecked()) {
-					this.deleteUnderlying();
-					this.onUpdate();
-				}
-				this.movingInstance = null;
-				this.updateCanvasPreview();
-			}
-		};
+		this.mouseUpHandler = () => this.canvasMouseUp();
 		document.addEventListener("mouseup", this.mouseUpHandler);
 
 		this.listeners = this.editor.project.dispatcher.listen({
@@ -620,27 +518,6 @@ export default class HWindowRoom extends HWindow {
 
 	// Preview
 
-	getMousePosition(e) {
-		const x = e.offsetX;
-		const y = e.offsetY;
-		return {x: x, y: y};
-	}
-
-	snapMousePosition(pos) {
-		let x = pos.x;
-		let y = pos.y;
-
-		if (this.inputSnapToGrid.getChecked()) {
-			const snapX = Math.max(1, parseInt(this.inputSnapX.getValue()) || 0);
-			const snapY = Math.max(1, parseInt(this.inputSnapY.getValue()) || 0);
-
-			x = Math.floor(x / snapX) * snapX;
-			y = Math.floor(y / snapY) * snapY;
-		}
-
-		return {x: x, y: y};
-	}
-
 	async updateCanvasPreview() {
 		// Setting the size resets the background to black, in case 'draw background color' isn't on.
 		this.canvasPreview.html.width = this.inputWidth.getValue();
@@ -776,6 +653,147 @@ export default class HWindowRoom extends HWindow {
 		this.ctx.stroke();
 
 		this.ctx.restore();
+	}
+
+	canvasMouseDown(e) {
+		const pos = this.getMousePosition(e);
+		const snappedPos = this.snapMousePosition(pos);
+
+		this.currentPos = e.altKey ? pos : snappedPos;
+		this.mouseButton = e.button;
+
+		if (this.mouseButton == 0) {
+			if (e.ctrlKey) {
+				// Move
+				const hover = this.getInstanceAtPosition(pos);
+				if (hover) {
+					this.movingInstance = hover;
+				}
+			} else
+			if (e.shiftKey) {
+				// Add multiple
+				this.movingInstance = this.addInstance();
+				this.deleteUnderlying();
+				this.onUpdate();
+			} else {
+				// Add
+				this.movingInstance = this.addInstance();
+				this.onUpdate();
+			}
+		} else if (this.mouseButton == 2) {
+			if (e.ctrlKey) {
+				// Menu
+			} else
+			if (e.shiftKey) {
+				// Delete all
+				this.resource.instances = this.resource.instances.filter(instance => !this.isInstanceAtPosition(instance, pos));
+				this.onUpdate();
+			} else {
+				// Delete
+				this.movingInstance = null;
+				const hover = this.getInstanceAtPosition(pos);
+				if (hover) {
+					this.resource.instances = this.resource.instances.filter(i => i != hover);
+					this.onUpdate();
+				}
+			}
+		}
+
+		this.updateCanvasPreview();
+	}
+
+	canvasMouseMove(e) {
+		const pos = this.getMousePosition(e);
+		const snappedPos = this.snapMousePosition(pos);
+
+		this.currentPos = e.altKey ? pos : snappedPos;
+
+		if (this.mouseButton == 0) {
+			if (e.ctrlKey) {
+				// Move
+				if (this.movingInstance) {
+					this.movingInstance.x = this.currentPos.x;
+					this.movingInstance.y = this.currentPos.y;
+					this.onUpdate();
+				}
+			} else
+			if (e.shiftKey) {
+				// Add multiple
+				const hover = this.getInstanceAtPosition(pos);
+				if (hover != this.movingInstance) {
+					this.movingInstance = this.addInstance();
+					this.deleteUnderlying();
+					this.onUpdate();
+				}
+			} else {
+				// Add
+				if (this.movingInstance) {
+					this.movingInstance.x = this.currentPos.x;
+					this.movingInstance.y = this.currentPos.y;
+					this.onUpdate();
+				}
+			}
+		} else if (this.mouseButton == 2) {
+			if (e.ctrlKey) {
+				// Menu
+			} else
+			if (e.shiftKey) {
+				// Delete all
+				this.resource.instances = this.resource.instances.filter(instance => !this.isInstanceAtPosition(instance, pos));
+				this.onUpdate();
+			} else {
+				// Delete
+				this.movingInstance = null;
+				const hover = this.getInstanceAtPosition(pos);
+				if (hover) {
+					this.resource.instances = this.resource.instances.filter(i => i != hover);
+					this.onUpdate();
+				}
+			}
+		}
+
+		this.updateCanvasPreview();
+
+		this.spanX.html.textContent = this.currentPos.x;
+		this.spanY.html.textContent = this.currentPos.y;
+		this.spanObject.html.textContent = "";
+		this.spanId.html.textContent = "";
+
+		const hover = this.getInstanceAtPosition(pos);
+		if (hover) {
+			this.spanObject.html.textContent = this.editor.project.getResourceById("ProjectObject", hover.object_index).name;
+			if (hover.id != null) {
+				this.spanId.html.textContent = hover.id;
+			} else {
+				this.spanId.html.textContent = "(not applied)";
+			}
+		}
+	}
+
+	canvasMouseUp() {
+		this.mouseButton = null;
+
+		if (this.movingInstance) {
+			this.deleteUnderlying();
+			this.onUpdate();
+
+			this.movingInstance = null;
+			this.updateCanvasPreview();
+		}
+	}
+
+	getMousePosition(e) {
+		return {x: e.offsetX, y: e.offsetY};
+	}
+
+	snapMousePosition(pos) {
+		const snapX = Math.max(1, parseInt(this.inputSnapX.getValue()) || 0);
+		const snapY = Math.max(1, parseInt(this.inputSnapY.getValue()) || 0);
+
+		return {
+			x: Math.floor(pos.x / snapX) * snapX,
+			y: Math.floor(pos.y / snapY) * snapY,
+		};
 	}
 
 	close() {

@@ -113,17 +113,18 @@
 	> .buttons {
 		> .button {
 			border-color: var(--window-client-horizontal-border) !important;
+			background-color: var(--window-client-horizontal-border);
 		}
 	}
 
-	> .content {
+	> .body > .content {
 		padding: 8px;
 		border: 1px solid var(--window-client-horizontal-border);
 		border-top: none;
 	}
 
 	&.right {
-		> .content {
+		> .body > .content {
 			border: 1px solid var(--window-client-horizontal-border);
 			border-right: none;
 		}
@@ -487,7 +488,7 @@ input[type="text"], input[type="number"], select {
 				display: flex;
 				flex-direction: row-reverse;
 
-				> .content > .action-types {
+				> .body > .content > .action-types {
 					display: grid;
 					grid-template-columns: repeat(3, minmax(0, 1fr));
 					overflow-wrap: break-word;
@@ -497,7 +498,8 @@ input[type="text"], input[type="number"], select {
 					}
 
 					> .action-type {
-						padding: 0;
+						padding: 2px;
+						border: 0;
 
 						&.new-row {
 							grid-column-start: 1;
@@ -561,13 +563,20 @@ input[type="text"], input[type="number"], select {
 			min-height: 0;
 			flex: none;
 
-			> .properties-tabs > .content {
-				> .backgrounds, > .views {
-					> select {
-						overflow: auto;
+			> .properties-tabs {
+				> .buttons > .button {
+					flex: 1;
+					text-align: center;
+				}
 
-						> option.bold {
-							font-weight: bold;
+				> .body > .content {
+					> .backgrounds, > .views {
+						> select {
+							overflow: auto;
+
+							> option.bold {
+								font-weight: bold;
+							}
 						}
 					}
 				}

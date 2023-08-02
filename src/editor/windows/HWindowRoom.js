@@ -48,6 +48,7 @@ export default class HWindowRoom extends HWindow {
 						this.tabControl = add( new HTabControl("properties-tabs") );
 
 						const tabInstances = parent( this.tabControl.addTab("objects") );
+							this.tabControl.setSelectedContent(tabInstances);
 
 							this.selectObject = add( new HResourceSelect(this.editor, "Object:", ProjectObject, true) );
 
@@ -310,8 +311,6 @@ export default class HWindowRoom extends HWindow {
 			endparent();
 
 		setDeepOnUpdateOnElement(this.client, () => this.onUpdate());
-
-		this.tabControl.showTabContent(tabInstances);
 	}
 
 	onAdd() {

@@ -1,4 +1,4 @@
-import {parent, endparent, add, HElement, HRadioInput, classToAttr, classToArray, uniqueID} from "~/common/h";
+import {parent, endparent, add, HElement, classToAttr, classToArray} from "~/common/h";
 
 import "./HTabControl.scss";
 
@@ -10,39 +10,49 @@ export default class HTabControl extends HElement {
 				this.html.classList.add("right");
 			}
 
-			this.tabButtonsDiv = add( new HElement("div", {class: "buttons"}) );
-			this.currentTabContent = null;
+			this.buttonsDiv = add( new HElement("div", {class: "buttons"}) );
+			this.bodyDiv = add( new HElement("div", {class: "body"}) );
 			endparent();
 
-		this.radioGroup = "_radio_"+uniqueID();
+		this.currentTab = null;
+		this.tabs = [];
 	}
 
-	addTab(name, isSelected) {
-		const tabContent = new HElement("div", {class: "content"});
+	addTab(name) {
+		parent(this.bodyDiv);
+			const content = add(new HElement("div", {class: "content"}));
+			endparent();
 
-		if (isSelected) {
-			this.showTabContent(tabContent);
-		}
-
-		parent(this.tabButtonsDiv);
-
-			const radio = add( new HRadioInput(this.radioGroup, name, isSelected, "button") );
-			radio.setOnClick(() => {
-				this.showTabContent(tabContent);
+		parent(this.buttonsDiv);
+			const button = add( new HElement("div", {class: "button"}, name) );
+			button.html.tabIndex = 0;
+			button.setEvent("click", () => {
+				this.setSelectedTab({button, content});
 			});
-
+			button.setEvent("keydown", e => {
+				if (e.code == "Enter") {
+					this.setSelectedTab({button, content});
+				}
+			});
 			endparent();
 
-		return tabContent;
+		this.tabs.push({button, content});
+
+		return content;
 	}
 
-	showTabContent(tabContent) {
-		if (this.currentTabContent) {
-			this.currentTabContent.remove();
-		}
+	setSelectedTab(tab) {
+		this.currentTab?.content.html.classList.remove("selected");
+		this.currentTab?.button.html.classList.remove("selected");
 
-		parent(this);
-			this.currentTabContent = add( tabContent );
-			endparent();
+		tab.content.html.classList.add("selected");
+		tab.button.html.classList.add("selected");
+
+		this.currentTab = tab;
+	}
+
+	setSelectedContent(content) {
+		const {button} = this.tabs.find(tab => tab.content == content);
+		this.setSelectedTab({button, content});
 	}
 }

@@ -57,7 +57,7 @@ export default class HWindowObject extends HWindow {
 					this.selectEvents.select.html.size = 2;
 
 					this.selectEvents.setOnChange(() => {
-						this.actionsEditor.updateActions(this.getSelectedEvent()?.actions);
+						this.actionsEditor.updateActions(this.getSelectedEvent()?.actions ?? []);
 					});
 
 					parent( add( new HElement("div") ) );
@@ -107,7 +107,7 @@ export default class HWindowObject extends HWindow {
 								this.updateSelectEvents();
 								this.updateEventsMenu();
 
-								this.actionsEditor.updateActions(this.getSelectedEvent()?.actions);
+								this.actionsEditor.updateActions(this.getSelectedEvent()?.actions ?? []);
 
 								this.onUpdate();
 							}) );
@@ -157,7 +157,7 @@ export default class HWindowObject extends HWindow {
 			this.updateEventsMenu();
 
 			// Select first event
-			this.actionsEditor.updateActions(this.getSelectedEvent()?.actions);
+			this.actionsEditor.updateActions(this.getSelectedEvent()?.actions ?? []);
 
 			endparent();
 

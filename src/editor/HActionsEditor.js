@@ -167,7 +167,11 @@ export default class HActionsEditor extends HElement {
 				const librariesTabs = add( new HTabControl("libraries-tabs", "right") );
 
 				this.editor.libraries.forEach(library => {
-					parent( librariesTabs.addTab(library.name, (library.name == this.editor.preferences.get("defaultActionLibraryTab"))) );
+					const tab = parent( librariesTabs.addTab(library.name) );
+
+						if (library.name == this.editor.preferences.get("defaultActionLibraryTab")) {
+							librariesTabs.setSelectedContent(tab);
+						}
 
 						let nextClass = null;
 

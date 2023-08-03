@@ -176,7 +176,7 @@ export default class HWindowSprite extends HWindow {
 
 	setImagesFromFiles(files) {
 		for (const child of this.windowChildren) {
-			child.close();
+			child.forceClose();
 		}
 
 		this.buttonLoadSprite.setDisabled(true);

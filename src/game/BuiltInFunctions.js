@@ -9265,33 +9265,41 @@ export default class BuiltInFunctions {
 
 	static action_path = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_path is not implemented");
-			// return 0;
+		func: function([path, speed, atEnd, relative]) {
+			BuiltInFunctions.path_start.func.call(this, [path, speed, atEnd, relative==1]);
+			return 0;
 		},
 	};
 
 	static action_path_end = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_path_end is not implemented");
-			// return 0;
+		func: function([]) {
+			BuiltInFunctions.path_end.func.call(this, []);
+			return 0;
 		},
 	};
 
 	static action_path_position = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_path_position is not implemented");
-			// return 0;
+		func: function([position], relative) {
+			if (!relative) {
+				this.currentInstance.pathPosition = position;
+			} else {
+				this.currentInstance.pathPosition += position;
+			}
+			return 0;
 		},
 	};
 
 	static action_path_speed = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_path_speed is not implemented");
-			// return 0;
+		func: function([speed], relative) {
+			if (!relative) {
+				this.currentInstance.pathSpeed = speed;
+			} else {
+				this.currentInstance.pathSpeed += speed;
+			}
+			return 0;
 		},
 	};
 

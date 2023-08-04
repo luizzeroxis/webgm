@@ -507,33 +507,49 @@ export default class BuiltInLibraries {
 						},
 					],
 				},
-				/*
 				{
 					name: "Steps",
 					kind: "label",
 				},
 				{
-					id: 999,
+					id: 120,
 					description: "Step Towards",
-					listText: [""],
-					hintText: [""],
+					listText: ["Step towards point (", a[0], ",", a[1], ")"],
+					hintText: [w, "perform a step ", r, "towards position (", a[0], ",", a[1], ") with speed ", a[2], " stop at ", a[3]],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_linear_step",
 
 					interfaceKind: "normal",
 					isQuestion: false,
-					hasApplyTo: false,
-					hasRelative: false,
+					hasApplyTo: true,
+					hasRelative: true,
 
 					args: [
 						{
-							name: "",
-							kind: "",
-							default: "",
+							name: "x",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "y",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "speed",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "stop at",
+							kind: "menu",
+							menu: ["solid only", "all instances"],
+							default: 0,
 						},
 					],
 				},
+				/*
 				{
 					id: 999,
 					description: "Step Avoiding",

@@ -1161,18 +1161,18 @@ export default class BuiltInFunctions {
 	// ## Motion planning
 
 	static mp_linear_step = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function mp_linear_step is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}],
+		func: function([x, y, stepsize, checkall]) {
+			return this.game.collision.linearStep(this.currentInstance, this.game.instances, x, y, stepsize, !checkall) ? 1 : 0;
 		},
 	};
 
 	static mp_linear_step_object = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function mp_linear_step_object is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "integer"}],
+		func: function([x, y, stepsize, obj]) {
+			let instances = this.objectReferenceToInstances(obj);
+			if (!Array.isArray(instances)) { instances = []; }
+			return this.game.collision.linearStep(this.currentInstance, instances, x, y, stepsize, false) ? 1 : 0;
 		},
 	};
 
@@ -9307,9 +9307,11 @@ export default class BuiltInFunctions {
 
 	static action_linear_step = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_linear_step is not implemented");
-			// return 0;
+		func: function([x, y, speed, stopAt], relative) {
+			x = (!relative ? x : this.currentInstance.x + x);
+			y = (!relative ? y : this.currentInstance.y + y);
+			BuiltInFunctions.mp_linear_step.func.call(this, [x, y, speed, stopAt == 0]);
+			return 0;
 		},
 	};
 

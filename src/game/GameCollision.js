@@ -528,4 +528,29 @@ export default class GameCollision {
 		instance.x = x;
 		instance.y = y;
 	}
+
+	linearStep(instance, colInstances, x, y, stepSize, solidOnly) {
+		const cx = instance.x;
+		const cy = instance.y;
+
+		if (x == cx && y == cy) return true;
+
+		const dist = Math.hypot(x - cx, y - cy);
+
+		if (dist > stepSize) {
+			const dir = Math.atan2(-(y - cy), x - cx);
+			x = cx + (Math.cos(dir) * stepSize);
+			y = cy + (-Math.sin(dir) * stepSize);
+		}
+
+		const c = this.instanceOnInstances(instance, colInstances, x, y, solidOnly);
+		if (!c) {
+			instance.x = x;
+			instance.y = y;
+
+			if (x == cx && y == cy) return true;
+		}
+
+		return false;
+	}
 }

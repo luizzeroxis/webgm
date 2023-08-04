@@ -9557,49 +9557,64 @@ export default class BuiltInFunctions {
 
 	static action_timeline_set = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_timeline_set is not implemented");
-			// return 0;
+		func: function([timeline, position, start, loop]) {
+			this.currentInstance.timelineIndex = timeline;
+			this.currentInstance.timeline = this.game.project.getResourceById("ProjectTimeline", timeline);
+
+			this.currentInstance.timelinePosition = position;
+
+			this.currentInstance.timelineRunning = (start == 0);
+			this.currentInstance.timelineLoop = (loop == 1);
+			return 0;
 		},
 	};
 
 	static action_set_timeline_position = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_set_timeline_position is not implemented");
-			// return 0;
+		func: function([position], relative) {
+			if (!relative) {
+				this.currentInstance.timelinePosition = position;
+			} else {
+				this.currentInstance.timelinePosition += position;
+			}
+			return 0;
 		},
 	};
 
 	static action_set_timeline_speed = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_set_timeline_speed is not implemented");
-			// return 0;
+		func: function([speed], relative) {
+			if (!relative) {
+				this.currentInstance.timelineSpeed = speed;
+			} else {
+				this.currentInstance.timelineSpeed += speed;
+			}
+			return 0;
 		},
 	};
 
 	static action_timeline_start = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_timeline_start is not implemented");
-			// return 0;
+		func: function([]) {
+			this.currentInstance.timelineRunning = true;
+			return 0;
 		},
 	};
 
 	static action_timeline_pause = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_timeline_pause is not implemented");
-			// return 0;
+		func: function([]) {
+			this.currentInstance.timelineRunning = false;
+			return 0;
 		},
 	};
 
 	static action_timeline_stop = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_timeline_stop is not implemented");
-			// return 0;
+		func: function([]) {
+			this.currentInstance.timelineRunning = false;
+			this.currentInstance.timelinePosition = 0;
+			return 0;
 		},
 	};
 

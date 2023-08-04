@@ -1119,6 +1119,9 @@ export default class BuiltInFunctions {
 			// TODO error check
 			const pathResource = this.game.project.getResourceById("ProjectPath", path);
 			this.currentInstance.path = pathResource;
+
+			if (!pathResource) return 0;
+
 			this.currentInstance.pathPosition = (speed >= 0 ? 0 : 1);
 			this.currentInstance.pathPreviousPosition = this.currentInstance.pathPosition;
 			this.currentInstance.pathSpeed = speed;
@@ -2559,10 +2562,10 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_path = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_path is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "bool"}],
+		func: function([path, x, y, absolute]) {
+			this.game.render.drawPath(path, x, y, absolute);
+			return 0;
 		},
 	};
 

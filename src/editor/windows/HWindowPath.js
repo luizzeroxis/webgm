@@ -485,27 +485,13 @@ export default class HWindowPath extends HWindow {
 		if (points.length < 2) return;
 
 		this.ctx.beginPath();
-		this.ctx.strokeStyle = "#000000";
-		this.ctx.lineWidth = 4;
 
-		if (this.resource.connectionKind == "curve") {
-			const linePoints = this.resource.getLinePoints();
+		const linePoints = this.resource.getLinePoints();
 
-			this.ctx.moveTo(linePoints[0].x, linePoints[0].y);
+		this.ctx.moveTo(linePoints[0].x, linePoints[0].y);
 
-			for (let i=1; i<linePoints.length; ++i) {
-				this.ctx.lineTo(linePoints[i].x, linePoints[i].y);
-			}
-		} else if (this.resource.connectionKind == "lines") {
-			this.ctx.moveTo(points[0].x, points[0].y);
-
-			for (let i=1; i<points.length; ++i) {
-				this.ctx.lineTo(points[i].x, points[i].y);
-			}
-
-			if (this.resource.closed) {
-				this.ctx.lineTo(points[0].x, points[0].y);
-			}
+		for (let i=1; i<linePoints.length; ++i) {
+			this.ctx.lineTo(linePoints[i].x, linePoints[i].y);
 		}
 
 		this.ctx.strokeStyle = "#000000";

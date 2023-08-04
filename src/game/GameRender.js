@@ -525,6 +525,39 @@ export default class GameRender {
 		this.ctx.restore();
 	}
 
+	drawPath(pathIndex, x, y, absolute) {
+		const path = this.game.project.getResourceById("ProjectPath", pathIndex);
+		if (!path) {
+			throw this.game.makeError({text:`Trying to drawn non-existing path. (${pathIndex})`});
+		}
+
+		const linePoints = path.getLinePoints();
+
+		this.ctx.strokeStyle = this.drawColorAlpha;
+
+		this.ctx.save();
+		this.ctx.translate(0.5, 0.5);
+
+		let offset = {x: 0, y: 0};
+		if (!absolute) {
+			const start = path.getStartPosition();
+			offset = {
+				x: -start.x + x,
+				y: -start.y + y,
+			};
+		}
+
+		this.ctx.beginPath();
+		this.ctx.moveTo(offset.x + linePoints[0].x, offset.y + linePoints[0].y);
+
+		for (let i=1; i<linePoints.length; ++i) {
+			this.ctx.lineTo(offset.x + linePoints[i].x, offset.y + linePoints[i].y);
+		}
+
+		this.ctx.stroke();
+		this.ctx.restore();
+	}
+
 	drawText(x, y, string, sep, w) {
 		this.ctx.fillStyle = this.drawColorAlpha;
 

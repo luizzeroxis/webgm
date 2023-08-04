@@ -468,13 +468,11 @@ export default class Game {
 		for (const [subtype, list] of this.events.getEventsOfType("collision")) {
 			for (const {event, instance} of list) {
 				// TODO test what happens when colliding with multiple instances at once
-				// TODO paths
 				for (const other of this.instances) {
 					if (!instance.exists) continue;
 					if (!other.exists) continue;
 					if (!(other.objectIndex == subtype)) continue;
 					if (this.collision.instanceOnInstance(instance, other)) {
-						// Collision shenanigans
 						if (other.solid) {
 							// Move instance back
 							instance.x = instance.xPrevious;
@@ -669,6 +667,8 @@ export default class Game {
 						instance.pathPosition = (stoppedForward ? 1 : 0);
 						instance.pathSpeed *= -1;
 						break;
+					default:
+						instance.path = null;
 				}
 
 				await this.events.runEventOfInstance("other", Events.OTHER_END_OF_PATH, instance);

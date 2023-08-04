@@ -24,6 +24,9 @@ export default class HActionsEditor extends HElement {
 
 			this.editor = editor;
 			this.parentWindow = parentWindow;
+			this.onActionsChange = onActionsChange;
+			this.containerName = containerName;
+
 			this.actions = null;
 
 			parent( add( new HElement("div", {class: "actions"}) ) );
@@ -184,22 +187,13 @@ export default class HActionsEditor extends HElement {
 									nextClass = "new-row";
 								} else {
 									const actionTypeButton = add( new HButton(null, () => {
-										if (!this.actions) {
-											alert(`You need to select or add ${containerName} before you can add actions.`);
-										}
-										const action = new ProjectAction();
-										action.setType(library, actionType);
-
-										this.openActionWindow(action);
-
-										this.actions.push(action);
-
-										this.updateSelectActions();
-										this.selectActions.setSelectedIndex(this.actions.length-1);
-										this.updateActionsMenu();
-
-										onActionsChange(this.actions);
+										this.addAction(library, actionType);
 									}, "action-type") );
+
+									actionTypeButton.setEvent("contextmenu", e => {
+										e.preventDefault();
+										this.addAction(library, actionType);
+									});
 
 									if (nextClass) {
 										actionTypeButton.html.classList.add(nextClass);
@@ -227,6 +221,24 @@ export default class HActionsEditor extends HElement {
 				endparent();
 
 			endparent();
+	}
+
+	addAction(library, actionType) {
+		if (!this.actions) {
+			alert(`You need to select or add ${this.containerName} before you can add actions.`);
+		}
+		const action = new ProjectAction();
+		action.setType(library, actionType);
+
+		this.openActionWindow(action);
+
+		this.actions.push(action);
+
+		this.updateSelectActions();
+		this.selectActions.setSelectedIndex(this.actions.length-1);
+		this.updateActionsMenu();
+
+		this.onActionsChange(this.actions);
 	}
 
 	updateActions(actions) {

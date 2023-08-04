@@ -2932,30 +2932,53 @@ export default class BuiltInLibraries {
 						},
 					],
 				},
-				/*
 				{
-					id: 999,
+					id: 519,
 					description: "Draw Scaled Text",
-					listText: [""],
-					hintText: [""],
+					listText: ["Draw a text transformed"],
+					hintText: [w, "at ", r, "position (", a[1], ",", a[2], ") draw text: ", a[0], " scaled horizontally with ", a[3], ", vertically with ", a[4], ", and rotated over ", a[5], " degrees"],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_draw_text_transformed",
 
 					interfaceKind: "normal",
 					isQuestion: false,
-					hasApplyTo: false,
-					hasRelative: false,
+					hasApplyTo: true,
+					hasRelative: true,
 
 					args: [
 						{
-							name: "",
-							kind: "",
+							name: "text:",
+							kind: "both",
 							default: "",
+						},
+						{
+							name: "x:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "y:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "xscale:",
+							kind: "expression",
+							default: "1",
+						},
+						{
+							name: "xyscale:",
+							kind: "expression",
+							default: "1",
+						},
+						{
+							name: "angle:",
+							kind: "expression",
+							default: "0",
 						},
 					],
 				},
-				*/
 				{
 					kind: "separator",
 				},
@@ -3155,30 +3178,48 @@ export default class BuiltInLibraries {
 						},
 					],
 				},
-				/*
 				{
-					id: 999,
+					id: 515,
 					description: "Draw Arrow",
-					listText: [""],
-					hintText: [""],
+					listText: ["Draw an arrow"],
+					hintText: [w, "draw an arrow ", r, "between (", a[0], ",", a[1], ") and (", a[2], ",", a[3], ") with size ", a[4]],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_draw_arrow",
 
 					interfaceKind: "normal",
 					isQuestion: false,
-					hasApplyTo: false,
-					hasRelative: false,
+					hasApplyTo: true,
+					hasRelative: true,
 
 					args: [
 						{
-							name: "",
-							kind: "",
-							default: "",
+							name: "x1:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "y1:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "x2:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "y2:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "tip size:",
+							kind: "expression",
+							default: "12",
 						},
 					],
 				},
-				*/
 				{
 					name: "Settings",
 					kind: "label",

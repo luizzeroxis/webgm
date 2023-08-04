@@ -558,24 +558,39 @@ export default class GameRender {
 		this.ctx.restore();
 	}
 
-	drawText(x, y, string, sep, w) {
+	drawText(x, y, string, options) {
+		/* options {
+			scale: {x, y},
+			angle,
+		} */
 		this.ctx.fillStyle = this.drawColorAlpha;
 
-		const geometry = this.getTextGeometry(string, sep, w);
+		this.ctx.save();
+		this.ctx.translate(x, y);
+		if (options?.angle) {
+			this.ctx.rotate(-options.angle * Math.PI/180);
+		}
+		if (options?.scale) {
+			this.ctx.scale(options.scale.x, options.scale.y);
+		}
+
+		const geometry = this.getTextGeometry(string, options?.sep, options?.w);
 
 		let cy;
-		if (this.drawVAlign == 0) { cy = y; }
-		if (this.drawVAlign == 1) { cy = y - geometry.height/2; }
-		if (this.drawVAlign == 2) { cy = y - geometry.height; }
+		if (this.drawVAlign == 0) { cy = 0; }
+		if (this.drawVAlign == 1) { cy = -geometry.height/2; }
+		if (this.drawVAlign == 2) { cy = -geometry.height; }
 
 		for (const line of geometry.lines) {
 			let cx;
-			if (this.drawHAlign == 0) { cx = x; }
-			if (this.drawHAlign == 1) { cx = x - line.width/2; }
-			if (this.drawHAlign == 2) { cx = x - line.width; }
+			if (this.drawHAlign == 0) { cx = 0; }
+			if (this.drawHAlign == 1) { cx = -line.width/2; }
+			if (this.drawHAlign == 2) { cx = -line.width; }
 
 			this.ctx.fillText(line.text, cx, cy + line.y);
 		}
+
+		this.ctx.restore();
 	}
 
 	getTextGeometry(string, sep, w) {

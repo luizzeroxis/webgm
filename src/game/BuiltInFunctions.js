@@ -2734,7 +2734,7 @@ export default class BuiltInFunctions {
 	static draw_text_ext = {
 		args: [{type: "real"}, {type: "real"}, {type: "as_string"}, {type: "real"}, {type: "real"}],
 		func: function([x, y, string, sep, w]) {
-			this.game.render.drawText(x, y, string, sep, w);
+			this.game.render.drawText(x, y, string, {sep, w});
 			return 0;
 		},
 	};
@@ -2768,18 +2768,18 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_text_transformed = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_text_transformed is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "as_string"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([x, y, string, xscale, yscale, angle]) {
+			this.game.render.drawText(x, y, string, {scale: {x: xscale, y: yscale}, angle});
+			return 0;
 		},
 	};
 
 	static draw_text_ext_transformed = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function draw_text_ext_transformed is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "as_string"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([x, y, string, sep, w, xscale, yscale, angle]) {
+			this.game.render.drawText(x, y, string, {sep, w, scale: {x: xscale, y: yscale}, angle});
+			return 0;
 		},
 	};
 
@@ -10250,9 +10250,11 @@ export default class BuiltInFunctions {
 
 	static action_draw_text_transformed = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_draw_text_transformed is not implemented");
-			// return 0;
+		func: function([text, x, y, xscale, yscale, angle], relative) {
+			x = (!relative ? x : this.currentInstance.x + x);
+			y = (!relative ? y : this.currentInstance.y + y);
+			BuiltInFunctions.draw_text_transformed.func.call(this, [x, y, text, xscale, yscale, angle]);
+			return 0;
 		},
 	};
 
@@ -10318,9 +10320,13 @@ export default class BuiltInFunctions {
 
 	static action_draw_arrow = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_draw_arrow is not implemented");
-			// return 0;
+		func: function([x1, y1, x2, y2, tipSize], relative) {
+			x1 = (!relative ? x1 : this.currentInstance.x + x1);
+			y1 = (!relative ? y1 : this.currentInstance.y + y1);
+			x2 = (!relative ? x2 : this.currentInstance.x + x2);
+			y2 = (!relative ? y2 : this.currentInstance.y + y2);
+			BuiltInFunctions.draw_line.func.call(this, [x1, y1, x2, y2, tipSize]);
+			return 0;
 		},
 	};
 

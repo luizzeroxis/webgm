@@ -275,7 +275,7 @@ input[type="text"], input[type="number"], select {
 		overflow: auto;
 		flex: none;
 
-		.origin-x-y {
+		> fieldset > .origin-x-y {
 			display: flex;
 
 			> .h-label-and-input {
@@ -457,7 +457,8 @@ input[type="text"], input[type="number"], select {
 
 .window-timeline, .window-object {
 	> .actions-editor {
-		display: contents;
+		display: flex;
+		flex: 1;
 		
 		> .actions {
 			display: flex;
@@ -483,6 +484,7 @@ input[type="text"], input[type="number"], select {
 
 		> .libraries {
 			flex: none;
+			padding-left: 4px;
 
 			> .libraries-tabs {
 				display: flex;
@@ -507,6 +509,8 @@ input[type="text"], input[type="number"], select {
 
 						img {
 							display: block;
+							min-width: 24px;
+							min-height: 24px;
 							margin: auto;
 						}
 					}

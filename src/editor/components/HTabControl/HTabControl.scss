@@ -4,14 +4,14 @@
 		flex-wrap: wrap;
 
 		> .button {
+			padding: 2px 4px;
 			border: 1px solid black;
 			background-color: gray;
-			padding: 2px 4px 2px 4px;
 			user-select: none;
 
 			&.selected {
-				background-color: inherit;
 				border-bottom: none;
+				background-color: inherit;
 			}
 		}
 	}
@@ -31,8 +31,8 @@
 			writing-mode: vertical-rl;
 
 			> .button {
+				padding: 4px 2px;
 				border: 1px solid black;
-				padding: 4px 2px 4px 2px;
 
 				&.selected {
 					border-left: none;

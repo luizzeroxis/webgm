@@ -1,17 +1,13 @@
-import HWindow from "~/common/components/HWindowManager/HWindow.js";
+import HModalWindow from "~/common/components/HWindowManager/HModalWindow.js";
 import Events from "~/common/Events.js";
 import {parent, endparent, add, HElement, HButton, HNumberInput, HSelectWithOptions} from "~/common/h";
 import {ProjectObject} from "~/common/project/ProjectProperties.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
 
-export default class HEventChooserWindow extends HWindow {
+export default class HEventChooserWindow extends HModalWindow {
 	constructor(manager, editor) {
 		super(manager);
 		this.editor = editor;
-
-		this.promise = new Promise(resolve => {
-			this.resolveFunction = resolve;
-		});
 
 		this.setResizable(false);
 		this.setMinimizeButton(false);
@@ -81,10 +77,5 @@ export default class HEventChooserWindow extends HWindow {
 			}
 
 			endparent();
-	}
-
-	close(result) {
-		super.close();
-		this.resolveFunction(result);
 	}
 }

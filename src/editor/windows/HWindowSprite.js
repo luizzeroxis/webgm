@@ -5,6 +5,7 @@ import {ProjectSprite} from "~/common/project/ProjectProperties.js";
 import {openFile, setDeepOnUpdateOnElement, setOnFileDrop} from "~/common/tools.js";
 
 import HWindowSpriteImages from "./HWindowSpriteImages.js";
+import HWindowSpriteMask from "./HWindowSpriteMask.js";
 
 export default class HWindowSprite extends HWindow {
 	constructor(manager, editor, resource) {
@@ -101,6 +102,16 @@ export default class HWindowSprite extends HWindow {
 						this.inputSeparateCollisionMasks = add( new HCheckBoxInput("Separate collision masks", this.resource.separateCollisionMasks) );
 
 						endparent();
+
+					add( new HButton("Modify Mask", async () => {
+						await this.editor.windowManager.openModal(HWindowSpriteMask, this).promise;
+
+						// Update UI beforehand so saveData() doesn't override it
+						this.inputPreciseCollisionChecking.setChecked((this.resource.shape == "precise"));
+						this.inputSeparateCollisionMasks.setChecked(this.resource.separateCollisionMasks);
+
+						this.onUpdate();
+					}) );
 					endparent();
 
 				parent( add( new HElement("div", {class: "preview"}) ) );
@@ -133,7 +144,7 @@ export default class HWindowSprite extends HWindow {
 		this.resource.shape = this.inputPreciseCollisionChecking.getChecked() ? "precise" : "rectangle";
 		this.resource.separateCollisionMasks = this.inputSeparateCollisionMasks.getChecked();
 
-		this.resource.alphaTolerance = 0;
+		// this.resource.alphaTolerance = 0;
 		this.resource.boundingBox = "automatic";
 		this.resource.bbLeft = 0;
 		this.resource.bbTop = 0;

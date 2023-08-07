@@ -8,7 +8,6 @@ export default class ProjectLoader {
 		this.game = game;
 		this.project = project;
 
-		// this.imageDataCache = new Map();
 		this.collisionMasks = new Map();
 		this.sounds = new Map();
 
@@ -46,75 +45,19 @@ export default class ProjectLoader {
 		this.project.resources.ProjectSprite.forEach(sprite => {
 			let prevMask;
 
-			sprite.images.forEach((image, imageNumber) => {
+			this.images.forEach((image, imageIndex) => {
 				image.load();
 				promises.push(image.promise
 					.then(() => {
-						// TODO account for sprite.boundingBox
-						if (sprite.shape == "precise") {
-							if (image.width > offscreen.width || image.height > offscreen.height) {
-								offscreen.width = image.width;
-								offscreen.height = image.height;
-							}
-
-							offscreenCtx.clearRect(0, 0, image.width, image.height);
-							offscreenCtx.drawImage(image.image, 0, 0);
-
-							const data = offscreenCtx.getImageData(0, 0, image.width, image.height);
-							// this.imageDataCache.set(image, data);
-
-							let mask = prevMask;
-
-							if (!mask) {
-								mask = new Array(data.width);
-								for (let x=0; x<data.width; ++x) {
-									mask[x] = new Array(data.height);
-								}
-							}
-
-							for (let i=0; i<data.data.length; i+=4) {
-								const x = (i/4) % data.width;
-								const y = Math.floor((i/4) / data.width);
-								const alpha = data.data[i+3];
-
-								if (alpha >= (255 - sprite.alphaTolerance)) {
-									mask[x][y] = true;
-								}
-							}
-
-							this.collisionMasks.set(image, mask);
-
-							if (!sprite.separateCollisionMasks) {
-								prevMask = mask;
-							}
-						} else if (sprite.shape == "rectangle") {
-							let mask = prevMask;
-
-							if (!mask) {
-								mask = new Array(image.width);
-								for (let x=0; x<image.width; ++x) {
-									mask[x] = new Array(image.height);
-									for (let y=0; y<image.height; ++y) {
-										mask[x][y] = true;
-									}
-								}
-
-								prevMask = mask;
-							}
-
-							this.collisionMasks.set(image, mask);
-						} else if (sprite.shape == "disk") {
-							throw new Error("Shape not supported");
-						} else if (sprite.shape == "diamond") {
-							throw new Error("Shape not supported");
-						} else {
-							throw new Error("Shape not supported");
-						}
+						const mask = sprite.getMaskIntoPrev(image, prevMask, offscreen, offscreenCtx);
+						prevMask = mask;
+						this.collisionMasks.set(image, mask);
 					})
 					.catch(e => {
 						console.error(e);
-						throw new EngineException("Could not load image " + imageNumber.toString() + " in sprite " + sprite.name);
-					}));
+						throw new EngineException("Could not load image " + imageIndex.toString() + " in sprite " + sprite.name);
+					}),
+				);
 			});
 		});
 

@@ -18,6 +18,11 @@ export class HCanvas extends HElement {
 		super("canvas", {class: classToAttr(_class), width: width, height: height});
 	}
 
+	setSize(w, h) {
+		this.html.width = w;
+		this.html.height = h;
+	}
+
 	clear() {
 		// Haxs for cleaning canvas
 		const h = this.html.height;
@@ -108,6 +113,19 @@ export class HRangeInput extends HLabelAndInput {
 		if (step != null) this.input.html.step = step;
 		if (min != null) this.input.html.min = min;
 		if (max != null) this.input.html.max = max;
+		this.input.html.value = value; // Redo because of default max of 100
+	}
+
+	getIntValue(def=0) {
+		const value = parseInt(this.input.html.value);
+		if (Number.isNaN(value)) return def;
+		return value;
+	}
+
+	getFloatValue(def=0) {
+		const value = parseFloat(this.input.html.value);
+		if (Number.isNaN(value)) return def;
+		return value;
 	}
 }
 

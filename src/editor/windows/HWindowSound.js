@@ -56,7 +56,7 @@ export default class HWindowSound extends HWindow {
 		this.editor.project.changeResourceName(this.resource, this.inputName.getValue());
 		this.updateTitle();
 
-		this.resource.volume = parseFloat(this.inputVolume.getValue());
+		this.resource.volume = parseFloat(this.inputVolume.getFloatValue());
 	}
 
 	restoreData() {

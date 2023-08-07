@@ -17,7 +17,7 @@ export default class HWindowPath extends HWindow {
 		this.areaX = 0;
 		this.areaY = 0;
 		this.areaW = 0;
-		this.arawH = 0;
+		this.areaH = 0;
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "window-path"}) ) );

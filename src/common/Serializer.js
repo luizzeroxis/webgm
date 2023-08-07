@@ -54,7 +54,7 @@ export default class Serializer {
 	}
 
 
-	// Run this in the contructor of serializable classes
+	// Run this in the constructor of serializable classes
 	static initProperties(_this, args) {
 		const [object] = args;
 

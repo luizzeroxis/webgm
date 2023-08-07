@@ -692,7 +692,7 @@ export class ProjectGlobalGameSettings {
 
 			displayErrors: true,
 			abortOnError: false,
-			unitializedVarsAre0: false,
+			uninitializedVarsAre0: false,
 
 			author: "",
 			version: "100",

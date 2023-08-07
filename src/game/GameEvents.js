@@ -208,6 +208,8 @@ export default class GameEvents {
 			return await this.game.gml.execute(result.ast, instance, other);
 		}
 
+		// TODO maybe parse boolean
+
 		return arg.value;
 	}
 
@@ -228,7 +230,7 @@ export default class GameEvents {
 		return this.runEvent(this.getEventOfObject(instance.object, type, subtype), instance);
 	}
 
-	// Generates this.mapOfEvents, a map containg all event-instance pairs that exist currently. It is structured like so:
+	// Generates this.mapOfEvents, a map containing all event-instance pairs that exist currently. It is structured like so:
 	// Map(<event type>, Map(<event subtype>, {event, instance}))
 	makeMapOfEvents() {
 		const map = new Map();

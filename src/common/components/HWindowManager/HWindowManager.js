@@ -47,7 +47,7 @@ export default class HWindowManager extends HElement {
 		document.removeEventListener("mousedown", this.mouseDownHandler);
 	}
 
-	// Opens or focus on a window. idFunc(window) will be called for each window; it should return a bool that determines if it's the same window as the one you're tryng to open. If window doesn't exist yet, a new windowClass(manager, ...args) will be created. If window exists, it will be focused on.
+	// Opens or focus on a window. idFunc(window) will be called for each window; it should return a bool that determines if it's the same window as the one you're trying to open. If window doesn't exist yet, a new windowClass(manager, ...args) will be created. If window exists, it will be focused on.
 	open(windowClass, idFunc, ...args) {
 		let w = this.find(windowClass, idFunc);
 		if (w) {
@@ -138,7 +138,7 @@ export default class HWindowManager extends HElement {
 		return false;
 	}
 
-	// Moves all windows into a cascanding pattern.
+	// Moves all windows into a cascading pattern.
 	cascade() {
 		let x = 0;
 		let y = 0;

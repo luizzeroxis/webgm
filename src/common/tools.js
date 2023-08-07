@@ -194,7 +194,7 @@ export function stringifyArrowValues(values) {
 	return string;
 }
 
-// Value type convertion
+// Value type conversion
 
 export function asString(value) {
 	if (typeof value != "string") {

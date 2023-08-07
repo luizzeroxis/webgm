@@ -935,14 +935,14 @@ export default class Game {
 
 	// // Helper functions
 
-	// If parent is an ancenstor of child, by index.
+	// If parent is an ancestor of child, by index.
 	objectIsAncestorByIndex(parentIndex, childIndex) {
 		const parent = this.project.getResourceById("ProjectObject", parentIndex);
 		const child = this.project.getResourceById("ProjectObject", childIndex);
 		return this.objectIsAncestor(parent, child);
 	}
 
-	// If parent is an ancenstor of child.
+	// If parent is an ancestor of child.
 	objectIsAncestor(parent, child) {
 		if (child.parent_index >= 0) {
 			if (child.parent_index == parent.id) return true;
@@ -990,7 +990,7 @@ export default class Game {
 
 	// TODO make the message more like the one from GM
 
-	// Display a error messsage using the text property.
+	// Display a error message using the text property.
 	async showError(e) {
 		console.error(e.text);
 

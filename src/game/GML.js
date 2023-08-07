@@ -294,7 +294,7 @@ export default class GML {
 				const value = await this.interpretASTNode(_expression);
 				await this.varSet(varInfo, value, _variableNode);
 			},
-			// Note: In GM, assignment operations don't error out when they should, and they have weird behaviour. It's replicated here.
+			// Note: In GM, assignment operations don't error out when they should, and they have weird behavior. It's replicated here.
 			AssignmentAdd: async ({_variable, _variableNode, _expression}) => {
 				const varInfo = await this.interpretASTNode(_variable);
 				const value = await this.interpretASTNode(_expression);

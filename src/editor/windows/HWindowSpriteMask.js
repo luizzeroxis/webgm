@@ -18,6 +18,8 @@ export default class HWindowSpriteMask extends HModalWindow {
 			parent( add( new HElement("div", {class: "window-sprite-mask"}) ) );
 				parent( add( new HElement("div") ) );
 
+					this.inputShowCollisionMask = add( new HCheckBoxInput("Show collision mask", true) );
+
 					this.inputSeparateCollisionMasks = add( new HCheckBoxInput("Separate collision masks", this.resource.separateCollisionMasks) );
 					this.inputAlphaTolerance = add( new HRangeInput("Alpha Tolerance:", this.resource.alphaTolerance, 1, 0, 255) );
 
@@ -40,6 +42,7 @@ export default class HWindowSpriteMask extends HModalWindow {
 
 					parent( add( new HElement("div", {class: "preview"}) ) );
 						this.canvasPreview = add( new HCanvas(0, 0) );
+						this.ctx = this.canvasPreview.html.getContext("2d");
 						this.updatePreview();
 						endparent();
 
@@ -61,31 +64,49 @@ export default class HWindowSpriteMask extends HModalWindow {
 		if (!image) return;
 
 		this.canvasPreview.setSize(image.width, image.height);
-		const ctx = this.canvasPreview.html.getContext("2d");
 
-		ctx.drawImage(image.image, 0, 0);
+		this.ctx.drawImage(image.image, 0, 0);
 
-		const offscreen = new OffscreenCanvas(0, 0);
-		const offscreenCtx = offscreen.getContext("2d", {willReadFrequently: true});
+		if (this.inputShowCollisionMask.getChecked()) {
+			const offscreen = new OffscreenCanvas(0, 0);
+			const offscreenCtx = offscreen.getContext("2d", {willReadFrequently: true});
 
-		const masks = [];
-		let prevMask;
+			const masks = this.resource.getMasks(offscreen, offscreenCtx);
 
-		for (const [imageIndex, image] of this.resource.images.entries()) {
-			const mask = this.resource.getMaskIntoPrev(image, prevMask, offscreen, offscreenCtx);
-			prevMask = mask;
-			masks[imageIndex] = mask;
-		}
+			const imageMask = masks[0];
 
-		const imageMask = masks[0];
-		for (let x=0; x<imageMask.length; ++x)
-		for (let y=0; y<imageMask[x].length; ++y) {
-			if (imageMask[x][y]) {
-				ctx.fillStyle = "rgba(0,0,0,0.5)";
-			} else {
-				ctx.fillStyle = "rgba(255,255,255,0.5)";
+			const aO = (aA, aB) => {
+				return aA + aB * (1 - aA);
 			}
-			ctx.fillRect(x, y, 1, 1);
+			const cO = (cA, cB, aA, aB, aO) => {
+				return (cA * aA + cB * aB * (1 - aA)) / aO;
+			}
+
+			const data = this.ctx.getImageData(0, 0, image.width, image.height);
+			for (let x=0; x<imageMask.length; ++x)
+			for (let y=0; y<imageMask[x].length; ++y) {
+				const pixel = (x+(y*imageMask.length)) * 4;
+				const r = data.data[pixel] / 255;
+				const g = data.data[pixel + 1] / 255;
+				const b = data.data[pixel + 2] / 255;
+				const a = data.data[pixel + 3] / 255;
+
+				const outA = aO(0.5, a);
+
+				if (imageMask[x][y]) {
+					data.data[pixel] = cO(0, r, 0.5, a, outA) * 255;
+					data.data[pixel+1] = cO(0, g, 0.5, a, outA) * 255;
+					data.data[pixel+2] = cO(0, b, 0.5, a, outA) * 255;
+					data.data[pixel+3] = outA * 255;
+				} else {
+					data.data[pixel] = cO(1, r, 0.5, a, outA) * 255;
+					data.data[pixel+1] = cO(1, g, 0.5, a, outA) * 255;
+					data.data[pixel+2] = cO(1, b, 0.5, a, outA) * 255;
+					data.data[pixel+3] = outA * 255;
+				}
+			}
+
+			this.ctx.putImageData(data, 0, 0);
 		}
 	}
 

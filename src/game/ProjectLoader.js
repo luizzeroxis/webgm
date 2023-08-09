@@ -43,21 +43,18 @@ export default class ProjectLoader {
 		const offscreenCtx = offscreen.getContext("2d", {willReadFrequently: true});
 
 		this.project.resources.ProjectSprite.forEach(sprite => {
-			let prevMask;
-
-			this.images.forEach((image, imageIndex) => {
+			sprite.images.forEach((image, imageIndex) => {
 				image.load();
 				promises.push(image.promise
-					.then(() => {
-						const mask = sprite.getMaskIntoPrev(image, prevMask, offscreen, offscreenCtx);
-						prevMask = mask;
-						this.collisionMasks.set(image, mask);
-					})
 					.catch(e => {
 						console.error(e);
 						throw new EngineException("Could not load image " + imageIndex.toString() + " in sprite " + sprite.name);
 					}),
 				);
+			});
+
+			sprite.getMasks(offscreen, offscreenCtx).forEach((mask, index) => {
+				this.collisionMasks.set(sprite.images[index], mask);
 			});
 		});
 

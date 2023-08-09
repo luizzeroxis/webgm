@@ -25,11 +25,14 @@ export class ProjectSprite {
 		Serializer.initProperties(this, args);
 	}
 
-	getMaskIntoPrev(image, prevMask, canvas, ctx) {
-		// TODO account for boundingBox, bbLeft, bbTop, bbRight, bbBottom
-		let mask = prevMask;
+	getMasks(canvas, ctx) {
+		const masks = [];
+		let prevMask;
 
-		if (this.shape == "precise") {
+		for (const [imageIndex, image] of this.images.entries()) {
+			// TODO account for boundingBox, bbLeft, bbTop, bbRight, bbBottom
+			let mask = prevMask;
+
 			if (image.width > canvas.width || image.height > canvas.height) {
 				canvas.width = image.width;
 				canvas.height = image.height;
@@ -40,47 +43,53 @@ export class ProjectSprite {
 
 			const data = ctx.getImageData(0, 0, image.width, image.height);
 
-			if (!mask) {
-				mask = new Array(data.width);
-				for (let x=0; x<data.width; ++x) {
-					mask[x] = new Array(data.height);
+			if (this.shape == "precise") {
+				if (!mask) {
+					mask = new Array(image.width);
+					for (let x=0; x<image.width; ++x) {
+						mask[x] = new Array(image.height);
+					}
 				}
-			}
 
-			for (let i=0; i<data.data.length; i+=4) {
-				const x = (i/4) % data.width;
-				const y = Math.floor((i/4) / data.width);
-				const alpha = data.data[i+3];
 
-				if (alpha > this.alphaTolerance) {
-					mask[x][y] = true;
-				}
-			}
+				for (let i=0; i<data.data.length; i+=4) {
+					const x = (i/4) % image.width;
+					const y = Math.floor((i/4) / image.width);
+					const alpha = data.data[i+3];
 
-			if (!this.separateCollisionMasks) {
-				prevMask = mask;
-			}
-		} else if (this.shape == "rectangle") {
-			if (!mask) {
-				mask = new Array(image.width);
-				for (let x=0; x<image.width; ++x) {
-					mask[x] = new Array(image.height);
-					for (let y=0; y<image.height; ++y) {
+					if (alpha > this.alphaTolerance) {
 						mask[x][y] = true;
 					}
 				}
 
-				prevMask = mask;
+				if (!this.separateCollisionMasks) {
+					prevMask = mask;
+				}
+			} else if (this.shape == "rectangle") {
+				if (!mask) {
+					mask = new Array(image.width);
+					for (let x=0; x<image.width; ++x) {
+						mask[x] = new Array(image.height);
+						for (let y=0; y<image.height; ++y) {
+							mask[x][y] = true;
+						}
+					}
+
+					prevMask = mask;
+				}
+			} else if (this.shape == "disk") {
+				throw new Error("Shape not supported");
+			} else if (this.shape == "diamond") {
+				throw new Error("Shape not supported");
+			} else {
+				throw new Error("Shape not supported");
 			}
-		} else if (this.shape == "disk") {
-			throw new Error("Shape not supported");
-		} else if (this.shape == "diamond") {
-			throw new Error("Shape not supported");
-		} else {
-			throw new Error("Shape not supported");
+
+			prevMask = mask;
+			masks[imageIndex] = mask;
 		}
 
-		return mask;
+		return masks;
 	}
 
 	static getName() { return "sprite"; }

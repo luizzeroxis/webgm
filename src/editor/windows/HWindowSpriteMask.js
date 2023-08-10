@@ -45,6 +45,8 @@ export default class HWindowSpriteMask extends HModalWindow {
 						const shapeGroup = "_radio_"+uniqueID();
 						this.radioShapePrecise = add( new HRadioInput(shapeGroup, "Precise", (this.resource.shape == "precise")) );
 						this.radioShapeRectangle = add( new HRadioInput(shapeGroup, "Rectangle", (this.resource.shape == "rectangle")) );
+						this.radioShapeDisk = add( new HRadioInput(shapeGroup, "Disk", (this.resource.shape == "disk")) );
+						this.radioShapeDiamond = add( new HRadioInput(shapeGroup, "Diamond", (this.resource.shape == "diamond")) );
 						endparent();
 
 					add( new HButton("OK", () => {
@@ -59,7 +61,6 @@ export default class HWindowSpriteMask extends HModalWindow {
 					parent( add( new HElement("div", {class: "preview"}) ) );
 						this.canvasPreview = add( new HCanvas(0, 0) );
 						this.ctx = this.canvasPreview.html.getContext("2d", {willReadFrequently: true});
-						this.updatePreview();
 						endparent();
 
 					endparent();
@@ -73,6 +74,63 @@ export default class HWindowSpriteMask extends HModalWindow {
 			this.onUpdate();
 		});
 	}
+
+	async onAdd() {
+		await this.updatePreview();
+		super.onAdd();
+	}
+
+	copyData() {
+		this.resourceCopy = new ProjectSprite(this.resource); // TODO maybe just copy certain properties?
+	}
+
+	saveData() {
+		this.resource.separateCollisionMasks = this.inputSeparateCollisionMasks.getChecked();
+		this.resource.alphaTolerance = this.inputAlphaTolerance.getIntValue();
+
+		this.resource.boundingBox = (
+			this.radioBBAutomatic.getChecked() ? "automatic"
+			: this.radioBBFullImage.getChecked() ? "fullimage"
+			: this.radioBBManual.getChecked() ? "manual"
+			: null
+		);
+
+		this.resource.bbLeft = this.inputBBLeft.getIntValue();
+		this.resource.bbTop = this.inputBBTop.getIntValue();
+		this.resource.bbRight = this.inputBBRight.getIntValue();
+		this.resource.bbBottom = this.inputBBBottom.getIntValue();
+
+		this.resource.shape = (
+			this.radioShapePrecise.getChecked() ? "precise"
+			: this.radioShapeRectangle.getChecked() ? "rectangle"
+			: this.radioShapeDisk.getChecked() ? "disk"
+			: this.radioShapeDiamond.getChecked() ? "diamond"
+			: null
+		);
+
+		// TODO: perhaps it would be better to just invalidate it, but would screw over the save file.
+		this.resource.updateMaskProperties();
+
+		// this.spriteWindow.updateImageInfo();
+		// this.spriteWindow.onUpdate();
+	}
+
+	restoreData() {
+		Object.assign(this.resource, this.resourceCopy);
+
+		// this.spriteWindow.updateImageInfo();
+		// this.spriteWindow.onUpdate();
+	}
+
+	onUpdate() {
+		this.modified = true;
+		this.saveData();
+	}
+
+	updateTitle() {
+		this.setTitle("Mask Properties: "+this.spriteWindow.resource.name);
+	}
+
 
 	updateBBInputs() {
 		const disable = !this.radioBBManual.getChecked();
@@ -136,55 +194,6 @@ export default class HWindowSpriteMask extends HModalWindow {
 		this.inputBBTop.setValue(this.resource.bbTop);
 		this.inputBBRight.setValue(this.resource.bbRight);
 		this.inputBBBottom.setValue(this.resource.bbBottom);
-	}
-
-	copyData() {
-		this.resourceCopy = new ProjectSprite(this.resource); // TODO maybe just copy certain properties?
-	}
-
-	saveData() {
-		this.resource.separateCollisionMasks = this.inputSeparateCollisionMasks.getChecked();
-		this.resource.alphaTolerance = this.inputAlphaTolerance.getIntValue();
-
-		this.resource.boundingBox = (
-			this.radioBBAutomatic.getChecked() ? "automatic"
-			: this.radioBBFullImage.getChecked() ? "fullimage"
-			: this.radioBBManual.getChecked() ? "manual"
-			: null
-		);
-
-		this.resource.bbLeft = this.inputBBLeft.getIntValue();
-		this.resource.bbTop = this.inputBBTop.getIntValue();
-		this.resource.bbRight = this.inputBBRight.getIntValue();
-		this.resource.bbBottom = this.inputBBBottom.getIntValue();
-
-		this.resource.shape = (
-			this.radioShapePrecise.getChecked() ? "precise"
-			: this.radioShapeRectangle.getChecked() ? "rectangle"
-			: null
-		);
-
-		// TODO: perhaps it would be better to just invalidate it, but would screw over the save file.
-		this.resource.updateMaskProperties();
-
-		// this.spriteWindow.updateImageInfo();
-		// this.spriteWindow.onUpdate();
-	}
-
-	restoreData() {
-		Object.assign(this.resource, this.resourceCopy);
-
-		// this.spriteWindow.updateImageInfo();
-		// this.spriteWindow.onUpdate();
-	}
-
-	onUpdate() {
-		this.modified = true;
-		this.saveData();
-	}
-
-	updateTitle() {
-		this.setTitle("Mask Properties: "+this.spriteWindow.resource.name);
 	}
 
 	close() {

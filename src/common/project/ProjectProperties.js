@@ -34,10 +34,10 @@ export class ProjectSprite {
 		const masks = this.makeMaskProperties(offscreen, offscreenCtx);
 
 		this.masks = masks.list;
-		this.bbLeft = masks.l;
-		this.bbTop = masks.t;
-		this.bbRight = masks.r;
-		this.bbBottom = masks.b;
+		this.bbLeft = masks.bbox.l;
+		this.bbTop = masks.bbox.t;
+		this.bbRight = masks.bbox.r;
+		this.bbBottom = masks.bbox.b;
 	}
 
 	// Use this to get masks if you are sure bb props are correct.
@@ -56,28 +56,27 @@ export class ProjectSprite {
 	makeMaskProperties(canvas, ctx) {
 		const masks = {
 			list: [],
+			bbox: {},
 		};
 
 		let currentMask;
 
-		let spriteBBox = {};
-
 		if (this.boundingBox == "automatic") {
-			spriteBBox = {
+			masks.bbox = {
 				l: (this.images[0]?.width ?? 32) - 1,
 				t: (this.images[0]?.height ?? 32) - 1,
 				r: 0,
 				b: 0,
 			};
 		} else if (this.boundingBox == "fullimage") {
-			spriteBBox = {
+			masks.bbox = {
 				l: 0,
 				t: 0,
 				r: (this.images[0]?.width ?? 32) - 1,
 				b: (this.images[0]?.height ?? 32) - 1,
 			};
 		} else if (this.boundingBox == "manual") {
-			spriteBBox = {
+			masks.bbox = {
 				l: this.bbLeft,
 				t: this.bbTop,
 				r: this.bbRight,
@@ -104,7 +103,7 @@ export class ProjectSprite {
 					b: 0,
 				};
 			} else {
-				bbox = spriteBBox;
+				bbox = masks.bbox;
 			}
 
 			if (image.width > canvas.width || image.height > canvas.height) {
@@ -140,23 +139,14 @@ export class ProjectSprite {
 
 			// Merge image bbox with sprite bbox
 			if (this.boundingBox == "automatic") {
-				spriteBBox.l = Math.min(spriteBBox.l, bbox.l);
-				spriteBBox.t = Math.min(spriteBBox.t, bbox.t);
-				spriteBBox.r = Math.max(spriteBBox.r, bbox.r);
-				spriteBBox.b = Math.max(spriteBBox.b, bbox.b);
+				masks.bbox.l = Math.min(masks.bbox.l, bbox.l);
+				masks.bbox.t = Math.min(masks.bbox.t, bbox.t);
+				masks.bbox.r = Math.max(masks.bbox.r, bbox.r);
+				masks.bbox.b = Math.max(masks.bbox.b, bbox.b);
 			}
 
 			if (this.separateCollisionMasks) {
-				if (this.shape == "rectangle") {
-					for (let x=bbox.l; x<bbox.r+1; ++x)
-					for (let y=bbox.t; y<bbox.b+1; ++y) {
-						currentMask[x][y] = true;
-					}
-				} else if (this.shape == "disk") {
-					throw new Error("Shape not supported");
-				} else if (this.shape == "diamond") {
-					throw new Error("Shape not supported");
-				}
+				this.fillMaskInBBox(currentMask, bbox);
 			}
 
 			masks.list[imageIndex] = currentMask;
@@ -167,24 +157,51 @@ export class ProjectSprite {
 		}
 
 		if (!this.separateCollisionMasks && this.images[0]) {
-			if (this.shape == "rectangle") {
-				for (let x=spriteBBox.l; x<spriteBBox.r+1; ++x)
-				for (let y=spriteBBox.t; y<spriteBBox.b+1; ++y) {
-					currentMask[x][y] = true;
-				}
-			} else if (this.shape == "disk") {
-				throw new Error("Shape not supported");
-			} else if (this.shape == "diamond") {
-				throw new Error("Shape not supported");
-			}
+			this.fillMaskInBBox(currentMask, masks.bbox);
 		}
 
-		masks.l = spriteBBox.l;
-		masks.t = spriteBBox.t;
-		masks.r = spriteBBox.r;
-		masks.b = spriteBBox.b;
-
 		return masks;
+	}
+
+	fillMaskInBBox(mask, bbox) {
+		if (this.shape == "rectangle") {
+			for (let x=bbox.l; x<bbox.r+1; ++x)
+			for (let y=bbox.t; y<bbox.b+1; ++y) {
+				mask[x][y] = true;
+			}
+		} else if (this.shape == "disk") {
+			const w = (bbox.r+1 - bbox.l);
+			const h = (bbox.b+1 - bbox.t);
+			const ellipseX = bbox.l - 0.5 + (w/2);
+			const ellipseY = bbox.t - 0.5 + (h/2);
+			const wPrime = ((w/2) ** 2);
+			const hPrime = ((h/2) ** 2);
+
+			for (let x=bbox.l; x<bbox.r+1; ++x)
+			for (let y=bbox.t; y<bbox.b+1; ++y) {
+				const xPrime = ((x - ellipseX) ** 2);
+				const yPrime = ((y - ellipseY) ** 2);
+
+				if ((xPrime/wPrime + yPrime/hPrime) <= 1) {
+					mask[x][y] = true;
+				}
+			}
+		} else if (this.shape == "diamond") {
+			for (let x=bbox.l; x<bbox.r+1; ++x)
+			for (let y=bbox.t; y<bbox.b+1; ++y) {
+				const diamondW = (bbox.r+1 - bbox.l);
+				const diamondH = (bbox.b+1 - bbox.t);
+				const diamondX = bbox.l - 0.5 + (diamondW/2);
+				const diamondY = bbox.t - 0.5 + (diamondH/2);
+
+				const dx = Math.abs(x - diamondX);
+				const dy = Math.abs(y - diamondY);
+
+				if ((dx/diamondW + dy/diamondH) <= 0.5) {
+					mask[x][y] = true;
+				}
+			}
+		}
 	}
 
 	static getName() { return "sprite"; }

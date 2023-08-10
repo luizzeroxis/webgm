@@ -69,8 +69,8 @@ export default class HWindowManager extends HElement {
 
 		parent(this);
 			const modal = parent( add( new HElement("div", {class: "modal"}) ) );
-				add(w);
 				w.setModal(modal);
+				add(w);
 				endparent();
 			endparent();
 

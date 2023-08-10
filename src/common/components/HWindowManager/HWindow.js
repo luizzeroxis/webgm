@@ -101,8 +101,8 @@ export default class HWindow extends HElement {
 		};
 		document.addEventListener("keydown", this.keyDownHandler);
 
-		this.setPositionToDefault();
 		this.setSizeToDefault();
+		this.setPositionToDefault();
 	}
 
 	onRemove() {
@@ -126,21 +126,26 @@ export default class HWindow extends HElement {
 	}
 
 	setPositionToDefault() {
-		let x = 0;
-		let y = 0;
+		if (!this.modal) {
+			let x = 0;
+			let y = 0;
 
-		while (true) {
-			const positionTaken = this.manager.windows.some(w => (w.x == x && w.y == y)); // eslint-disable-line no-loop-func
+			while (true) {
+				const positionTaken = this.manager.windows.some(w => (w.x == x && w.y == y)); // eslint-disable-line no-loop-func
 
-			if (positionTaken) {
-				x += this.manager.cascadeDiff;
-				y += this.manager.cascadeDiff;
-			} else {
-				break;
+				if (positionTaken) {
+					x += this.manager.cascadeDiff;
+					y += this.manager.cascadeDiff;
+				} else {
+					break;
+				}
 			}
-		}
 
-		this.setPosition(x, y);
+			this.setPosition(x, y);
+		} else {
+			const maxSize = this.getMaxSize();
+			this.setPosition(maxSize.w / 2 - this.w / 2, maxSize.h / 2 - this.h / 2);
+		}
 	}
 
 	setSizeToDefault(hasMaxSize=true) {
@@ -314,10 +319,6 @@ export default class HWindow extends HElement {
 
 	setModal(modal) {
 		this.modal = modal;
-
-		// center
-		const maxSize = this.getMaxSize();
-		this.setPosition(maxSize.w / 2 - this.w / 2, maxSize.h / 2 - this.h / 2);
 	}
 
 	openAsChild(windowClass, idFunc, ...args) {

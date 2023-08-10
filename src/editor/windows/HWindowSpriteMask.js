@@ -21,6 +21,32 @@ export default class HWindowSpriteMask extends HModalWindow {
 					parent( add( new HElement("fieldset") ) );
 						add( new HElement("legend", {}, "Image") );
 
+						const divWidth = add( new HElement("div", {}, `Width: 32`));
+						const divHeight = add( new HElement("div", {}, `Height: 32`));
+
+						this.resource.images[0]?.promise.then(image => {
+							divWidth.html.textContent = `Width: ${image.width}`;
+							divHeight.html.textContent = `Height: ${image.height}`;
+						});
+
+						add( new HElement("div", {}, `Number of subimages: ${this.resource.images.length}`));
+
+						parent( add( new HElement("div", {}, "Show: ")) );
+							this.showSubimage = 0;
+
+							this.buttonShowSubimageLeft = add( new HButton("◀", () => {
+								this.showSubimage -= 1;
+								this.updateShow();
+							}) );
+							this.divShowSubimage = add( new HElement("span") );
+							this.buttonShowSubimageRight = add( new HButton("▶", () => {
+								this.showSubimage += 1;
+								this.updateShow();
+							}) );
+
+							this.updateShow();
+							endparent();
+
 						this.inputShowCollisionMask = add( new HCheckBoxInput("Show collision mask", true) );
 						endparent();
 
@@ -135,6 +161,13 @@ export default class HWindowSpriteMask extends HModalWindow {
 		this.setTitle("Mask Properties: "+this.spriteWindow.resource.name);
 	}
 
+	updateShow() {
+		this.updatePreview();
+
+		this.divShowSubimage.html.textContent = this.showSubimage.toString();
+		this.buttonShowSubimageLeft.setDisabled(this.showSubimage == 0);
+		this.buttonShowSubimageRight.setDisabled(this.showSubimage >= this.resource.images.length - 1);
+	}
 
 	updateBBInputs() {
 		const disable = !this.radioBBManual.getChecked();
@@ -147,7 +180,7 @@ export default class HWindowSpriteMask extends HModalWindow {
 	async updatePreview() {
 		await Promise.all(this.resource.images.map(x => x.promise));
 
-		const image = this.resource.images[0];
+		const image = this.resource.images[this.showSubimage];
 		if (!image) return;
 
 		this.canvasPreview.setSize(image.width, image.height);
@@ -157,7 +190,7 @@ export default class HWindowSpriteMask extends HModalWindow {
 		if (this.inputShowCollisionMask.getChecked()) {
 			const masks = this.resource.getMasks();
 
-			const imageMask = masks[0];
+			const imageMask = masks[this.showSubimage];
 
 			const aO = (aA, aB) => {
 				return aA + aB * (1 - aA);

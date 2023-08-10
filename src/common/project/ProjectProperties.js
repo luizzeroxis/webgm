@@ -19,19 +19,93 @@ export class ProjectSprite {
 			bbBottom: 0,
 			shape: "precise", // precise, rectangle, disk, diamond
 		});
+
+		this.masks = null;
 	}
 
 	constructor(...args) {
 		Serializer.initProperties(this, args);
 	}
 
+	// Creates masks and updates bb props.
+	updateMaskProperties() {
+		const offscreen = new OffscreenCanvas(0, 0);
+		const offscreenCtx = offscreen.getContext("2d", {willReadFrequently: true});
+		const masks = this.makeMaskProperties(offscreen, offscreenCtx);
+
+		this.masks = masks.list;
+		this.bbLeft = masks.l;
+		this.bbTop = masks.t;
+		this.bbRight = masks.r;
+		this.bbBottom = masks.b;
+	}
+
+	// Use this to get masks if you are sure bb props are correct.
 	getMasks(canvas, ctx) {
-		const masks = [];
-		let prevMask;
+		if (this.masks) return this.masks;
+
+		canvas ??= new OffscreenCanvas(0, 0);
+		ctx ??= canvas.getContext("2d", {willReadFrequently: true});
+
+		const masks = this.makeMaskProperties(canvas, ctx);
+		this.masks = masks.list;
+		return this.masks;
+	}
+
+	// Returns masks and bb props.
+	makeMaskProperties(canvas, ctx) {
+		const masks = {
+			list: [],
+		};
+
+		let currentMask;
+
+		let spriteBBox = {};
+
+		if (this.boundingBox == "automatic") {
+			spriteBBox = {
+				l: (this.images[0]?.width ?? 32) - 1,
+				t: (this.images[0]?.height ?? 32) - 1,
+				r: 0,
+				b: 0,
+			};
+		} else if (this.boundingBox == "fullimage") {
+			spriteBBox = {
+				l: 0,
+				t: 0,
+				r: (this.images[0]?.width ?? 32) - 1,
+				b: (this.images[0]?.height ?? 32) - 1,
+			};
+		} else if (this.boundingBox == "manual") {
+			spriteBBox = {
+				l: this.bbLeft,
+				t: this.bbTop,
+				r: this.bbRight,
+				b: this.bbBottom,
+			};
+		}
 
 		for (const [imageIndex, image] of this.images.entries()) {
 			// TODO account for boundingBox, bbLeft, bbTop, bbRight, bbBottom
-			let mask = prevMask;
+			if (!currentMask) {
+				currentMask = new Array(image.width);
+				for (let x=0; x<image.width; ++x) {
+					currentMask[x] = new Array(image.height);
+				}
+			}
+
+			let bbox = {};
+
+			if (this.boundingBox == "automatic") {
+				bbox = {
+					l: image.width-1,
+					t: image.height-1,
+					r: 0,
+					b: 0,
+				};
+			} else {
+				bbox = spriteBBox;
+			}
 
 			if (image.width > canvas.width || image.height > canvas.height) {
 				canvas.width = image.width;
@@ -43,51 +117,72 @@ export class ProjectSprite {
 
 			const data = ctx.getImageData(0, 0, image.width, image.height);
 
-			if (this.shape == "precise") {
-				if (!mask) {
-					mask = new Array(image.width);
-					for (let x=0; x<image.width; ++x) {
-						mask[x] = new Array(image.height);
+			for (let i=0; i<data.data.length; i+=4) {
+				const x = (i/4) % image.width;
+				const y = Math.floor((i/4) / image.width);
+				const alpha = data.data[i+3];
+
+				if (alpha > this.alphaTolerance) {
+					if (this.boundingBox == "automatic") {
+						if (x < bbox.l) bbox.l = x;
+						if (y < bbox.t) bbox.t = y;
+						if (x > bbox.r) bbox.r = x;
+						if (y > bbox.b) bbox.b = y;
 					}
-				}
 
-
-				for (let i=0; i<data.data.length; i+=4) {
-					const x = (i/4) % image.width;
-					const y = Math.floor((i/4) / image.width);
-					const alpha = data.data[i+3];
-
-					if (alpha > this.alphaTolerance) {
-						mask[x][y] = true;
-					}
-				}
-
-				if (!this.separateCollisionMasks) {
-					prevMask = mask;
-				}
-			} else if (this.shape == "rectangle") {
-				if (!mask) {
-					mask = new Array(image.width);
-					for (let x=0; x<image.width; ++x) {
-						mask[x] = new Array(image.height);
-						for (let y=0; y<image.height; ++y) {
-							mask[x][y] = true;
+					if (this.shape == "precise") {
+						if (/*this.boundingBox != "manual" || */(x >= bbox.l && y >= bbox.t && x < bbox.r+1 && y < bbox.b+1)) {
+							currentMask[x][y] = true;
 						}
 					}
+				}
+			}
 
-					prevMask = mask;
+			// Merge image bbox with sprite bbox
+			if (this.boundingBox == "automatic") {
+				spriteBBox.l = Math.min(spriteBBox.l, bbox.l);
+				spriteBBox.t = Math.min(spriteBBox.t, bbox.t);
+				spriteBBox.r = Math.max(spriteBBox.r, bbox.r);
+				spriteBBox.b = Math.max(spriteBBox.b, bbox.b);
+			}
+
+			if (this.separateCollisionMasks) {
+				if (this.shape == "rectangle") {
+					for (let x=bbox.l; x<bbox.r+1; ++x)
+					for (let y=bbox.t; y<bbox.b+1; ++y) {
+						currentMask[x][y] = true;
+					}
+				} else if (this.shape == "disk") {
+					throw new Error("Shape not supported");
+				} else if (this.shape == "diamond") {
+					throw new Error("Shape not supported");
+				}
+			}
+
+			masks.list[imageIndex] = currentMask;
+
+			if (this.separateCollisionMasks) {
+				currentMask = null;
+			}
+		}
+
+		if (!this.separateCollisionMasks && this.images[0]) {
+			if (this.shape == "rectangle") {
+				for (let x=spriteBBox.l; x<spriteBBox.r+1; ++x)
+				for (let y=spriteBBox.t; y<spriteBBox.b+1; ++y) {
+					currentMask[x][y] = true;
 				}
 			} else if (this.shape == "disk") {
 				throw new Error("Shape not supported");
 			} else if (this.shape == "diamond") {
 				throw new Error("Shape not supported");
-			} else {
-				throw new Error("Shape not supported");
 			}
-
-			prevMask = mask;
-			masks[imageIndex] = mask;
 		}
+
+		masks.l = spriteBBox.l;
+		masks.t = spriteBBox.t;
+		masks.r = spriteBBox.r;
+		masks.b = spriteBBox.b;
 
 		return masks;
 	}

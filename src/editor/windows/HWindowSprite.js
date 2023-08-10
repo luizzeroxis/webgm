@@ -101,17 +101,27 @@ export default class HWindowSprite extends HWindow {
 						this.inputPreciseCollisionChecking = add( new HCheckBoxInput("Precise collision checking", (this.resource.shape == "precise")) );
 						this.inputSeparateCollisionMasks = add( new HCheckBoxInput("Separate collision masks", this.resource.separateCollisionMasks) );
 
+						const isModified = () => (
+							this.resource.alphaTolerance != 0
+							|| this.resource.boundingBox != "automatic"
+							|| (this.resource.shape != "precise" && this.resource.shape != "rectangle")
+						);
+
+						this.divMaskModified = add( new HElement("div", {}, isModified() ? "Modified" : "\u200B") );
+
+						add( new HButton("Modify Mask", async () => {
+							await this.editor.windowManager.openModal(HWindowSpriteMask, this).promise;
+
+							// Update UI beforehand so saveData() doesn't override it
+							this.inputPreciseCollisionChecking.setChecked((this.resource.shape == "precise"));
+							this.inputSeparateCollisionMasks.setChecked(this.resource.separateCollisionMasks);
+
+							this.divMaskModified.html.textContent = isModified() ? "Modified" : "\u200B";
+
+							this.onUpdate();
+						}) );
+
 						endparent();
-
-					add( new HButton("Modify Mask", async () => {
-						await this.editor.windowManager.openModal(HWindowSpriteMask, this).promise;
-
-						// Update UI beforehand so saveData() doesn't override it
-						this.inputPreciseCollisionChecking.setChecked((this.resource.shape == "precise"));
-						this.inputSeparateCollisionMasks.setChecked(this.resource.separateCollisionMasks);
-
-						this.onUpdate();
-					}) );
 					endparent();
 
 				parent( add( new HElement("div", {class: "preview"}) ) );
@@ -145,15 +155,13 @@ export default class HWindowSprite extends HWindow {
 		this.resource.separateCollisionMasks = this.inputSeparateCollisionMasks.getChecked();
 
 		// this.resource.alphaTolerance = 0;
-		this.resource.boundingBox = "automatic";
-		this.resource.bbLeft = 0;
-		this.resource.bbTop = 0;
-		this.resource.bbRight = 0;
-		this.resource.bbBottom = 0;
-		if (this.resource.images.length > 0) {
-			this.resource.bbRight = this.resource.images[0].width - 1;
-			this.resource.bbBottom = this.resource.images[0].height - 1;
-		}
+		// this.resource.boundingBox = "automatic";
+		// this.resource.bbLeft = 0;
+		// this.resource.bbTop = 0;
+		// this.resource.bbRight = 0;
+		// this.resource.bbBottom = 0;
+
+		this.resource.updateMaskProperties();
 	}
 
 	restoreData() {

@@ -56,7 +56,6 @@
         "dot-notation": "warn",
         "func-name-matching": ["warn", {"considerPropertyDescriptor": true}],
         "func-names": ["warn", "as-needed"],
-        "func-style": ["warn", "declaration"],
         "grouped-accessor-pairs": ["warn", "getBeforeSet"],
         "max-depth": "warn",
         "max-nested-callbacks": "warn",

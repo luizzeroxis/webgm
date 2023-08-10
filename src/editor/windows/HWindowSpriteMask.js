@@ -1,5 +1,5 @@
 import HModalWindow from "~/common/components/HWindowManager/HModalWindow.js";
-import {parent, endparent, add, HElement, HButton, HCheckBoxInput, HRadioInput, HRangeInput, HCanvas, uniqueID} from "~/common/h";
+import {parent, endparent, add, HElement, HButton, HNumberInput, HCheckBoxInput, HRadioInput, HRangeInput, HCanvas, uniqueID} from "~/common/h";
 import {ProjectSprite} from "~/common/project/ProjectProperties.js";
 import {setDeepOnUpdateOnElement} from "~/common/tools.js";
 
@@ -15,7 +15,7 @@ export default class HWindowSpriteMask extends HModalWindow {
 		this.updateTitle();
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "window-sprite-mask"}) ) );
+			parent( add( new HElement("div", {class: "panel-container window-sprite-mask"}) ) );
 				parent( add( new HElement("div") ) );
 
 					this.inputShowCollisionMask = add( new HCheckBoxInput("Show collision mask", true) );
@@ -24,13 +24,27 @@ export default class HWindowSpriteMask extends HModalWindow {
 					this.inputAlphaTolerance = add( new HRangeInput("Alpha Tolerance:", this.resource.alphaTolerance, 1, 0, 255) );
 
 					parent( add( new HElement("fieldset") ) );
+						add( new HElement("legend", {}, "Bounding Box") );
+
+						const bbGroup = "_radio_"+uniqueID();
+						this.radioBBAutomatic = add( new HRadioInput(bbGroup, "Automatic", (this.resource.boundingBox == "automatic")) );
+						this.radioBBFullImage = add( new HRadioInput(bbGroup, "Full image", (this.resource.boundingBox == "fullimage")) );
+						this.radioBBManual = add( new HRadioInput(bbGroup, "Manual", (this.resource.boundingBox == "manual")) );
+
+						this.inputBBLeft = add( new HNumberInput("Left", this.resource.bbLeft) );
+						this.inputBBTop = add( new HNumberInput("Top", this.resource.bbTop) );
+						this.inputBBRight = add( new HNumberInput("Right", this.resource.bbRight) );
+						this.inputBBBottom = add( new HNumberInput("Bottom", this.resource.bbBottom) );
+
+						this.updateBBInputs();
+						endparent();
+
+					parent( add( new HElement("fieldset") ) );
 						add( new HElement("legend", {}, "Shape") );
 
 						const shapeGroup = "_radio_"+uniqueID();
-
 						this.radioShapePrecise = add( new HRadioInput(shapeGroup, "Precise", (this.resource.shape == "precise")) );
 						this.radioShapeRectangle = add( new HRadioInput(shapeGroup, "Rectangle", (this.resource.shape == "rectangle")) );
-
 						endparent();
 
 					add( new HButton("OK", () => {
@@ -38,11 +52,13 @@ export default class HWindowSpriteMask extends HModalWindow {
 						this.close();
 					}) );
 
-					//
+					endparent();
+
+				parent( add( new HElement("div") ) );
 
 					parent( add( new HElement("div", {class: "preview"}) ) );
 						this.canvasPreview = add( new HCanvas(0, 0) );
-						this.ctx = this.canvasPreview.html.getContext("2d");
+						this.ctx = this.canvasPreview.html.getContext("2d", {willReadFrequently: true});
 						this.updatePreview();
 						endparent();
 
@@ -52,9 +68,18 @@ export default class HWindowSpriteMask extends HModalWindow {
 			endparent();
 
 		setDeepOnUpdateOnElement(this.client, () => {
+			this.updateBBInputs();
 			this.updatePreview();
 			this.onUpdate();
 		});
+	}
+
+	updateBBInputs() {
+		const disable = !this.radioBBManual.getChecked();
+		this.inputBBLeft.input.html.disabled = disable;
+		this.inputBBTop.input.html.disabled = disable;
+		this.inputBBRight.input.html.disabled = disable;
+		this.inputBBBottom.input.html.disabled = disable;
 	}
 
 	async updatePreview() {
@@ -68,19 +93,16 @@ export default class HWindowSpriteMask extends HModalWindow {
 		this.ctx.drawImage(image.image, 0, 0);
 
 		if (this.inputShowCollisionMask.getChecked()) {
-			const offscreen = new OffscreenCanvas(0, 0);
-			const offscreenCtx = offscreen.getContext("2d", {willReadFrequently: true});
-
-			const masks = this.resource.getMasks(offscreen, offscreenCtx);
+			const masks = this.resource.getMasks();
 
 			const imageMask = masks[0];
 
 			const aO = (aA, aB) => {
 				return aA + aB * (1 - aA);
-			}
+			};
 			const cO = (cA, cB, aA, aB, aO) => {
 				return (cA * aA + cB * aB * (1 - aA)) / aO;
-			}
+			};
 
 			const data = this.ctx.getImageData(0, 0, image.width, image.height);
 			for (let x=0; x<imageMask.length; ++x)
@@ -108,6 +130,12 @@ export default class HWindowSpriteMask extends HModalWindow {
 
 			this.ctx.putImageData(data, 0, 0);
 		}
+
+		// TOOD no
+		this.inputBBLeft.setValue(this.resource.bbLeft);
+		this.inputBBTop.setValue(this.resource.bbTop);
+		this.inputBBRight.setValue(this.resource.bbRight);
+		this.inputBBBottom.setValue(this.resource.bbBottom);
 	}
 
 	copyData() {
@@ -118,11 +146,26 @@ export default class HWindowSpriteMask extends HModalWindow {
 		this.resource.separateCollisionMasks = this.inputSeparateCollisionMasks.getChecked();
 		this.resource.alphaTolerance = this.inputAlphaTolerance.getIntValue();
 
+		this.resource.boundingBox = (
+			this.radioBBAutomatic.getChecked() ? "automatic"
+			: this.radioBBFullImage.getChecked() ? "fullimage"
+			: this.radioBBManual.getChecked() ? "manual"
+			: null
+		);
+
+		this.resource.bbLeft = this.inputBBLeft.getIntValue();
+		this.resource.bbTop = this.inputBBTop.getIntValue();
+		this.resource.bbRight = this.inputBBRight.getIntValue();
+		this.resource.bbBottom = this.inputBBBottom.getIntValue();
+
 		this.resource.shape = (
 			this.radioShapePrecise.getChecked() ? "precise"
 			: this.radioShapeRectangle.getChecked() ? "rectangle"
 			: null
 		);
+
+		// TODO: perhaps it would be better to just invalidate it, but would screw over the save file.
+		this.resource.updateMaskProperties();
 
 		// this.spriteWindow.updateImageInfo();
 		// this.spriteWindow.onUpdate();

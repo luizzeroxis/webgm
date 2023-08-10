@@ -306,7 +306,19 @@ input[type="text"], input[type="number"], select {
 }
 
 .window-sprite-mask {
+	min-height: 0;
 	flex: 1;
+
+	> .properties {
+		overflow: auto;
+		flex: none;
+	}
+
+	> .preview {
+		overflow: auto;
+		min-width: 250px;
+		flex: 1;
+	}
 }
 
 .window-sound {

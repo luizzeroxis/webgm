@@ -16,12 +16,20 @@ export default class HWindowSpriteMask extends HModalWindow {
 
 		parent(this.client);
 			parent( add( new HElement("div", {class: "panel-container window-sprite-mask"}) ) );
-				parent( add( new HElement("div") ) );
+				parent( add( new HElement("div", {class: "properties"}) ) );
 
-					this.inputShowCollisionMask = add( new HCheckBoxInput("Show collision mask", true) );
+					parent( add( new HElement("fieldset") ) );
+						add( new HElement("legend", {}, "Image") );
 
-					this.inputSeparateCollisionMasks = add( new HCheckBoxInput("Separate collision masks", this.resource.separateCollisionMasks) );
-					this.inputAlphaTolerance = add( new HRangeInput("Alpha Tolerance:", this.resource.alphaTolerance, 1, 0, 255) );
+						this.inputShowCollisionMask = add( new HCheckBoxInput("Show collision mask", true) );
+						endparent();
+
+					parent( add( new HElement("fieldset") ) );
+						add( new HElement("legend", {}, "General") );
+
+						this.inputSeparateCollisionMasks = add( new HCheckBoxInput("Separate collision masks", this.resource.separateCollisionMasks) );
+						this.inputAlphaTolerance = add( new HRangeInput("Alpha Tolerance:", this.resource.alphaTolerance, 1, 0, 255) );
+						endparent();
 
 					parent( add( new HElement("fieldset") ) );
 						add( new HElement("legend", {}, "Bounding Box") );
@@ -56,13 +64,9 @@ export default class HWindowSpriteMask extends HModalWindow {
 
 					endparent();
 
-				parent( add( new HElement("div") ) );
-
-					parent( add( new HElement("div", {class: "preview"}) ) );
-						this.canvasPreview = add( new HCanvas(0, 0) );
-						this.ctx = this.canvasPreview.html.getContext("2d", {willReadFrequently: true});
-						endparent();
-
+				parent( add( new HElement("div", {class: "preview"}) ) );
+					this.canvasPreview = add( new HCanvas(0, 0) );
+					this.ctx = this.canvasPreview.html.getContext("2d", {willReadFrequently: true});
 					endparent();
 
 				endparent();

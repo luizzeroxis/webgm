@@ -99,6 +99,8 @@ export default class HWindowSprite extends HWindow {
 						add( new HElement("legend", {}, "Collision Checking") );
 
 						this.inputPreciseCollisionChecking = add( new HCheckBoxInput("Precise collision checking", (this.resource.shape == "precise")) );
+						this.inputPreciseCollisionChecking.input.html.indeterminate = (this.resource.shape != "precise" && this.resource.shape != "rectangle");
+
 						this.inputSeparateCollisionMasks = add( new HCheckBoxInput("Separate collision masks", this.resource.separateCollisionMasks) );
 
 						const isModified = () => (
@@ -114,6 +116,8 @@ export default class HWindowSprite extends HWindow {
 
 							// Update UI beforehand so saveData() doesn't override it
 							this.inputPreciseCollisionChecking.setChecked((this.resource.shape == "precise"));
+							this.inputPreciseCollisionChecking.input.html.indeterminate = (this.resource.shape != "precise" && this.resource.shape != "rectangle");
+
 							this.inputSeparateCollisionMasks.setChecked(this.resource.separateCollisionMasks);
 
 							this.divMaskModified.html.textContent = isModified() ? "Modified" : "\u200B";
@@ -151,7 +155,9 @@ export default class HWindowSprite extends HWindow {
 		this.editor.project.changeSpriteImages(this.resource, this.resource.images);
 		this.editor.project.changeSpriteOrigin(this.resource, parseInt(this.inputOriginX.getValue()), parseInt(this.inputOriginY.getValue()));
 
-		this.resource.shape = this.inputPreciseCollisionChecking.getChecked() ? "precise" : "rectangle";
+		if (!this.inputPreciseCollisionChecking.input.html.indeterminate) {
+			this.resource.shape = this.inputPreciseCollisionChecking.getChecked() ? "precise" : "rectangle";
+		}
 		this.resource.separateCollisionMasks = this.inputSeparateCollisionMasks.getChecked();
 
 		// this.resource.alphaTolerance = 0;

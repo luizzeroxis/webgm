@@ -1,18 +1,14 @@
-import HWindow from "~/common/components/HWindowManager/HWindow.js";
+import HModalWindow from "~/common/components/HWindowManager/HModalWindow.js";
 import {parent, endparent, add, HElement, HButton, HMultilineTextInput} from "~/common/h";
 
 import {NonFatalErrorException} from "./Game.js";
 
-export default class HErrorWindow extends HWindow {
+export default class HErrorWindow extends HModalWindow {
 	constructor(manager, game, exception) {
 		super(manager);
 
 		this.game = game;
 		this.exception = exception;
-
-		this.promise = new Promise(resolve => {
-			this.resolveFunction = resolve;
-		});
 
 		this.setResizable(false);
 		this.setMinimizeButton(false);
@@ -48,8 +44,7 @@ export default class HErrorWindow extends HWindow {
 	}
 
 	close(result) {
-		if (!result) result = {abort: true};
-		super.close();
-		this.resolveFunction(result);
+		result ??= {abort: true};
+		super.close(result);
 	}
 }

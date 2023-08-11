@@ -21,3 +21,14 @@
 		font-family: monospace;
 	}
 }
+
+.window-message {
+	.buttons {
+		display: flex;
+		gap: 16px;
+
+		.button {
+			flex: 1;
+		}
+	}
+}

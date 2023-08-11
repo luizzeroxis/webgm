@@ -1,3 +1,4 @@
+import HMessageWindow from "~/common/components/HWindowManager/HMessageWindow.js";
 import Events from "~/common/Events.js";
 import {toGMDate, toJSDate, decimalToHSV, hsvToDecimal, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, forceInteger, toInteger, parseNewLineHash} from "~/common/tools.js";
 
@@ -4480,35 +4481,56 @@ export default class BuiltInFunctions {
 
 	static show_message = {
 		args: [{type: "as_string"}],
-		func: function([str]) {
+		func: async function([str]) {
 			str = parseNewLineHash(str);
+
 			this.game.input.clear();
-			alert(str);
+			await this.game.windowManager.openModal(HMessageWindow, str).promise;
+			this.game.render.canvas.focus({preventScroll: true});
 
 			return 0;
 		},
 	};
 
 	static show_message_ext = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function show_message_ext is not implemented");
-			// return 0;
+		args: [{type: "as_string"}, {type: "string"}, {type: "string"}, {type: "string"}],
+		func: async function([str, but1, but2, but3]) {
+			// TODO & shortcut
+			str = parseNewLineHash(str);
+
+			this.game.input.clear();
+			const result = await this.game.windowManager.openModal(HMessageWindow,
+				str, {buttons: [but1, but2, but3]}).promise;
+			this.game.render.canvas.focus({preventScroll: true});
+
+			return result ?? 0;
 		},
 	};
 
 	static show_question = {
 		args: [{type: "as_string"}],
-		func: function([str]) {
+		func: async function([str]) {
+			str = parseNewLineHash(str);
+
 			this.game.input.clear();
-			return confirm(str) ? 1 : 0;
+			const result = await this.game.windowManager.openModal(HMessageWindow,
+				str, {buttons: ["Yes", "", "No"]}).promise;
+			this.game.render.canvas.focus({preventScroll: true});
+
+			return (result == 1) ? 1 : 0;
 		},
 	};
 
 	static get_integer = {
 		args: [{type: "string"}, {type: "integer"}],
-		func: function([str, def]) {
-			const result = prompt(str, def);
+		func: async function([str, def]) {
+			str = parseNewLineHash(str);
+
+			this.game.input.clear();
+			const result = await this.game.windowManager.openModal(HMessageWindow,
+				str, {input: {default: def}}).promise;
+			this.game.render.canvas.focus({preventScroll: true});
+
 			if (result === null) return def;
 
 			const value = parseFloat(result);
@@ -4520,8 +4542,14 @@ export default class BuiltInFunctions {
 
 	static get_string = {
 		args: [{type: "string"}, {type: "string"}],
-		func: function([str, def]) {
-			const result = prompt(str, def);
+		func: async function([str, def]) {
+			str = parseNewLineHash(str);
+
+			this.game.input.clear();
+			const result = await this.game.windowManager.openModal(HMessageWindow,
+				str, {input: {default: def}}).promise;
+			this.game.render.canvas.focus({preventScroll: true});
+
 			if (result === null) return def;
 
 			return result;

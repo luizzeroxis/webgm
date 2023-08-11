@@ -244,6 +244,10 @@ input[type="text"], input[type="number"], select {
 		overflow-x: auto;
 		overflow-y: scroll;
 		pointer-events: auto;
+
+		&:has(.maximized) {
+			overflow: hidden;
+		}
 	}
 }
 

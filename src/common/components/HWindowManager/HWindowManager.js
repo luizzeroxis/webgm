@@ -15,6 +15,7 @@ export default class HWindowManager extends HElement {
 
 		this.cascadeDiff = 24;
 		this.minimizedSize = 250;
+		this.lastCascadePosition = {x: 0, y: 0};
 
 		this.mouseDownHandler = null;
 		this.focusInHandler = null;

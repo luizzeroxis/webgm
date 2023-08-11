@@ -117,7 +117,59 @@ export default class HWindow extends HElement {
 		this.html.style.top = y.toString() + "px";
 	}
 
+	setPositionToCascade() {
+		const maxSize = this.getMaxSize();
+		let x = this.manager.lastCascadePosition.x;
+		let y = this.manager.lastCascadePosition.y;
+
+		if ((x + this.manager.html.scrollLeft + this.w) > maxSize.w || (y + this.manager.html.scrollTop + this.h) > maxSize.h) {
+			x = 0;
+			y = 0;
+		}
+
+		this.setPosition(x + this.manager.html.scrollLeft, y + this.manager.html.scrollTop);
+
+		this.manager.lastCascadePosition = {x, y};
+		this.manager.lastCascadePosition.x += this.manager.cascadeDiff;
+		this.manager.lastCascadePosition.y += this.manager.cascadeDiff;
+	}
+
+	setPositionToCenter() {
+		const maxSize = this.getMaxSize();
+		this.setPosition(maxSize.w / 2 - this.w / 2, maxSize.h / 2 - this.h / 2);
+	}
+
 	setSize(w, h) {
+		this.w = w;
+		this.h = h;
+
+		this.html.style.width = w.toString() + "px";
+		this.html.style.height = h.toString() + "px";
+	}
+
+	setSizeAuto(w, h) {
+		if (w == null || h == null) {
+			if (w == null) {
+				this.html.style.removeProperty("width");
+			} else {
+				this.html.style.width = w.toString() + "px";
+			}
+			if (h == null) {
+				this.html.style.removeProperty("height");
+			} else {
+				this.html.style.height = h.toString() + "px";
+			}
+
+			const style = window.getComputedStyle(this.html);
+
+			if (w == null) {
+				w = parseFloat(style.width);
+			}
+			if (h == null) {
+				h = parseFloat(style.height);
+			}
+		}
+
 		this.w = w;
 		this.h = h;
 
@@ -127,24 +179,9 @@ export default class HWindow extends HElement {
 
 	setPositionToDefault() {
 		if (!this.modal) {
-			let x = 0;
-			let y = 0;
-
-			while (true) {
-				const positionTaken = this.manager.windows.some(w => (w.x == x && w.y == y)); // eslint-disable-line no-loop-func
-
-				if (positionTaken) {
-					x += this.manager.cascadeDiff;
-					y += this.manager.cascadeDiff;
-				} else {
-					break;
-				}
-			}
-
-			this.setPosition(x, y);
+			this.setPositionToCascade();
 		} else {
-			const maxSize = this.getMaxSize();
-			this.setPosition(maxSize.w / 2 - this.w / 2, maxSize.h / 2 - this.h / 2);
+			this.setPositionToCenter();
 		}
 	}
 
@@ -296,10 +333,13 @@ export default class HWindow extends HElement {
 	}
 
 	getMaxSize() {
-		const style = window.getComputedStyle(this.manager.html);
+		// const style = window.getComputedStyle(this.manager.html);
 
-		const w = parseFloat(style.width);
-		const h = parseFloat(style.height);
+		// const w = parseFloat(style.width);
+		// const h = parseFloat(style.height);
+
+		const w = this.manager.html.scrollWidth;
+		const h = this.manager.html.scrollHeight;
 
 		return {w, h};
 	}

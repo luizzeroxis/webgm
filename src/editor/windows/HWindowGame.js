@@ -10,9 +10,17 @@ export default class HWindowGame extends HWindow {
 
 	close() {
 		if (this.editor.game) {
-			this.editor.stopGame();
+			this.editor.game.closeButtonClicked();
+		} else {
+			super.close();
+		}
+	}
+
+	forceClose() {
+		if (this.editor.game) {
+			this.editor.game.close();
 		}
 
-		super.close();
+		super.forceClose();
 	}
 }

@@ -8,7 +8,7 @@ export default class GameEvents {
 
 		this.actionNumber = null;
 
-		this.mapOfEvents = null;
+		this.mapOfEvents = new Map();
 	}
 
 	// Executes an event on an instance.

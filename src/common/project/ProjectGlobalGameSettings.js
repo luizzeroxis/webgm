@@ -8,6 +8,7 @@ export class ProjectGlobalGameSettings {
 			displayCursor: true,
 
 			keyEscEndsGame: true,
+			treatCloseButtonAsEsc: true,
 			keyF1ShowsGameInformation: true,
 			keyF4SwitchesFullscreen: true,
 			keyF5SavesF6Loads: true,

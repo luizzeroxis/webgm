@@ -152,6 +152,17 @@ export default class Game {
 		this.close();
 	}
 
+	async closeButtonClicked() {
+		if (this.project.globalGameSettings.treatCloseButtonAsEsc) {
+			this.input.key[27] = true;
+		} else {
+			for (const {event, instance} of this.events.getEventsOfTypeAndSubtype("other", Events.OTHER_CLOSE_BUTTON)) {
+				if (!instance.exists) continue;
+				await this.events.runEvent(event, instance);
+			}
+		}
+	}
+
 	// // Internals
 
 	// Function to deal with exceptions when called during the main loop or room loading.
@@ -303,6 +314,7 @@ export default class Game {
 
 		// Time line
 		for (const instance of this.instances) {
+			if (!instance.exists) continue;
 			if (!instance.timeline) continue;
 			if (!instance.timelineRunning) continue;
 
@@ -553,7 +565,7 @@ export default class Game {
 
 		// Check global game settings default keys
 		if (this.project.globalGameSettings.keyEscEndsGame) {
-			if (this.input.getKey(27, this.input.keyPressed)) {
+			if (this.input.getKey(27, this.input.key)) {
 				this.stepStopAction = async () => {
 					await this.end();
 				};

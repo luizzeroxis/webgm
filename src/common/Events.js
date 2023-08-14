@@ -28,7 +28,7 @@ export default class Events {
 	static OTHER_NO_MORE_HEALTH = 9;
 	static OTHER_ANIMATION_END = 7;
 	static OTHER_END_OF_PATH = 8;
-	static OTHER_CLOSE_BUTTON = 30; // unused
+	static OTHER_CLOSE_BUTTON = 30;
 	static OTHER_USER = 10;
 
 	static listEventTypes = [

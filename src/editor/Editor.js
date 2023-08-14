@@ -265,13 +265,14 @@ export default class Editor {
 
 	async runGame() {
 		this.toolBarArea.runButton.setDisabled(true);
-		this.toolBarArea.stopButton.setDisabled(true);
+		this.toolBarArea.stopButton.setDisabled(false);
 
-		await this.stopGame();
+		// await this.stopGame();
 
 		if (this.project.resources.ProjectRoom.length <= 0) {
 			alert("A game must have at least one room to run.");
 			this.toolBarArea.runButton.setDisabled(false);
+			this.toolBarArea.stopButton.setDisabled(true);
 			return;
 		}
 
@@ -298,6 +299,7 @@ export default class Editor {
 		const gameListeners = this.game.dispatcher.listen({
 			close: e => {
 				this.toolBarArea.stopButton.setDisabled(true);
+				this.toolBarArea.runButton.setDisabled(false);
 
 				if (e instanceof WebGMException) {
 					alert("An error has ocurred when trying to run the game:\n" + e.message);
@@ -313,15 +315,11 @@ export default class Editor {
 
 				this.game = null;
 
-				this.toolBarArea.runButton.setDisabled(false);
-
 				if (e) {
 					throw e;
 				}
 			},
 		});
-
-		this.toolBarArea.stopButton.setDisabled(false);
 
 		this.game.start();
 	}
@@ -329,21 +327,10 @@ export default class Editor {
 	stopGame() {
 		if (this.game) {
 			this.toolBarArea.stopButton.setDisabled(true);
+			this.toolBarArea.runButton.setDisabled(false);
 
-			return new Promise((resolve) => {
-				const gameListeners = this.game.dispatcher.listen({
-					close: () => {
-						if (this.game) {
-							this.game.dispatcher.stopListening(gameListeners);
-						}
-
-						resolve();
-					},
-				});
-				this.game.stepStopAction = async () => await this.game.end();
-			});
+			this.game.close();
 		}
-		return Promise.resolve();
 	}
 
 	showAbout() {

@@ -2,7 +2,7 @@ import HModalWindow from "~/common/components/HWindowManager/HModalWindow.js";
 import {parent, endparent, add, HElement, HButton, HTextInput} from "~/common/h";
 
 export default class HMessageWindow extends HModalWindow {
-	constructor(manager, text, options={}) {
+	constructor(manager, game, text, options={}) {
 		super(manager);
 
 		this.setResizable(false);

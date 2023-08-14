@@ -1,9 +1,9 @@
-import HMessageWindow from "~/common/components/HWindowManager/HMessageWindow.js";
 import Events from "~/common/Events.js";
 import {toGMDate, toJSDate, decimalToHSV, hsvToDecimal, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, forceInteger, toInteger, parseNewLineHash} from "~/common/tools.js";
 
 import {EngineException} from "./Game.js";
 import GameCollision from "./GameCollision.js";
+import HMessageWindow from "./HMessageWindow.js";
 
 export default class BuiltInFunctions {
 	// this = GML

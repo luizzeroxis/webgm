@@ -42,9 +42,4 @@ export default class HErrorWindow extends HModalWindow {
 
 			endparent();
 	}
-
-	close(result) {
-		result ??= {abort: true};
-		super.close(result);
-	}
 }

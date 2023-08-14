@@ -31,8 +31,8 @@ export default class HWindowGlobalGameSettings extends HWindow {
 					setDeepOnUpdateOnElement(tabGraphics, () => this.onUpdate());
 					endparent();
 
-				// const tabResolution = parent( this.tabControl.addTab('Resolution') )
-				// 	endparent()
+				// const tabResolution = parent( this.tabControl.addTab("Resolution") );
+				// 	endparent();
 
 				const tabOther = parent( this.tabControl.addTab("Other") );
 
@@ -43,11 +43,15 @@ export default class HWindowGlobalGameSettings extends HWindow {
 					setDeepOnUpdateOnElement(tabOther, () => this.onUpdate());
 					endparent();
 
-				// const tabLoading = parent( this.tabControl.addTab('Loading') )
-				// 	endparent()
+				// const tabLoading = parent( this.tabControl.addTab("Loading") );
+				// 	endparent();
 
-				// const tabErrors = parent( this.tabControl.addTab('Errors') )
-				// 	endparent()
+				const tabErrors = parent( this.tabControl.addTab("Errors") );
+
+					this.inputDisplayErrors = add( new HCheckBoxInput("Display error messages", this.resource.displayErrors) );
+
+					setDeepOnUpdateOnElement(tabErrors, () => this.onUpdate());
+					endparent();
 
 				const tabInfo = parent( this.tabControl.addTab("Info") );
 
@@ -81,6 +85,8 @@ export default class HWindowGlobalGameSettings extends HWindow {
 		this.resource.keyEscEndsGame = this.inputKeyEscEndsGame.getChecked();
 		this.resource.treatCloseButtonAsEsc = this.inputTreatCloseButtonAsEsc.getChecked();
 		this.resource.keyF4SwitchesFullscreen = this.inputKeyF4SwitchesFullscreen.getChecked();
+
+		this.resource.displayErrors = this.inputDisplayErrors.getChecked();
 
 		this.resource.author = this.inputAuthor.getValue();
 		this.resource.version = this.inputVersion.getValue();

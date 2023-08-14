@@ -1017,9 +1017,16 @@ export default class Game {
 		this.errorLast = e.text;
 		this.errorMessages += e.text + "\n";
 
-		const result = await this.windows.openModal(HErrorWindow, e);
+		let result;
+		if (this.project.globalGameSettings.displayErrors) {
+			result = await this.windows.openModal(HErrorWindow, e);
+		} else {
+			if (e instanceof FatalErrorException) {
+				result = {abort: true};
+			}
+		}
 
-		if (result.abort == true) {
+		if (result?.abort == true) {
 			throw new AbortException();
 		}
 	}

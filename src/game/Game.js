@@ -15,6 +15,7 @@ import GameCollision from "./GameCollision.js";
 import GameEvents from "./GameEvents.js";
 import GameInput from "./GameInput.js";
 import GameRender from "./GameRender.js";
+import GameWindows from "./GameWindows.js";
 import GML from "./GML.js";
 import HErrorWindow from "./HErrorWindow.js";
 import Instance from "./Instance.js";
@@ -35,6 +36,7 @@ export default class Game {
 		this.audio = new GameAudio(this);
 		this.collision = new GameCollision(this);
 		this.events = new GameEvents(this);
+		this.windows = new GameWindows(this);
 
 		// Project
 		this.loadedProject = new ProjectLoader(this, this.project);
@@ -184,6 +186,9 @@ export default class Game {
 
 		// audio
 		this.audio.end();
+
+		//
+		this.windows.end();
 
 		this.dispatcher.speak("close", e);
 	}
@@ -1000,7 +1005,7 @@ export default class Game {
 		this.errorLast = e.text;
 		this.errorMessages += e.text + "\n";
 
-		const result = await this.windowManager.openModal(HErrorWindow, this, e).promise;
+		const result = await this.windows.openModal(HErrorWindow, e);
 
 		if (result.abort == true) {
 			throw new AbortException();

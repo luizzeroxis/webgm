@@ -4482,12 +4482,8 @@ export default class BuiltInFunctions {
 	static show_message = {
 		args: [{type: "as_string"}],
 		func: async function([str]) {
-			str = parseNewLineHash(str);
-
-			this.game.input.clear();
-			await this.game.windowManager.openModal(HMessageWindow, str).promise;
-			this.game.render.canvas.focus({preventScroll: true});
-
+			await this.game.windows.openModal(HMessageWindow,
+				parseNewLineHash(str));
 			return 0;
 		},
 	};
@@ -4496,13 +4492,8 @@ export default class BuiltInFunctions {
 		args: [{type: "as_string"}, {type: "string"}, {type: "string"}, {type: "string"}],
 		func: async function([str, but1, but2, but3]) {
 			// TODO & shortcut
-			str = parseNewLineHash(str);
-
-			this.game.input.clear();
-			const result = await this.game.windowManager.openModal(HMessageWindow,
-				str, {buttons: [but1, but2, but3]}).promise;
-			this.game.render.canvas.focus({preventScroll: true});
-
+			const result = await this.game.windows.openModal(HMessageWindow,
+				parseNewLineHash(str), {buttons: [but1, but2, but3]});
 			return result ?? 0;
 		},
 	};
@@ -4510,13 +4501,8 @@ export default class BuiltInFunctions {
 	static show_question = {
 		args: [{type: "as_string"}],
 		func: async function([str]) {
-			str = parseNewLineHash(str);
-
-			this.game.input.clear();
-			const result = await this.game.windowManager.openModal(HMessageWindow,
-				str, {buttons: ["Yes", "", "No"]}).promise;
-			this.game.render.canvas.focus({preventScroll: true});
-
+			const result = await this.game.windows.openModal(HMessageWindow,
+				parseNewLineHash(str), {buttons: ["Yes", "", "No"]});
 			return (result == 1) ? 1 : 0;
 		},
 	};
@@ -4524,12 +4510,8 @@ export default class BuiltInFunctions {
 	static get_integer = {
 		args: [{type: "string"}, {type: "integer"}],
 		func: async function([str, def]) {
-			str = parseNewLineHash(str);
-
-			this.game.input.clear();
-			const result = await this.game.windowManager.openModal(HMessageWindow,
-				str, {input: {default: def}}).promise;
-			this.game.render.canvas.focus({preventScroll: true});
+			const result = await this.game.windows.openModal(HMessageWindow,
+				parseNewLineHash(str), {input: {default: def}});
 
 			if (result === null) return def;
 
@@ -4543,12 +4525,8 @@ export default class BuiltInFunctions {
 	static get_string = {
 		args: [{type: "string"}, {type: "string"}],
 		func: async function([str, def]) {
-			str = parseNewLineHash(str);
-
-			this.game.input.clear();
-			const result = await this.game.windowManager.openModal(HMessageWindow,
-				str, {input: {default: def}}).promise;
-			this.game.render.canvas.focus({preventScroll: true});
+			const result = await this.game.windows.openModal(HMessageWindow,
+				parseNewLineHash(str), {input: {default: def}});
 
 			if (result === null) return def;
 

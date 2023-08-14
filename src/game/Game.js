@@ -230,7 +230,9 @@ export default class Game {
 		}
 
 		try {
-			this.mainLoopPromise = await this.mainLoop();
+			// This is not an one liner (this.mainLoopPromise = await this.mainLoop()) because the timeout code above might execute before mainLoop finishes, so mainLoopPromise has to already be set by that point. Otherwise, the timeout will not wait for the current frame and add in a bunch of main calls.
+			this.mainLoopPromise = this.mainLoop();
+			await this.mainLoopPromise;
 
 			++this.fpsFrameCount;
 		} catch (e) {

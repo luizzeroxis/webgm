@@ -20,6 +20,7 @@ import GML from "./GML.js";
 import HErrorWindow from "./HErrorWindow.js";
 import Instance from "./Instance.js";
 import ProjectLoader from "./ProjectLoader.js";
+import Room from "./Room.js";
 import VariableHolder from "./VariableHolder.js";
 
 import "./Game.scss";
@@ -699,7 +700,7 @@ export default class Game {
 
 	// Loads a room. Only use this inside the stepStopAction function, or at the beginning of the game.
 	// isGameStart is set when it's the first room loaded or the game is restarted.
-	async loadRoom(room, isGameStart=false) {
+	async loadRoom(roomResource, isGameStart=false) {
 		if (!isGameStart) {
 			// If one instance calls a step stop exception, then the entire chain stops
 			try {
@@ -720,84 +721,19 @@ export default class Game {
 			this.instances = []; // TODO check if when it restarts it calls destroy events
 		}
 
-		this.room = {
-			resource: room,
-			width: room.width,
-			height: room.height,
-			caption: room.caption,
-			speed: room.speed,
-			persistent: room.persistent,
-			backgroundShowColor: room.drawBackgroundColor,
-			backgroundColor: room.backgroundColor,
-			viewsEnabled: room.enableViews,
+		this.room = new Room(roomResource, this);
 
-			backgrounds: room.backgrounds.map(roomBackground => {
-				if (!roomBackground) return null;
-
-				let xScale = 1;
-				let yScale = 1;
-				if (roomBackground.stretch) {
-					const backgroundImage = this.project.getResourceById("ProjectBackground", roomBackground.backgroundIndex)?.image;
-					if (backgroundImage) {
-						xScale = room.width / backgroundImage.width;
-						yScale = room.height / backgroundImage.height;
-					}
-				}
-				return {
-					visible: roomBackground.visibleAtStart,
-					isForeground: roomBackground.isForeground,
-					backgroundIndex: roomBackground.backgroundIndex,
-					tileHorizontally: roomBackground.tileHorizontally,
-					tileVertically: roomBackground.tileVertically,
-					x: roomBackground.x,
-					y: roomBackground.y,
-					horizontalSpeed: roomBackground.horizontalSpeed,
-					verticalSpeed: roomBackground.verticalSpeed,
-
-					xScale: xScale,
-					yScale: yScale,
-					blend: 16777215, // TODO
-					alpha: 1,
-				};
-			}),
-
-			// TODO tiles
-
-			views: room.views.map(view => {
-				if (!view) return null;
-
-				return {
-					visible: view.visibleAtStart,
-					viewX: view.viewX,
-					viewY: view.viewY,
-					viewW: view.viewW,
-					viewH: view.viewH,
-					portX: view.portX,
-					portY: view.portY,
-					portW: view.portW,
-					portH: view.portH,
-					objectFollowIndex: view.objectFollowIndex, // TODO
-					objectFollowHorizontalBorder: view.objectFollowHorizontalBorder,
-					objectFollowVerticalBorder: view.objectFollowVerticalBorder,
-					objectFollowHorizontalSpeed: view.objectFollowHorizontalSpeed,
-					objectFollowVerticalSpeed: view.objectFollowVerticalSpeed,
-
-					angle: 0,
-				};
-			}),
-		};
-
-		if (room.enableViews) {
+		if (this.viewsEnabled) {
 			let w = 0;
 			let h = 0;
-			for (const view of room.views) {
+			for (const view of this.room.views) {
 				if (!view) continue;
 				w = Math.max(w, view.portX + view.portW);
 				h = Math.max(h, view.portY + view.portH);
 			}
 			this.render.setSize(w, h);
 		} else {
-			this.render.setSize(room.width, room.height);
+			this.render.setSize(this.room.width, this.room.height);
 		}
 
 		this.input.clear();
@@ -805,7 +741,7 @@ export default class Game {
 		// TODO Check if room is persistent
 
 		const createdInstances = [];
-		for (const roomInstance of room.instances) {
+		for (const roomInstance of roomResource.instances) {
 			createdInstances.push(this.instanceCreateNoEvents(roomInstance.id, roomInstance.x, roomInstance.y, roomInstance.object_index, false));
 		}
 
@@ -871,53 +807,6 @@ export default class Game {
 	async instanceDestroy(instance) {
 		await this.events.runEventOfInstance("destroy", null, instance);
 		instance.exists = false;
-	}
-
-	// Get a room background. If it doesn't exist, create one with default parameters.
-	getRoomBackground(index) {
-		if (this.room.backgrounds[index] == null) {
-			this.room.backgrounds[index] = {
-				visible: false,
-				isForeground: false,
-				backgroundIndex: -1,
-				tileHorizontally: true,
-				tileVertically: true,
-				x: 0,
-				y: 0,
-				horizontalSpeed: 0,
-				verticalSpeed: 0,
-				xScale: 1,
-				yScale: 1,
-				blend: 16777215,
-				alpha: 1,
-			};
-		}
-		return this.room.backgrounds[index];
-	}
-
-	// Get a room view. If it doesn't exist, create one with default parameters.
-	getRoomView(index) {
-		if (this.room.views[index] == null) {
-			this.room.views[index] = {
-				visible: false,
-				viewX: 0,
-				viewY: 0,
-				viewW: 640,
-				viewH: 480,
-				portX: 0,
-				portY: 0,
-				portW: 640,
-				portH: 480,
-				objectFollowIndex: -1,
-				objectFollowHorizontalBorder: 32,
-				objectFollowVerticalBorder: 32,
-				objectFollowHorizontalSpeed: -1,
-				objectFollowVerticalSpeed: -1,
-
-				angle: 0,
-			};
-		}
-		return this.room.views[index];
 	}
 
 	// Sets the random seed used by the game. If null, make random one.

@@ -3846,14 +3846,14 @@ export default class BuiltInFunctions {
 	static window_view_mouse_get_x = {
 		args: [{type: "integer"}],
 		func: function([id]) {
-			return this.game.input.getMousePositionOnView(this.game.getRoomView(id)).x;
+			return this.game.input.getMousePositionOnView(this.game.room.getView(id)).x;
 		},
 	};
 
 	static window_view_mouse_get_y = {
 		args: [{type: "integer"}],
 		func: function([id]) {
-			return this.game.input.getMousePositionOnView(this.game.getRoomView(id)).y;
+			return this.game.input.getMousePositionOnView(this.game.room.getView(id)).y;
 		},
 	};
 

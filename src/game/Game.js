@@ -231,10 +231,11 @@ export default class Game {
 	}
 
 	// Run a step and set timeout for next step. With error catching.
-	async mainLoopForTimeout() {
+	mainLoopForTimeout() {
 		this.timeout = setTimeout(async () => {
-			await this.mainLoopPromise;
-			this.mainLoopForTimeout();
+			if (await this.mainLoopPromise) { // Check if should continue or stop
+				this.mainLoopForTimeout();
+			}
 		}, 1000 / this.room.speed);
 
 		const timeoutStepStart = performance.now();
@@ -246,15 +247,18 @@ export default class Game {
 			this.fpsFrameCount = 0;
 		}
 
-		try {
-			// This is not an one liner (this.mainLoopPromise = await this.mainLoop()) because the timeout code above might execute before mainLoop finishes, so mainLoopPromise has to already be set by that point. Otherwise, the timeout will not wait for the current frame and add in a bunch of main calls.
-			this.mainLoopPromise = this.mainLoop();
-			await this.mainLoopPromise;
-
-			++this.fpsFrameCount;
-		} catch (e) {
+		// This is not an one liner (this.mainLoopPromise = await this.mainLoop()) because the timeout code above might execute before mainLoop finishes, so mainLoopPromise has to already be set by that point. Otherwise, the timeout will not wait for the current frame and add in a bunch of main calls.
+		// If this rejects, the browser thinks it's unhandled, so we just catch and deal with it now.
+		this.mainLoopPromise = this.mainLoop()
+		.then(() => {
+			return true;
+		})
+		.catch(async e => {
 			await this.catch(e);
-		}
+			return false;
+		});
+
+		++this.fpsFrameCount;
 	}
 
 	// Start running game steps.

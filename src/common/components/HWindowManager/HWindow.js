@@ -333,13 +333,13 @@ export default class HWindow extends HElement {
 	}
 
 	getMaxSize() {
-		// const style = window.getComputedStyle(this.manager.html);
+		const style = window.getComputedStyle(this.manager.html);
 
-		// const w = parseFloat(style.width);
-		// const h = parseFloat(style.height);
+		const w = parseFloat(style.width);
+		const h = parseFloat(style.height);
 
-		const w = this.manager.html.scrollWidth;
-		const h = this.manager.html.scrollHeight;
+		// const w = this.manager.html.scrollWidth;
+		// const h = this.manager.html.scrollHeight;
 
 		return {w, h};
 	}

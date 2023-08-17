@@ -135,16 +135,16 @@ export default class Instance {
 		instanceX ??= this.x;
 		instanceY ??= this.y;
 
+		const mask = this.getMask();
 		const image = this.getMaskImage();
 		if (!image) return {x1: instanceX, y1: instanceY, x2: instanceX, y2: instanceY};
 
 		// TODO optimize this lol
-		// TODO use sprite.boundingBox instead of entire image
 		const points = [
-			this.instanceImagePointToRoomPoint({x: 0, y: 0}, instanceX, instanceY),
-			this.instanceImagePointToRoomPoint({x: image.width, y: 0}, instanceX, instanceY),
-			this.instanceImagePointToRoomPoint({x: 0, y: image.height}, instanceX, instanceY),
-			this.instanceImagePointToRoomPoint({x: image.width, y: image.height}, instanceX, instanceY),
+			this.instanceImagePointToRoomPoint({x: mask.bbLeft, y: mask.bbTop}, instanceX, instanceY),
+			this.instanceImagePointToRoomPoint({x: mask.bbRight, y: mask.bbTop}, instanceX, instanceY),
+			this.instanceImagePointToRoomPoint({x: mask.bbLeft, y: mask.bbBottom}, instanceX, instanceY),
+			this.instanceImagePointToRoomPoint({x: mask.bbRight, y: mask.bbBottom}, instanceX, instanceY),
 		];
 
 		const xs = points.map(point => point.x);

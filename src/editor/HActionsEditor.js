@@ -98,18 +98,7 @@ export default class HActionsEditor extends HElement {
 						}},
 
 						{text: "Delete", onClick: () => {
-							const actionIndexes = this.selectActions.getSelectedIndexes();
-
-							for (const index of actionIndexes) {
-								this.closeActionWindow(this.actions[index]);
-							}
-
-							this.actions = this.actions.filter((action, index) => !actionIndexes.includes(index));
-
-							this.updateSelectActions();
-							this.updateActionsMenu();
-
-							onActionsChange(this.actions);
+							this.deleteAction();
 						}},
 
 						{text: "Select All", onClick: () => {
@@ -132,6 +121,20 @@ export default class HActionsEditor extends HElement {
 							onActionsChange(this.actions);
 						}},
 					], {returnFocus: false, x: e.clientX, y: e.clientY});
+				});
+
+				this.selectActions.setEvent("keydown", e => {
+					if (e.code == "Enter") {
+						const actionIndex = this.selectActions.getSelectedIndex();
+						if (actionIndex < 0) return;
+
+						const action = this.actions[actionIndex];
+						if (!action) return;
+
+						this.openActionWindow(action);
+					} else if (e.code == "Delete") {
+						this.deleteAction();
+					}
 				});
 
 				parent( add( new HElement("div") ) );
@@ -236,6 +239,21 @@ export default class HActionsEditor extends HElement {
 
 		this.updateSelectActions();
 		this.selectActions.setSelectedIndex(this.actions.length-1);
+		this.updateActionsMenu();
+
+		this.onActionsChange(this.actions);
+	}
+
+	deleteAction() {
+		const actionIndexes = this.selectActions.getSelectedIndexes();
+
+		for (const index of actionIndexes) {
+			this.closeActionWindow(this.actions[index]);
+		}
+
+		this.actions = this.actions.filter((action, index) => !actionIndexes.includes(index));
+
+		this.updateSelectActions();
 		this.updateActionsMenu();
 
 		this.onActionsChange(this.actions);

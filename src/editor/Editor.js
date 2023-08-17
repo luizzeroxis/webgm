@@ -263,7 +263,7 @@ export default class Editor {
 		}
 	}
 
-	async runGame() {
+	runGame() {
 		this.toolBarArea.runButton.setDisabled(true);
 		this.toolBarArea.stopButton.setDisabled(false);
 

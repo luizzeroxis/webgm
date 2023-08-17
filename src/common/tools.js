@@ -261,7 +261,7 @@ export function setDeepOnUpdateOnElement(element, fn) {
 	if (["INPUT", "TEXTAREA", "SELECT"].includes(element.html.tagName)) {
 		element.html.addEventListener("input", () => {
 			fn();
-		});
+		}, {passive: true});
 	}
 	for (const child of element.children) {
 		setDeepOnUpdateOnElement(child, fn);

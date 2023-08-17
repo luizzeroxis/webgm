@@ -78,10 +78,6 @@ export default class GameCollision {
 		const bImage = bInstance.getMaskImage();
 		if (aImage == null || bImage == null) return false;
 
-		// TODO collision masks
-		// spriteA.boundingBox == 'fullimage';
-		// spriteA.shape = 'rectangle' || 'precise';
-
 		const aRect = aInstance.getBoundingBox(aX, aY);
 		const bRect = bInstance.getBoundingBox(bX, bY);
 

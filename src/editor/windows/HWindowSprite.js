@@ -212,9 +212,11 @@ export default class HWindowSprite extends HWindow {
 			this.updateImageInfo();
 			this.onUpdate();
 		})
-		.catch(() => {
-			// this.updateImageInfo();
-			alert("Error when opening image");
+		.catch(e => {
+			if (e.message == "Could not load image") {
+				alert("Error when opening image");
+			}
+			throw e;
 		})
 		.finally(() => {
 			this.buttonLoadSprite.setDisabled(false);

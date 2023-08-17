@@ -84,7 +84,6 @@ export class ProjectSprite {
 		}
 
 		for (const [imageIndex, image] of this.images.entries()) {
-			// TODO account for boundingBox, bbLeft, bbTop, bbRight, bbBottom
 			if (!currentMask) {
 				currentMask = new Array(image.width);
 				for (let x=0; x<image.width; ++x) {

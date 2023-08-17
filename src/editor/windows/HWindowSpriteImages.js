@@ -103,8 +103,11 @@ export default class HWindowSpriteImages extends HWindow {
 			this.imageList.setSelected(null);
 			this.onUpdate();
 		})
-		.catch(() => {
-			alert("Error when opening image");
+		.catch(e => {
+			if (e.message == "Could not load image") {
+				alert("Error when opening image");
+			}
+			throw e;
 		});
 	}
 

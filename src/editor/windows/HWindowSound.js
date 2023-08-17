@@ -86,8 +86,11 @@ export default class HWindowSound extends HWindow {
 			this.audioPreview.html.src = sound.src;
 			this.onUpdate();
 		})
-		.catch(() => {
-			alert("Error when opening audio");
+		.catch(e => {
+			if (e.message == "Could not load audio") {
+				alert("Error when opening audio");
+			}
+			throw e;
 		})
 		.finally(() => {
 			this.buttonLoadSound.setDisabled(false);

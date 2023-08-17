@@ -285,7 +285,7 @@ input[type="text"], input[type="number"], select {
 			> .h-label-and-input {
 				flex: 1;
 
-				input {
+				> input {
 					width: 32px;
 				}
 			}

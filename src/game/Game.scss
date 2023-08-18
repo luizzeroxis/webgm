@@ -32,3 +32,22 @@
 		}
 	}
 }
+
+.window-highscore {
+	background-color: rgb(255, 251, 240);
+
+	> .grid {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		column-gap: 16px;
+		grid-auto-rows: 32px;
+
+		> .position, > .score {
+			text-align: right;
+		}
+	}
+
+	> .escape-text {
+		text-align: center;
+	}
+}

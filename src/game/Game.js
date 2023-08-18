@@ -72,22 +72,7 @@ export default class Game {
 		this.rng = null;
 		this.setRandomSeed();
 
-		// Transitions
-		this.transitionKind = 0;
-		this.transitionSteps = 80;
-
-		// Score, lives, health
-		this.score = 0;
-		this.lives = -1;
-		this.health = 100;
-
-		this.showHealth = false;
-		this.showLives = false;
-		this.showScore = true;
-
-		this.captionHealth = "Health: ";
-		this.captionLives = "Lives: ";
-		this.captionScore = "Score: ";
+		this.initVariables();
 
 		// Errors
 		this.errorOccurred = false;
@@ -122,9 +107,38 @@ export default class Game {
 		}
 	}
 
+	initVariables() {
+		// TODO check
+
+		// Transitions
+		this.transitionKind = 0;
+		this.transitionSteps = 80;
+
+		// Score, lives, health
+		this.score = 0;
+		this.lives = -1;
+		this.health = 100;
+
+		this.showHealth = false;
+		this.showLives = false;
+		this.showScore = true;
+
+		this.captionHealth = "Health: ";
+		this.captionLives = "Lives: ";
+		this.captionScore = "Score: ";
+
+		// Highscore
+		this.highscores = [];
+	}
+
 	// Restarts the game.
 	async restart() {
+		this.initVariables();
+		this.render.initVariables();
+		this.windows.initVariables();
+
 		this.audio.stopAllSounds();
+
 		await this.loadFirstRoom();
 		this.startMainLoop();
 	}

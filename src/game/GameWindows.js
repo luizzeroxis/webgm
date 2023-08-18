@@ -2,6 +2,12 @@ export default class GameWindows {
 	constructor(game) {
 		this.game = game;
 
+		this.modals = [];
+
+		this.initVariables();
+	}
+
+	initVariables() {
 		this.messageBackground = -1;
 		this.messageAlpha = 1;
 		this.messageButtonSprite = -1;
@@ -14,7 +20,15 @@ export default class GameWindows {
 		this.messagePosition = {x: -1, y: -1};
 		this.messageSize = {w: -1, h: -1};
 
-		this.modals = [];
+		this.highscoreBackground = -1;
+		this.highscoreBorder = true;
+		this.highscoreFont = null;
+		this.highscoreBackgroundColor = null;
+		this.highscoreNewColor = null;
+		this.highscoreOtherColor = null;
+		this.highscoreCaptionText = "Top Ten Players";
+		this.highscoreNobodyText = "<nobody>";
+		this.highscoreEscapeText = "press <Escape> to close";
 	}
 
 	end() {

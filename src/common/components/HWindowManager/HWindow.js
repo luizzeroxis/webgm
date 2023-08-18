@@ -95,8 +95,11 @@ export default class HWindow extends HElement {
 
 	onAdd() {
 		this.keyDownHandler = e => {
-			if (this.escCloses && this.manager.focused == this && e.code == "Escape") {
-				this.close();
+			if (this.manager.focused == this) {
+				this.onKeyDown(e);
+				if (this.escCloses && e.code == "Escape") {
+					this.close();
+				}
 			}
 		};
 		document.addEventListener("keydown", this.keyDownHandler);
@@ -108,6 +111,8 @@ export default class HWindow extends HElement {
 	onRemove() {
 		document.removeEventListener("keydown", this.keyDownHandler);
 	}
+
+	onKeyDown() {}
 
 	setPosition(x, y) {
 		this.x = x;

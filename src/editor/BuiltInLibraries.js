@@ -2120,14 +2120,15 @@ export default class BuiltInLibraries {
 						},
 					],
 				},
+				*/
 				{
-					id: 999,
+					id: 709,
 					description: "Show Highscore",
-					listText: [""],
-					hintText: [""],
+					listText: ["Show the highscore table"],
+					hintText: ["show the highscore table\n    background: ", a[0], "\n     ", a[1], " the border\n     new color: ", a[2], ", other color: ", a[3], "\n     Font: ", a[4]],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_highscore_show",
 
 					interfaceKind: "normal",
 					isQuestion: false,
@@ -2136,12 +2137,34 @@ export default class BuiltInLibraries {
 
 					args: [
 						{
-							name: "",
-							kind: "",
-							default: "",
+							name: "background:",
+							kind: "background",
+							default: -1,
+						},
+						{
+							name: "border:",
+							kind: "menu",
+							menu: ["don't show", "show"],
+							default: 1,
+						},
+						{
+							name: "new color:",
+							kind: "color",
+							default: 255,
+						},
+						{
+							name: "other color:",
+							kind: "color",
+							default: 0,
+						},
+						{
+							name: "font:",
+							kind: "string", // TODO should be fontstring
+							default: "\"Times New Roman\",10,0,0,0,0,0",
 						},
 					],
 				},
+				/*
 				{
 					id: 999,
 					description: "Clear Highscore",

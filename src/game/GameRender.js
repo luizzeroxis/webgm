@@ -17,6 +17,22 @@ export default class GameRender {
 
 		this.setInitialSize();
 
+		this.initVariables();
+	}
+
+	start() {
+		if (this.game.project.globalGameSettings.startInFullScreen) {
+			this.setFullscreen(true);
+		}
+
+		if (!this.game.project.globalGameSettings.displayCursor) {
+			this.canvas.classList.add("no-cursor");
+		}
+	}
+
+	initVariables() {
+		// TODO check
+
 		// Cursor
 		this.cursorSprite = null;
 		this.cursorImageIndex = 0;
@@ -28,16 +44,6 @@ export default class GameRender {
 		this.drawVAlign = 0;
 
 		this.currentView = 0;
-	}
-
-	start() {
-		if (this.game.project.globalGameSettings.startInFullScreen) {
-			this.setFullscreen(true);
-		}
-
-		if (!this.game.project.globalGameSettings.displayCursor) {
-			this.canvas.classList.add("no-cursor");
-		}
 	}
 
 	end() {

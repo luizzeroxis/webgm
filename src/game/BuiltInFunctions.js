@@ -3,6 +3,7 @@ import {toGMDate, toJSDate, decimalToHSV, hsvToDecimal, decimalToHex, decimalToH
 
 import {EngineException} from "./Game.js";
 import GameCollision from "./GameCollision.js";
+import HHighscoreWindow from "./HHighscoreWindow.js";
 import HMessageWindow from "./HMessageWindow.js";
 
 export default class BuiltInFunctions {
@@ -9937,9 +9938,33 @@ export default class BuiltInFunctions {
 
 	static action_highscore_show = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_highscore_show is not implemented");
-			// return 0;
+		func: async function([background, border, newColor, otherColor, font]) {
+			this.game.windows.highscoreBackground = background;
+			this.game.windows.highscoreBorder = border;
+			this.game.windows.highscoreNewColor = newColor;
+			this.game.windows.highscoreOtherColor = otherColor;
+			this.game.windows.highscoreFont = font;
+
+			// Add current score to highscores
+			let highscoreIndex = this.game.highscores.length;
+			for (const [index, highscore] of this.game.highscores.entries()) {
+				if (this.game.score > highscore.score) {
+					highscoreIndex = index;
+					break;
+				}
+			}
+
+			if (highscoreIndex < 10) {
+				this.game.highscores.splice(highscoreIndex, 0, {score: this.game.score, name: ""});
+				if (this.game.highscores.length > 10) this.game.highscores.length = 10;
+			}
+
+			const result = await this.game.windows.openModal(HHighscoreWindow, {inputPosition: highscoreIndex});
+			if (result) {
+				this.game.highscores[highscoreIndex].name = result;
+			}
+
+			return 0;
 		},
 	};
 

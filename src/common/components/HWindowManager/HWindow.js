@@ -190,7 +190,7 @@ export default class HWindow extends HElement {
 		}
 	}
 
-	setSizeToDefault(hasMaxSize=true) {
+	setSizeToDefault() {
 		this.html.style.removeProperty("width");
 		this.html.style.removeProperty("height");
 
@@ -199,11 +199,9 @@ export default class HWindow extends HElement {
 		let w = parseFloat(style.width);
 		let h = parseFloat(style.height);
 
-		if (hasMaxSize) {
-			const maxSize = this.getMaxSize();
-			w = Math.min(maxSize.w, w);
-			h = Math.min(maxSize.h, h);
-		}
+		const maxSize = this.getMaxSize();
+		w = Math.min(maxSize.w, w);
+		h = Math.min(maxSize.h, h);
 
 		this.setSize(w, h);
 	}

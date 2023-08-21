@@ -8,9 +8,7 @@ import Project from "~/common/project/Project.js";
 import {ProjectAction} from "~/common/project/ProjectProperties.js";
 import ProjectSerializer, {UnserializeException} from "~/common/project/ProjectSerializer.js";
 import {openFile, saveFile, setOnFileDrop, setOnFileDropAsFileHandle} from "~/common/tools.js";
-import WebGMException from "~/common/WebGMException.js";
 import HSplitter from "~/editor/components/HSplitter/HSplitter.js";
-import Game from "~/game/Game.js";
 
 import HAreaMenuBar from "./areas/HAreaMenuBar.js";
 import HAreaResources from "./areas/HAreaResources.js";
@@ -264,73 +262,19 @@ export default class Editor {
 	}
 
 	runGame() {
-		this.toolBarArea.runButton.setDisabled(true);
-		this.toolBarArea.stopButton.setDisabled(false);
-
-		// await this.stopGame();
-
 		if (this.project.resources.ProjectRoom.length <= 0) {
 			alert("A game must have at least one room to run.");
-			this.toolBarArea.runButton.setDisabled(false);
-			this.toolBarArea.stopButton.setDisabled(true);
 			return;
 		}
 
-		this.game = new Game({
-			project: this.project,
-		});
-
+		if (this.gameWindow) {
+			this.gameWindow.forceClose();
+		}
 		this.gameWindow = this.windowsArea.openGame();
-		this.gameWindow.client.removeChildren();
-
-		parent(this.gameWindow.client);
-			add(this.game.div);
-			endparent();
-
-		this.gameWindow.setSizeToDefault(false);
-
-		if (this.preferences.get("scrollToGameOnRun")) {
-			this.gameWindow.html.scrollIntoView();
-		}
-		if (this.preferences.get("focusCanvasOnRun")) {
-			this.game.render.canvas.focus({preventScroll: true});
-		}
-
-		const gameListeners = this.game.dispatcher.listen({
-			close: e => {
-				this.toolBarArea.stopButton.setDisabled(true);
-				this.toolBarArea.runButton.setDisabled(false);
-
-				if (e instanceof WebGMException) {
-					alert("An error has ocurred when trying to run the game:\n" + e.message);
-				}
-
-				if (this.preferences.get("clearCanvasOnStop")) {
-					const h = this.game.render.canvas.height;
-					this.game.render.canvas.height = 0;
-					this.game.render.canvas.height = h;
-				}
-
-				this.game.dispatcher.stopListening(gameListeners);
-
-				this.game = null;
-
-				if (e) {
-					throw e;
-				}
-			},
-		});
-
-		this.game.start();
 	}
 
 	stopGame() {
-		if (this.game) {
-			this.toolBarArea.stopButton.setDisabled(true);
-			this.toolBarArea.runButton.setDisabled(false);
-
-			this.game.close();
-		}
+		this.gameWindow.forceClose();
 	}
 
 	showAbout() {

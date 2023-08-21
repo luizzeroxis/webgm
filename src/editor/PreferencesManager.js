@@ -7,7 +7,6 @@ export default class PreferencesManager {
 			defaultActionLibraryTab: "move",
 			scrollToGameOnRun: true,
 			focusCanvasOnRun: true,
-			clearCanvasOnStop: true,
 			hintTextInAction: false,
 			showWIPWarning: true,
 		};

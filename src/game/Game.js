@@ -72,6 +72,9 @@ export default class Game {
 		this.rng = null;
 		this.setRandomSeed();
 
+		// Highscore
+		this.highscores = [];
+
 		this.initVariables();
 
 		// Errors
@@ -126,9 +129,6 @@ export default class Game {
 		this.captionHealth = "Health: ";
 		this.captionLives = "Lives: ";
 		this.captionScore = "Score: ";
-
-		// Highscore
-		this.highscores = [];
 	}
 
 	// Restarts the game.
@@ -857,6 +857,27 @@ export default class Game {
 				await this.events.runEventOfInstance("other", Events.OTHER_NO_MORE_HEALTH, instance);
 			}
 		}
+	}
+
+	// Adds new highscore, if high enough.
+	addHighscore(value) {
+		// TODO change highscores so 10 places are filled out with with nobody text.
+		let highscoreIndex = this.highscores.length;
+		for (const [index, highscore] of this.highscores.entries()) {
+			if (value > highscore.score) {
+				highscoreIndex = index;
+				break;
+			}
+		}
+
+		if (highscoreIndex < 10 && value > 0) {
+			this.highscores.splice(highscoreIndex, 0, {score: value, name: ""});
+			if (this.highscores.length > 10) this.highscores.length = 10;
+		} else {
+			highscoreIndex = null;
+		}
+
+		return highscoreIndex;
 	}
 
 	// // Helper functions

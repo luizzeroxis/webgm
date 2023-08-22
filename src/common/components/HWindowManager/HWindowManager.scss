@@ -132,6 +132,19 @@
 					flex: 1;
 				}
 			}
+
+			&.client-only {
+				grid-template-columns: 1fr;
+				grid-template-rows: 1fr;
+
+				> .border {
+					display: none;
+				}
+
+				> .contents > .title-bar {
+					display: none;
+				}
+			}
 		}
 	}
 

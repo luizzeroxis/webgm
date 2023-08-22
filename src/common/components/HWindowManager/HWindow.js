@@ -18,6 +18,7 @@ export default class HWindow extends HElement {
 		this.isMinimized = false;
 		this.isMaximized = false;
 		this.isResizable = true;
+		this.isClientOnly = false;
 		this.escCloses = false;
 
 		this.windowChildren = [];
@@ -232,6 +233,15 @@ export default class HWindow extends HElement {
 			this.maximizeButton.html.style.removeProperty("display");
 		} else {
 			this.maximizeButton.html.style.setProperty("display", "none");
+		}
+	}
+
+	setClientOnly(value) {
+		this.isClientOnly = value;
+		if (value) {
+			this.html.classList.add("client-only");
+		} else {
+			this.html.classList.remove("client-only");
 		}
 	}
 

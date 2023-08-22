@@ -4696,98 +4696,128 @@ export default class BuiltInFunctions {
 	// ## Highscore list
 
 	static highscore_show = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function highscore_show is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: async function([numb]) {
+			const highscoreIndex = this.game.addHighscore(numb);
+
+			const result = await this.game.windows.openModal(HHighscoreWindow, {inputPosition: highscoreIndex});
+			if (result && highscoreIndex != null) {
+				this.game.highscores[highscoreIndex].name = result;
+			}
+
+			return 0;
 		},
 	};
 
 	static highscore_set_background = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function highscore_set_background is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([back]) {
+			this.game.windows.highscoreBackground = this.game.project.getResourceById("ProjectBackground", back);
+			return 0;
 		},
 	};
 
 	static highscore_set_border = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function highscore_set_border is not implemented");
-			// return 0;
+		args: [{type: "bool"}],
+		func: function([show]) {
+			this.game.windows.highscoreBorder = show;
+			return 0;
 		},
 	};
 
 	static highscore_set_font = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function highscore_set_font is not implemented");
-			// return 0;
+		args: [{type: "string"}, {type: "integer"}, {type: "integer"}],
+		func: function([name, size, style]) {
+			this.game.windows.highscoreFont = {
+				name: `"${name}"`,
+				size: `${size}`,
+				bold: (style == 1 || style == 3) ? "1" : "0",
+				italic: (style == 2 || style == 3) ? "1" : "0",
+				underline: "0",
+				strike: "0",
+			};
+			return 0;
 		},
 	};
 
 	static highscore_set_colors = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function highscore_set_colors is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([back, _new, other]) {
+			this.game.windows.highscoreBackgroundColor = decimalToHex(back);
+			this.game.windows.highscoreNewColor = decimalToHex(_new);
+			this.game.windows.highscoreOtherColor = decimalToHex(other);
+			return 0;
 		},
 	};
 
 	static highscore_set_strings = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function highscore_set_strings is not implemented");
-			// return 0;
+		args: [{type: "string"}, {type: "string"}, {type: "string"}],
+		func: function([caption, nobody, escape]) {
+			this.game.windows.highscoreCaptionText = caption;
+			this.game.windows.highscoreNobodyText = nobody;
+			this.game.windows.highscoreEscapeText = escape;
+			return 0;
 		},
 	};
 
 	static highscore_show_ext = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function highscore_show_ext is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "bool"}, {type: "integer"}, {type: "integer"}, {type: "string"}, {type: "integer"}],
+		func: async function([numb, back, border, col1, col2, name, size]) {
+			this.game.windows.highscoreBackground = this.game.project.getResourceById("ProjectBackground", back);
+			this.game.windows.highscoreBorder = border;
+			this.game.windows.highscoreNewColor = decimalToHex(col1);
+			this.game.windows.highscoreOtherColor = decimalToHex(col2);
+			this.game.windows.highscoreFont.name = `"${name}"`;
+			this.game.windows.highscoreFont.size = `${size}`;
+
+			await BuiltInFunctions.highscore_show.func.call(this, [numb]);
+			return 0;
 		},
 	};
 
 	static highscore_clear = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function highscore_clear is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			this.game.highscores = [];
+			return 0;
 		},
 	};
 
 	static highscore_add = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function highscore_add is not implemented");
-			// return 0;
+		args: [{type: "string"}, {type: "integer"}],
+		func: function([str, numb]) {
+			const highscoreIndex = this.game.addHighscore(numb);
+			if (highscoreIndex) {
+				this.game.highscores[highscoreIndex].name = str;
+			}
+			return 0;
 		},
 	};
 
 	static highscore_add_current = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function highscore_add_current is not implemented");
-			// return 0;
+		args: [],
+		func: async function([]) {
+			const highscoreIndex = this.game.addHighscore(this.game.score);
+			if (highscoreIndex) {
+				const result = await this.game.windows.openModal(HMessageWindow,
+					"You reached a place in the highscore table.\nPlease provide your name.", {input: {default: "player"}});
+				this.game.highscores[highscoreIndex].name = result ?? "player";
+			}
+			return 0;
 		},
 	};
 
 	static highscore_value = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function highscore_value is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([place]) {
+			return this.game.highscores[place]?.score ?? 0;
 		},
 	};
 
 	static highscore_name = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function highscore_name is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([place]) {
+			return this.game.highscores[place]?.name ?? this.game.highscoreNobodyText;
 		},
 	};
 
@@ -9939,30 +9969,15 @@ export default class BuiltInFunctions {
 	static action_highscore_show = {
 		args: null,
 		func: async function([background, border, newColor, otherColor, font]) {
-			this.game.windows.highscoreBackground = background;
-			this.game.windows.highscoreBorder = border;
-			this.game.windows.highscoreNewColor = newColor;
-			this.game.windows.highscoreOtherColor = otherColor;
-			this.game.windows.highscoreFont = font;
+			this.game.windows.highscoreBackground = this.game.project.getResourceById("ProjectBackground", background);
+			this.game.windows.highscoreBorder = (border == 1);
+			this.game.windows.highscoreNewColor = decimalToHex(newColor);
+			this.game.windows.highscoreOtherColor = decimalToHex(otherColor);
 
-			// Add current score to highscores
-			let highscoreIndex = this.game.highscores.length;
-			for (const [index, highscore] of this.game.highscores.entries()) {
-				if (this.game.score > highscore.score) {
-					highscoreIndex = index;
-					break;
-				}
-			}
+			const f = this.game.windows.highscoreFont;
+			[f.name, f.size, , f.bold, f.italic, f.underline, f.strike] = font.split(",");
 
-			if (highscoreIndex < 10) {
-				this.game.highscores.splice(highscoreIndex, 0, {score: this.game.score, name: ""});
-				if (this.game.highscores.length > 10) this.game.highscores.length = 10;
-			}
-
-			const result = await this.game.windows.openModal(HHighscoreWindow, {inputPosition: highscoreIndex});
-			if (result) {
-				this.game.highscores[highscoreIndex].name = result;
-			}
+			await BuiltInFunctions.highscore_show.func.call(this, [this.game.score]);
 
 			return 0;
 		},

@@ -34,7 +34,8 @@
 }
 
 .window-highscore {
-	background-color: rgb(255, 251, 240);
+	background-color: black;
+	background-size: 100% 100%;
 
 	> .grid {
 		display: grid;
@@ -42,8 +43,19 @@
 		column-gap: 16px;
 		grid-auto-rows: 32px;
 
-		> .position, > .score {
-			text-align: right;
+		> .row {
+			display: contents;
+
+			> .position, > .score {
+				text-align: right;
+			}
+
+			> .name > input {
+				font: inherit;
+				color: inherit;
+				background: inherit;
+				border: inherit;
+			}
 		}
 	}
 

@@ -20,12 +20,19 @@ export default class GameWindows {
 		this.messagePosition = {x: -1, y: -1};
 		this.messageSize = {w: -1, h: -1};
 
-		this.highscoreBackground = -1;
+		this.highscoreBackground = null;
 		this.highscoreBorder = true;
-		this.highscoreFont = null;
-		this.highscoreBackgroundColor = null;
-		this.highscoreNewColor = null;
-		this.highscoreOtherColor = null;
+		this.highscoreFont = {
+			name: "\"Times New Roman\"",
+			size: "10",
+			bold: "0",
+			italic: "0",
+			underline: "0",
+			strike: "0",
+		};
+		this.highscoreBackgroundColor = "#fffbf0";
+		this.highscoreNewColor = "#ff0000";
+		this.highscoreOtherColor = "#000000";
 		this.highscoreCaptionText = "Top Ten Players";
 		this.highscoreNobodyText = "<nobody>";
 		this.highscoreEscapeText = "press <Escape> to close";

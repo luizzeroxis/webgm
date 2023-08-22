@@ -9960,9 +9960,11 @@ export default class BuiltInFunctions {
 
 	static action_draw_score = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_draw_score is not implemented");
-			// return 0;
+		func: function([x, y, caption], relative) {
+			x = (!relative ? x : this.currentInstance.x + x);
+			y = (!relative ? y : this.currentInstance.y + y);
+			BuiltInFunctions.draw_text.func.call(this, [x, y, `${caption}${this.game.score}`]);
+			return 0;
 		},
 	};
 
@@ -9985,9 +9987,9 @@ export default class BuiltInFunctions {
 
 	static action_highscore_clear = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_highscore_clear is not implemented");
-			// return 0;
+		func: function([]) {
+			BuiltInFunctions.highscore_clear.func.call(this, []);
+			return 0;
 		},
 	};
 
@@ -10019,17 +10021,28 @@ export default class BuiltInFunctions {
 
 	static action_draw_life = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_draw_life is not implemented");
-			// return 0;
+		func: function([x, y, caption], relative) {
+			x = (!relative ? x : this.currentInstance.x + x);
+			y = (!relative ? y : this.currentInstance.y + y);
+			BuiltInFunctions.draw_text.func.call(this, [x, y, `${caption}${this.game.lives}`]);
+			return 0;
 		},
 	};
 
 	static action_draw_life_images = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_draw_life_images is not implemented");
-			// return 0;
+		func: function([x, y, image], relative) {
+			x = (!relative ? x : this.currentInstance.x + x);
+			y = (!relative ? y : this.currentInstance.y + y);
+
+			const spriteImage = this.game.project.getResourceById("ProjectSprite", image)?.images[0];
+			if (!spriteImage) return 0;
+
+			for (let i=0; i<this.game.lives; ++i) {
+				this.game.render.drawImageExt(spriteImage.image, x + (i * spriteImage.width), y);
+			}
+
+			return 0;
 		},
 	};
 

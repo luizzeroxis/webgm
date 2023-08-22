@@ -2097,30 +2097,38 @@ export default class BuiltInLibraries {
 						},
 					],
 				},
-				/*
 				{
-					id: 999,
+					id: 703,
 					description: "Draw Score",
-					listText: [""],
-					hintText: [""],
+					listText: ["Draw the value of score"],
+					hintText: ["at ", r, "position (", a[0], ",", a[1], ") draw the value of score with caption ", a[2]],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_draw_score",
 
 					interfaceKind: "normal",
 					isQuestion: false,
 					hasApplyTo: false,
-					hasRelative: false,
+					hasRelative: true,
 
 					args: [
 						{
-							name: "",
-							kind: "",
-							default: "",
+							name: "x:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "y:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "caption:",
+							kind: "string",
+							default: "Score: ",
 						},
 					],
 				},
-				*/
 				{
 					id: 709,
 					description: "Show Highscore",
@@ -2164,30 +2172,18 @@ export default class BuiltInLibraries {
 						},
 					],
 				},
-				/*
 				{
-					id: 999,
+					id: 707,
 					description: "Clear Highscore",
-					listText: [""],
-					hintText: [""],
+					listText: ["Clear the highscore table"],
+					hintText: ["clear the highscore table"],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_highscore_clear",
 
-					interfaceKind: "normal",
+					interfaceKind: "none",
 					isQuestion: false,
-					hasApplyTo: false,
-					hasRelative: false,
-
-					args: [
-						{
-							name: "",
-							kind: "",
-							default: "",
-						},
-					],
 				},
-				*/
 				{
 					name: "Lives",
 					kind: "label",
@@ -2242,52 +2238,70 @@ export default class BuiltInLibraries {
 						},
 					],
 				},
-				/*
 				{
-					id: 999,
+					id: 713,
 					description: "Draw Lives",
-					listText: [""],
-					hintText: [""],
+					listText: ["Draw the number of lives"],
+					hintText: ["at ", r, "position (", a[0], ",", a[1], ") draw the number of lives with caption ", a[2]],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_draw_life",
 
 					interfaceKind: "normal",
 					isQuestion: false,
 					hasApplyTo: false,
-					hasRelative: false,
+					hasRelative: true,
 
 					args: [
 						{
-							name: "",
-							kind: "",
-							default: "",
+							name: "x:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "y:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "caption:",
+							kind: "string",
+							default: "Lives: ",
 						},
 					],
 				},
 				{
-					id: 999,
+					id: 714,
 					description: "Draw Life Images",
-					listText: [""],
-					hintText: [""],
+					listText: ["Draw the lives as image"],
+					hintText: ["draw the lives ", r, "at (", a[0], ",", a[1], ") with sprite ", a[2]],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_draw_life_images",
 
 					interfaceKind: "normal",
 					isQuestion: false,
 					hasApplyTo: false,
-					hasRelative: false,
+					hasRelative: true,
 
 					args: [
 						{
-							name: "",
-							kind: "",
-							default: "",
+							name: "x:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "y:",
+							kind: "expression",
+							default: "0",
+						},
+						{
+							name: "image:",
+							kind: "sprite",
+							default: -1,
 						},
 					],
 				},
-				*/
 				{
 					name: "Health",
 					kind: "label",

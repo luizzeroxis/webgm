@@ -1,7 +1,7 @@
 /* eslint-env node, commonjs */
 
+const ESLintPlugin = require("eslint-webpack-plugin");
 const path = require("path");
-
 const {mergeWithRules} = require("webpack-merge");
 
 const common = require("./webpack.common.js");
@@ -44,4 +44,9 @@ module.exports = mergeWithRules({
 		},
 	},
 	devtool: "inline-source-map",
+	plugins: [
+		new ESLintPlugin({
+			files: path.resolve(__dirname, "."),
+		})
+	],
 });

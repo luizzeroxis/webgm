@@ -2,7 +2,6 @@
 
 const path = require("path");
 
-const ESLintPlugin = require("eslint-webpack-plugin");
 const {GitRevisionPlugin} = require("git-revision-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -80,9 +79,6 @@ module.exports = {
 				"COMMITHASH": JSON.stringify(gitRevisionPlugin.commithash()),
 				"LASTCOMMITDATETIME": JSON.stringify(gitRevisionPlugin.lastcommitdatetime()),
 			},
-		}),
-		new ESLintPlugin({
-			files: path.resolve(__dirname, "."),
 		}),
 		new HtmlWebpackPlugin({
 			title: "webgm",

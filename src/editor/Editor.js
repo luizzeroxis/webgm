@@ -65,11 +65,12 @@ export default class Editor {
 
 				add( new HSplitter(this.resourcesArea, this.windowsArea) );
 
-				add( this.menuManager );
 				endparent();
 
 			this.windowManager = new HWindowManager(this.mainDiv);
 			add( this.windowManager );
+
+			add( this.menuManager );
 
 			endparent();
 

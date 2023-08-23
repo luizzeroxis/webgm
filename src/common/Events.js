@@ -41,12 +41,17 @@ export default class Events {
 			getFullName: () => "Destroy",
 		},
 		{
+			id: Events.ALARM, value: "alarm", name: "Alarm",
+			getFullName: subtype => "Alarm "+subtype,
+		},
+		{
 			id: Events.STEP, value: "step", name: "Step",
 			getFullName: subtype => Events.listStepSubtypes.find(x => x.value == subtype).name,
 		},
 		{
-			id: Events.ALARM, value: "alarm", name: "Alarm",
-			getFullName: subtype => "Alarm "+subtype,
+			id: Events.COLLISION, value: "collision", name: "Collision",
+			getFullName: (subtype, project) => "Collision with "
+				+ (project.resources.ProjectObject.find(x => x.id == subtype)?.name ?? "<undefined>"),
 		},
 		{
 			id: Events.KEYBOARD, value: "keyboard", name: "Keyboard",
@@ -55,11 +60,6 @@ export default class Events {
 		{
 			id: Events.MOUSE, value: "mouse", name: "Mouse",
 			getFullName: subtype => Events.listMouseSubtypes.find(x => x.value == subtype).name,
-		},
-		{
-			id: Events.COLLISION, value: "collision", name: "Collision",
-			getFullName: (subtype, project) => "Collision with "
-				+ (project.resources.ProjectObject.find(x => x.id == subtype)?.name ?? "<undefined>"),
 		},
 		{
 			id: Events.OTHER, value: "other", name: "Other",

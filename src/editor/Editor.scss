@@ -475,6 +475,17 @@ input[type="text"], input[type="number"], select {
 	}
 }
 
+.window-event-chooser {
+	> .events {
+		column-count: 2;
+
+		> button {
+			display: block;
+			width: 100%;
+		}
+	}
+}
+
 .window-timeline, .window-object {
 	> .actions-editor {
 		display: flex;

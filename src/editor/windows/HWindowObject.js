@@ -116,6 +116,7 @@ export default class HWindowObject extends HWindow {
 
 							this.buttonEventChange = add( new HButton("Change", async () => {
 								const newEvent = await this.editor.windowManager.openModal(HEventChooserWindow, this.editor).promise;
+								if (!newEvent) return;
 
 								const event = this.getSelectedEvent();
 								if (!event) return;

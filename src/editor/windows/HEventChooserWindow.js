@@ -1,8 +1,6 @@
 import HModalWindow from "~/common/components/HWindowManager/HModalWindow.js";
 import Events from "~/common/Events.js";
-import {parent, endparent, add, HElement, HButton, HNumberInput, HSelectWithOptions} from "~/common/h";
-import {ProjectObject} from "~/common/project/ProjectProperties.js";
-import HResourceSelect from "~/editor/HResourceSelect.js";
+import {parent, endparent, add, HElement, HButton} from "~/common/h";
 
 export default class HEventChooserWindow extends HModalWindow {
 	constructor(manager, editor) {
@@ -17,65 +15,45 @@ export default class HEventChooserWindow extends HModalWindow {
 		this.setTitle("Choose the Event to Add");
 
 		parent(this.client);
-			// Event type select
-			this.selectEventType = add( new HSelectWithOptions("Event type:", Events.listEventTypes) );
+			this.client.html.classList.add("window-event-chooser");
 
-			this.selectEventType.setOnChange(() => {
-				this.updateDivEventSubtype();
-			});
+			parent( add( new HElement("div", {class: "events"}) ) );
 
-			// Event subtype div
-			this.selectCollisionObject = null;
-			this.divEventSubtype = add( new HElement("div") );
+				for (const eventType of Events.listEventTypes) {
+					add( new HButton(eventType.name, async e => {
+						const menuLists = {
+							[Events.STEP]: Events.listStepSubtypes,
+							[Events.ALARM]: Array.from(new Array(12), (_, i) => ({name: `Alarm ${i}`, value: i})),
+							[Events.KEYBOARD]: Events.listKeyboardSubtypes,
+							[Events.MOUSE]: Events.listMouseSubtypes,
+							[Events.COLLISION]: this.editor.project.resources.ProjectObject.map(resource => ({name: resource.name, value: resource.id})),
+							[Events.OTHER]: Events.listOtherSubtypes,
+							[Events.KEYPRESS]: Events.listKeyboardSubtypes,
+							[Events.KEYRELEASE]: Events.listKeyboardSubtypes,
+						};
 
-			add( new HButton("Ok", () => {
-				const eventType = this.selectEventType.getValue();
-				const eventSubtype = this.subtypeValueFunction?.() ?? 0;
+						const list = menuLists[eventType.id];
+						if (list) {
+							const index = await this.editor.menuManager.openMenu(
+								list.map(subtype => ({
+									text: subtype.name,
+								})), {x: e.clientX, y: e.clientY}).promise;
+							if (index != null) {
+								const eventSubtype = list[index];
+								this.close({type: eventType.value, subtype: eventSubtype.value});
+							}
+						} else {
+							// Create, destroy and draw
+							this.close({type: eventType.value, subtype: 0});
+						}
+					}) );
+				}
+				endparent();
 
-				this.close({type: eventType, subtype: eventSubtype});
-			}) );
-			endparent();
-	}
-
-	updateDivEventSubtype() {
-		this.divEventSubtype.removeChildren();
-
-		const eventType = this.selectEventType.getValue();
-
-		parent(this.divEventSubtype);
-
-			this.subtypeValueFunction = null;
-
-			if (eventType == "step") {
-				const subtypeElement = add( new HSelectWithOptions("Step:", Events.listStepSubtypes));
-				this.subtypeValueFunction = () => subtypeElement.getValue();
-			} else
-
-			if (eventType == "alarm") {
-				const subtypeElement = add( new HNumberInput("Alarm:", 0, 1, 0, 11) );
-				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
-			} else
-
-			if (eventType == "keyboard" || eventType == "keypress" || eventType == "keyrelease") {
-				const subtypeElement = add( new HSelectWithOptions("Key:", Events.listKeyboardSubtypes) );
-				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
-			} else
-
-			if (eventType == "mouse") {
-				const subtypeElement = add( new HSelectWithOptions("Mouse:", Events.listMouseSubtypes));
-				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
-			} else
-
-			if (eventType == "collision") {
-				this.selectCollisionObject = add( new HResourceSelect(this.editor, "Object:", ProjectObject, true) );
-				this.subtypeValueFunction = () => (parseInt(this.selectCollisionObject.getValue()));
-			} else
-
-			if (eventType == "other") {
-				const subtypeElement = add( new HSelectWithOptions("Other:", Events.listOtherSubtypes));
-				this.subtypeValueFunction = () => (parseInt(subtypeElement.getValue()));
-			}
-
-			endparent();
+			parent( add( new HElement("div") ) );
+				add( new HButton("Cancel", () => {
+					this.close();
+				}) );
+				endparent();
 	}
 }

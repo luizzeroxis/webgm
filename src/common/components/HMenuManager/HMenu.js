@@ -2,6 +2,17 @@ import {HElement, parent, endparent, add} from "~/common/h";
 
 export default class HMenu extends HElement {
 	constructor(manager, items, options) {
+		/*
+		items: [
+			text,
+			onClick,
+			enable: true,
+		],
+		options: {
+			x, y,
+			fromElement,
+		}
+		*/
 		parent( super("div", {class: "h-menu"}) );
 
 			this.manager = manager;
@@ -132,10 +143,10 @@ export default class HMenu extends HElement {
 		const managerRect = this.manager.html.getBoundingClientRect();
 
 		if (this.x + rect.width > managerRect.width) {
-			this.x = managerRect.width - rect.width;
+			this.x = Math.max(0, managerRect.width - rect.width);
 		}
 		if (this.y + rect.height > managerRect.height) {
-			this.y = managerRect.height - rect.height;
+			this.y = Math.max(0, managerRect.height - rect.height);
 		}
 
 		this.html.style.left = this.x.toString() + "px";

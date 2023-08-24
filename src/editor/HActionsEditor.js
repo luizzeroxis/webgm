@@ -273,11 +273,17 @@ export default class HActionsEditor extends HElement {
 		this.selectActions.removeOptions();
 
 		if (this.actions) {
+			let indent = 0;
+
 			parent(this.selectActions.select);
 				for (const action of this.actions) {
 					const actionType = this.editor.getActionType(action);
 					const listText = this.getActionListText(action, actionType);
 					const hintText = this.getActionHintText(action, actionType);
+
+					if (actionType.kind == "begin") {
+						indent += 1;
+					}
 
 					const option = add( new HOption(
 						(this.editor.preferences.get("hintTextInAction") ? hintText.text : listText.text), // text
@@ -286,9 +292,18 @@ export default class HActionsEditor extends HElement {
 					) );
 					option.html.title = hintText.text;
 
+					const offset = (Math.max(0, indent) * 16);
+					option.html.style.paddingLeft = `${2 + 24 + 2 + offset}px`;
+					option.html.style.backgroundImage = `url(${actionType.image})`;
+					option.html.style.backgroundPositionX = `${2 + offset}px`;
+
 					option.setEvent("dblclick", () => {
 						this.openActionWindow(action);
 					});
+
+					if (actionType.kind == "end") {
+						indent -= 1;
+					}
 				}
 				endparent();
 

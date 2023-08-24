@@ -436,6 +436,7 @@ input[type="text"], input[type="number"], select {
 }
 
 .window-timeline {
+	min-height: 0;
 	flex: 1;
 
 	> .properties {
@@ -456,6 +457,7 @@ input[type="text"], input[type="number"], select {
 }
 
 .window-object {
+	min-height: 0;
 	flex: 1;
 
 	> .properties {
@@ -493,6 +495,7 @@ input[type="text"], input[type="number"], select {
 		
 		> .actions {
 			display: flex;
+			width: 200px;
 			min-width: 200px;
 			flex: 1;
 			flex-direction: column;
@@ -502,6 +505,11 @@ input[type="text"], input[type="number"], select {
 				flex-direction: column;
 
 				> select > option {
+					display: flex;
+					align-items: center;
+					min-height: 24px;
+					background-repeat: no-repeat;
+
 					&.bold {
 						font-weight: bold;
 					}
@@ -516,6 +524,7 @@ input[type="text"], input[type="number"], select {
 		> .libraries {
 			flex: none;
 			padding-left: 4px;
+			overflow-y: auto;
 
 			> .libraries-tabs {
 				display: flex;

@@ -1,5 +1,5 @@
 import Events from "~/common/Events.js";
-import {toGMDate, toJSDate, decimalToHSV, hsvToDecimal, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, rgbToDecimal, parseArrowString, forceInteger, toInteger, parseNewLineHash} from "~/common/tools.js";
+import {toGMDate, toJSDate, decimalToHSV, hsvToDecimal, decimalToHex, decimalToHexAlpha, hexAlphaToDecimal, decimalToRGB, rgbToDecimal, parseArrowString, forceInteger, toInteger, parseNewLineHash} from "~/common/tools.js";
 
 import {EngineException} from "./Game.js";
 import GameCollision from "./GameCollision.js";
@@ -2666,10 +2666,15 @@ export default class BuiltInFunctions {
 	};
 
 	static merge_color = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function merge_color is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "real"}],
+		func: function([col1, col2, amount]) {
+			col1 = decimalToRGB(col1);
+			col2 = decimalToRGB(col2);
+			return rgbToDecimal({
+				r: Math.round((col1.r * (1-amount)) + (col2.r * amount)),
+				g: Math.round((col1.g * (1-amount)) + (col2.g * amount)),
+				b: Math.round((col1.b * (1-amount)) + (col2.b * amount)),
+			});
 		},
 	};
 

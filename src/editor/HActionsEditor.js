@@ -137,6 +137,30 @@ export default class HActionsEditor extends HElement {
 					}
 				});
 
+				this.selectActions.setEvent("drop", e => {
+					const data = e.dataTransfer.getData("application/json");
+					if (data == "") return;
+					const {libraryName, actionTypeId} = JSON.parse(data);
+					const actionType = this.editor.getActionType(libraryName, actionTypeId);
+					this.addAction(libraryName, actionType);
+				});
+
+				this.selectActions.setEvent("dragover", e => {
+					e.stopPropagation();
+					e.preventDefault();
+
+					console.log(e.dataTransfer.items);
+					// debugger;
+					console.log(Array.from(e.dataTransfer.items));
+					console.log(Array.from(e.dataTransfer.items).find(item => item.type == "application/json"))
+					const v = !(Array.from(e.dataTransfer.items).find(item => item.type == "application/json"));
+
+					if (v) {
+						console.log("setting to none")
+						e.dataTransfer.dropEffect = "none";
+					}
+				});
+
 				parent( add( new HElement("div") ) );
 
 					this.buttonActionUp = add( new HButton("↑", () => {
@@ -190,12 +214,16 @@ export default class HActionsEditor extends HElement {
 									nextClass = "new-row";
 								} else {
 									const actionTypeButton = add( new HButton(null, () => {
-										this.addAction(library, actionType);
+										this.addAction(library.name, actionType);
 									}, "action-type") );
 
 									actionTypeButton.setEvent("contextmenu", e => {
 										e.preventDefault();
-										this.addAction(library, actionType);
+										this.addAction(library.name, actionType);
+									});
+
+									actionTypeButton.setEvent("dragstart", e => {
+										e.dataTransfer.setData("application/json", JSON.stringify({libraryName: library.name, actionTypeId: actionType.id}));
 									});
 
 									if (nextClass) {
@@ -204,6 +232,7 @@ export default class HActionsEditor extends HElement {
 									}
 
 									actionTypeButton.html.title = actionType.description;
+									actionTypeButton.html.draggable = true;
 
 									if (actionType.image) {
 										actionTypeButton.html.classList.add("image-button");
@@ -226,12 +255,13 @@ export default class HActionsEditor extends HElement {
 			endparent();
 	}
 
-	addAction(library, actionType) {
+	addAction(libraryName, actionType) {
 		if (!this.actions) {
 			alert(`You need to select or add ${this.containerName} before you can add actions.`);
+			return;
 		}
 		const action = new ProjectAction();
-		action.setType(library, actionType);
+		action.setType(libraryName, actionType);
 
 		this.openActionWindow(action);
 
@@ -259,11 +289,12 @@ export default class HActionsEditor extends HElement {
 		this.onActionsChange(this.actions);
 	}
 
-	updateActions(actions) {
-		if (actions) {
-			this.actions = actions;
-		}
+	setActions(actions) {
+		this.actions = actions;
+		this.updateAll();
+	}
 
+	updateAll() {
 		this.updateSelectActions();
 		this.updateActionsMenu();
 	}

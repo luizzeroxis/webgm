@@ -143,7 +143,7 @@ export default class HWindowAction extends HWindow {
 			this.action.not = this.inputNot.getChecked();
 
 		// Update action in event in object
-		this.windowObject.actionsEditor.updateActions();
+		this.windowObject.actionsEditor.updateAll();
 		this.windowObject.onUpdate();
 	}
 
@@ -151,7 +151,7 @@ export default class HWindowAction extends HWindow {
 		Object.assign(this.action, this.actionCopy);
 
 		// Update action in event in object
-		this.windowObject.actionsEditor.updateActions();
+		this.windowObject.actionsEditor.updateAll();
 		this.windowObject.onUpdate();
 	}
 

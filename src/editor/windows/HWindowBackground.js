@@ -53,7 +53,7 @@ export default class HWindowBackground extends HWindow {
 		setDeepOnUpdateOnElement(this.client, () => this.onUpdate());
 
 		// Open file if dropped in the window body
-		setOnFileDrop(this.html, file => this.loadBackgroundFromFile(file));
+		setOnFileDrop(this.html, null, file => this.loadBackgroundFromFile(file));
 	}
 
 	copyData() {

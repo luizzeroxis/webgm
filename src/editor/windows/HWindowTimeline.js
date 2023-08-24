@@ -39,7 +39,7 @@ export default class HWindowTimeline extends HWindow {
 							this.updateSelectMoments();
 							this.selectMoments.setValue(step);
 
-							this.actionsEditor.updateActions(moment.actions);
+							this.actionsEditor.setActions(moment.actions);
 
 							this.onUpdate();
 						}) );
@@ -86,7 +86,7 @@ export default class HWindowTimeline extends HWindow {
 
 							this.updateSelectMoments();
 
-							this.actionsEditor.updateActions(this.getSelectedMoment()?.actions ?? []);
+							this.actionsEditor.setActions(this.getSelectedMoment()?.actions);
 
 							this.onUpdate();
 						}) );
@@ -97,7 +97,7 @@ export default class HWindowTimeline extends HWindow {
 
 								this.updateSelectMoments();
 
-								this.actionsEditor.updateActions(this.getSelectedMoment()?.actions ?? []);
+								this.actionsEditor.setActions(this.getSelectedMoment()?.actions);
 
 								this.onUpdate();
 							}
@@ -139,7 +139,7 @@ export default class HWindowTimeline extends HWindow {
 					this.selectMoments.select.html.size = 2;
 
 					this.selectMoments.setOnChange(() => {
-						this.actionsEditor.updateActions(this.getSelectedMoment()?.actions ?? []);
+						this.actionsEditor.setActions(this.getSelectedMoment()?.actions);
 					});
 
 					this.updateSelectMoments();
@@ -161,7 +161,7 @@ export default class HWindowTimeline extends HWindow {
 		this.updateSelectMoments();
 		this.selectMoments.setSelectedIndex(0);
 
-		this.actionsEditor.updateActions(this.getSelectedMoment()?.actions ?? []);
+		this.actionsEditor.setActions(this.getSelectedMoment()?.actions);
 
 		setDeepOnUpdateOnElement(this.divProperties, () => this.onUpdate());
 	}
@@ -172,7 +172,7 @@ export default class HWindowTimeline extends HWindow {
 		this.listeners = this.editor.project.dispatcher.listen({
 			changeResourceName: () => {
 				this.updateSelectMoments();
-				this.actionsEditor.updateActions();
+				this.actionsEditor.updateAll();
 			},
 		});
 	}

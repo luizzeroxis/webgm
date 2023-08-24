@@ -65,8 +65,8 @@ export class ProjectAction {
 		{kind: "exit", args: []},
 	];
 
-	setType(library, actionType) {
-		this.typeLibrary = library.name;
+	setType(libraryName, actionType) {
+		this.typeLibrary = libraryName;
 		this.typeId = actionType.id;
 		this.typeKind = actionType.kind;
 		this.typeExecution = actionType.execution;

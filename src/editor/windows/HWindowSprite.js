@@ -141,7 +141,7 @@ export default class HWindowSprite extends HWindow {
 		setDeepOnUpdateOnElement(this.client, () => this.onUpdate());
 
 		// Open file if dropped in the window body
-		setOnFileDrop(this.html, files => this.setImagesFromFiles(files), true);
+		setOnFileDrop(this.html, null, files => this.setImagesFromFiles(files), true);
 	}
 
 	copyData() {

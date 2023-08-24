@@ -57,7 +57,7 @@ export default class HWindowObject extends HWindow {
 					this.selectEvents.select.html.size = 2;
 
 					this.selectEvents.setOnChange(() => {
-						this.actionsEditor.updateActions(this.getSelectedEvent()?.actions ?? []);
+						this.actionsEditor.setActions(this.getSelectedEvent()?.actions);
 					});
 
 					parent( add( new HElement("div") ) );
@@ -82,7 +82,7 @@ export default class HWindowObject extends HWindow {
 							this.selectEvents.setValue(event.getNameId());
 							this.updateEventsMenu();
 
-							this.actionsEditor.updateActions(event.actions);
+							this.actionsEditor.setActions(event.actions);
 
 							this.onUpdate();
 						}) );
@@ -107,7 +107,7 @@ export default class HWindowObject extends HWindow {
 								this.updateSelectEvents();
 								this.updateEventsMenu();
 
-								this.actionsEditor.updateActions(this.getSelectedEvent()?.actions ?? []);
+								this.actionsEditor.setActions(this.getSelectedEvent()?.actions);
 
 								this.onUpdate();
 							}) );
@@ -158,7 +158,7 @@ export default class HWindowObject extends HWindow {
 			this.updateEventsMenu();
 
 			// Select first event
-			this.actionsEditor.updateActions(this.getSelectedEvent()?.actions ?? []);
+			this.actionsEditor.setActions(this.getSelectedEvent()?.actions);
 
 			endparent();
 
@@ -171,7 +171,7 @@ export default class HWindowObject extends HWindow {
 		this.listeners = this.editor.project.dispatcher.listen({
 			changeResourceName: () => {
 				this.updateSelectEvents();
-				this.actionsEditor.updateActions();
+				this.actionsEditor.updateAll();
 			},
 		});
 	}

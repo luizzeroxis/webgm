@@ -269,15 +269,21 @@ export function setDeepOnUpdateOnElement(element, fn) {
 }
 
 // Make a element be able to receive drops of files from anywhere, but returns a file handle
-export function setOnFileDropAsFileHandle(element, onSelectFile, multiple=false) {
-	return setOnFileDrop(element, onSelectFile, multiple, true);
+export function setOnFileDropAsFileHandle(element, type, onSelectFile, multiple=false) {
+	return setOnFileDrop(element, type, onSelectFile, multiple, true);
 }
 
 // Make a element be able to receive drops of files from anywhere.
-export function setOnFileDrop(element, onSelectFile, multiple=false, asFileHandle=false) {
+export function setOnFileDrop(element, typeFunc, onSelectFile, multiple=false, asFileHandle=false) {
 	element.addEventListener("dragover", e => {
 		e.stopPropagation();
 		e.preventDefault();
+
+		const files = Array.from(e.dataTransfer.items).filter(item => item.kind == "file");
+		if (files.length == 0 || (typeFunc && files.some(file => !typeFunc(file.type)))) {
+			console.log("drop none", e.target);
+			e.dataTransfer.dropEffect = "none";
+		}
 	});
 
 	element.addEventListener("drop", async e => {

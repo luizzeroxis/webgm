@@ -75,14 +75,15 @@ export default class Editor {
 			endparent();
 
 		// Open file if dropped in the editor body
+		const zipType = t => t == "application/zip" || t == "application/x-zip-compressed";
 		if ("showOpenFilePicker" in window) {
-			setOnFileDropAsFileHandle(this.div.html, async handle => {
+			setOnFileDropAsFileHandle(this.div.html, zipType, async handle => {
 				if (!confirm("Game may have been changed. Continue?")) return;
 				this.projectFileHandle = handle;
 				this.openProjectFromFile(await this.projectFileHandle.getFile());
 			});
 		} else {
-			setOnFileDrop(this.div.html, file => {
+			setOnFileDrop(this.div.html, zipType, file => {
 				if (!confirm("Game may have been changed. Continue?")) return;
 				this.openProjectFromFile(file);
 			});

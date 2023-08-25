@@ -161,7 +161,7 @@ export function hsvToRGB({h, s, v}) {
 // CSS font string
 
 export function makeCSSFont(family, size, bold, italic) {
-	return (italic ? "italic " : "") + (bold ? "bold " : "") + size + "pt \"" + family + "\"";
+	return `${bold ? "bold " : ""}${italic ? "italic " : ""}${size}pt "${family}"`;
 }
 
 // Arrow strings
@@ -281,7 +281,6 @@ export function setOnFileDrop(element, typeFunc, onSelectFile, multiple=false, a
 
 		const files = Array.from(e.dataTransfer.items).filter(item => item.kind == "file");
 		if (files.length == 0 || (typeFunc && files.some(file => !typeFunc(file.type)))) {
-			console.log("drop none", e.target);
 			e.dataTransfer.dropEffect = "none";
 		}
 	});

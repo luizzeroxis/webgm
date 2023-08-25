@@ -149,14 +149,7 @@ export default class HActionsEditor extends HElement {
 					e.stopPropagation();
 					e.preventDefault();
 
-					console.log(e.dataTransfer.items);
-					// debugger;
-					console.log(Array.from(e.dataTransfer.items));
-					console.log(Array.from(e.dataTransfer.items).find(item => item.type == "application/json"))
-					const v = !(Array.from(e.dataTransfer.items).find(item => item.type == "application/json"));
-
-					if (v) {
-						console.log("setting to none")
+					if (!(Array.from(e.dataTransfer.items).find(item => item.type == "application/json"))) {
 						e.dataTransfer.dropEffect = "none";
 					}
 				});

@@ -11,12 +11,12 @@
 
 	.h-menu {
 		position: absolute;
+		overflow: auto;
+		max-height: 100%;
 		border: 1px solid black;
 		background-color: white;
 		color: black;
 		pointer-events: auto;
-		overflow: auto;
-		max-height: 100%;
 
 		@media (prefers-color-scheme: dark) {
 			border: 1px solid white;

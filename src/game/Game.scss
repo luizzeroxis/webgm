@@ -39,9 +39,9 @@
 
 	> .grid {
 		display: grid;
-		grid-template-columns: auto 1fr auto;
 		column-gap: 16px;
 		grid-auto-rows: 32px;
+		grid-template-columns: auto 1fr auto;
 
 		> .row {
 			display: contents;
@@ -51,15 +51,21 @@
 			}
 
 			> .name > input {
-				font: inherit;
-				color: inherit;
-				background: inherit;
 				border: inherit;
+				background: inherit;
+				color: inherit;
+				font: inherit;
 			}
 		}
 	}
 
 	> .escape-text {
 		text-align: center;
+	}
+}
+
+.h-window-manager {
+	> .modal {
+		background-color: transparent;
 	}
 }

@@ -506,8 +506,8 @@ input[type="text"], input[type="number"], select {
 
 				> select > option {
 					display: flex;
-					align-items: center;
 					min-height: 24px;
+					align-items: center;
 					background-repeat: no-repeat;
 
 					&.bold {

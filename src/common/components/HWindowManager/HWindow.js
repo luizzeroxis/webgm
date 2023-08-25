@@ -184,11 +184,7 @@ export default class HWindow extends HElement {
 	}
 
 	setPositionToDefault() {
-		if (!this.modal) {
-			this.setPositionToCascade();
-		} else {
-			this.setPositionToCenter();
-		}
+		this.setPositionToCascade();
 	}
 
 	setSizeToDefault() {

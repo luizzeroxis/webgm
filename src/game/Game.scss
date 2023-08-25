@@ -23,12 +23,42 @@
 }
 
 .window-message {
+	--button-image: initial;
+	--button-hover-image: initial;
+	--button-pressed-image: initial;
+	--button-font: initial;
+	--button-color: initial;
+	--button-hover-color: initial;
+	--button-width: 80px;
+	--button-height: 25px;
+
+	background-size: 100% 100%;
+
+	.text {
+		flex: 1;
+	}
+
 	.buttons {
 		display: flex;
+		justify-content: space-evenly;
 		gap: 16px;
 
 		.button {
-			flex: 1;
+			width: var(--button-width);
+			height: var(--button-height);
+			background-image: var(--button-image);
+			// background-size: 100% 100%;
+			color: var(--button-color);
+			font: var(--button-font);
+		}
+
+		.button:hover {
+			background-image: var(--button-hover-image);
+			color: var(--button-hover-color);
+		}
+
+		.button:active {
+			background-image: var(--button-pressed-image);
 		}
 	}
 }

@@ -9,6 +9,10 @@ export default class HModalWindow extends HWindow {
 		});
 	}
 
+	setPositionToDefault() {
+		this.setPositionToCenter();
+	}
+
 	close(result) {
 		super.close();
 		this.resolveFunction(result);

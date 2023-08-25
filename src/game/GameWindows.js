@@ -8,14 +8,14 @@ export default class GameWindows {
 	}
 
 	initVariables() {
-		this.messageBackground = -1;
+		this.messageBackground = null;
 		this.messageAlpha = 1;
-		this.messageButtonSprite = -1;
+		this.messageButtonSprite = null;
 		this.messageTextFont = null;
 		this.messageButtonFont = null;
 		this.messageInputFont = null;
 		this.messageButtonHoverColor = null;
-		this.messageInputColor = null;
+		this.messageInputBackgroundColor = null;
 		this.messageCaption = null;
 		this.messagePosition = {x: -1, y: -1};
 		this.messageSize = {w: -1, h: -1};

@@ -4541,90 +4541,107 @@ export default class BuiltInFunctions {
 	};
 
 	static message_background = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function message_background is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([back]) {
+			// TODO one pixel transparency
+			this.game.windows.messageBackground = this.game.project.getResourceById("ProjectBackground", back);
+			return 0;
 		},
 	};
 
 	static message_alpha = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function message_alpha is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([alpha]) {
+			this.game.windows.messageAlpha = alpha;
+			return 0;
 		},
 	};
 
 	static message_button = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function message_button is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([spr]) {
+			// TODO one pixel transparency
+			this.game.windows.messageButtonSprite = this.game.project.getResourceById("ProjectSprite", spr);
+			return 0;
 		},
 	};
 
 	static message_text_font = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function message_text_font is not implemented");
-			// return 0;
+		args: [{type: "string"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([name, size, color, style]) {
+			this.game.windows.messageTextFont = {
+				font: `${(style == 1 || style == 3) ? "bold " : ""}`
+					+ `${(style == 2 || style == 3) ? "italic " : ""}`
+					+ `${size}pt "${name}"`,
+				color: decimalToHex(color),
+			};
+			return 0;
 		},
 	};
 
 	static message_button_font = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function message_button_font is not implemented");
-			// return 0;
+		args: [{type: "string"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([name, size, color, style]) {
+			this.game.windows.messageButtonFont = {
+				font: `${(style == 1 || style == 3) ? "bold " : ""}`
+					+ `${(style == 2 || style == 3) ? "italic " : ""}`
+					+ `${size}pt "${name}"`,
+				color: decimalToHex(color),
+			};
+			return 0;
 		},
 	};
 
 	static message_input_font = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function message_input_font is not implemented");
-			// return 0;
+		args: [{type: "string"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([name, size, color, style]) {
+			this.game.windows.messageInputFont = {
+				font: `${(style == 1 || style == 3) ? "bold " : ""}`
+					+ `${(style == 2 || style == 3) ? "italic " : ""}`
+					+ `${size}pt "${name}"`,
+				color: decimalToHex(color),
+			};
+			return 0;
 		},
 	};
 
 	static message_mouse_color = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function message_mouse_color is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([col]) {
+			this.game.windows.messageButtonHoverColor = decimalToHex(col);
+			return 0;
 		},
 	};
 
 	static message_input_color = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function message_input_color is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([col]) {
+			this.game.windows.messageInputBackgroundColor = decimalToHex(col);
+			return 0;
 		},
 	};
 
 	static message_caption = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function message_caption is not implemented");
-			// return 0;
+		args: [{type: "bool"}, {type: "string"}],
+		func: function([show, str]) {
+			this.game.windows.messageCaption = show ? str : null;
+			return 0;
 		},
 	};
 
 	static message_position = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function message_position is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}],
+		func: function([x, y]) {
+			this.game.windows.messagePosition = {x, y};
+			return 0;
 		},
 	};
 
 	static message_size = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function message_size is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}],
+		func: function([w, h]) {
+			this.game.windows.messageSize = {w, h};
+			return 0;
 		},
 	};
 

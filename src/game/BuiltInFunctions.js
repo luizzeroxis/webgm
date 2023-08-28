@@ -4468,10 +4468,10 @@ export default class BuiltInFunctions {
 	};
 
 	static show_info = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function show_info is not implemented");
-			// return 0;
+		args: [],
+		func: async function([]) {
+			await this.game.windows.openGameInformation();
+			return 0;
 		},
 	};
 

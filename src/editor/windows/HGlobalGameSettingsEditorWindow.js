@@ -38,6 +38,7 @@ export default class HGlobalGameSettingsEditorWindow extends HWindow {
 
 					this.inputKeyEscEndsGame = add( new HCheckBoxInput("Let <Esc> end the game", this.resource.keyEscEndsGame) );
 					this.inputTreatCloseButtonAsEsc = add( new HCheckBoxInput("Treat the close button as <Esc> key", this.resource.treatCloseButtonAsEsc) );
+					this.inputKeyF1ShowsGameInformation = add( new HCheckBoxInput("Let <F1> show the game information", this.resource.keyF1ShowsGameInformation) );
 					this.inputKeyF4SwitchesFullscreen = add( new HCheckBoxInput("Let <F4> switch between screen modes", this.resource.keyF4SwitchesFullscreen) );
 
 					setDeepOnUpdateOnElement(tabOther, () => this.onUpdate());
@@ -84,6 +85,7 @@ export default class HGlobalGameSettingsEditorWindow extends HWindow {
 
 		this.resource.keyEscEndsGame = this.inputKeyEscEndsGame.getChecked();
 		this.resource.treatCloseButtonAsEsc = this.inputTreatCloseButtonAsEsc.getChecked();
+		this.resource.keyF1ShowsGameInformation = this.inputKeyF1ShowsGameInformation.getChecked();
 		this.resource.keyF4SwitchesFullscreen = this.inputKeyF4SwitchesFullscreen.getChecked();
 
 		this.resource.displayErrors = this.inputDisplayErrors.getChecked();

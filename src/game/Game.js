@@ -591,27 +591,31 @@ export default class Game {
 				};
 			}
 		}
-		// if (this.project.globalGameSettings.keyF1ShowsGameInformation) {
-		// 	if (this.input.getKey(112, this.input.keyPressed)) {
-		// 		// this.showGameInformation();
-		// 		// console.log('f1 pressed');
-		// 	}
-		// }
+
+		if (this.project.globalGameSettings.keyF1ShowsGameInformation) {
+			if (this.input.getKey(112, this.input.keyPressed)) {
+				this.windows.openGameInformation();
+			}
+		}
+
 		if (this.project.globalGameSettings.keyF4SwitchesFullscreen) {
 			if (this.input.getKey(115, this.input.keyPressed)) {
 				this.render.setFullscreen(!this.render.getFullscreen());
 			}
 		}
+
 		// if (this.project.globalGameSettings.keyF5SavesF6Loads) {
 		// 	if (this.input.getKey(116, this.input.keyPressed)) {
 		// 		// this.saveGame();
 		// 		// console.log('f5 pressed');
 		// 	}
+
 		// 	if (this.input.getKey(117, this.input.keyPressed)) {
 		// 		// this.loadGame();
 		// 		// console.log('f6 pressed');
 		// 	}
 		// }
+
 		// if (this.project.globalGameSettings.keyF9Screenshots) {
 		// 	if (this.input.getKey(120, this.input.keyPressed)) {
 		// 		// this.screenshotGame();

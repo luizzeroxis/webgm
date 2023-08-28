@@ -1,3 +1,5 @@
+import HGameInformationWindow from "./HGameInformationWindow.js";
+
 export default class GameWindows {
 	constructor(game) {
 		this.game = game;
@@ -8,6 +10,8 @@ export default class GameWindows {
 	}
 
 	initVariables() {
+		this.gameInformationWindow = null;
+
 		this.messageBackground = null;
 		this.messageAlpha = 1;
 		this.messageButtonSprite = null;
@@ -55,5 +59,22 @@ export default class GameWindows {
 		this.game.render.canvas.focus({preventScroll: true});
 
 		return result;
+	}
+
+	async openGameInformation() {
+		this.game.input.clear();
+
+		const modal = this.game.windowManager.openModal(HGameInformationWindow, this.game);
+		this.modals.push(modal);
+
+		this.gameInformationWindow = modal;
+
+		await modal.promise;
+
+		this.gameInformationWindow = null;
+
+		this.modals.splice(this.modals.indexOf(modal), 1);
+
+		this.game.render.canvas.focus({preventScroll: true});
 	}
 }

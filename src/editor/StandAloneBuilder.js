@@ -13,8 +13,8 @@ export default class StandAloneBuilder {
 			{url: "common.bundle.js"},
 			{url: "vendors.bundle.js"},
 			{url: "runtime.bundle.js"},
+			{url: "main.bundle.js.LICENSE.txt", optional: true},
 			{url: "vendors.bundle.js.LICENSE.txt", optional: true},
-			// Probably should have my own GPL here lol
 		];
 
 		const zip = new JSZip();

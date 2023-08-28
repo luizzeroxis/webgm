@@ -22,7 +22,7 @@ export default class HActionEditorWindow extends HWindow {
 		const actionTypeInfoItem = ProjectAction.typeInfo.find(x => x.kind == this.actionType.kind && x.interfaceKind == this.actionType.interfaceKind);
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "window-action"}) ) );
+			parent( add( new HElement("div", {class: "action-editor-window"}) ) );
 
 				this.actionTypeHasApplyTo = this.actionType.hasApplyTo ?? actionTypeInfoItem.hasApplyTo;
 

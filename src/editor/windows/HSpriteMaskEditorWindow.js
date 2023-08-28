@@ -15,7 +15,7 @@ export default class HSpriteMaskEditorWindow extends HModalWindow {
 		this.updateTitle();
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "panel-container window-sprite-mask"}) ) );
+			parent( add( new HElement("div", {class: "panel-container sprite-mask-editor-window"}) ) );
 				parent( add( new HElement("div", {class: "properties"}) ) );
 
 					parent( add( new HElement("fieldset") ) );

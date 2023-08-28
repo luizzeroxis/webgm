@@ -15,7 +15,7 @@ export default class HGameInformationEditorWindow extends HWindow {
 		this.setTitle("Game Information");
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "window-game-information"}) ) );
+			parent( add( new HElement("div", {class: "game-information-editor-window"}) ) );
 
 				parent( add( new HElement("div") ) );
 					add( new HButton("OK", () => {

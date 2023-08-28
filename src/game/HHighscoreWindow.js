@@ -19,7 +19,7 @@ export default class HHighscoreWindow extends HModalWindow {
 		this.inputName = null;
 
 		parent(this.client);
-			this.client.html.classList.add("window-highscore");
+			this.client.html.classList.add("highscore-window");
 
 			if (game.windows.highscoreBackground) {
 				this.client.html.style.backgroundImage = `url("${game.windows.highscoreBackground.image.src}")`;

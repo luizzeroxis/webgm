@@ -305,11 +305,11 @@ input[type="text"], input[type="number"], select {
 	}
 }
 
-.window-sprite-images {
+.sprite-images-editor-window {
 	flex: 1;
 }
 
-.window-sprite-mask {
+.sprite-mask-editor-window {
 	min-height: 0;
 	flex: 1;
 
@@ -477,7 +477,7 @@ input[type="text"], input[type="number"], select {
 	}
 }
 
-.window-event-chooser {
+.event-chooser-window {
 	> .events {
 		column-count: 2;
 
@@ -560,7 +560,7 @@ input[type="text"], input[type="number"], select {
 	}
 }
 
-.window-action {
+.action-editor-window {
 	flex: 1;
 
 	> .arrow-interface {
@@ -569,7 +569,7 @@ input[type="text"], input[type="number"], select {
 	}
 }
 
-.window-code {
+.code-editor-window {
 	display: flex;
 	flex: 1;
 	flex-direction: column;
@@ -661,7 +661,7 @@ input[type="text"], input[type="number"], select {
 	}
 }
 
-.window-game-information {
+.game-information-editor-window {
 	display: flex;
 	flex: 1;
 	flex-direction: column;
@@ -672,7 +672,7 @@ input[type="text"], input[type="number"], select {
 	}
 }
 
-.window-global-game-settings {
+.global-game-settings-editor-window {
 	flex: 1;
 }
 

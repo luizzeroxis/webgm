@@ -20,7 +20,7 @@ export default class HMessageWindow extends HModalWindow {
 		this.html.style.opacity = `${game.windows.messageAlpha}`;
 
 		parent(this.client);
-			this.client.html.classList.add("window-message");
+			this.client.html.classList.add("message-window");
 
 			if (game.windows.messageBackground) {
 				this.client.html.style.backgroundImage = `url("${game.windows.messageBackground.image.src}")`;

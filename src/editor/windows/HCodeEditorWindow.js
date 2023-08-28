@@ -21,7 +21,7 @@ export default class HCodeEditorWindow extends HWindow {
 
 		parent(this.client);
 
-			parent( add( new HElement("div", {class: "window-code"}) ) );
+			parent( add( new HElement("div", {class: "code-editor-window"}) ) );
 
 				parent( add( new HElement("div", {class: "tool-bar"}) ) );
 

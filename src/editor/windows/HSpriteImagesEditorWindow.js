@@ -15,7 +15,7 @@ export default class HSpriteImagesEditorWindow extends HWindow {
 		this.updateTitle();
 
 		parent(this.client);
-			parent( add( new HElement("div", {class: "window-sprite-images"}) ) );
+			parent( add( new HElement("div", {class: "sprite-images-editor-window"}) ) );
 				parent( add( new HElement("div") ) );
 
 					add( new HButton("OK", () => {

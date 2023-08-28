@@ -17,7 +17,7 @@ export default class HGlobalGameSettingsEditorWindow extends HWindow {
 
 		parent(this.client);
 
-			parent( add( new HElement("div", {class: "window-global-game-settings"}) ) );
+			parent( add( new HElement("div", {class: "global-game-settings-editor-window"}) ) );
 
 				this.tabControl = add( new HTabControl() );
 

@@ -15,7 +15,7 @@ export default class HEventChooserWindow extends HModalWindow {
 		this.setTitle("Choose the Event to Add");
 
 		parent(this.client);
-			this.client.html.classList.add("window-event-chooser");
+			this.client.html.classList.add("event-chooser-window");
 
 			parent( add( new HElement("div", {class: "events"}) ) );
 

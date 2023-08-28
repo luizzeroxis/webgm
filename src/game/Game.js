@@ -213,8 +213,9 @@ export default class Game {
 		// audio
 		this.audio.end();
 
-		//
-		this.windows.end();
+		// windows
+		// this.windows.end();
+		this.windowManager.clear();
 
 		this.dispatcher.speak("close", e);
 	}

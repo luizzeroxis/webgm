@@ -3,8 +3,8 @@ import {
 	ProjectSprite, ProjectSound, ProjectBackground, ProjectPath, ProjectScript, ProjectObject, ProjectRoom, ProjectFont, ProjectTimeline, ProjectAction,
 } from "~/common/project/ProjectProperties.js";
 import HTabControl from "~/editor/components/HTabControl/HTabControl.js";
-import HWindowAction from "~/editor/windows/HWindowAction.js";
-import HWindowCode from "~/editor/windows/HWindowCode.js";
+import HActionEditorWindow from "~/editor/windows/HActionEditorWindow.js";
+import HCodeEditorWindow from "~/editor/windows/HCodeEditorWindow.js";
 
 export default class HActionsEditor extends HElement {
 	static actionArgResourceTypes = {
@@ -358,11 +358,11 @@ export default class HActionsEditor extends HElement {
 			|| (actionType.kind == "normal" && actionType.interfaceKind == "arrows")
 			|| (actionType.kind == "repeat")
 			|| (actionType.kind == "variable")) {
-			windowClass = HWindowAction;
+			windowClass = HActionEditorWindow;
 		} else if ((actionType.kind == "normal" && actionType.interfaceKind == "code")
 			|| (actionType.kind == "normal" && actionType.interfaceKind == "text")
 			|| (actionType.kind == "code")) {
-			windowClass = HWindowCode;
+			windowClass = HCodeEditorWindow;
 		}
 
 		if (windowClass) {

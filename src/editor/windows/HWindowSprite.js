@@ -4,8 +4,8 @@ import ImageWrapper from "~/common/ImageWrapper.js";
 import {ProjectSprite} from "~/common/project/ProjectProperties.js";
 import {openFile, setDeepOnUpdateOnElement, setOnFileDrop} from "~/common/tools.js";
 
-import HWindowSpriteImages from "./HWindowSpriteImages.js";
-import HWindowSpriteMask from "./HWindowSpriteMask.js";
+import HSpriteImagesEditorWindow from "./HSpriteImagesEditorWindow.js";
+import HSpriteMaskEditorWindow from "./HSpriteMaskEditorWindow.js";
 
 export default class HWindowSprite extends HWindow {
 	constructor(manager, editor, resource) {
@@ -33,7 +33,7 @@ export default class HWindowSprite extends HWindow {
 
 					parent( add( new HElement("div") ) );
 						add( new HButton("Edit Sprite", () => {
-							this.openAsChild(HWindowSpriteImages, w => w.spriteWindow == this, this);
+							this.openAsChild(HSpriteImagesEditorWindow, w => w.spriteWindow == this, this);
 						}) );
 						endparent();
 
@@ -112,7 +112,7 @@ export default class HWindowSprite extends HWindow {
 						this.divMaskModified = add( new HElement("div", {}, isModified() ? "Modified" : "\u200B") );
 
 						add( new HButton("Modify Mask", async () => {
-							await this.editor.windowManager.openModal(HWindowSpriteMask, this).promise;
+							await this.editor.windowManager.openModal(HSpriteMaskEditorWindow, this).promise;
 
 							// Update UI beforehand so saveData() doesn't override it
 							this.inputPreciseCollisionChecking.setChecked((this.resource.shape == "precise"));

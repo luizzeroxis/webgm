@@ -3,7 +3,7 @@ import {parent, endparent, add, HElement, HButton, HNumberInput, HCheckBoxInput,
 import {ProjectSprite} from "~/common/project/ProjectProperties.js";
 import {setDeepOnUpdateOnElement} from "~/common/tools.js";
 
-export default class HWindowSpriteMask extends HModalWindow {
+export default class HSpriteMaskEditorWindow extends HModalWindow {
 	constructor(manager, spriteWindow) {
 		super(manager);
 		this.spriteWindow = spriteWindow;

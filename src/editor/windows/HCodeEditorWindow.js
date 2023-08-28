@@ -5,7 +5,7 @@ import {setDeepOnUpdateOnElement} from "~/common/tools.js";
 import HCodeEditor from "~/editor/components/HCodeEditor/HCodeEditor.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
 
-export default class HWindowCode extends HWindow {
+export default class HCodeEditorWindow extends HWindow {
 	constructor(manager, editor, action, windowObject) {
 		super(manager);
 		this.editor = editor;

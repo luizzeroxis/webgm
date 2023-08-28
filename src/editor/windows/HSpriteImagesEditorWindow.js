@@ -3,7 +3,7 @@ import {parent, endparent, add, HElement, HButton} from "~/common/h";
 import {openFile} from "~/common/tools.js";
 import HImageList from "~/editor/components/HImageList/HImageList.js";
 
-export default class HWindowSpriteImages extends HWindow {
+export default class HSpriteImagesEditorWindow extends HWindow {
 	constructor(manager, spriteWindow) {
 		super(manager);
 		this.spriteWindow = spriteWindow;

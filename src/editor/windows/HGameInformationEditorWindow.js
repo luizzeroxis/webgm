@@ -3,7 +3,7 @@ import {parent, endparent, add, HElement, HButton, HMultilineTextInput} from "~/
 import {ProjectGameInformation} from "~/common/project/ProjectProperties.js";
 import {setDeepOnUpdateOnElement} from "~/common/tools.js";
 
-export default class HGameInformationWindow extends HWindow {
+export default class HGameInformationEditorWindow extends HWindow {
 	constructor(manager, editor, resource) {
 		super(manager);
 		this.editor = editor;

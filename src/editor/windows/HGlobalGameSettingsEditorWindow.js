@@ -4,7 +4,7 @@ import {ProjectGlobalGameSettings} from "~/common/project/ProjectProperties.js";
 import {setDeepOnUpdateOnElement} from "~/common/tools.js";
 import HTabControl from "~/editor/components/HTabControl/HTabControl.js";
 
-export default class HWindowGlobalGameSettings extends HWindow {
+export default class HGlobalGameSettingsEditorWindow extends HWindow {
 	constructor(manager, editor, resource) {
 		super(manager);
 		this.editor = editor;

@@ -2,7 +2,7 @@ import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HButton, HTextInput, HCheckBoxInput, HSelectWithOptions} from "~/common/h";
 import {setDeepOnUpdateOnElement} from "~/common/tools.js";
 
-export default class HWindowPreferences extends HWindow {
+export default class HPreferencesWindow extends HWindow {
 	constructor(manager, editor) {
 		super(manager);
 		this.editor = editor;

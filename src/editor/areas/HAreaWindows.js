@@ -1,13 +1,13 @@
 import HWindowManager from "~/common/components/HWindowManager/HWindowManager.js";
 import {parent, endparent, add, HElement} from "~/common/h";
+import HGameInformationEditorWindow from "~/editor/windows/HGameInformationEditorWindow.js";
+import HGlobalGameSettingsEditorWindow from "~/editor/windows/HGlobalGameSettingsEditorWindow.js";
+import HPreferencesWindow from "~/editor/windows/HPreferencesWindow.js";
 import HWindowBackground from "~/editor/windows/HWindowBackground.js";
 import HWindowFont from "~/editor/windows/HWindowFont.js";
 import HWindowGame from "~/editor/windows/HWindowGame.js";
-import HWindowGameInformation from "~/editor/windows/HWindowGameInformation.js";
-import HWindowGlobalGameSettings from "~/editor/windows/HWindowGlobalGameSettings.js";
 import HWindowObject from "~/editor/windows/HWindowObject.js";
 import HWindowPath from "~/editor/windows/HWindowPath.js";
-import HWindowPreferences from "~/editor/windows/HWindowPreferences.js";
 import HWindowRoom from "~/editor/windows/HWindowRoom.js";
 import HWindowScript from "~/editor/windows/HWindowScript.js";
 import HWindowSound from "~/editor/windows/HWindowSound.js";
@@ -63,17 +63,17 @@ export default class HAreaWindows extends HElement {
 
 	// Open or focus on the game information window.
 	openGameInformation() {
-		return this.manager.open(HWindowGameInformation, null, this.editor, this.editor.project.gameInformation);
+		return this.manager.open(HGameInformationEditorWindow, null, this.editor, this.editor.project.gameInformation);
 	}
 
 	// Open or focus on the global game settings window.
 	openGlobalGameSettings() {
-		return this.manager.open(HWindowGlobalGameSettings, null, this.editor, this.editor.project.globalGameSettings);
+		return this.manager.open(HGlobalGameSettingsEditorWindow, null, this.editor, this.editor.project.globalGameSettings);
 	}
 
 	// Open or focus on the preferences window.
 	openPreferences() {
-		return this.editor.windowManager.open(HWindowPreferences, null, this.editor);
+		return this.editor.windowManager.open(HPreferencesWindow, null, this.editor);
 	}
 
 	// Open or focus on the game window.
@@ -85,7 +85,7 @@ export default class HAreaWindows extends HElement {
 	clearProject() {
 		// this.manager.clear();
 		for (const w of [...this.manager.windows]) {
-			if (!([HWindowPreferences].includes(w.constructor))) {
+			if (!([HPreferencesWindow].includes(w.constructor))) {
 				w.forceClose();
 			}
 		}

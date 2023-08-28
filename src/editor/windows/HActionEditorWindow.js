@@ -5,7 +5,7 @@ import {setDeepOnUpdateOnElement, parseArrowString, stringifyArrowValues, decima
 import HActionsEditor from "~/editor/HActionsEditor.js";
 import HResourceSelect from "~/editor/HResourceSelect.js";
 
-export default class HWindowAction extends HWindow {
+export default class HActionEditorWindow extends HWindow {
 	constructor(manager, editor, action, windowObject) {
 		super(manager);
 		this.editor = editor;

@@ -20,6 +20,12 @@
 		min-height: 300px;
 		font-family: monospace;
 	}
+
+	> .h-window-manager {
+		> .modal {
+			background-color: transparent;
+		}
+	}
 }
 
 .game-information-window {
@@ -99,8 +105,3 @@
 	}
 }
 
-.h-window-manager {
-	> .modal {
-		background-color: transparent;
-	}
-}

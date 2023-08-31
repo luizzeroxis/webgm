@@ -59,6 +59,23 @@ export default class GameDataStructures {
 		return 0;
 	}
 
+	// stack
+	stackPush(id, val) {
+		this.checkIfExists("stack", id);
+		this.types["stack"][id].push(val);
+		return 0;
+	}
+
+	stackPop(id) {
+		this.checkIfExists("stack", id);
+		return this.types["stack"][id].pop() ?? 0;
+	}
+
+	stackTop(id) {
+		this.checkIfExists("stack", id);
+		return this.types["stack"][id][this.types["stack"][id].length-1] ?? 0;
+	}
+
 	// list
 	listAdd(id, val) {
 		this.checkIfExists("list", id);

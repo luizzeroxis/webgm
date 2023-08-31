@@ -6665,74 +6665,65 @@ export default class BuiltInFunctions {
 	// ## Stacks
 
 	static ds_stack_create = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_stack_create is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			return this.game.dataStructures.create("stack");
 		},
 	};
 
 	static ds_stack_destroy = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_stack_destroy is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.destroy("stack", id);
 		},
 	};
 
 	static ds_stack_clear = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_stack_clear is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.clear("stack", id);
 		},
 	};
 
 	static ds_stack_copy = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_stack_copy is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}],
+		func: function([id, source]) {
+			return this.game.dataStructures.copy("stack", id, source);
 		},
 	};
 
 	static ds_stack_size = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_stack_size is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.size("stack", id);
 		},
 	};
 
 	static ds_stack_empty = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_stack_empty is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.empty("stack", id);
 		},
 	};
 
 	static ds_stack_push = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_stack_push is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}],
+		func: function([id, val]) {
+			return this.game.dataStructures.stackPush(id, val);
 		},
 	};
 
 	static ds_stack_pop = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_stack_pop is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.stackPop(id);
 		},
 	};
 
 	static ds_stack_top = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_stack_top is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.stackTop(id);
 		},
 	};
 

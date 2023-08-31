@@ -2,6 +2,34 @@
 
 import {HElement} from "./h";
 
+export function sortValues(array, ascending, fnGetValue) {
+	array.sort((a, b) => {
+		if (fnGetValue) {
+			a = fnGetValue(a);
+			b = fnGetValue(b);
+		}
+
+		if (typeof a == "number" && typeof b == "number") {
+			return ascending ? (a - b) : (b - a);
+		} else if (typeof a == "string" && typeof b == "string") {
+			return ascending ? a.localeCompare(b) : b.localeCompare(a);
+		} else if (typeof a == "number" && typeof b == "string") {
+			return ascending ? -1 : 1;
+		} else if (typeof a == "string" && typeof b == "number") {
+			return ascending ? 1 : -1;
+		}
+
+		return 0;
+	});
+}
+
+export function shuffle(array) {
+	for (let i = array.length-1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[array[i], array[j]] = [array[j], array[i]];
+	}
+}
+
 // Open and save files
 
 export function openFile(accept, multiple=false) {

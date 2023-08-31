@@ -6853,114 +6853,100 @@ export default class BuiltInFunctions {
 	// ## Lists
 
 	static ds_list_create = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_list_create is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			return this.game.dataStructures.create("list");
 		},
 	};
 
 	static ds_list_destroy = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_list_destroy is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.destroy("list", id);
 		},
 	};
 
 	static ds_list_clear = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_list_clear is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.clear("list", id);
 		},
 	};
 
 	static ds_list_copy = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_list_copy is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}],
+		func: function([id, source]) {
+			return this.game.dataStructures.copy("list", id, source);
 		},
 	};
 
 	static ds_list_size = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_list_size is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.size("list", id);
 		},
 	};
 
 	static ds_list_empty = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_list_empty is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.empty("list", id);
 		},
 	};
 
 	static ds_list_add = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_list_add is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}],
+		func: function([id, val]) {
+			return this.game.dataStructures.listAdd(id, val);
 		},
 	};
 
 	static ds_list_insert = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_list_insert is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "any"}],
+		func: function([id, pos, val]) {
+			return this.game.dataStructures.listInsert(id, pos, val);
 		},
 	};
 
 	static ds_list_replace = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_list_replace is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "any"}],
+		func: function([id, pos, val]) {
+			return this.game.dataStructures.listReplace(id, pos, val);
 		},
 	};
 
 	static ds_list_delete = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_list_delete is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}],
+		func: function([id, pos]) {
+			return this.game.dataStructures.listDelete(id, pos);
 		},
 	};
 
 	static ds_list_find_index = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_list_find_index is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}],
+		func: function([id, val]) {
+			return this.game.dataStructures.listFindIndex(id, val);
 		},
 	};
 
 	static ds_list_find_value = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_list_find_value is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}],
+		func: function([id, pos]) {
+			return this.game.dataStructures.listFindValue(id, pos);
 		},
 	};
 
 	static ds_list_sort = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_list_sort is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "bool"}],
+		func: function([id, ascend]) {
+			return this.game.dataStructures.listSort(id, ascend);
 		},
 	};
 
 	static ds_list_shuffle = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_list_shuffle is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.listShuffle(id);
 		},
 	};
 

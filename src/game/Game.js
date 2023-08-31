@@ -12,6 +12,7 @@ import BuiltInConstants from "./BuiltInConstants.js";
 import BuiltInGlobals from "./BuiltInGlobals.js";
 import GameAudio from "./GameAudio.js";
 import GameCollision from "./GameCollision.js";
+import GameDataStructures from "./GameDataStructures.js";
 import GameEvents from "./GameEvents.js";
 import GameInput from "./GameInput.js";
 import GameRender from "./GameRender.js";
@@ -38,6 +39,7 @@ export default class Game {
 		this.collision = new GameCollision(this);
 		this.events = new GameEvents(this);
 		this.windows = new GameWindows(this);
+		this.dataStructures = new GameDataStructures(this);
 
 		// Project
 		this.loadedProject = new ProjectLoader(this, this.project);

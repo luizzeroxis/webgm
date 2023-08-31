@@ -6746,82 +6746,72 @@ export default class BuiltInFunctions {
 	// ## Queues
 
 	static ds_queue_create = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_queue_create is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			return this.game.dataStructures.create("queue");
 		},
 	};
 
 	static ds_queue_destroy = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_queue_destroy is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.destroy("queue", id);
 		},
 	};
 
 	static ds_queue_clear = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_queue_clear is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.clear("queue", id);
 		},
 	};
 
 	static ds_queue_copy = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_queue_copy is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}],
+		func: function([id, source]) {
+			return this.game.dataStructures.copy("queue", id, source);
 		},
 	};
 
 	static ds_queue_size = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_queue_size is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.size("queue", id);
 		},
 	};
 
 	static ds_queue_empty = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_queue_empty is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.empty("queue", id);
 		},
 	};
 
 	static ds_queue_enqueue = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_queue_enqueue is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}],
+		func: function([id, val]) {
+			return this.game.dataStructures.queueEnqueue(id, val);
 		},
 	};
 
 	static ds_queue_dequeue = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_queue_dequeue is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.queueDequeue(id);
 		},
 	};
 
 	static ds_queue_head = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_queue_head is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.queueHead(id);
 		},
 	};
 
 	static ds_queue_tail = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_queue_tail is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.queueTail(id);
 		},
 	};
 

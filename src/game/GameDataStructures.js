@@ -76,6 +76,28 @@ export default class GameDataStructures {
 		return this.types["stack"][id][this.types["stack"][id].length-1] ?? 0;
 	}
 
+	// queue
+	queueEnqueue(id, val) {
+		this.checkIfExists("queue", id);
+		this.types["queue"][id].push(val);
+		return 0;
+	}
+
+	queueDequeue(id) {
+		this.checkIfExists("queue", id);
+		return this.types["queue"][id].shift() ?? 0;
+	}
+
+	queueHead(id) {
+		this.checkIfExists("queue", id);
+		return this.types["queue"][id][0] ?? 0;
+	}
+
+	queueTail(id) {
+		this.checkIfExists("queue", id);
+		return this.types["queue"][id][this.types["queue"][id].length-1] ?? 0;
+	}
+
 	// list
 	listAdd(id, val) {
 		this.checkIfExists("list", id);

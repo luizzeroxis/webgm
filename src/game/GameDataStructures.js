@@ -217,4 +217,59 @@ export default class GameDataStructures {
 		this.checkIfExists("map", id);
 		return this.types["map"][id][this.types["map"][id].length-1]?.key ?? 0;
 	}
+
+	// priority
+	priorityCopy(id, source) {
+		this.types["priority"][id] = this.types["priority"][source].map(x => ({val: x.val, prio: x.prio}));
+		return 0;
+	}
+
+	priorityAdd(id, val, prio) {
+		this.types["priority"][id].push({val, prio});
+		sortValues(this.types["priority"][id], true, x => x.prio);
+		return 0;
+	}
+
+	priorityChangePriority(id, val, prio) {
+		const o = this.types["priority"][id].find(x => x.val == val);
+		if (o) {
+			o.prio = prio;
+			sortValues(this.types["priority"][id], true, x => x.prio);
+		}
+		return 0;
+	}
+
+	priorityFindPriority(id, val) {
+		return this.types["priority"][id].find(x => x.val == val)?.prio ?? 0;
+	}
+
+	priorityDeleteValue(id, val) {
+		const i = this.types["priority"][id].findIndex(x => x.val == val);
+		if (i != -1) {
+			this.types["priority"][id].splice(i, 1);
+		}
+		return 0;
+	}
+
+	priorityDeleteMin(id) {
+		if (this.types["priority"][id].length > 0) {
+			return this.types["priority"][id].splice(0, 1)[0].val;
+		}
+		return 0;
+	}
+
+	priorityFindMin(id) {
+		return this.types["priority"][id][0]?.val ?? 0;
+	}
+
+	priorityDeleteMax(id) {
+		if (this.types["priority"][id].length > 0) {
+			return this.types["priority"][id].splice(this.types["priority"][id].length-1, 1)[0].val;
+		}
+		return 0;
+	}
+
+	priorityFindMax(id) {
+		return this.types["priority"][id][this.types["priority"][id].length-1]?.val ?? 0;
+	}
 }

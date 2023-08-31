@@ -7073,114 +7073,100 @@ export default class BuiltInFunctions {
 	// ## Priority queues
 
 	static ds_priority_create = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_priority_create is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			return this.game.dataStructures.create("priority");
 		},
 	};
 
 	static ds_priority_destroy = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_priority_destroy is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.destroy("priority", id);
 		},
 	};
 
 	static ds_priority_clear = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_priority_clear is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.clear("priority", id);
 		},
 	};
 
 	static ds_priority_copy = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_priority_copy is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}],
+		func: function([id, source]) {
+			return this.game.dataStructures.priorityCopy(id, source);
 		},
 	};
 
 	static ds_priority_size = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_priority_size is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.size("priority", id);
 		},
 	};
 
 	static ds_priority_empty = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_priority_empty is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.empty("priority", id);
 		},
 	};
 
 	static ds_priority_add = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_priority_add is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}, {type: "any"}],
+		func: function([id, val, prio]) {
+			return this.game.dataStructures.priorityAdd(id, val, prio);
 		},
 	};
 
 	static ds_priority_change_priority = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_priority_change_priority is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}, {type: "any"}],
+		func: function([id, val, prio]) {
+			return this.game.dataStructures.priorityChangePriority(id, val, prio);
 		},
 	};
 
 	static ds_priority_find_priority = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_priority_find_priority is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}],
+		func: function([id, val]) {
+			return this.game.dataStructures.priorityFindPriority(id, val);
 		},
 	};
 
 	static ds_priority_delete_value = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_priority_delete_value is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}],
+		func: function([id, val]) {
+			return this.game.dataStructures.priorityDeleteValue(id, val);
 		},
 	};
 
 	static ds_priority_delete_min = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_priority_delete_min is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.priorityDeleteMin(id);
 		},
 	};
 
 	static ds_priority_find_min = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_priority_find_min is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.priorityFindMin(id);
 		},
 	};
 
 	static ds_priority_delete_max = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_priority_delete_max is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.priorityDeleteMax(id);
 		},
 	};
 
 	static ds_priority_find_max = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_priority_find_max is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.priorityFindMax(id);
 		},
 	};
 

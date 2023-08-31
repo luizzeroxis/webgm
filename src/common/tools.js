@@ -226,7 +226,7 @@ export function stringifyArrowValues(values) {
 
 export function asString(value) {
 	if (typeof value != "string") {
-		return value.toString();
+		return (value % 1 == 0) ? value.toString() : value.toFixed(2);
 	}
 	return value;
 }

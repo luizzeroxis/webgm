@@ -150,4 +150,71 @@ export default class GameDataStructures {
 		shuffle(this.types["list"][id]);
 		return 0;
 	}
+
+	// map
+	mapCopy(id, source) {
+		this.checkIfExists("map", id);
+		this.checkIfExists("map", source);
+		this.types["map"][id] = this.types["map"][source].map(x => ({key: x.key, val: x.val}));
+		return 0;
+	}
+
+	mapAdd(id, key, val) {
+		this.checkIfExists("map", id);
+		this.types["map"][id].push({key, val});
+		sortValues(this.types["map"][id], true, x => x.key);
+		return 0;
+	}
+
+	mapReplace(id, key, val) {
+		this.checkIfExists("map", id);
+		const o = this.types["map"][id].find(x => x.key == key);
+		if (o) {
+			o.val = val;
+		}
+		return 0;
+	}
+
+	mapDelete(id, key) {
+		this.checkIfExists("map", id);
+		const i = this.types["map"][id].findIndex(x => x.key == key);
+		if (i != -1) {
+			this.types["map"][id].splice(i, 1);
+		}
+		return 0;
+	}
+
+	mapExists(id, key) {
+		this.checkIfExists("map", id);
+		return (this.types["map"][id].find(x => x.key == key) != null) ? 1 : 0;
+	}
+
+	mapFindValue(id, key) {
+		this.checkIfExists("map", id);
+		return this.types["map"][id].find(x => x.key == key)?.val ?? 0;
+	}
+
+	mapFindPrevious(id, key) {
+		this.checkIfExists("map", id);
+		const i = this.types["map"][id].findIndex(x => x.key == key);
+		if (i == -1) return 0;
+		return this.types["map"][id][i-1]?.key ?? 0;
+	}
+
+	mapFindNext(id, key) {
+		this.checkIfExists("map", id);
+		const i = this.types["map"][id].findIndex(x => x.key == key);
+		if (i == -1) return 0;
+		return this.types["map"][id][i+1]?.key ?? 0;
+	}
+
+	mapFindFirst(id) {
+		this.checkIfExists("map", id);
+		return this.types["map"][id][0]?.key ?? 0;
+	}
+
+	mapFindLast(id) {
+		this.checkIfExists("map", id);
+		return this.types["map"][id][this.types["map"][id].length-1]?.key ?? 0;
+	}
 }

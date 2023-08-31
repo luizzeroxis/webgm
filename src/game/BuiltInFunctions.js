@@ -6950,122 +6950,107 @@ export default class BuiltInFunctions {
 	// ## Maps
 
 	static ds_map_create = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_map_create is not implemented");
-			// return 0;
+		args: [],
+		func: function([]) {
+			return this.game.dataStructures.create("map");
 		},
 	};
 
 	static ds_map_destroy = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_map_destroy is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.destroy("map", id);
 		},
 	};
 
 	static ds_map_clear = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_map_clear is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.clear("map", id);
 		},
 	};
 
 	static ds_map_copy = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_map_copy is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}],
+		func: function([id, source]) {
+			return this.game.dataStructures.mapCopy(id, source);
 		},
 	};
 
 	static ds_map_size = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_map_size is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.size("map", id);
 		},
 	};
 
 	static ds_map_empty = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_map_empty is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.empty("map", id);
 		},
 	};
 
 	static ds_map_add = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_map_add is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}, {type: "any"}],
+		func: function([id, key, val]) {
+			return this.game.dataStructures.mapAdd(id, key, val);
 		},
 	};
 
 	static ds_map_replace = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_map_replace is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}, {type: "any"}],
+		func: function([id, key, val]) {
+			return this.game.dataStructures.mapReplace(id, key, val);
 		},
 	};
 
 	static ds_map_delete = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_map_delete is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}],
+		func: function([id, key]) {
+			return this.game.dataStructures.mapDelete(id, key);
 		},
 	};
 
 	static ds_map_exists = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_map_exists is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}],
+		func: function([id, key]) {
+			return this.game.dataStructures.mapExists(id, key);
 		},
 	};
 
 	static ds_map_find_value = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_map_find_value is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}],
+		func: function([id, key]) {
+			return this.game.dataStructures.mapFindValue(id, key);
 		},
 	};
 
 	static ds_map_find_previous = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_map_find_previous is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}],
+		func: function([id, key]) {
+			return this.game.dataStructures.mapFindPrevious(id, key);
 		},
 	};
 
 	static ds_map_find_next = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_map_find_next is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}],
+		func: function([id, key]) {
+			return this.game.dataStructures.mapFindNext(id, key);
 		},
 	};
 
 	static ds_map_find_first = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_map_find_first is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.mapFindFirst(id);
 		},
 	};
 
 	static ds_map_find_last = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_map_find_last is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.mapFindLast(id);
 		},
 	};
 

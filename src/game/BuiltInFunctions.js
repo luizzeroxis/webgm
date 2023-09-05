@@ -7189,282 +7189,247 @@ export default class BuiltInFunctions {
 	// ## Grids
 
 	static ds_grid_create = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_create is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}],
+		func: function([w, h]) {
+			return this.game.dataStructures.gridCreate(w, h);
 		},
 	};
 
 	static ds_grid_destroy = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_destroy is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.destroy("grid", id);
 		},
 	};
 
 	static ds_grid_copy = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_copy is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}],
+		func: function([id, source]) {
+			return this.game.dataStructures.gridCopy(id, source);
 		},
 	};
 
 	static ds_grid_resize = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_resize is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([id, w, h]) {
+			return this.game.dataStructures.gridResize(id, w, h);
 		},
 	};
 
 	static ds_grid_width = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_width is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.gridWidth(id);
 		},
 	};
 
 	static ds_grid_height = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_height is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.gridHeight(id);
 		},
 	};
 
 	static ds_grid_clear = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_clear is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "any"}],
+		func: function([id, val]) {
+			return this.game.dataStructures.gridClear(id, val);
 		},
 	};
 
 	static ds_grid_set = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_set is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		func: function([id, x, y, val]) {
+			return this.game.dataStructures.gridSet(id, x, y, val);
 		},
 	};
 
 	static ds_grid_add = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_add is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		func: function([id, x, y, val]) {
+			return this.game.dataStructures.gridAdd(id, x, y, val);
 		},
 	};
 
 	static ds_grid_multiply = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_multiply is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		func: function([id, x, y, val]) {
+			return this.game.dataStructures.gridMultiply(id, x, y, val);
 		},
 	};
 
 	static ds_grid_set_region = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_set_region is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		func: function([id, x1, y1, x2, y2, val]) {
+			return this.game.dataStructures.gridSetRegion(id, x1, y1, x2, y2, val);
 		},
 	};
 
 	static ds_grid_add_region = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_add_region is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		func: function([id, x1, y1, x2, y2, val]) {
+			return this.game.dataStructures.gridAddRegion(id, x1, y1, x2, y2, val);
 		},
 	};
 
 	static ds_grid_multiply_region = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_multiply_region is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		func: function([id, x1, y1, x2, y2, val]) {
+			return this.game.dataStructures.gridMultiplyRegion(id, x1, y1, x2, y2, val);
 		},
 	};
 
 	static ds_grid_set_disk = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_set_disk is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
+		func: function([id, xm, ym, r, val]) {
+			return this.game.dataStructures.gridSetDisk(id, xm, ym, r, val);
 		},
 	};
 
 	static ds_grid_add_disk = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_add_disk is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
+		func: function([id, xm, ym, r, val]) {
+			return this.game.dataStructures.gridAddDisk(id, xm, ym, r, val);
 		},
 	};
 
 	static ds_grid_multiply_disk = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_multiply_disk is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
+		func: function([id, xm, ym, r, val]) {
+			return this.game.dataStructures.gridMultiplyDisk(id, xm, ym, r, val);
 		},
 	};
 
 	static ds_grid_set_grid_region = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_set_grid_region is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([id, source, x1, y1, x2, y2, xpos, ypos]) {
+			return this.game.dataStructures.gridSetGridRegion(id, source, x1, y1, x2, y2, xpos, ypos);
 		},
 	};
 
 	static ds_grid_add_grid_region = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_add_grid_region is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([id, source, x1, y1, x2, y2, xpos, ypos]) {
+			return this.game.dataStructures.gridAddGridRegion(id, source, x1, y1, x2, y2, xpos, ypos);
 		},
 	};
 
 	static ds_grid_multiply_grid_region = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_multiply_grid_region is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([id, source, x1, y1, x2, y2, xpos, ypos]) {
+			return this.game.dataStructures.gridMultiplyGridRegion(id, source, x1, y1, x2, y2, xpos, ypos);
 		},
 	};
 
 	static ds_grid_get = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_get is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([id, x, y]) {
+			return this.game.dataStructures.gridGet(id, x, y);
 		},
 	};
 
 	static ds_grid_get_sum = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_get_sum is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([id, x1, y1, x2, y2]) {
+			return this.game.dataStructures.gridGetSum(id, x1, y1, x2, y2);
 		},
 	};
 
 	static ds_grid_get_max = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_get_max is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([id, x1, y1, x2, y2]) {
+			return this.game.dataStructures.gridGetMax(id, x1, y1, x2, y2);
 		},
 	};
 
 	static ds_grid_get_min = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_get_min is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([id, x1, y1, x2, y2]) {
+			return this.game.dataStructures.gridGetMin(id, x1, y1, x2, y2);
 		},
 	};
 
 	static ds_grid_get_mean = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_get_mean is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		func: function([id, x1, y1, x2, y2]) {
+			return this.game.dataStructures.gridGetMean(id, x1, y1, x2, y2);
 		},
 	};
 
 	static ds_grid_get_disk_sum = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_get_disk_sum is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([id, xm, ym, r]) {
+			return this.game.dataStructures.gridGetDiskSum(id, xm, ym, r);
 		},
 	};
 
 	static ds_grid_get_disk_min = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_get_disk_min is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([id, xm, ym, r]) {
+			return this.game.dataStructures.gridGetDiskMin(id, xm, ym, r);
 		},
 	};
 
 	static ds_grid_get_disk_max = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_get_disk_max is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([id, xm, ym, r]) {
+			return this.game.dataStructures.gridGetDiskMax(id, xm, ym, r);
 		},
 	};
 
 	static ds_grid_get_disk_mean = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_get_disk_mean is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		func: function([id, xm, ym, r]) {
+			return this.game.dataStructures.gridGetDiskMean(id, xm, ym, r);
 		},
 	};
 
 	static ds_grid_value_exists = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_value_exists is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		func: function([id, x1, y1, x2, y2, val]) {
+			return this.game.dataStructures.gridValueExists(id, x1, y1, x2, y2, val);
 		},
 	};
 
 	static ds_grid_value_x = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_value_x is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		func: function([id, x1, y1, x2, y2, val]) {
+			return this.game.dataStructures.gridValueX(id, x1, y1, x2, y2, val);
 		},
 	};
 
 	static ds_grid_value_y = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_value_y is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		func: function([id, x1, y1, x2, y2, val]) {
+			return this.game.dataStructures.gridValueY(id, x1, y1, x2, y2, val);
 		},
 	};
 
 	static ds_grid_value_disk_exists = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_value_disk_exists is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
+		func: function([id, xm, ym, r, val]) {
+			return this.game.dataStructures.gridValueDiskExists(id, xm, ym, r, val);
 		},
 	};
 
 	static ds_grid_value_disk_x = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_value_disk_x is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
+		func: function([id, xm, ym, r, val]) {
+			return this.game.dataStructures.gridValueDiskX(id, xm, ym, r, val);
 		},
 	};
 
 	static ds_grid_value_disk_y = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_value_disk_y is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
+		func: function([id, xm, ym, r, val]) {
+			return this.game.dataStructures.gridValueDiskY(id, xm, ym, r, val);
 		},
 	};
 
 	static ds_grid_shuffle = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function ds_grid_shuffle is not implemented");
-			// return 0;
+		args: [{type: "integer"}],
+		func: function([id]) {
+			return this.game.dataStructures.gridShuffle(id);
 		},
 	};
 

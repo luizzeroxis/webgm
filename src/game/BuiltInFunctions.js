@@ -9346,6 +9346,7 @@ export default class BuiltInFunctions {
 		args: null,
 		func: async function([changeInto, performEvents]) {
 			await BuiltInFunctions.instance_change.func.call(this, [changeInto, performEvents == 1]);
+			return 0;
 		},
 	};
 
@@ -9597,9 +9598,9 @@ export default class BuiltInFunctions {
 
 	static action_show_info = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_show_info is not implemented");
-			// return 0;
+		func: async function([]) {
+			await BuiltInFunctions.show_info.func.call(this, []);
+			return 0;
 		},
 	};
 

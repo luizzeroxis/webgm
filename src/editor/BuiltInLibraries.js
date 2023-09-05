@@ -1296,29 +1296,19 @@ export default class BuiltInLibraries {
 						},
 					],
 				},
-				/*
 				{
-					id: 999,
+					id: 322,
 					description: "Show Info",
-					listText: [""],
-					hintText: [""],
+					listText: ["Show the game info"],
+					hintText: ["show the game info"],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_show_info",
 
-					interfaceKind: "normal",
+					interfaceKind: "none",
 					isQuestion: false,
-					hasApplyTo: false,
-					hasRelative: false,
-
-					args: [
-						{
-							name: "",
-							kind: "",
-							default: "",
-						},
-					],
 				},
+				/*
 				{
 					kind: "separator",
 				},

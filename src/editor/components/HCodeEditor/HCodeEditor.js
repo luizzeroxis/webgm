@@ -16,7 +16,10 @@ export default class HCodeEditor extends HElement {
 				if (e.code == "Tab" && e.shiftKey == false) {
 					if (this.tabEnabled) {
 						e.preventDefault();
-						this.textareaCode.html.setRangeText("\t", this.textareaCode.html.selectionStart, this.textareaCode.html.selectionEnd, "end");
+						const execWorked = document.execCommand("insertText", false, "\t");
+						if (!execWorked) {
+							this.textareaCode.html.setRangeText("\t", this.textareaCode.html.selectionStart, this.textareaCode.html.selectionEnd, "end");
+						}
 					}
 				} else if (e.code == "Escape") {
 					this.tabEnabled = false;

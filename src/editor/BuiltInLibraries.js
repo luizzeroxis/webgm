@@ -703,30 +703,34 @@ export default class BuiltInLibraries {
 						},
 					],
 				},
-				/*
 				{
-					id: 999,
+					id: 202,
 					description: "Change Instance",
-					listText: [""],
-					hintText: [""],
+					listText: ["Change instance into ", a[0]],
+					hintText: [w, "change the instance into object ", a[0], ", ", a[1], " performing events"],
 					kind: "normal",
 					execution: "function",
-					executionFunction: "",
+					executionFunction: "action_change_object",
 
 					interfaceKind: "normal",
 					isQuestion: false,
-					hasApplyTo: false,
+					hasApplyTo: true,
 					hasRelative: false,
 
 					args: [
 						{
-							name: "",
-							kind: "",
-							default: "",
+							name: "change into:",
+							kind: "object",
+							default: -100,
+						},
+						{
+							name: "perform events:",
+							kind: "menu",
+							menu: ["not", "yes"],
+							default: 0,
 						},
 					],
 				},
-				*/
 				{
 					id: 203,
 					description: "Destroy Instance",

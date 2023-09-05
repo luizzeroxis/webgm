@@ -9344,9 +9344,8 @@ export default class BuiltInFunctions {
 
 	static action_change_object = {
 		args: null,
-		func: function([_]) {
-			throw new EngineException("Function action_change_object is not implemented");
-			// return 0;
+		func: async function([changeInto, performEvents]) {
+			await BuiltInFunctions.instance_change.func.call(this, [changeInto, performEvents == 1]);
 		},
 	};
 

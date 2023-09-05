@@ -10,7 +10,7 @@ export default class Instance {
 		this.objectIndex = objectIndex;
 		this.game = game;
 
-		this.object = game.project.getResourceById("ProjectObject", this.objectIndex);
+		this.object = this.game.project.getResourceById("ProjectObject", this.objectIndex);
 
 		// Inherited from object
 		this.spriteIndex = this.object.sprite_index;
@@ -173,5 +173,33 @@ export default class Instance {
 		const directionRadians = direction * (Math.PI / 180);
 		this.hSpeed = Math.cos(directionRadians) * speed;
 		this.vSpeed = -Math.sin(directionRadians) * speed;
+	}
+
+	async changeObject(objectIndex, performEvents) {
+		const object = this.game.project.getResourceById("ProjectObject", objectIndex);
+		if (!object) {
+			throw this.game.makeError({text: `Asking to change into non-existing object: ${objectIndex}`});
+		}
+
+		if (performEvents) {
+			await this.game.events.runEventOfInstance("destroy", null, this);
+		}
+
+		this.objectIndex = objectIndex;
+		this.object = object;
+
+		this.spriteIndex = this.object.sprite_index;
+		this.visible = this.object.visible;
+		this.solid = this.object.solid;
+		this.depth = this.object.depth;
+		this.persistent = this.object.persistent;
+		this.maskIndex = this.object.mask_index;
+
+		this.sprite = this.game.project.getResourceById("ProjectSprite", this.spriteIndex);
+		this.mask = this.game.project.getResourceById("ProjectSprite", this.maskIndex);
+
+		if (performEvents) {
+			await this.game.events.runEventOfInstance("create", null, this);
+		}
 	}
 }

@@ -1569,10 +1569,10 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_change = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function instance_change is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "bool"}],
+		func: async function([obj, perf]) {
+			await this.currentInstance.changeObject(obj, perf);
+			return 0;
 		},
 	};
 
@@ -1589,10 +1589,14 @@ export default class BuiltInFunctions {
 	};
 
 	static position_change = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function position_change is not implemented");
-			// return 0;
+		args: [{type: "real"}, {type: "real"}, {type: "integer"}, {type: "bool"}],
+		func: async function([x, y, obj, perf]) {
+			const instances = this.game.collision.getAllInstancesOnPoint(this.game.instances, {x, y});
+			for (const instance of instances) {
+				await instance.changeObject(obj, perf);
+			}
+
+			return 0;
 		},
 	};
 

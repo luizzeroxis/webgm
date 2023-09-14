@@ -12,31 +12,31 @@ export class UnserializeException extends WebGMException {}
 export default class ProjectSerializer {
 	static serializeZIP(project) {
 		const zip = new JSZip();
-		zip.file("version", "2");
+		zip.file("version", "3");
 
 		const json = Serializer.serializeToJSON(project);
 
-		zip.file("project.json", json);
-
 		project.resources.ProjectSprite.forEach(sprite => {
-			sprite.images.forEach((image, index) => {
+			sprite.images.forEach((image, imageIndex) => {
 				if (image) {
-					zip.file("sprites/"+sprite.id+"/"+index, image.blob);
+					zip.file(`sprites/${sprite.id}/${imageIndex}.png`, image.blob);
 				}
 			});
 		});
 
 		project.resources.ProjectSound.forEach(sound => {
 			if (sound.sound) {
-				zip.file("sounds/"+sound.id, sound.sound.blob);
+				zip.file(`sounds/${sound.id}.${sound.fileType}`, sound.sound.blob);
 			}
 		});
 
 		project.resources.ProjectBackground.forEach(background => {
 			if (background.image) {
-				zip.file("backgrounds/"+background.id, background.image.blob);
+				zip.file(`backgrounds/${background.id}.png`, background.image.blob);
 			}
 		});
+
+		zip.file("project.json", json);
 
 		return zip.generateAsync({type: "blob"});
 	}
@@ -57,7 +57,7 @@ export default class ProjectSerializer {
 		})
 		.then(versionString => {
 			version = parseInt(versionString);
-			if (version < 2) throw new UnserializeException("Unsupported "+version.toString()+" version.");
+			if (version <= 1) throw new UnserializeException(`Unsupported ${version} version.`);
 		})
 		.then(() => {
 			const file = zip.file("project.json");
@@ -65,42 +65,50 @@ export default class ProjectSerializer {
 			return file.async("string");
 		})
 		.then(json => {
-			if (version == 2) {
+			if (version == 2 || version == 3) {
 				const promises = [];
 
 				// const project = Serializer.unserializeFromJSON(json);
 				const project = Serializer.unserializeFromJSON(json, {kind: "object", objectType: Project});
 
 				project.resources.ProjectSprite.forEach(sprite => {
-					sprite.images.forEach((image, index) => {
-						const file = zip.file("sprites/"+sprite.id+"/"+index);
-						if (file == null) return;
+					let imageIndexLoop = 0;
 
-						promises.push(file.async("blob")
-						.then(blob => {
-							sprite.images[index] = new ImageWrapper(blob);
-						}));
-					});
+					while (true) {
+						const imageIndex = imageIndexLoop;
+
+						const fileName = (version == 3) ? `sprites/${sprite.id}/${imageIndex}.png` : `sprites/${sprite.id}/${imageIndex}`;
+						const file = zip.file(fileName);
+
+						if (file) {
+							promises.push(file.async("blob").then(blob => {
+								sprite.images[imageIndex] = new ImageWrapper(blob);
+							}));
+							++imageIndexLoop;
+						} else {
+							break;
+						}
+					}
 				});
 
 				project.resources.ProjectSound.forEach(sound => {
-					const file = zip.file("sounds/"+sound.id);
-					if (file == null) return;
+					const fileName = (version == 3) ? `sounds/${sound.id}.${sound.fileType}` : `sounds/${sound.id}`;
+					const file = zip.file(fileName);
+					if (!file) throw new Error("File not found");
 
-					promises.push(file.async("blob")
-						.then(blob => {
-							sound.sound = new AudioWrapper(blob);
-						}));
+					promises.push(file.async("blob").then(blob => {
+						sound.sound = new AudioWrapper(blob);
+					}));
 				});
 
 				project.resources.ProjectBackground.forEach(background => {
-					const file = zip.file("backgrounds/"+background.id);
-					if (file == null) return;
+					const fileName = (version == 3) ? `backgrounds/${background.id}.png` : `backgrounds/${background.id}`;
+					const file = zip.file(fileName);
+					if (!file) throw new Error("File not found");
 
-					promises.push(file.async("blob")
-						.then(blob => {
-							background.image = new ImageWrapper(blob);
-						}));
+					promises.push(file.async("blob").then(blob => {
+						background.image = new ImageWrapper(blob);
+					}));
 				});
 
 				return Promise.all(promises).then(() => {
@@ -108,7 +116,7 @@ export default class ProjectSerializer {
 				});
 			}
 
-			throw new UnserializeException("Unsupported "+version.toString()+" version.");
+			throw new UnserializeException(`Unsupported ${version} version.`);
 		});
 	}
 }

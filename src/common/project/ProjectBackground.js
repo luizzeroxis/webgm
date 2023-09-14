@@ -6,7 +6,7 @@ export class ProjectBackground {
 		Serializer.setupClass(this, "ProjectBackground", {
 			id: null,
 			name: null,
-			image: {object: ImageWrapper, value: null},
+			image: {object: ImageWrapper, serialize: false},
 
 			useAsTileSet: false,
 			tileWidth: 16,

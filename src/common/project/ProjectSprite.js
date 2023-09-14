@@ -6,7 +6,7 @@ export class ProjectSprite {
 		Serializer.setupClass(this, "ProjectSprite", {
 			id: null,
 			name: null,
-			images: {array: ImageWrapper}, // this should not be serialized, however look at ProjectSerializer
+			images: {array: ImageWrapper, serialize: false},
 			originx: 0,
 			originy: 0,
 			separateCollisionMasks: false,

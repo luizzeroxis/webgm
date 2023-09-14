@@ -21,7 +21,7 @@ export default class HWindowSound extends HWindow {
 
 				this.buttonLoadSound = add( new HButton("Load Sound", async () => {
 					const file = await openFile("audio/*");
-					this.loadSoundFromFile(file);
+					await this.loadSound(file);
 				}) );
 
 				parent( add( new HElement("div", {class: "preview"}) ) );
@@ -75,26 +75,30 @@ export default class HWindowSound extends HWindow {
 		this.setTitle("Sound Properties: "+this.resource.name);
 	}
 
-	loadSoundFromFile(file) {
+	async loadSound(file) {
 		this.buttonLoadSound.setDisabled(true);
 
-		const sound = new AudioWrapper(file);
+		try {
+			const sound = new AudioWrapper(file);
+			await sound.promise;
 
-		sound.promise
-		.then(() => {
 			this.resource.sound = sound;
+
+			const index = file.name.lastIndexOf(".");
+			const type = (index < 1) ? "" : file.name.slice(index+1);
+			this.resource.fileType = type;
+
 			this.audioPreview.html.src = sound.src;
+
 			this.onUpdate();
-		})
-		.catch(e => {
+		} catch (e) {
 			if (e.message == "Could not load audio") {
 				alert("Error when opening audio");
 			}
 			throw e;
-		})
-		.finally(() => {
+		} finally {
 			this.buttonLoadSound.setDisabled(false);
-		});
+		}
 	}
 
 	close() {

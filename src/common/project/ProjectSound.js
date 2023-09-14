@@ -6,7 +6,8 @@ export class ProjectSound {
 		Serializer.setupClass(this, "ProjectSound", {
 			id: null,
 			name: null,
-			sound: {object: AudioWrapper, value: null},
+			sound: {object: AudioWrapper, serialize: false},
+			fileType: null,
 			volume: 1,
 		});
 	}

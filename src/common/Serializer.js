@@ -16,7 +16,7 @@ export default class Serializer {
 			};
 
 			if (value?.constructor == Object) {
-				if (value.serialize) p.serialize = value.serialize;
+				if (value.serialize != null) p.serialize = value.serialize;
 			}
 
 			classProperties.push(p);
@@ -147,13 +147,13 @@ export default class Serializer {
 		return object;
 	}
 
-	static unserializeFromJSON(json, pType) {
+	static unserializeFromJSON(json, pType, context) {
 		const jsonObj = JSON.parse(json);
 
-		return this.unserializeValue(jsonObj, pType);
+		return this.unserializeValue(jsonObj, pType, context);
 	}
 
-	static unserializeValue(value, pType) {
+	static unserializeValue(value, pType, context) {
 		if (!pType) {
 			pType = this.detectType(value);
 		} else {
@@ -163,12 +163,13 @@ export default class Serializer {
 		if (pType.kind == "primitive") {
 			return value;
 		} else if (pType.kind == "array") {
-			return value.map(x => this.unserializeValue(x, pType.arrayType));
+			return value.map(x => this.unserializeValue(x, pType.arrayType, context));
 		} else if (pType.kind == "object") {
 			if (value == null) return null;
 
 			if (pType.objectType) {
-				return this.unserializeObject(value, pType.objectType);
+				if (pType.objectType.fromJSON) return pType.objectType.fromJSON(value, context);
+				return this.unserializeObject(value, pType.objectType, context);
 			} else {
 				if (value.$class) {
 					const _class = this.classes.find(x => x.name == value.$class)?.class;
@@ -177,7 +178,7 @@ export default class Serializer {
 						throw new Error(`class ${value.$class} not registered in serializer`);
 					}
 
-					return this.unserializeObject(value, _class);
+					return this.unserializeObject(value, _class, context);
 				} else {
 					throw new Error("no $class");
 					// Only use this to allow unserializing as plain objects
@@ -189,7 +190,7 @@ export default class Serializer {
 		}
 	}
 
-	static unserializeObject(value, _class) {
+	static unserializeObject(value, _class, context) {
 		const object = new _class();
 
 		this.getProperties(_class).forEach(p => {
@@ -204,18 +205,18 @@ export default class Serializer {
 					object[p.name] = p.value;
 				}
 			} else {
-				object[p.name] = this.unserializeValue(value[p.name], p.type);
+				object[p.name] = this.unserializeValue(value[p.name], p.type, context);
 			}
 		});
 
 		return object;
 	}
 
-	static unserializePlainObject(value) {
+	static unserializePlainObject(value, context) {
 		const object = {};
 
 		for (const property in value) {
-			object[property] = this.unserializeValue(value[property]);
+			object[property] = this.unserializeValue(value[property], context);
 		}
 
 		return object;

@@ -85,7 +85,7 @@ export default class HWindowSound extends HWindow {
 			this.resource.sound = sound;
 
 			const index = file.name.lastIndexOf(".");
-			const type = (index < 1) ? "" : file.name.slice(index+1);
+			const type = (index < 1) ? "" : file.name.slice(index);
 			this.resource.fileType = type;
 
 			this.audioPreview.html.src = sound.src;

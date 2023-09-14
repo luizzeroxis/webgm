@@ -7,7 +7,7 @@ export class ProjectSound {
 			id: null,
 			name: null,
 			sound: {object: AudioWrapper, serialize: false},
-			fileType: null,
+			fileType: "",
 			volume: 1,
 		});
 	}

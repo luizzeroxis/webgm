@@ -26,7 +26,7 @@ export default class ProjectSerializer {
 
 		project.resources.ProjectSound.forEach(sound => {
 			if (sound.sound) {
-				zip.file(`sounds/${sound.id}.${sound.fileType}`, sound.sound.blob);
+				zip.file(`sounds/${sound.id}${sound.fileType}`, sound.sound.blob);
 			}
 		});
 
@@ -92,7 +92,7 @@ export default class ProjectSerializer {
 				});
 
 				project.resources.ProjectSound.forEach(sound => {
-					const fileName = (version == 3) ? `sounds/${sound.id}.${sound.fileType}` : `sounds/${sound.id}`;
+					const fileName = (version == 3) ? `sounds/${sound.id}${sound.fileType}` : `sounds/${sound.id}`;
 					const file = zip.file(fileName);
 					if (!file) throw new Error("File not found");
 

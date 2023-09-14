@@ -92,23 +92,24 @@ export default class HSpriteImagesEditorWindow extends HWindow {
 	async addImage(position) {
 		const files = await openFile("image/*", true);
 
-		this.spriteWindow.loadImagesFromFiles(files)
-		.then(images => {
+		try {
+			const newImages = await this.spriteWindow.constructor.getImagesFromFiles(files, this.images);
+
 			if (position != null) {
-				this.images.splice(position, 0, ...images);
+				this.images.splice(position, 0, ...newImages);
 			} else {
-				this.images.push(...images);
+				this.images.push(...newImages);
 			}
+
 			this.updateImageListItems();
 			this.imageList.setSelected(null);
 			this.onUpdate();
-		})
-		.catch(e => {
+		} catch (e) {
 			if (e.message == "Could not load image") {
 				alert("Error when opening image");
 			}
 			throw e;
-		});
+		}
 	}
 
 	updateImageListItems() {

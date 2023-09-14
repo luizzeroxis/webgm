@@ -27,7 +27,7 @@ export default class HWindowSprite extends HWindow {
 					parent( add( new HElement("div") ) );
 						this.buttonLoadSprite = add( new HButton("Load Sprite", async () => {
 							const files = await openFile("image/*", true);
-							this.setImagesFromFiles(files);
+							await this.loadSprite(files);
 						}) );
 						endparent();
 
@@ -141,7 +141,7 @@ export default class HWindowSprite extends HWindow {
 		setDeepOnUpdateOnElement(this.client, () => this.onUpdate());
 
 		// Open file if dropped in the window body
-		setOnFileDrop(this.html, null, files => this.setImagesFromFiles(files), true);
+		setOnFileDrop(this.html, null, files => this.loadSprite(files), true);
 	}
 
 	copyData() {
@@ -189,7 +189,32 @@ export default class HWindowSprite extends HWindow {
 		this.setTitle("Sprite Properties: "+this.resource.name);
 	}
 
-	loadImagesFromFiles(files) {
+	//
+
+	static async getImagesFromFiles(files, prevImages) {
+		const images = await HWindowSprite.loadImagesFromFiles(files);
+		const hasPrevImages = (prevImages && prevImages.length > 0);
+
+		let w = hasPrevImages ? prevImages[0].width : 0;
+		let h = hasPrevImages ? prevImages[0].height : 0;
+
+		images.forEach(image => {
+			if (image.width > w) w = image.width;
+			if (image.height > h) h = image.height;
+		});
+
+		// If new images bigger than previous, resize all previous images
+		if (hasPrevImages && (w != prevImages[0].width || h != prevImages[0].height)) {
+			await HWindowSprite.resizeImages(prevImages, w, h);
+		}
+
+		// New images must be drawn regardless
+		await HWindowSprite.resizeImages(images, w, h);
+
+		return Promise.all(images.map(x => x.promise));
+	}
+
+	static loadImagesFromFiles(files) {
 		const images = [];
 
 		for (const file of files) {
@@ -199,28 +224,38 @@ export default class HWindowSprite extends HWindow {
 		return Promise.all(images.map(x => x.promise));
 	}
 
-	setImagesFromFiles(files) {
+	static async resizeImages(images, w, h) {
+		const canvas = new OffscreenCanvas(w, h);
+		const ctx = canvas.getContext("2d");
+
+		for (let i=0; i<images.length; ++i) {
+			ctx.clearRect(0, 0, w, h);
+			ctx.drawImage(images[i].image, 0, 0);
+
+			const blob = await canvas.convertToBlob({type: "image/png"});
+			images[i] = new ImageWrapper(blob);
+		}
+	}
+
+	async loadSprite(files) {
 		for (const child of this.windowChildren) {
 			child.forceClose();
 		}
 
 		this.buttonLoadSprite.setDisabled(true);
 
-		this.loadImagesFromFiles(files)
-		.then(images => {
-			this.resource.images = images;
+		try {
+			this.resource.images = await HWindowSprite.getImagesFromFiles(files);
 			this.updateImageInfo();
 			this.onUpdate();
-		})
-		.catch(e => {
+		} catch (e) {
 			if (e.message == "Could not load image") {
 				alert("Error when opening image");
 			}
 			throw e;
-		})
-		.finally(() => {
+		} finally {
 			this.buttonLoadSprite.setDisabled(false);
-		});
+		}
 	}
 
 	updateImageInfo() {

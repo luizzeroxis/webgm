@@ -44,7 +44,6 @@ export default class ProjectLoader {
 
 		this.project.resources.ProjectSprite.forEach(sprite => {
 			sprite.images.forEach((image, imageIndex) => {
-				image.load();
 				promises.push(image.promise
 					.catch(e => {
 						console.error(e);
@@ -66,7 +65,6 @@ export default class ProjectLoader {
 		const promises = [];
 		this.project.resources.ProjectSound.forEach(sound => {
 			if (!sound.sound) return;
-			sound.sound.load();
 			promises.push(sound.sound.promise
 				.catch(() => {
 					throw new EngineException("Could not load audio in sound " + sound.name);
@@ -82,7 +80,6 @@ export default class ProjectLoader {
 		const promises = [];
 		this.project.resources.ProjectBackground.forEach(background => {
 			if (!background.image) return;
-			background.image.load();
 			promises.push(background.image.promise
 				.catch(() => {
 					throw new EngineException("Could not load image in background " + background.name);

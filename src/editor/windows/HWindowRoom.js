@@ -1,6 +1,5 @@
 import HWindow from "~/common/components/HWindowManager/HWindow.js";
 import {parent, endparent, add, HElement, HButton, HCanvas, HTextInput, HNumberInput, HColorInput, HCheckBoxInput, HSelect, HOption} from "~/common/h";
-import ImageWrapper from "~/common/ImageWrapper.js";
 import {ProjectBackground, ProjectObject, ProjectRoom, ProjectInstance, ProjectRoomBackground, ProjectRoomView} from "~/common/project/ProjectProperties.js";
 import {setDeepOnUpdateOnElement} from "~/common/tools.js";
 import HTabControl from "~/editor/components/HTabControl/HTabControl.js";
@@ -8,6 +7,16 @@ import HResourceSelect from "~/editor/HResourceSelect.js";
 import DefaultInstanceIcon from "~/editor/img/default-instance-icon.png";
 
 export default class HWindowRoom extends HWindow {
+	static {
+		this.defaultInstanceImage = new Image();
+		this.defaultInstanceImage.src = DefaultInstanceIcon;
+		this.defaultInstanceImagePromise = new Promise(resolve => {
+			this.defaultInstanceImage.onload = () => {
+				resolve(this);
+			};
+		});
+	}
+
 	constructor(manager, editor, resource) {
 		super(manager);
 		this.editor = editor;
@@ -305,7 +314,6 @@ export default class HWindowRoom extends HWindow {
 					endparent();
 				endparent();
 
-				this.defaultInstanceImage = new ImageWrapper(DefaultInstanceIcon);
 				this.updateCanvasPreview();
 
 			endparent();
@@ -454,8 +462,8 @@ export default class HWindowRoom extends HWindow {
 				// On GM, if there's no images, it just defaults to 32x32. A possible improvement would be to either simply show the default image anyway, or use the grid size. Right now I'll just use 32x32 anyway.
 			}
 		} else {
-			w = this.defaultInstanceImage.width;
-			h = this.defaultInstanceImage.height;
+			w = 16;
+			h = 16;
 		}
 
 		const x1 = instance.x - ox;
@@ -749,18 +757,19 @@ export default class HWindowRoom extends HWindow {
 			ox = sprite.originx;
 			oy = sprite.originy;
 			if (sprite.images.length > 0) {
-				image = sprite.images[0];
+				image = sprite.images[0].image;
+				await sprite.images[0].promise;
 			} else {
 				// won't show if there is a sprite, but no images
 				return;
 			}
 		} else {
-			image = this.defaultInstanceImage;
+			image = this.constructor.defaultInstanceImage;
+			await this.constructor.defaultInstanceImagePromise;
 		}
 
 		if (image) {
-			await image.promise;
-			this.ctx.drawImage(image.image, roomInstance.x - ox, roomInstance.y - oy);
+			this.ctx.drawImage(image, roomInstance.x - ox, roomInstance.y - oy);
 		}
 	}
 

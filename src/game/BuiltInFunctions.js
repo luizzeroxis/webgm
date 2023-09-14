@@ -3946,12 +3946,7 @@ export default class BuiltInFunctions {
 	static sound_play = {
 		args: [{type: "real"}],
 		func: function([index]) {
-			const sound = this.game.project.getResourceById("ProjectSound", index);
-			if (!sound) {
-				throw this.game.makeError({text: `Sound does not exist. ${index})`});
-			}
-
-			this.game.audio.playSound(sound, false);
+			this.game.audio.playSound(index, false);
 			return 0;
 		},
 	};
@@ -3959,12 +3954,7 @@ export default class BuiltInFunctions {
 	static sound_loop = {
 		args: [{type: "real"}],
 		func: function([index]) {
-			const sound = this.game.project.getResourceById("ProjectSound", index);
-			if (!sound) {
-				throw this.game.makeError({text: `Sound does not exist. (${index})`});
-			}
-
-			this.game.audio.playSound(sound, true);
+			this.game.audio.playSound(index, true);
 			return 0;
 		},
 	};
@@ -3972,12 +3962,7 @@ export default class BuiltInFunctions {
 	static sound_stop = {
 		args: [{type: "real"}],
 		func: function([index]) {
-			const sound = this.game.project.getResourceById("ProjectSound", index);
-			if (!sound) {
-				throw this.game.makeError({text: `Sound does not exist. (${index})`});
-			}
-
-			this.game.audio.stopSound(sound);
+			this.game.audio.stopSound(index);
 		},
 	};
 
@@ -3992,31 +3977,14 @@ export default class BuiltInFunctions {
 	static sound_isplaying = {
 		args: [{type: "real"}],
 		func: function([index]) {
-			const sound = this.game.project.getResourceById("ProjectSound", index);
-			if (!sound) return 0;
-
-			for (const audioNode of this.game.loadedProject.sounds.get(sound).audioNodes) {
-				if (!audioNode.mediaElement.ended) {
-					return 1;
-				}
-			}
-
-			return 0;
+			return this.game.audio.isSoundPlaying(index) ? 1 : 0;
 		},
 	};
 
 	static sound_volume = {
 		args: [{type: "real"}, {type: "real"}],
 		func: function([index, value]) {
-			const sound = this.game.project.getResourceById("ProjectSound", index);
-			if (!sound) return 0; // TODO check if error
-
-			this.game.loadedProject.sounds.get(sound).volume = value;
-
-			for (const audioNode of this.game.loadedProject.sounds.get(sound).audioNodes) {
-				audioNode.mediaElement.volume = value;
-			}
-
+			this.game.audio.setSoundVolume(index, value);
 			return 0;
 		},
 	};

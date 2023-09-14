@@ -9,7 +9,6 @@ export default class ProjectLoader {
 		this.project = project;
 
 		this.collisionMasks = new Map();
-		this.sounds = new Map();
 
 		this.cssFontsCache = {
 			"-1": makeCSSFont("Arial", 12, false, false),
@@ -69,8 +68,6 @@ export default class ProjectLoader {
 				.catch(() => {
 					throw new EngineException("Could not load audio in sound " + sound.name);
 				}));
-
-			this.sounds.set(sound, {volume: sound.volume, audioNodes: []});
 		});
 		return Promise.all(promises);
 	}

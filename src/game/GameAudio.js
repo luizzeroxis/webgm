@@ -16,7 +16,7 @@ export default class GameAudio {
 		}
 
 		this.globalGainNode = this.audioContext.createGain();
-		this.globalGainNode.connect(this.audioContext.destination)
+		this.globalGainNode.connect(this.audioContext.destination);
 
 		this.game.project.resources.ProjectSound.forEach(sound => {
 			const soundInfo = {
@@ -24,21 +24,19 @@ export default class GameAudio {
 				pan: sound.pan,
 			};
 
+			soundInfo.gainNode = this.audioContext.createGain();
+			soundInfo.gainNode.gain.value = sound.volume;
+			soundInfo.gainNode.connect(this.globalGainNode);
+
+			soundInfo.stereoPannerNode = this.audioContext.createStereoPanner();
+			soundInfo.stereoPannerNode.pan.value = sound.pan;
+			soundInfo.stereoPannerNode.connect(soundInfo.gainNode);
+
 			if (sound.kind == "media") {
-				soundInfo.nextAudio = null;
 				soundInfo.mediaElementSourceNodeList = [];
-
-				soundInfo.stereoPannerNode = this.audioContext.createStereoPanner();
-				soundInfo.stereoPannerNode.pan.value = sound.pan;
-				soundInfo.stereoPannerNode.connect(this.globalGainNode);
 			} else {
-				// soundInfo.arrayBuffer = null;
-
-				// soundInfo.gainNode = this.audioContext.createGain();
-				// soundInfo.gainNode.gain.value = sound.volume;
-				// soundInfo.gainNode.connect(this.globalGainNode);
-
-				// soundInfo.bufferSourceNodes = [];
+				soundInfo.arrayBuffer = null;
+				soundInfo.bufferSourceNodeList = [];
 			}
 
 			this.sounds.set(sound, soundInfo);
@@ -58,7 +56,7 @@ export default class GameAudio {
 	}
 
 	loadSound(sound) {
-		// const soundInfo = this.sounds.get(sound);
+		const soundInfo = this.sounds.get(sound);
 
 		if (sound.kind == "media") {
 			// soundInfo.nextAudio = new Audio(sound.sound.src);
@@ -72,14 +70,38 @@ export default class GameAudio {
 			// 	})
 			// });
 		} else {
+			if (soundInfo.arrayBuffer) return null;
+
+			return new Promise((resolve, reject) => {
+				const reader = new FileReader();
+				reader.addEventListener("load", () => {
+					this.audioContext.decodeAudioData(reader.result)
+						.then(arrayBuffer => {
+							soundInfo.arrayBuffer = arrayBuffer;
+							resolve();
+						});
+				});
+				reader.readAsArrayBuffer(sound.sound.blob);
+			});
+		}
+
+		return null;
+	}
+
+	unloadSound(sound) {
+		const soundInfo = this.sounds.get(sound);
+
+		if (sound.kind == "media") {
 			//
+		} else {
+			soundInfo.arrayBuffer = null;
 		}
 	}
 
 	// Play a sound, on loop or not.
-	playSound(soundIndex, loop) {
+	async playSound(soundIndex, loop) {
 		const sound = this.getSound(soundIndex);
-		this.loadSound(sound);
+		await this.loadSound(sound);
 
 		const soundInfo = this.sounds.get(sound);
 
@@ -99,15 +121,19 @@ export default class GameAudio {
 
 			audio.play();
 		} else {
-			// const bufferSourceNode = this.audioContext.createBufferSource(soundInfo.arrayBuffer);
-			// bufferSourceNode.loop = loop;
-			// bufferSourceNode.addEventListener("ended", () => {
-			// 	// disconnect and remove from list
-			// });
-			// bufferSourceNode.connect(soundInfo.gainNode);
-			// bufferSourceNode.start();
+			const bufferSourceNode = this.audioContext.createBufferSource();
+			bufferSourceNode.buffer = soundInfo.arrayBuffer;
+			bufferSourceNode.loop = loop;
+			bufferSourceNode.connect(soundInfo.stereoPannerNode);
 
-			// obj.bufferSourceNodes.push(bufferSourceNode);
+			soundInfo.bufferSourceNodeList.push(bufferSourceNode);
+			bufferSourceNode.addEventListener("ended", () => {
+				const index = soundInfo.bufferSourceNodeList.indexOf(bufferSourceNode);
+				if (index >= 0) soundInfo.bufferSourceNodeList.splice(index, 1);
+				console.log(bufferSourceNode, "ended");
+			});
+
+			bufferSourceNode.start();
 		}
 	}
 
@@ -121,10 +147,13 @@ export default class GameAudio {
 				mediaElementSourceNode.mediaElement.pause();
 			}
 			soundInfo.mediaElementSourceNodeList = [];
-			// soundInfo.stereoPannerNode.disconnect();
 		} else {
-			//
+			for (const bufferSourceNode of soundInfo.bufferSourceNodeList) {
+				bufferSourceNode.stop();
+			}
+			soundInfo.bufferSourceNodeList = [];
 		}
+		// soundInfo.stereoPannerNode.disconnect();
 	}
 
 	// Stop all sounds being played.
@@ -139,13 +168,11 @@ export default class GameAudio {
 		if (!sound) return false;
 		const soundInfo = this.sounds.get(sound);
 
-		for (const mediaElementSourceNode of soundInfo.mediaElementSourceNodeList) {
-			if (!mediaElementSourceNode.mediaElement.ended) {
-				return true;
-			}
+		if (sound.kind == "media") {
+			return soundInfo.mediaElementSourceNodeList.length != 0;
+		} else {
+			return soundInfo.bufferSourceNodeList.length != 0;
 		}
-
-		return false;
 	}
 
 	setSoundVolume(soundIndex, value) {
@@ -153,14 +180,19 @@ export default class GameAudio {
 		const soundInfo = this.sounds.get(sound);
 
 		soundInfo.volume = value;
-
-		for (const mediaElementSourceNode of soundInfo.mediaElementSourceNodeList) {
-			mediaElementSourceNode.mediaElement.volume = value;
-		}
+		soundInfo.gainNode.gain.value = value;
 	}
 
 	setGlobalVolume(value) {
 		this.globalGainNode.gain.value = value;
+	}
+
+	setSoundFade(soundIndex, value, time) {
+		const sound = this.getSound(soundIndex);
+		const soundInfo = this.sounds.get(sound);
+
+		soundInfo.volume = value;
+		soundInfo.gainNode.gain.linearRampToValueAtTime(value, this.audioContext.currentTime + time/1000);
 	}
 
 	setSoundPan(soundIndex, value) {
@@ -168,7 +200,6 @@ export default class GameAudio {
 		const soundInfo = this.sounds.get(sound);
 
 		soundInfo.pan = value;
-
 		soundInfo.stereoPannerNode.pan.value = value;
 	}
 }

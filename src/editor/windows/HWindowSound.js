@@ -38,7 +38,7 @@ export default class HWindowSound extends HWindow {
 					add( new HElement("legend", {}, "Kind") );
 
 					const kindGroup = "_radio_"+uniqueID();
-					// this.radioKindNormal = add( new HRadioInput(kindGroup, "Normal sound", (this.resource.kind == "normal")) );
+					this.radioKindNormal = add( new HRadioInput(kindGroup, "Normal sound", (this.resource.kind == "normal")) );
 					// this.radioKindBackground = add( new HRadioInput(kindGroup, "Background music", (this.resource.kind == "background")) );
 					// this.radioKind3D = add( new HRadioInput(kindGroup, "3D sound", (this.resource.kind == "3d")) );
 					this.radioKindMedia = add( new HRadioInput(kindGroup, "Use multimedia player", (this.resource.kind == "media")) );
@@ -68,7 +68,11 @@ export default class HWindowSound extends HWindow {
 		this.editor.project.changeResourceName(this.resource, this.inputName.getValue());
 		this.updateTitle();
 
-		this.resource.kind = "media";
+		this.resource.kind = (
+			this.radioKindNormal.getChecked() ? "normal"
+			: this.radioKindMedia.getChecked() ? "media"
+			: null
+		);
 		this.resource.volume = parseFloat(this.inputVolume.getFloatValue());
 		this.resource.pan = parseFloat(this.inputPan.getFloatValue());
 	}

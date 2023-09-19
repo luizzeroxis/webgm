@@ -625,7 +625,7 @@ export default class GML {
 					properArgs[i] = args[i];
 				} else if (funcArg.type == "real") {
 					properArgs[i] = forceReal(args[i]);
-				} else if (funcArg.type == "integer") {
+				} else if (funcArg.type == "int") {
 					properArgs[i] = forceInteger(args[i]);
 				} else if (funcArg.type == "string") {
 					properArgs[i] = forceString(args[i]);
@@ -633,6 +633,8 @@ export default class GML {
 					properArgs[i] = asString(args[i]);
 				} else if (funcArg.type == "bool") {
 					properArgs[i] = forceBool(args[i]);
+				} else {
+					throw new Error("Unknown arg type.");
 				}
 				++i;
 

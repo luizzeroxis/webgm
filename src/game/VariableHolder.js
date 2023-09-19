@@ -130,18 +130,20 @@ export default class VariableHolder {
 			}
 
 			if (varInfo.builtIn.type != null) {
-				if (varInfo.builtIn.type == "string") {
-					value = forceString(value);
-				} else if (varInfo.builtIn.type == "real") {
+				if (varInfo.builtIn.type == "real") {
 					value = forceReal(value);
-				} else if (varInfo.builtIn.type == "integer") {
+				} else if (varInfo.builtIn.type == "int") {
 					value = forceInteger(value);
+				} else if (varInfo.builtIn.type == "string") {
+					value = forceString(value);
 				} else if (varInfo.builtIn.type == "bool") {
 					value = forceBool(value);
 				} else if (varInfo.builtIn.type == "unit") {
 					value = forceUnit(value);
 				} else if (varInfo.builtIn.type == "char") {
 					value = forceChar(value);
+				} else {
+					throw new Error("Unknown var type.");
 				}
 			}
 

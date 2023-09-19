@@ -46,7 +46,7 @@ export default class BuiltInGlobals {
 
 	// Game play / Timing
 
-	static room_speed = {type: "integer",
+	static room_speed = {type: "int",
 		get() { return this.room.speed; },
 		set(value) {
 			if (value <= 0) {
@@ -99,7 +99,7 @@ export default class BuiltInGlobals {
 
 	// Game play / Rooms
 
-	static room = {type: "integer",
+	static room = {type: "int",
 		get() { return this.room.resource.id; },
 		set(value) {
 			this.loadRoomAtStepStop(value);
@@ -132,24 +132,24 @@ export default class BuiltInGlobals {
 		set(value) { this.room.persistent = value; },
 	};
 
-	static transition_kind = {type: "integer",
+	static transition_kind = {type: "int",
 		get() { return this.transitionKind; },
 		set(value) { this.transitionKind = value; },
 	};
 
-	static transition_steps = {type: "integer",
+	static transition_steps = {type: "int",
 		get() { return this.transitionSteps; },
 		set(value) { this.transitionSteps = Math.max(1, value); },
 	};
 
 	// Game play / Score
 
-	static score = {type: "integer",
+	static score = {type: "int",
 		get() { return this.score; },
 		set(value) { this.score = value; },
 	};
 
-	static lives = {type: "integer",
+	static lives = {type: "int",
 		get() { return this.lives; },
 		async set(value) { await this.setLives(value); },
 	};
@@ -245,12 +245,12 @@ export default class BuiltInGlobals {
 
 	// User Interaction / The Keyboard
 
-	static keyboard_lastkey = {type: "integer",
+	static keyboard_lastkey = {type: "int",
 		get() { return this.input.lastKey; },
 		set(value) { this.input.lastKey = value; },
 	};
 
-	static keyboard_key = {type: "integer",
+	static keyboard_key = {type: "int",
 		get() { return this.input.currentKey; },
 		set(value) { this.input.currentKey = value; },
 	};
@@ -275,17 +275,17 @@ export default class BuiltInGlobals {
 		get() { return this.input.mouseYInCurrentView; },
 	};
 
-	static mouse_button = {type: "integer",
+	static mouse_button = {type: "int",
 		get() { return this.input.currentMouse; },
 		set(value) { this.input.currentMouse = value; }, // TODO I think this is an enum, should check bounds or something
 	};
 
-	static mouse_lastbutton = {type: "integer",
+	static mouse_lastbutton = {type: "int",
 		get() { return this.input.lastMouse; },
 		set(value) { this.input.lastMouse = value; },
 	};
 
-	static cursor_sprite = {type: "integer",
+	static cursor_sprite = {type: "int",
 		get() { return this.render.cursorSprite?.id ?? -1; },
 		set(value) {
 			this.render.cursorSprite = this.project.getResourceById("ProjectSprite", value);
@@ -294,7 +294,7 @@ export default class BuiltInGlobals {
 
 	// Game Graphics / Backgrounds
 
-	static background_color = {type: "integer",
+	static background_color = {type: "int",
 		get() { return hexToDecimal(this.room.backgroundColor); },
 		set(value) { this.room.backgroundColor = decimalToHex(value); },
 	};
@@ -316,7 +316,7 @@ export default class BuiltInGlobals {
 		set(value, index) { this.room.getBackground(index).isForeground = value; },
 	};
 
-	static background_index = {type: "integer", dimensions: 1,
+	static background_index = {type: "int", dimensions: 1,
 		length() { return 8; },
 		get(index) { return this.room.getBackground(index).backgroundIndex; },
 		set(value, index) { this.room.getBackground(index).backgroundIndex = value; },
@@ -386,7 +386,7 @@ export default class BuiltInGlobals {
 		set(value, index) { this.room.getBackground(index).verticalSpeed = value; },
 	};
 
-	static background_blend = {type: "integer", dimensions: 1,
+	static background_blend = {type: "int", dimensions: 1,
 		length() { return 8; },
 		get(index) { return this.room.getBackground(index).blend; },
 		set(value, index) { this.room.getBackground(index).blend = value; },
@@ -415,49 +415,49 @@ export default class BuiltInGlobals {
 		set(value, index) { this.room.getView(index).visible = value; },
 	};
 
-	static view_xview = {type: "integer", dimensions: 1,
+	static view_xview = {type: "int", dimensions: 1,
 		length() { return 8; },
 		get(index) { return this.room.getView(index).viewX; },
 		set(value, index) { this.room.getView(index).viewX = value; },
 	};
 
-	static view_yview = {type: "integer", dimensions: 1,
+	static view_yview = {type: "int", dimensions: 1,
 		length() { return 8; },
 		get(index) { return this.room.getView(index).viewY; },
 		set(value, index) { this.room.getView(index).viewY = value; },
 	};
 
-	static view_wview = {type: "integer", dimensions: 1,
+	static view_wview = {type: "int", dimensions: 1,
 		length() { return 8; },
 		get(index) { return this.room.getView(index).viewW; },
 		set(value, index) { this.room.getView(index).viewW = value; },
 	};
 
-	static view_hview = {type: "integer", dimensions: 1,
+	static view_hview = {type: "int", dimensions: 1,
 		length() { return 8; },
 		get(index) { return this.room.getView(index).viewH; },
 		set(value, index) { this.room.getView(index).viewH = value; },
 	};
 
-	static view_xport = {type: "integer", dimensions: 1,
+	static view_xport = {type: "int", dimensions: 1,
 		length() { return 8; },
 		get(index) { return this.room.getView(index).portX; },
 		set(value, index) { this.room.getView(index).portX = value; },
 	};
 
-	static view_yport = {type: "integer", dimensions: 1,
+	static view_yport = {type: "int", dimensions: 1,
 		length() { return 8; },
 		get(index) { return this.room.getView(index).portY; },
 		set(value, index) { this.room.getView(index).portY = value; },
 	};
 
-	static view_wport = {type: "integer", dimensions: 1,
+	static view_wport = {type: "int", dimensions: 1,
 		length() { return 8; },
 		get(index) { return this.room.getView(index).portW; },
 		set(value, index) { this.room.getView(index).portW = value; },
 	};
 
-	static view_hport = {type: "integer", dimensions: 1,
+	static view_hport = {type: "int", dimensions: 1,
 		length() { return 8; },
 		get(index) { return this.room.getView(index).portH; },
 		set(value, index) { this.room.getView(index).portH = value; },
@@ -469,31 +469,31 @@ export default class BuiltInGlobals {
 		set(value, index) { this.room.getView(index).angle = value; },
 	};
 
-	static view_hborder = {type: "integer", dimensions: 1,
+	static view_hborder = {type: "int", dimensions: 1,
 		length() { return 8; },
 		get(index) { return this.room.getView(index).objectFollowHorizontalBorder; },
 		set(value, index) { this.room.getView(index).objectFollowHorizontalBorder = value; },
 	};
 
-	static view_vborder = {type: "integer", dimensions: 1,
+	static view_vborder = {type: "int", dimensions: 1,
 		length() { return 8; },
 		get(index) { return this.room.getView(index).objectFollowVerticalBorder; },
 		set(value, index) { this.room.getView(index).objectFollowVerticalBorder = value; },
 	};
 
-	static view_hspeed = {type: "integer", dimensions: 1,
+	static view_hspeed = {type: "int", dimensions: 1,
 		length() { return 8; },
 		get(index) { return this.room.getView(index).objectFollowHorizontalSpeed; },
 		set(value, index) { this.room.getView(index).objectFollowHorizontalSpeed = value; },
 	};
 
-	static view_vspeed = {type: "integer", dimensions: 1,
+	static view_vspeed = {type: "int", dimensions: 1,
 		length() { return 8; },
 		get(index) { return this.room.getView(index).objectFollowVerticalSpeed; },
 		set(value, index) { this.room.getView(index).objectFollowVerticalSpeed = value; },
 	};
 
-	static view_object = {type: "integer", dimensions: 1,
+	static view_object = {type: "int", dimensions: 1,
 		length() { return 8; },
 		get(index) { return this.room.getView(index).objectFollowIndex; },
 		set(value, index) { this.room.getView(index).objectFollowIndex = value; },

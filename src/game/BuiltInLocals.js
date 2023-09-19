@@ -109,7 +109,7 @@ export default class BuiltInLocals {
 		set(value) { this.pathScale = value; },
 	};
 
-	static path_endaction = {type: "integer",
+	static path_endaction = {type: "int",
 		get() { return this.pathEndAction; },
 		set(value) { this.pathEndAction = value; },
 	};
@@ -124,7 +124,7 @@ export default class BuiltInLocals {
 		get() { return this.id; },
 	};
 
-	static mask_index = {type: "integer",
+	static mask_index = {type: "int",
 		get() { return this.maskIndex; },
 		set(value) { this.maskIndex = value; },
 	};
@@ -141,13 +141,13 @@ export default class BuiltInLocals {
 
 	// Game play / Timing
 
-	static alarm = {type: "integer", dimensions: 1,
+	static alarm = {type: "int", dimensions: 1,
 		length() { return 12; },
 		get(index) { return this.alarms[index] ?? -1; },
 		set(value, index) { this.alarms[index] = value; },
 	};
 
-	static timeline_index = {type: "integer",
+	static timeline_index = {type: "int",
 		get() { return this.timelineIndex; },
 		set(value) {
 			this.timelineIndex = value;
@@ -183,7 +183,7 @@ export default class BuiltInLocals {
 		set(value) { this.visible = value; },
 	};
 
-	static sprite_index = {type: "integer",
+	static sprite_index = {type: "int",
 		get() { return this.spriteIndex; },
 		set(value) {
 			this.spriteIndex = value;
@@ -252,7 +252,7 @@ export default class BuiltInLocals {
 		set(value) { this.imageAlpha = value; },
 	};
 
-	static image_blend = {type: "integer",
+	static image_blend = {type: "int",
 		get() { return hexToDecimal(this.imageBlend); },
 		set(value) { this.imageBlend = decimalToHex(value); },
 	};
@@ -279,7 +279,7 @@ export default class BuiltInLocals {
 
 	// Unknown
 
-	static image_single = {type: "real",
+	static image_single = {type: "int",
 		get() { return this.imageIndex; },
 		set(value) {
 			this.imageIndex = value;

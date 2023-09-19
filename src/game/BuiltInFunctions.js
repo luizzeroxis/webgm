@@ -344,7 +344,7 @@ export default class BuiltInFunctions {
 	};
 
 	static string_format = {
-		args: [{type: "any"}, {type: "real"}, {type: "real"}],
+		args: [{type: "any"}, {type: "int"}, {type: "int"}],
 		func: function([val, tot, dec]) {
 			if (typeof val == "string") return val;
 			return val.toFixed(dec).padStart(tot);
@@ -366,28 +366,28 @@ export default class BuiltInFunctions {
 	};
 
 	static string_copy = {
-		args: [{type: "string"}, {type: "real"}, {type: "real"}],
+		args: [{type: "string"}, {type: "int"}, {type: "int"}],
 		func: function([str, index, count]) {
 			return str.slice(index - 1, index - 1 + count);
 		},
 	};
 
 	static string_char_at = {
-		args: [{type: "string"}, {type: "real"}],
+		args: [{type: "string"}, {type: "int"}],
 		func: function([str, index]) {
 			return str[index - 1];
 		},
 	};
 
 	static string_delete = {
-		args: [{type: "string"}, {type: "real"}, {type: "real"}],
+		args: [{type: "string"}, {type: "int"}, {type: "int"}],
 		func: function([str, index, count]) {
 			return str.substring(0, index) + str.substring(index+count);
 		},
 	};
 
 	static string_insert = {
-		args: [{type: "string"}, {type: "string"}, {type: "real"}],
+		args: [{type: "string"}, {type: "string"}, {type: "int"}],
 		func: function([substr, str, index]) {
 			return str.substring(0, index) + substr + str.substring(index);
 		},
@@ -437,7 +437,7 @@ export default class BuiltInFunctions {
 	};
 
 	static string_repeat = {
-		args: [{type: "string"}, {type: "real"}],
+		args: [{type: "string"}, {type: "int"}],
 		func: function([str, count]) {
 			return str.repeat(count);
 		},
@@ -526,28 +526,28 @@ export default class BuiltInFunctions {
 	};
 
 	static date_create_datetime = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([year, month, day, hour, minute, second]) {
 			return toGMDate(Date.UTC(year, month-1, day, hour, minute, second));
 		},
 	};
 
 	static date_create_date = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([year, month, day]) {
 			return toGMDate(Date.UTC(year, month-1, day));
 		},
 	};
 
 	static date_create_time = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([hour, minute, second]) {
 			return toGMDate(Date.UTC(1899, 11, 30, hour, minute, second)); // % 1
 		},
 	};
 
 	static date_valid_datetime = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([year, month, day, hour, minute, second]) {
 			return (!(year <= 0 || year > 9999
 				|| month < 1 || month > 12
@@ -560,7 +560,7 @@ export default class BuiltInFunctions {
 	};
 
 	static date_valid_date = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([year, month, day]) {
 			return (!(year <= 0 || year > 9999
 				|| month < 1 || month > 12
@@ -570,7 +570,7 @@ export default class BuiltInFunctions {
 	};
 
 	static date_valid_time = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([hour, minute, second]) {
 			return (!(hour < 0 || hour > 24
 				|| minute < 0 || minute >= 60
@@ -580,7 +580,7 @@ export default class BuiltInFunctions {
 	};
 
 	static date_inc_year = {
-		args: [{type: "real"}, {type: "integer"}],
+		args: [{type: "real"}, {type: "int"}],
 		func: function([date, amount]) {
 			const d = toJSDate(date);
 			d.setUTCFullYear(d.getUTCFullYear() + amount);
@@ -589,7 +589,7 @@ export default class BuiltInFunctions {
 	};
 
 	static date_inc_month = {
-		args: [{type: "real"}, {type: "integer"}],
+		args: [{type: "real"}, {type: "int"}],
 		func: function([date, amount]) {
 			const d = toJSDate(date);
 			d.setUTCMonth(d.getUTCMonth() + amount);
@@ -598,7 +598,7 @@ export default class BuiltInFunctions {
 	};
 
 	static date_inc_week = {
-		args: [{type: "real"}, {type: "integer"}],
+		args: [{type: "real"}, {type: "int"}],
 		func: function([date, amount]) {
 			const d = toJSDate(date);
 			d.setUTCDate(d.getUTCDate() + (amount * 7));
@@ -607,7 +607,7 @@ export default class BuiltInFunctions {
 	};
 
 	static date_inc_day = {
-		args: [{type: "real"}, {type: "integer"}],
+		args: [{type: "real"}, {type: "int"}],
 		func: function([date, amount]) {
 			const d = toJSDate(date);
 			d.setUTCDate(d.getUTCDate() + amount);
@@ -616,7 +616,7 @@ export default class BuiltInFunctions {
 	};
 
 	static date_inc_hour = {
-		args: [{type: "real"}, {type: "integer"}],
+		args: [{type: "real"}, {type: "int"}],
 		func: function([date, amount]) {
 			const d = toJSDate(date);
 			d.setUTCHours(d.getUTCHours() + amount);
@@ -625,7 +625,7 @@ export default class BuiltInFunctions {
 	};
 
 	static date_inc_minute = {
-		args: [{type: "real"}, {type: "integer"}],
+		args: [{type: "real"}, {type: "int"}],
 		func: function([date, amount]) {
 			const d = toJSDate(date);
 			d.setUTCMinutes(d.getUTCMinutes() + amount);
@@ -634,7 +634,7 @@ export default class BuiltInFunctions {
 	};
 
 	static date_inc_second = {
-		args: [{type: "real"}, {type: "integer"}],
+		args: [{type: "real"}, {type: "int"}],
 		func: function([date, amount]) {
 			const d = toJSDate(date);
 			d.setUTCSeconds(d.getUTCSeconds() + amount);
@@ -925,7 +925,7 @@ export default class BuiltInFunctions {
 	};
 
 	static place_meeting = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "real"}, {type: "real"}, {type: "int"}],
 		func: function([x, y, obj]) {
 			const instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) { return 0; }
@@ -1074,7 +1074,7 @@ export default class BuiltInFunctions {
 	};
 
 	static distance_to_object = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([obj]) {
 			const instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) { return 0; } // TODO check
@@ -1105,7 +1105,7 @@ export default class BuiltInFunctions {
 	};
 
 	static position_meeting = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "real"}, {type: "real"}, {type: "int"}],
 		func: function([x, y, obj]) {
 			const instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) { return 0; }
@@ -1116,7 +1116,7 @@ export default class BuiltInFunctions {
 	// ## Paths
 
 	static path_start = {
-		args: [{type: "integer"}, {type: "real"}, {type: "integer"}, {type: "bool"}],
+		args: [{type: "int"}, {type: "real"}, {type: "int"}, {type: "bool"}],
 		func: function([path, speed, endaction, absolute]) {
 			// TODO error check
 			const pathResource = this.game.project.getResourceById("ProjectPath", path);
@@ -1170,7 +1170,7 @@ export default class BuiltInFunctions {
 	};
 
 	static mp_linear_step_object = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "integer"}],
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "int"}],
 		func: function([x, y, stepsize, obj]) {
 			let instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) { instances = []; }
@@ -1317,7 +1317,7 @@ export default class BuiltInFunctions {
 	// ## Collision checking
 
 	static collision_point = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}, {type: "bool"}],
+		args: [{type: "real"}, {type: "real"}, {type: "int"}, {type: "bool"}, {type: "bool"}],
 		func: function([x, y, obj, prec, notme]) {
 			let instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) return -4;
@@ -1336,7 +1336,7 @@ export default class BuiltInFunctions {
 	};
 
 	static collision_rectangle = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}, {type: "bool"}],
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "int"}, {type: "bool"}, {type: "bool"}],
 		func: function([x1, y1, x2, y2, obj, prec, notme]) {
 			let instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) return -4;
@@ -1356,7 +1356,7 @@ export default class BuiltInFunctions {
 	};
 
 	static collision_circle = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}, {type: "bool"}],
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "int"}, {type: "bool"}, {type: "bool"}],
 		func: function([xc, yc, radius, obj, prec, notme]) {
 			let instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) return -4;
@@ -1375,7 +1375,7 @@ export default class BuiltInFunctions {
 	};
 
 	static collision_ellipse = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}, {type: "bool"}],
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "int"}, {type: "bool"}, {type: "bool"}],
 		func: function([x1, y1, x2, y2, obj, prec, notme]) {
 			let instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) return -4;
@@ -1394,7 +1394,7 @@ export default class BuiltInFunctions {
 	};
 
 	static collision_line = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "bool"}, {type: "bool"}],
+		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "int"}, {type: "bool"}, {type: "bool"}],
 		func: function([x1, y1, x2, y2, obj, prec, notme]) {
 			let instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) return -4;
@@ -1415,7 +1415,7 @@ export default class BuiltInFunctions {
 	// ## Instances
 
 	static instance_find = {
-		args: [{type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "int"}],
 		func: function([obj, n]) {
 			const instances = this.objectReferenceToInstances(obj);
 
@@ -1428,7 +1428,7 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_exists = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([obj]) {
 			if (obj == -7) { // local
 				return 0;
@@ -1447,7 +1447,7 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_number = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([obj]) {
 			if (obj == -7) { // local
 				return 0;
@@ -1463,7 +1463,7 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_position = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "real"}, {type: "real"}, {type: "int"}],
 		func: function([x, y, obj]) {
 			const instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) { return -4; }
@@ -1476,7 +1476,7 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_nearest = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "real"}, {type: "real"}, {type: "int"}],
 		func: function([x, y, obj]) {
 			const instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) { return -4; }
@@ -1501,7 +1501,7 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_furthest = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "real"}, {type: "real"}, {type: "int"}],
 		func: function([x, y, obj]) {
 			const instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) { return -4; }
@@ -1526,7 +1526,7 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_place = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "real"}, {type: "real"}, {type: "int"}],
 		func: function([x, y, obj]) {
 			const instances = this.objectReferenceToInstances(obj);
 			if (!Array.isArray(instances)) { return -4; }
@@ -1539,7 +1539,7 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_create = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "real"}, {type: "real"}, {type: "int"}],
 		func: async function([x, y, obj]) {
 			const object = this.game.project.getResourceById("ProjectObject", obj);
 			if (object == null) {
@@ -1569,7 +1569,7 @@ export default class BuiltInFunctions {
 	};
 
 	static instance_change = {
-		args: [{type: "integer"}, {type: "bool"}],
+		args: [{type: "int"}, {type: "bool"}],
 		func: async function([obj, perf]) {
 			await this.currentInstance.changeObject(obj, perf);
 			return 0;
@@ -1589,7 +1589,7 @@ export default class BuiltInFunctions {
 	};
 
 	static position_change = {
-		args: [{type: "real"}, {type: "real"}, {type: "integer"}, {type: "bool"}],
+		args: [{type: "real"}, {type: "real"}, {type: "int"}, {type: "bool"}],
 		func: async function([x, y, obj, perf]) {
 			const instances = this.game.collision.getAllInstancesOnPoint(this.game.instances, {x, y});
 			for (const instance of instances) {
@@ -1665,7 +1665,7 @@ export default class BuiltInFunctions {
 	// ## Rooms
 
 	static room_goto = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([numb]) {
 			this.game.loadRoomAtStepStop(numb);
 			return 0;
@@ -1689,7 +1689,7 @@ export default class BuiltInFunctions {
 	};
 
 	static room_previous = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([numb]) {
 			const index = this.game.project.resources.ProjectRoom.findIndex(x => x.id == numb);
 			if (index == null || index == 0) {
@@ -1700,7 +1700,7 @@ export default class BuiltInFunctions {
 	};
 
 	static room_next = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([numb]) {
 			const index = this.game.project.resources.ProjectRoom.findIndex(x => x.id == numb);
 			if (index == null || index == this.game.project.resources.ProjectRoom.length - 1) {
@@ -1791,7 +1791,7 @@ export default class BuiltInFunctions {
 	};
 
 	static event_user = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: async function([numb]) {
 			if (numb >= 0 && numb <= 15) {
 			// User 0 has id of 10
@@ -1851,7 +1851,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_global_array_get = {
-		args: [{type: "string"}, {type: "real"}],
+		args: [{type: "string"}, {type: "int"}],
 		func: function([name, ind]) {
 			if (this.game.globalVars.exists(name))
 				return this.game.globalVars.get(name, [ind]);
@@ -1862,7 +1862,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_global_array2_get = {
-		args: [{type: "string"}, {type: "real"}, {type: "real"}],
+		args: [{type: "string"}, {type: "int"}, {type: "int"}],
 		func: function([name, ind1, ind2]) {
 			if (this.game.globalVars.exists(name))
 				return this.game.globalVars.get(name, [ind1, ind2]);
@@ -1882,7 +1882,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_local_array_get = {
-		args: [{type: "string"}, {type: "real"}],
+		args: [{type: "string"}, {type: "int"}],
 		func: function([name, ind]) {
 			if (this.currentInstance.vars.exists(name))
 				return this.currentInstance.vars.get(name, [ind]);
@@ -1891,7 +1891,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_local_array2_get = {
-		args: [{type: "string"}, {type: "real"}, {type: "real"}],
+		args: [{type: "string"}, {type: "int"}, {type: "int"}],
 		func: function([name, ind1, ind2]) {
 			if (this.currentInstance.vars.exists(name))
 				return this.currentInstance.vars.get(name, [ind1, ind2]);
@@ -1912,7 +1912,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_global_array_set = {
-		args: [{type: "string"}, {type: "real"}, {type: "any"}],
+		args: [{type: "string"}, {type: "int"}, {type: "any"}],
 		func: function([name, ind, value]) {
 			if (this.game.globalVars.exists(name)) {
 				this.game.globalVars.set(name, value, [ind]);
@@ -1924,7 +1924,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_global_array2_set = {
-		args: [{type: "string"}, {type: "real"}, {type: "real"}, {type: "any"}],
+		args: [{type: "string"}, {type: "int"}, {type: "int"}, {type: "any"}],
 		func: function([name, ind1, ind2, value]) {
 			if (this.game.globalVars.exists(name)) {
 				this.game.globalVars.set(name, value, [ind1, ind2]);
@@ -1944,7 +1944,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_local_array_set = {
-		args: [{type: "string"}, {type: "real"}, {type: "any"}],
+		args: [{type: "string"}, {type: "int"}, {type: "any"}],
 		func: function([name, ind, value]) {
 			this.currentInstance.vars.set(name, value, [ind]);
 			return 0;
@@ -1952,7 +1952,7 @@ export default class BuiltInFunctions {
 	};
 
 	static variable_local_array2_set = {
-		args: [{type: "string"}, {type: "real"}, {type: "real"}, {type: "any"}],
+		args: [{type: "string"}, {type: "int"}, {type: "int"}, {type: "any"}],
 		func: function([name, ind1, ind2, value]) {
 			this.currentInstance.vars.set(name, value, [ind1, ind2]);
 			return 0;
@@ -2004,21 +2004,21 @@ export default class BuiltInFunctions {
 	};
 
 	static keyboard_check = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([key]) {
 			return this.game.input.getKey(key, this.game.input.key) ? 1 : 0;
 		},
 	};
 
 	static keyboard_check_pressed = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([key]) {
 			return this.game.input.getKey(key, this.game.input.keyPressed) ? 1 : 0;
 		},
 	};
 
 	static keyboard_check_released = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([key]) {
 			return this.game.input.getKey(key, this.game.input.keyReleased) ? 1 : 0;
 		},
@@ -2065,7 +2065,7 @@ export default class BuiltInFunctions {
 	};
 
 	static keyboard_clear = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([key]) {
 			this.game.input.clearKey(key);
 			return 0;
@@ -2099,21 +2099,21 @@ export default class BuiltInFunctions {
 	// ## The mouse
 
 	static mouse_check_button = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([numb]) {
 			return this.game.input.getMouse(numb, this.game.input.mouse) ? 1 : 0;
 		},
 	};
 
 	static mouse_check_button_pressed = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([numb]) {
 			return this.game.input.getMouse(numb, this.game.input.mousePressed) ? 1 : 0;
 		},
 	};
 
 	static mouse_check_button_released = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([numb]) {
 			return this.game.input.getMouse(numb, this.game.input.mouseReleased) ? 1 : 0;
 		},
@@ -2134,7 +2134,7 @@ export default class BuiltInFunctions {
 	};
 
 	static mouse_clear = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([button]) {
 			this.game.input.clearMouse(button);
 			return 0;
@@ -2275,7 +2275,7 @@ export default class BuiltInFunctions {
 	// ## Drawing sprites and backgrounds
 
 	static draw_sprite = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "int"}, {type: "real"}, {type: "real"}],
 		func: function([sprite, subimg, x, y]) {
 			this.game.render.drawSprite(sprite, subimg, x, y);
 			return 0;
@@ -2283,7 +2283,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_sprite_stretched = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([sprite, subimg, x, y, w, h]) {
 			this.game.render.drawSpriteExt(sprite, subimg, x, y, {
 				size: {width: w, height: h},
@@ -2293,7 +2293,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_sprite_tiled = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "int"}, {type: "real"}, {type: "real"}],
 		func: function([sprite, subimg, x, y]) {
 			this.game.render.drawSpriteTiled(sprite, subimg, x, y);
 			return 0;
@@ -2301,7 +2301,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_sprite_part = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([sprite, subimg, left, top, width, height, x, y]) {
 			this.game.render.drawSpriteExt(sprite, subimg, x, y, {
 				part: {left, top, width, height},
@@ -2311,7 +2311,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_background = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}],
 		func: function([back, x, y]) {
 			this.game.render.drawBackground(back, x, y);
 			return 0;
@@ -2319,7 +2319,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_background_stretched = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([back, x, y, w, h]) {
 			this.game.render.drawBackgroundExt(back, x, y, {
 				size: {width: w, height: h},
@@ -2328,7 +2328,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_background_tiled = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}],
 		func: function([back, x, y]) {
 			this.game.render.drawBackgroundTiled(back, x, y);
 			return 0;
@@ -2336,7 +2336,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_background_part = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([back, left, top, width, height, x, y]) {
 			this.game.render.drawBackgroundExt(back, x, y, {
 				part: {left, top, width, height},
@@ -2346,7 +2346,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_sprite_ext = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "int"}, {type: "real"}],
 		func: function([sprite, subimg, x, y, xscale, yscale, rot, color, alpha]) {
 			this.game.render.drawSpriteExt(sprite, subimg, x, y, {
 				scale: {x: xscale, y: yscale},
@@ -2359,7 +2359,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_sprite_stretched_ext = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "int"}, {type: "real"}],
 		func: function([sprite, subimg, x, y, w, h, color, alpha]) {
 			this.game.render.drawSpriteExt(sprite, subimg, x, y, {
 				blend: decimalToHex(color),
@@ -2371,7 +2371,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_sprite_tiled_ext = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "int"}, {type: "real"}],
 		func: function([sprite, subimg, x, y, xscale, yscale, color, alpha]) {
 			this.game.render.drawSpriteTiled(sprite, subimg, x, y, {
 				scale: {x: xscale, y: yscale},
@@ -2383,7 +2383,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_sprite_part_ext = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "int"}, {type: "real"}],
 		func: function([sprite, subimg, left, top, width, height, x, y, xscale, yscale, color, alpha]) {
 			this.game.render.drawSpriteExt(sprite, subimg, x, y, {
 				scale: {x: xscale, y: yscale},
@@ -2404,7 +2404,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_background_ext = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "int"}, {type: "real"}],
 		func: function([back, x, y, xscale, yscale, rot, color, alpha]) {
 			this.game.render.drawBackgroundExt(back, x, y, {
 				scale: {x: xscale, y: yscale},
@@ -2417,7 +2417,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_background_stretched_ext = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "int"}, {type: "real"}],
 		func: function([back, x, y, w, h, color, alpha]) {
 			this.game.render.drawBackgroundExt(back, x, y, {
 				blend: decimalToHex(color),
@@ -2429,7 +2429,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_background_tiled_ext = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "int"}, {type: "real"}],
 		func: function([back, x, y, xscale, yscale, color, alpha]) {
 			this.game.render.drawBackgroundTiled(back, x, y, {
 				scale: {x: xscale, y: yscale},
@@ -2441,7 +2441,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_background_part_ext = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "int"}, {type: "real"}],
 		func: function([back, left, top, width, height, x, y, xscale, yscale, color, alpha]) {
 			this.game.render.drawBackgroundExt(back, x, y, {
 				scale: {x: xscale, y: yscale},
@@ -2464,7 +2464,7 @@ export default class BuiltInFunctions {
 	// ## Drawing shapes
 
 	static draw_clear = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([col]) {
 			this.game.render.drawClear(col);
 			return 0;
@@ -2472,7 +2472,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_clear_alpha = {
-		args: [{type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}],
 		func: function([col, alpha]) {
 			this.game.render.drawClear(col, alpha);
 			return 0;
@@ -2568,7 +2568,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_path = {
-		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "bool"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "bool"}],
 		func: function([path, x, y, absolute]) {
 			this.game.render.drawPath(path, x, y, absolute);
 			return 0;
@@ -2584,7 +2584,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_set_color = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([color]) {
 			this.game.render.drawColorAlpha = decimalToHexAlpha(color, hexAlphaToDecimal(this.game.render.drawColorAlpha).alpha);
 			return 0;
@@ -2628,49 +2628,49 @@ export default class BuiltInFunctions {
 	};
 
 	static color_get_red = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([col]) {
 			return col % 256;
 		},
 	};
 
 	static color_get_green = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([col]) {
 			return Math.floor(col % (256*256) / 256);
 		},
 	};
 
 	static color_get_blue = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([col]) {
 			return Math.floor(col % (256*256*256) / (256*256));
 		},
 	};
 
 	static color_get_hue = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([col]) {
 			return decimalToHSV(col).h;
 		},
 	};
 
 	static color_get_saturation = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([col]) {
 			return decimalToHSV(col).s;
 		},
 	};
 
 	static color_get_value = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([col]) {
 			return decimalToHSV(col).v;
 		},
 	};
 
 	static merge_color = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "real"}],
+		args: [{type: "int"}, {type: "int"}, {type: "real"}],
 		func: function([col1, col2, amount]) {
 			col1 = decimalToRGB(col1);
 			col2 = decimalToRGB(col2);
@@ -2711,7 +2711,7 @@ export default class BuiltInFunctions {
 	// ## Fonts and text
 
 	static draw_set_font = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([font]) {
 			this.game.render.drawFont = font;
 			return 0;
@@ -2719,7 +2719,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_set_halign = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([halign]) {
 			this.game.render.drawHAlign = halign;
 			return 0;
@@ -2727,7 +2727,7 @@ export default class BuiltInFunctions {
 	};
 
 	static draw_set_valign = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([valign]) {
 			this.game.render.drawVAlign = valign;
 			return 0;
@@ -2829,7 +2829,7 @@ export default class BuiltInFunctions {
 	// ## Advanced drawing functions
 
 	static draw_point_color = {
-		args: [{type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "real"}, {type: "real"}, {type: "int"}],
 		func: function([x, y, col1]) {
 			this.game.render.ctx.fillStyle = decimalToHex(col1);
 			this.game.render.ctx.fillRect(x, y, 1, 1);
@@ -3831,7 +3831,7 @@ export default class BuiltInFunctions {
 	// ## Views
 
 	static window_set_region_size = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "bool"}],
+		args: [{type: "int"}, {type: "int"}, {type: "bool"}],
 		func: function([w, h, adaptwindow]) { // eslint-disable-line no-unused-vars
 			// TODO adaptwindow
 			this.game.render.setSize(w, h);
@@ -3854,14 +3854,14 @@ export default class BuiltInFunctions {
 	};
 
 	static window_view_mouse_get_x = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.input.getMousePositionOnView(this.game.room.getView(id)).x;
 		},
 	};
 
 	static window_view_mouse_get_y = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.input.getMousePositionOnView(this.game.room.getView(id)).y;
 		},
@@ -3944,23 +3944,23 @@ export default class BuiltInFunctions {
 	// ## Basic sound functions
 
 	static sound_play = {
-		args: [{type: "real"}],
-		func: function([index]) {
-			this.game.audio.playSound(index, false);
+		args: [{type: "int"}],
+		func: async function([index]) {
+			await this.game.audio.playSound(index, false);
 			return 0;
 		},
 	};
 
 	static sound_loop = {
-		args: [{type: "real"}],
-		func: function([index]) {
-			this.game.audio.playSound(index, true);
+		args: [{type: "int"}],
+		func: async function([index]) {
+			await this.game.audio.playSound(index, true);
 			return 0;
 		},
 	};
 
 	static sound_stop = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([index]) {
 			this.game.audio.stopSound(index);
 		},
@@ -3975,14 +3975,14 @@ export default class BuiltInFunctions {
 	};
 
 	static sound_isplaying = {
-		args: [{type: "real"}],
+		args: [{type: "int"}],
 		func: function([index]) {
 			return this.game.audio.isSoundPlaying(index) ? 1 : 0;
 		},
 	};
 
 	static sound_volume = {
-		args: [{type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}],
 		func: function([index, value]) {
 			this.game.audio.setSoundVolume(index, value);
 			return 0;
@@ -4006,7 +4006,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sound_pan = {
-		args: [{type: "integer"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}],
 		func: function([index, value]) {
 			this.game.audio.setSoundPan(index, value);
 			return 0;
@@ -4486,7 +4486,7 @@ export default class BuiltInFunctions {
 	};
 
 	static get_integer = {
-		args: [{type: "string"}, {type: "integer"}],
+		args: [{type: "string"}, {type: "int"}],
 		func: async function([str, def]) {
 			const result = await this.game.windows.openModal(HMessageWindow,
 				parseNewLineHash(str), {input: {default: def}});
@@ -4513,7 +4513,7 @@ export default class BuiltInFunctions {
 	};
 
 	static message_background = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([back]) {
 			// TODO one pixel transparency
 			this.game.windows.messageBackground = this.game.project.getResourceById("ProjectBackground", back);
@@ -4530,7 +4530,7 @@ export default class BuiltInFunctions {
 	};
 
 	static message_button = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([spr]) {
 			// TODO one pixel transparency
 			this.game.windows.messageButtonSprite = this.game.project.getResourceById("ProjectSprite", spr);
@@ -4539,7 +4539,7 @@ export default class BuiltInFunctions {
 	};
 
 	static message_text_font = {
-		args: [{type: "string"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "string"}, {type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([name, size, color, style]) {
 			this.game.windows.messageTextFont = {
 				font: `${(style == 1 || style == 3) ? "bold " : ""}`
@@ -4552,7 +4552,7 @@ export default class BuiltInFunctions {
 	};
 
 	static message_button_font = {
-		args: [{type: "string"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "string"}, {type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([name, size, color, style]) {
 			this.game.windows.messageButtonFont = {
 				font: `${(style == 1 || style == 3) ? "bold " : ""}`
@@ -4565,7 +4565,7 @@ export default class BuiltInFunctions {
 	};
 
 	static message_input_font = {
-		args: [{type: "string"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "string"}, {type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([name, size, color, style]) {
 			this.game.windows.messageInputFont = {
 				font: `${(style == 1 || style == 3) ? "bold " : ""}`
@@ -4578,7 +4578,7 @@ export default class BuiltInFunctions {
 	};
 
 	static message_mouse_color = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([col]) {
 			this.game.windows.messageButtonHoverColor = decimalToHex(col);
 			return 0;
@@ -4586,7 +4586,7 @@ export default class BuiltInFunctions {
 	};
 
 	static message_input_color = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([col]) {
 			this.game.windows.messageInputBackgroundColor = decimalToHex(col);
 			return 0;
@@ -4602,7 +4602,7 @@ export default class BuiltInFunctions {
 	};
 
 	static message_position = {
-		args: [{type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}],
 		func: function([x, y]) {
 			this.game.windows.messagePosition = {x, y};
 			return 0;
@@ -4610,7 +4610,7 @@ export default class BuiltInFunctions {
 	};
 
 	static message_size = {
-		args: [{type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}],
 		func: function([w, h]) {
 			this.game.windows.messageSize = {w, h};
 			return 0;
@@ -4618,7 +4618,7 @@ export default class BuiltInFunctions {
 	};
 
 	static show_menu = {
-		args: [{type: "string"}, {type: "integer"}],
+		args: [{type: "string"}, {type: "int"}],
 		func: async function([str, def]) {
 			const x = this.game.input.mouseDisplayX;
 			const y = this.game.input.mouseDisplayY;
@@ -4628,7 +4628,7 @@ export default class BuiltInFunctions {
 	};
 
 	static show_menu_pos = {
-		args: [{type: "real"}, {type: "real"}, {type: "string"}, {type: "integer"}],
+		args: [{type: "real"}, {type: "real"}, {type: "string"}, {type: "int"}],
 		func: async function([x, y, str, def]) {
 			const items = str.split("|").map(text => ( { text: text } ));
 
@@ -4690,7 +4690,7 @@ export default class BuiltInFunctions {
 	// ## Highscore list
 
 	static highscore_show = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: async function([numb]) {
 			const highscoreIndex = this.game.addHighscore(numb);
 
@@ -4704,7 +4704,7 @@ export default class BuiltInFunctions {
 	};
 
 	static highscore_set_background = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([back]) {
 			this.game.windows.highscoreBackground = this.game.project.getResourceById("ProjectBackground", back);
 			return 0;
@@ -4720,7 +4720,7 @@ export default class BuiltInFunctions {
 	};
 
 	static highscore_set_font = {
-		args: [{type: "string"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "string"}, {type: "int"}, {type: "int"}],
 		func: function([name, size, style]) {
 			this.game.windows.highscoreFont = {
 				name: `"${name}"`,
@@ -4735,7 +4735,7 @@ export default class BuiltInFunctions {
 	};
 
 	static highscore_set_colors = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([back, _new, other]) {
 			this.game.windows.highscoreBackgroundColor = decimalToHex(back);
 			this.game.windows.highscoreNewColor = decimalToHex(_new);
@@ -4755,7 +4755,7 @@ export default class BuiltInFunctions {
 	};
 
 	static highscore_show_ext = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "bool"}, {type: "integer"}, {type: "integer"}, {type: "string"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "bool"}, {type: "int"}, {type: "int"}, {type: "string"}, {type: "int"}],
 		func: async function([numb, back, border, col1, col2, name, size]) {
 			this.game.windows.highscoreBackground = this.game.project.getResourceById("ProjectBackground", back);
 			this.game.windows.highscoreBorder = border;
@@ -4778,7 +4778,7 @@ export default class BuiltInFunctions {
 	};
 
 	static highscore_add = {
-		args: [{type: "string"}, {type: "integer"}],
+		args: [{type: "string"}, {type: "int"}],
 		func: function([str, numb]) {
 			const highscoreIndex = this.game.addHighscore(numb);
 			if (highscoreIndex) {
@@ -4802,14 +4802,14 @@ export default class BuiltInFunctions {
 	};
 
 	static highscore_value = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([place]) {
 			return this.game.highscores[place]?.score ?? 0;
 		},
 	};
 
 	static highscore_name = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([place]) {
 			return this.game.highscores[place]?.name ?? this.game.highscoreNobodyText;
 		},
@@ -4828,7 +4828,7 @@ export default class BuiltInFunctions {
 	// ## Sprites
 
 	static sprite_exists = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
 			return sprite ? 1 : 0;
@@ -4836,7 +4836,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sprite_get_name = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
 			return sprite?.name ?? "<undefined>";
@@ -4844,7 +4844,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sprite_get_number = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
 			return sprite?.images.length ?? -1;
@@ -4852,7 +4852,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sprite_get_width = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
 			if (!sprite) return -1;
@@ -4861,7 +4861,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sprite_get_height = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
 			if (!sprite) return -1;
@@ -4870,7 +4870,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sprite_get_xoffset = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
 			return sprite?.originx ?? -1;
@@ -4878,7 +4878,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sprite_get_yoffset = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
 			return sprite?.originy ?? -1;
@@ -4886,7 +4886,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sprite_get_bbox_left = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
 			return sprite?.bbLeft ?? -1;
@@ -4894,7 +4894,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sprite_get_bbox_right = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
 			return sprite?.bbRight ?? -1;
@@ -4902,7 +4902,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sprite_get_bbox_top = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
 			return sprite?.bbTop ?? -1;
@@ -4910,7 +4910,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sprite_get_bbox_bottom = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const sprite = this.game.project.getResourceById("ProjectSprite", ind);
 			return sprite?.bbBottom ?? -1;
@@ -4936,7 +4936,7 @@ export default class BuiltInFunctions {
 	// ## Sounds
 
 	static sound_exists = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const sound = this.game.project.getResourceById("ProjectSound", ind);
 			return sound ? 1 : 0;
@@ -4944,7 +4944,7 @@ export default class BuiltInFunctions {
 	};
 
 	static sound_get_name = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const sound = this.game.project.getResourceById("ProjectSound", ind);
 			return sound?.name ?? "<undefined>";
@@ -4986,7 +4986,7 @@ export default class BuiltInFunctions {
 	// ## Backgrounds
 
 	static background_exists = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const background = this.game.project.getResourceById("ProjectBackground", ind);
 			return background ? 1 : 0;
@@ -4994,7 +4994,7 @@ export default class BuiltInFunctions {
 	};
 
 	static background_get_name = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const background = this.game.project.getResourceById("ProjectBackground", ind);
 			return background?.name ?? "<undefined>";
@@ -5002,7 +5002,7 @@ export default class BuiltInFunctions {
 	};
 
 	static background_get_width = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const background = this.game.project.getResourceById("ProjectBackground", ind);
 			if (!background) return -1;
@@ -5011,7 +5011,7 @@ export default class BuiltInFunctions {
 	};
 
 	static background_get_height = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const background = this.game.project.getResourceById("ProjectBackground", ind);
 			if (!background) return -1;
@@ -5030,7 +5030,7 @@ export default class BuiltInFunctions {
 	// ## Fonts
 
 	static font_exists = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const font = this.game.project.getResourceById("ProjectFont", ind);
 			return font ? 1 : 0;
@@ -5038,7 +5038,7 @@ export default class BuiltInFunctions {
 	};
 
 	static font_get_name = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const font = this.game.project.getResourceById("ProjectFont", ind);
 			return font?.name ?? "<undefined>";
@@ -5046,7 +5046,7 @@ export default class BuiltInFunctions {
 	};
 
 	static font_get_fontname = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const font = this.game.project.getResourceById("ProjectFont", ind);
 			return font?.font ?? "";
@@ -5054,7 +5054,7 @@ export default class BuiltInFunctions {
 	};
 
 	static font_get_bold = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const font = this.game.project.getResourceById("ProjectFont", ind);
 			return (font?.bold ? 1 : 0) ?? -1;
@@ -5062,7 +5062,7 @@ export default class BuiltInFunctions {
 	};
 
 	static font_get_italic = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const font = this.game.project.getResourceById("ProjectFont", ind);
 			return (font?.italic ? 1 : 0) ?? -1;
@@ -5088,7 +5088,7 @@ export default class BuiltInFunctions {
 	// ## Paths
 
 	static path_exists = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const path = this.game.project.getResourceById("ProjectPath", ind);
 			return path ? 1 : 0;
@@ -5096,7 +5096,7 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_name = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const path = this.game.project.getResourceById("ProjectPath", ind);
 			return path?.name ?? "<undefined>";
@@ -5104,7 +5104,7 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_length = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const path = this.game.project.getResourceById("ProjectPath", ind);
 			return path?.getLength() ?? 0;
@@ -5112,7 +5112,7 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_kind = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const path = this.game.project.getResourceById("ProjectPath", ind);
 			return (path?.connectionKind == "lines" ? 0 : 1) ?? -1;
@@ -5120,7 +5120,7 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_closed = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const path = this.game.project.getResourceById("ProjectPath", ind);
 			return (path?.closed ? 1 : 0) ?? -1;
@@ -5128,7 +5128,7 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_precision = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const path = this.game.project.getResourceById("ProjectPath", ind);
 			return path?.precision ?? -1;
@@ -5136,7 +5136,7 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_number = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const path = this.game.project.getResourceById("ProjectPath", ind);
 			return path?.points.length ?? -1;
@@ -5144,7 +5144,7 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_point_x = {
-		args: [{type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}],
 		func: function([ind, n]) {
 			const path = this.game.project.getResourceById("ProjectPath", ind);
 			return path?.points[n]?.x ?? -1;
@@ -5152,7 +5152,7 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_point_y = {
-		args: [{type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}],
 		func: function([ind, n]) {
 			const path = this.game.project.getResourceById("ProjectPath", ind);
 			return path?.points[n]?.y ?? -1;
@@ -5160,7 +5160,7 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_point_speed = {
-		args: [{type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}],
 		func: function([ind, n]) {
 			const path = this.game.project.getResourceById("ProjectPath", ind);
 			return path?.points[n]?.sp ?? -1;
@@ -5168,7 +5168,7 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_x = {
-		args: [{type: "integer"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}],
 		func: function([ind, pos]) {
 			const path = this.game.project.getResourceById("ProjectPath", ind);
 			return path?.getPosInfo(pos).x;
@@ -5176,7 +5176,7 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_y = {
-		args: [{type: "integer"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}],
 		func: function([ind, pos]) {
 			const path = this.game.project.getResourceById("ProjectPath", ind);
 			return path?.getPosInfo(pos).y;
@@ -5184,7 +5184,7 @@ export default class BuiltInFunctions {
 	};
 
 	static path_get_speed = {
-		args: [{type: "integer"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}],
 		func: function([ind, pos]) {
 			const path = this.game.project.getResourceById("ProjectPath", ind);
 			return path?.getPosInfo(pos).sp;
@@ -5194,7 +5194,7 @@ export default class BuiltInFunctions {
 	// ## Scripts
 
 	static script_exists = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const script = this.game.project.getResourceById("ProjectScript", ind);
 			return script ? 1 : 0;
@@ -5202,7 +5202,7 @@ export default class BuiltInFunctions {
 	};
 
 	static script_get_name = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const script = this.game.project.getResourceById("ProjectScript", ind);
 			return script?.name ?? "<undefined>";
@@ -5210,7 +5210,7 @@ export default class BuiltInFunctions {
 	};
 
 	static script_get_text = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const script = this.game.project.getResourceById("ProjectScript", ind);
 			return script?.code ?? "";
@@ -5220,7 +5220,7 @@ export default class BuiltInFunctions {
 	// ## Time lines
 
 	static timeline_exists = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const timeline = this.game.project.getResourceById("ProjectTimeline", ind);
 			return timeline ? 1 : 0;
@@ -5228,7 +5228,7 @@ export default class BuiltInFunctions {
 	};
 
 	static timeline_get_name = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const timeline = this.game.project.getResourceById("ProjectTimeline", ind);
 			return timeline?.name ?? "<undefined>";
@@ -5238,7 +5238,7 @@ export default class BuiltInFunctions {
 	// ## Objects
 
 	static object_exists = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const object = this.game.project.getResourceById("ProjectObject", ind);
 			return object ? 1 : 0;
@@ -5246,7 +5246,7 @@ export default class BuiltInFunctions {
 	};
 
 	static object_get_name = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const object = this.game.project.getResourceById("ProjectObject", ind);
 			return object?.name ?? "<undefined>";
@@ -5254,7 +5254,7 @@ export default class BuiltInFunctions {
 	};
 
 	static object_get_sprite = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const object = this.game.project.getResourceById("ProjectObject", ind);
 			return object?.sprite_index ?? -1;
@@ -5262,7 +5262,7 @@ export default class BuiltInFunctions {
 	};
 
 	static object_get_solid = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const object = this.game.project.getResourceById("ProjectObject", ind);
 			return (object?.solid ? 1 : 0) ?? -1;
@@ -5270,7 +5270,7 @@ export default class BuiltInFunctions {
 	};
 
 	static object_get_visible = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const object = this.game.project.getResourceById("ProjectObject", ind);
 			return (object?.visible ? 1 : 0) ?? -1;
@@ -5278,7 +5278,7 @@ export default class BuiltInFunctions {
 	};
 
 	static object_get_depth = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const object = this.game.project.getResourceById("ProjectObject", ind);
 			return object?.depth ?? -1;
@@ -5286,7 +5286,7 @@ export default class BuiltInFunctions {
 	};
 
 	static object_get_persistent = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const object = this.game.project.getResourceById("ProjectObject", ind);
 			return (object?.persistent ? 1 : 0) ?? -1;
@@ -5294,7 +5294,7 @@ export default class BuiltInFunctions {
 	};
 
 	static object_get_mask = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const object = this.game.project.getResourceById("ProjectObject", ind);
 			return object?.mask_index ?? -1;
@@ -5302,7 +5302,7 @@ export default class BuiltInFunctions {
 	};
 
 	static object_get_parent = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const object = this.game.project.getResourceById("ProjectObject", ind);
 			return object?.parent_index ?? -1;
@@ -5310,7 +5310,7 @@ export default class BuiltInFunctions {
 	};
 
 	static object_is_ancestor = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind1, ind2]) {
 			return this.game.objectIsAncestorByIndex(ind2, ind1) ? 1 : 0;
 		},
@@ -5319,7 +5319,7 @@ export default class BuiltInFunctions {
 	// ## Rooms
 
 	static room_exists = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const room = this.game.project.getResourceById("ProjectRoom", ind);
 			return room ? 1 : 0;
@@ -5327,7 +5327,7 @@ export default class BuiltInFunctions {
 	};
 
 	static room_get_name = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([ind]) {
 			const room = this.game.project.getResourceById("ProjectRoom", ind);
 			return room?.name ?? "<undefined>";
@@ -5797,7 +5797,7 @@ export default class BuiltInFunctions {
 	};
 
 	static script_execute = {
-		args: [{type: "integer"}, {type: "any", infinite: true}],
+		args: [{type: "int"}, {type: "any", infinite: true}],
 		func: function([scr, ...args]) {
 			const script = this.game.project.getResourceById("ProjectScript", scr);
 			if (script) {
@@ -6644,56 +6644,56 @@ export default class BuiltInFunctions {
 	};
 
 	static ds_stack_destroy = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.destroy("stack", id);
 		},
 	};
 
 	static ds_stack_clear = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.clear("stack", id);
 		},
 	};
 
 	static ds_stack_copy = {
-		args: [{type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}],
 		func: function([id, source]) {
 			return this.game.dataStructures.copy("stack", id, source);
 		},
 	};
 
 	static ds_stack_size = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.size("stack", id);
 		},
 	};
 
 	static ds_stack_empty = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.empty("stack", id);
 		},
 	};
 
 	static ds_stack_push = {
-		args: [{type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}],
 		func: function([id, val]) {
 			return this.game.dataStructures.stackPush(id, val);
 		},
 	};
 
 	static ds_stack_pop = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.stackPop(id);
 		},
 	};
 
 	static ds_stack_top = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.stackTop(id);
 		},
@@ -6725,63 +6725,63 @@ export default class BuiltInFunctions {
 	};
 
 	static ds_queue_destroy = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.destroy("queue", id);
 		},
 	};
 
 	static ds_queue_clear = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.clear("queue", id);
 		},
 	};
 
 	static ds_queue_copy = {
-		args: [{type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}],
 		func: function([id, source]) {
 			return this.game.dataStructures.copy("queue", id, source);
 		},
 	};
 
 	static ds_queue_size = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.size("queue", id);
 		},
 	};
 
 	static ds_queue_empty = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.empty("queue", id);
 		},
 	};
 
 	static ds_queue_enqueue = {
-		args: [{type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}],
 		func: function([id, val]) {
 			return this.game.dataStructures.queueEnqueue(id, val);
 		},
 	};
 
 	static ds_queue_dequeue = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.queueDequeue(id);
 		},
 	};
 
 	static ds_queue_head = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.queueHead(id);
 		},
 	};
 
 	static ds_queue_tail = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.queueTail(id);
 		},
@@ -6813,107 +6813,107 @@ export default class BuiltInFunctions {
 	};
 
 	static ds_list_destroy = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.destroy("list", id);
 		},
 	};
 
 	static ds_list_clear = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.clear("list", id);
 		},
 	};
 
 	static ds_list_copy = {
-		args: [{type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}],
 		func: function([id, source]) {
 			return this.game.dataStructures.copy("list", id, source);
 		},
 	};
 
 	static ds_list_size = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.size("list", id);
 		},
 	};
 
 	static ds_list_empty = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.empty("list", id);
 		},
 	};
 
 	static ds_list_add = {
-		args: [{type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}],
 		func: function([id, val]) {
 			return this.game.dataStructures.listAdd(id, val);
 		},
 	};
 
 	static ds_list_insert = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "int"}, {type: "any"}],
 		func: function([id, pos, val]) {
 			return this.game.dataStructures.listInsert(id, pos, val);
 		},
 	};
 
 	static ds_list_replace = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "int"}, {type: "any"}],
 		func: function([id, pos, val]) {
 			return this.game.dataStructures.listReplace(id, pos, val);
 		},
 	};
 
 	static ds_list_delete = {
-		args: [{type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}],
 		func: function([id, pos]) {
 			return this.game.dataStructures.listDelete(id, pos);
 		},
 	};
 
 	static ds_list_find_index = {
-		args: [{type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}],
 		func: function([id, val]) {
 			return this.game.dataStructures.listFindIndex(id, val);
 		},
 	};
 
 	static ds_list_find_value = {
-		args: [{type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}],
 		func: function([id, pos]) {
 			return this.game.dataStructures.listFindValue(id, pos);
 		},
 	};
 
 	static ds_list_sort = {
-		args: [{type: "integer"}, {type: "bool"}],
+		args: [{type: "int"}, {type: "bool"}],
 		func: function([id, ascend]) {
 			return this.game.dataStructures.listSort(id, ascend);
 		},
 	};
 
 	static ds_list_shuffle = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.listShuffle(id);
 		},
 	};
 
 	static ds_list_write = {
-		args: null,
-		func: function([_]) {
+		args: [{type: "int"}],
+		func: function([id]) {
 			throw new EngineException("Function ds_list_write is not implemented");
 			// return 0;
 		},
 	};
 
 	static ds_list_read = {
-		args: null,
-		func: function([_]) {
+		args: [{type: "int"}, {type: "string"}],
+		func: function([id, str]) {
 			throw new EngineException("Function ds_list_read is not implemented");
 			// return 0;
 		},
@@ -6929,98 +6929,98 @@ export default class BuiltInFunctions {
 	};
 
 	static ds_map_destroy = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.destroy("map", id);
 		},
 	};
 
 	static ds_map_clear = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.clear("map", id);
 		},
 	};
 
 	static ds_map_copy = {
-		args: [{type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}],
 		func: function([id, source]) {
 			return this.game.dataStructures.mapCopy(id, source);
 		},
 	};
 
 	static ds_map_size = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.size("map", id);
 		},
 	};
 
 	static ds_map_empty = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.empty("map", id);
 		},
 	};
 
 	static ds_map_add = {
-		args: [{type: "integer"}, {type: "any"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}, {type: "any"}],
 		func: function([id, key, val]) {
 			return this.game.dataStructures.mapAdd(id, key, val);
 		},
 	};
 
 	static ds_map_replace = {
-		args: [{type: "integer"}, {type: "any"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}, {type: "any"}],
 		func: function([id, key, val]) {
 			return this.game.dataStructures.mapReplace(id, key, val);
 		},
 	};
 
 	static ds_map_delete = {
-		args: [{type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}],
 		func: function([id, key]) {
 			return this.game.dataStructures.mapDelete(id, key);
 		},
 	};
 
 	static ds_map_exists = {
-		args: [{type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}],
 		func: function([id, key]) {
 			return this.game.dataStructures.mapExists(id, key);
 		},
 	};
 
 	static ds_map_find_value = {
-		args: [{type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}],
 		func: function([id, key]) {
 			return this.game.dataStructures.mapFindValue(id, key);
 		},
 	};
 
 	static ds_map_find_previous = {
-		args: [{type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}],
 		func: function([id, key]) {
 			return this.game.dataStructures.mapFindPrevious(id, key);
 		},
 	};
 
 	static ds_map_find_next = {
-		args: [{type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}],
 		func: function([id, key]) {
 			return this.game.dataStructures.mapFindNext(id, key);
 		},
 	};
 
 	static ds_map_find_first = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.mapFindFirst(id);
 		},
 	};
 
 	static ds_map_find_last = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.mapFindLast(id);
 		},
@@ -7052,91 +7052,91 @@ export default class BuiltInFunctions {
 	};
 
 	static ds_priority_destroy = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.destroy("priority", id);
 		},
 	};
 
 	static ds_priority_clear = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.clear("priority", id);
 		},
 	};
 
 	static ds_priority_copy = {
-		args: [{type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}],
 		func: function([id, source]) {
 			return this.game.dataStructures.priorityCopy(id, source);
 		},
 	};
 
 	static ds_priority_size = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.size("priority", id);
 		},
 	};
 
 	static ds_priority_empty = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.empty("priority", id);
 		},
 	};
 
 	static ds_priority_add = {
-		args: [{type: "integer"}, {type: "any"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}, {type: "any"}],
 		func: function([id, val, prio]) {
 			return this.game.dataStructures.priorityAdd(id, val, prio);
 		},
 	};
 
 	static ds_priority_change_priority = {
-		args: [{type: "integer"}, {type: "any"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}, {type: "any"}],
 		func: function([id, val, prio]) {
 			return this.game.dataStructures.priorityChangePriority(id, val, prio);
 		},
 	};
 
 	static ds_priority_find_priority = {
-		args: [{type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}],
 		func: function([id, val]) {
 			return this.game.dataStructures.priorityFindPriority(id, val);
 		},
 	};
 
 	static ds_priority_delete_value = {
-		args: [{type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}],
 		func: function([id, val]) {
 			return this.game.dataStructures.priorityDeleteValue(id, val);
 		},
 	};
 
 	static ds_priority_delete_min = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.priorityDeleteMin(id);
 		},
 	};
 
 	static ds_priority_find_min = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.priorityFindMin(id);
 		},
 	};
 
 	static ds_priority_delete_max = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.priorityDeleteMax(id);
 		},
 	};
 
 	static ds_priority_find_max = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.priorityFindMax(id);
 		},
@@ -7161,245 +7161,245 @@ export default class BuiltInFunctions {
 	// ## Grids
 
 	static ds_grid_create = {
-		args: [{type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}],
 		func: function([w, h]) {
 			return this.game.dataStructures.gridCreate(w, h);
 		},
 	};
 
 	static ds_grid_destroy = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.destroy("grid", id);
 		},
 	};
 
 	static ds_grid_copy = {
-		args: [{type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}],
 		func: function([id, source]) {
 			return this.game.dataStructures.gridCopy(id, source);
 		},
 	};
 
 	static ds_grid_resize = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([id, w, h]) {
 			return this.game.dataStructures.gridResize(id, w, h);
 		},
 	};
 
 	static ds_grid_width = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.gridWidth(id);
 		},
 	};
 
 	static ds_grid_height = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.gridHeight(id);
 		},
 	};
 
 	static ds_grid_clear = {
-		args: [{type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "any"}],
 		func: function([id, val]) {
 			return this.game.dataStructures.gridClear(id, val);
 		},
 	};
 
 	static ds_grid_set = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "any"}],
 		func: function([id, x, y, val]) {
 			return this.game.dataStructures.gridSet(id, x, y, val);
 		},
 	};
 
 	static ds_grid_add = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "any"}],
 		func: function([id, x, y, val]) {
 			return this.game.dataStructures.gridAdd(id, x, y, val);
 		},
 	};
 
 	static ds_grid_multiply = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "any"}],
 		func: function([id, x, y, val]) {
 			return this.game.dataStructures.gridMultiply(id, x, y, val);
 		},
 	};
 
 	static ds_grid_set_region = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "any"}],
 		func: function([id, x1, y1, x2, y2, val]) {
 			return this.game.dataStructures.gridSetRegion(id, x1, y1, x2, y2, val);
 		},
 	};
 
 	static ds_grid_add_region = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "any"}],
 		func: function([id, x1, y1, x2, y2, val]) {
 			return this.game.dataStructures.gridAddRegion(id, x1, y1, x2, y2, val);
 		},
 	};
 
 	static ds_grid_multiply_region = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "any"}],
 		func: function([id, x1, y1, x2, y2, val]) {
 			return this.game.dataStructures.gridMultiplyRegion(id, x1, y1, x2, y2, val);
 		},
 	};
 
 	static ds_grid_set_disk = {
-		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
 		func: function([id, xm, ym, r, val]) {
 			return this.game.dataStructures.gridSetDisk(id, xm, ym, r, val);
 		},
 	};
 
 	static ds_grid_add_disk = {
-		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
 		func: function([id, xm, ym, r, val]) {
 			return this.game.dataStructures.gridAddDisk(id, xm, ym, r, val);
 		},
 	};
 
 	static ds_grid_multiply_disk = {
-		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
 		func: function([id, xm, ym, r, val]) {
 			return this.game.dataStructures.gridMultiplyDisk(id, xm, ym, r, val);
 		},
 	};
 
 	static ds_grid_set_grid_region = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([id, source, x1, y1, x2, y2, xpos, ypos]) {
 			return this.game.dataStructures.gridSetGridRegion(id, source, x1, y1, x2, y2, xpos, ypos);
 		},
 	};
 
 	static ds_grid_add_grid_region = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([id, source, x1, y1, x2, y2, xpos, ypos]) {
 			return this.game.dataStructures.gridAddGridRegion(id, source, x1, y1, x2, y2, xpos, ypos);
 		},
 	};
 
 	static ds_grid_multiply_grid_region = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([id, source, x1, y1, x2, y2, xpos, ypos]) {
 			return this.game.dataStructures.gridMultiplyGridRegion(id, source, x1, y1, x2, y2, xpos, ypos);
 		},
 	};
 
 	static ds_grid_get = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([id, x, y]) {
 			return this.game.dataStructures.gridGet(id, x, y);
 		},
 	};
 
 	static ds_grid_get_sum = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([id, x1, y1, x2, y2]) {
 			return this.game.dataStructures.gridGetSum(id, x1, y1, x2, y2);
 		},
 	};
 
 	static ds_grid_get_max = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([id, x1, y1, x2, y2]) {
 			return this.game.dataStructures.gridGetMax(id, x1, y1, x2, y2);
 		},
 	};
 
 	static ds_grid_get_min = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([id, x1, y1, x2, y2]) {
 			return this.game.dataStructures.gridGetMin(id, x1, y1, x2, y2);
 		},
 	};
 
 	static ds_grid_get_mean = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}],
 		func: function([id, x1, y1, x2, y2]) {
 			return this.game.dataStructures.gridGetMean(id, x1, y1, x2, y2);
 		},
 	};
 
 	static ds_grid_get_disk_sum = {
-		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([id, xm, ym, r]) {
 			return this.game.dataStructures.gridGetDiskSum(id, xm, ym, r);
 		},
 	};
 
 	static ds_grid_get_disk_min = {
-		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([id, xm, ym, r]) {
 			return this.game.dataStructures.gridGetDiskMin(id, xm, ym, r);
 		},
 	};
 
 	static ds_grid_get_disk_max = {
-		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([id, xm, ym, r]) {
 			return this.game.dataStructures.gridGetDiskMax(id, xm, ym, r);
 		},
 	};
 
 	static ds_grid_get_disk_mean = {
-		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}],
 		func: function([id, xm, ym, r]) {
 			return this.game.dataStructures.gridGetDiskMean(id, xm, ym, r);
 		},
 	};
 
 	static ds_grid_value_exists = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "any"}],
 		func: function([id, x1, y1, x2, y2, val]) {
 			return this.game.dataStructures.gridValueExists(id, x1, y1, x2, y2, val);
 		},
 	};
 
 	static ds_grid_value_x = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "any"}],
 		func: function([id, x1, y1, x2, y2, val]) {
 			return this.game.dataStructures.gridValueX(id, x1, y1, x2, y2, val);
 		},
 	};
 
 	static ds_grid_value_y = {
-		args: [{type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "integer"}, {type: "any"}],
+		args: [{type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "int"}, {type: "any"}],
 		func: function([id, x1, y1, x2, y2, val]) {
 			return this.game.dataStructures.gridValueY(id, x1, y1, x2, y2, val);
 		},
 	};
 
 	static ds_grid_value_disk_exists = {
-		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
 		func: function([id, xm, ym, r, val]) {
 			return this.game.dataStructures.gridValueDiskExists(id, xm, ym, r, val);
 		},
 	};
 
 	static ds_grid_value_disk_x = {
-		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
 		func: function([id, xm, ym, r, val]) {
 			return this.game.dataStructures.gridValueDiskX(id, xm, ym, r, val);
 		},
 	};
 
 	static ds_grid_value_disk_y = {
-		args: [{type: "integer"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
+		args: [{type: "int"}, {type: "real"}, {type: "real"}, {type: "real"}, {type: "any"}],
 		func: function([id, xm, ym, r, val]) {
 			return this.game.dataStructures.gridValueDiskY(id, xm, ym, r, val);
 		},
 	};
 
 	static ds_grid_shuffle = {
-		args: [{type: "integer"}],
+		args: [{type: "int"}],
 		func: function([id]) {
 			return this.game.dataStructures.gridShuffle(id);
 		},

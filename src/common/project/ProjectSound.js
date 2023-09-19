@@ -8,7 +8,15 @@ export class ProjectSound {
 			name: null,
 			sound: {object: AudioWrapper, serialize: false},
 			fileType: "",
+			kind: "media", // normal, background, 3d, media
+			// chorus: false,
+			// flanger: false,
+			// gargle: false,
+			// echo: false,
+			// reverb: false,
 			volume: 1,
+			pan: 0,
+			preload: true,
 		});
 	}
 

@@ -16,7 +16,29 @@ export default class GameAudio {
 		}
 
 		this.game.project.resources.ProjectSound.forEach(sound => {
-			this.sounds.set(sound, {volume: sound.volume, audioNodes: []});
+			const soundInfo = {
+				volume: sound.volume,
+				pan: sound.pan,
+			};
+
+			if (sound.kind == "media") {
+				soundInfo.nextAudio = null;
+				soundInfo.mediaElementSourceNodeList = [];
+
+				soundInfo.stereoPannerNode = this.audioContext.createStereoPanner();
+				soundInfo.stereoPannerNode.pan.value = sound.pan;
+				soundInfo.stereoPannerNode.connect(this.audioContext.destination);
+			} else {
+				// soundInfo.arrayBuffer = null;
+
+				// soundInfo.gainNode = this.audioContext.createGain();
+				// soundInfo.gainNode.gain.value = sound.volume;
+				// soundInfo.gainNode.connect(this.audioContext.destination);
+
+				// soundInfo.bufferSourceNodes = [];
+			}
+
+			this.sounds.set(sound, soundInfo);
 		});
 	}
 
@@ -32,47 +54,90 @@ export default class GameAudio {
 		return sound;
 	}
 
+	loadSound(sound) {
+		// const soundInfo = this.sounds.get(sound);
+
+		if (sound.kind == "media") {
+			// soundInfo.nextAudio = new Audio(sound.sound.src);
+
+			// new Promise((resolve, reject) => {
+			// 	soundInfo.nextAudio.addEventListener("canplay", () => {
+			// 		resolve();
+			// 	})
+			// 	soundInfo.nextAudio.addEventListener("error", () => {
+			// 		reject();
+			// 	})
+			// });
+		} else {
+			//
+		}
+	}
+
 	// Play a sound, on loop or not.
 	playSound(soundIndex, loop) {
 		const sound = this.getSound(soundIndex);
+		this.loadSound(sound);
 
-		const audioNode = this.audioContext.createMediaElementSource(sound.sound.audio);
-		audioNode.connect(this.audioContext.destination);
-		audioNode.mediaElement.volume = this.sounds.get(sound).volume;
-		audioNode.mediaElement.loop = loop;
-		audioNode.mediaElement.play();
+		const soundInfo = this.sounds.get(sound);
 
-		this.sounds.get(sound).audioNodes.push(audioNode);
+		if (sound.kind == "media") {
+			const audio = new Audio(sound.sound.src);
+			audio.volume = soundInfo.volume;
+			audio.loop = loop;
+
+			const mediaElementSourceNode = this.audioContext.createMediaElementSource(audio);
+			mediaElementSourceNode.connect(soundInfo.stereoPannerNode);
+
+			soundInfo.mediaElementSourceNodeList.push(mediaElementSourceNode);
+			audio.addEventListener("ended", () => {
+				const index = soundInfo.mediaElementSourceNodeList.indexOf(mediaElementSourceNode);
+				if (index >= 0) soundInfo.mediaElementSourceNodeList.splice(index, 1);
+			});
+
+			audio.play();
+		} else {
+			// const bufferSourceNode = this.audioContext.createBufferSource(soundInfo.arrayBuffer);
+			// bufferSourceNode.loop = loop;
+			// bufferSourceNode.addEventListener("ended", () => {
+			// 	// disconnect and remove from list
+			// });
+			// bufferSourceNode.connect(soundInfo.gainNode);
+			// bufferSourceNode.start();
+
+			// obj.bufferSourceNodes.push(bufferSourceNode);
+		}
 	}
 
 	// Stop all playing sounds from a sound resource.
 	stopSound(soundIndex) {
 		const sound = this.getSound(soundIndex);
+		const soundInfo = this.sounds.get(sound);
 
-		for (const audioNode of this.sounds.get(sound).audioNodes) {
-			audioNode.mediaElement.pause();
-			audioNode.disconnect();
+		if (sound.kind == "media") {
+			for (const mediaElementSourceNode of soundInfo.mediaElementSourceNodeList) {
+				mediaElementSourceNode.mediaElement.pause();
+			}
+			soundInfo.mediaElementSourceNodeList = [];
+			// soundInfo.stereoPannerNode.disconnect();
+		} else {
+			//
 		}
-		this.sounds.get(sound).audioNodes = [];
 	}
 
 	// Stop all sounds being played.
 	stopAllSounds() {
-		for (const value of this.sounds.values()) {
-			for (const audioNode of value.audioNodes) {
-				audioNode.mediaElement.pause();
-				audioNode.disconnect();
-			}
-			value.audioNodes = [];
+		for (const sound of this.sounds.keys()) {
+			this.stopSound(sound.id);
 		}
 	}
 
 	isSoundPlaying(soundIndex) {
 		const sound = this.game.project.getResourceById("ProjectSound", soundIndex);
 		if (!sound) return false;
+		const soundInfo = this.sounds.get(sound);
 
-		for (const audioNode of this.sounds.get(sound).audioNodes) {
-			if (!audioNode.mediaElement.ended) {
+		for (const mediaElementSourceNode of soundInfo.mediaElementSourceNodeList) {
+			if (!mediaElementSourceNode.mediaElement.ended) {
 				return true;
 			}
 		}
@@ -82,13 +147,21 @@ export default class GameAudio {
 
 	setSoundVolume(soundIndex, value) {
 		const sound = this.getSound(soundIndex);
+		const soundInfo = this.sounds.get(sound);
 
-		this.sounds.get(sound).volume = value;
+		soundInfo.volume = value;
 
-		for (const audioNode of this.sounds.get(sound).audioNodes) {
-			audioNode.mediaElement.volume = value;
+		for (const mediaElementSourceNode of soundInfo.mediaElementSourceNodeList) {
+			mediaElementSourceNode.mediaElement.volume = value;
 		}
+	}
 
-		return 0;
+	setSoundPan(soundIndex, value) {
+		const sound = this.getSound(soundIndex);
+		const soundInfo = this.sounds.get(sound);
+
+		soundInfo.pan = value;
+
+		soundInfo.stereoPannerNode.pan.value = value;
 	}
 }

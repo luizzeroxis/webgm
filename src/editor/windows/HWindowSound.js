@@ -1,6 +1,6 @@
 import AudioWrapper from "~/common/AudioWrapper.js";
 import HWindow from "~/common/components/HWindowManager/HWindow.js";
-import {parent, endparent, add, HElement, HButton, HTextInput, HRangeInput} from "~/common/h";
+import {parent, endparent, add, HElement, HButton, HTextInput, HRangeInput, HRadioInput, uniqueID} from "~/common/h";
 import {ProjectSound} from "~/common/project/ProjectProperties.js";
 import {openFile, setDeepOnUpdateOnElement} from "~/common/tools.js";
 
@@ -34,7 +34,19 @@ export default class HWindowSound extends HWindow {
 					}
 					endparent();
 
+				parent( add( new HElement("fieldset") ) );
+					add( new HElement("legend", {}, "Kind") );
+
+					const kindGroup = "_radio_"+uniqueID();
+					// this.radioKindNormal = add( new HRadioInput(kindGroup, "Normal sound", (this.resource.kind == "normal")) );
+					// this.radioKindBackground = add( new HRadioInput(kindGroup, "Background music", (this.resource.kind == "background")) );
+					// this.radioKind3D = add( new HRadioInput(kindGroup, "3D sound", (this.resource.kind == "3d")) );
+					this.radioKindMedia = add( new HRadioInput(kindGroup, "Use multimedia player", (this.resource.kind == "media")) );
+
+					endparent();
+
 				this.inputVolume = add( new HRangeInput("Volume:", this.resource.volume, 1/70, 0, 1) );
+				this.inputPan = add( new HRangeInput("Pan:", this.resource.pan, 1/50, -1, 1) );
 
 				add( new HButton("OK", () => {
 					this.modified = false;
@@ -56,7 +68,9 @@ export default class HWindowSound extends HWindow {
 		this.editor.project.changeResourceName(this.resource, this.inputName.getValue());
 		this.updateTitle();
 
+		this.resource.kind = "media";
 		this.resource.volume = parseFloat(this.inputVolume.getFloatValue());
+		this.resource.pan = parseFloat(this.inputPan.getFloatValue());
 	}
 
 	restoreData() {

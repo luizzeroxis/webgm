@@ -64,10 +64,11 @@ export default class ProjectLoader {
 		const promises = [];
 		this.project.resources.ProjectSound.forEach(sound => {
 			if (!sound.sound) return;
-			promises.push(sound.sound.promise
-				.catch(() => {
-					throw new EngineException("Could not load audio in sound " + sound.name);
-				}));
+			if (!sound.preload) return;
+			// promises.push(sound.load()
+			// 	.catch(() => {
+			// 		throw new EngineException("Could not load audio in sound " + sound.name);
+			// 	}));
 		});
 		return Promise.all(promises);
 	}

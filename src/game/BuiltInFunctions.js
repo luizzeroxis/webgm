@@ -3990,10 +3990,10 @@ export default class BuiltInFunctions {
 	};
 
 	static sound_global_volume = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function sound_global_volume is not implemented");
-			// return 0;
+		args: [{type: "real"}],
+		func: function([value]) {
+			this.game.audio.setGlobalVolume(value);
+			return 0;
 		},
 	};
 
@@ -4006,10 +4006,10 @@ export default class BuiltInFunctions {
 	};
 
 	static sound_pan = {
-		args: null,
-		func: function([_]) {
-			throw new EngineException("Function sound_pan is not implemented");
-			// return 0;
+		args: [{type: "integer"}, {type: "real"}],
+		func: function([index, value]) {
+			this.game.audio.setSoundPan(index, value);
+			return 0;
 		},
 	};
 

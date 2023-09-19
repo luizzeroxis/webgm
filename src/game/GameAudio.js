@@ -15,6 +15,9 @@ export default class GameAudio {
 			}
 		}
 
+		this.globalGainNode = this.audioContext.createGain();
+		this.globalGainNode.connect(this.audioContext.destination)
+
 		this.game.project.resources.ProjectSound.forEach(sound => {
 			const soundInfo = {
 				volume: sound.volume,
@@ -27,13 +30,13 @@ export default class GameAudio {
 
 				soundInfo.stereoPannerNode = this.audioContext.createStereoPanner();
 				soundInfo.stereoPannerNode.pan.value = sound.pan;
-				soundInfo.stereoPannerNode.connect(this.audioContext.destination);
+				soundInfo.stereoPannerNode.connect(this.globalGainNode);
 			} else {
 				// soundInfo.arrayBuffer = null;
 
 				// soundInfo.gainNode = this.audioContext.createGain();
 				// soundInfo.gainNode.gain.value = sound.volume;
-				// soundInfo.gainNode.connect(this.audioContext.destination);
+				// soundInfo.gainNode.connect(this.globalGainNode);
 
 				// soundInfo.bufferSourceNodes = [];
 			}
@@ -154,6 +157,10 @@ export default class GameAudio {
 		for (const mediaElementSourceNode of soundInfo.mediaElementSourceNodeList) {
 			mediaElementSourceNode.mediaElement.volume = value;
 		}
+	}
+
+	setGlobalVolume(value) {
+		this.globalGainNode.gain.value = value;
 	}
 
 	setSoundPan(soundIndex, value) {

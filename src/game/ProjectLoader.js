@@ -124,6 +124,7 @@ export default class ProjectLoader {
 	// Compile all GML code, parsing it and checking for errors.
 	async loadGML() {
 		try {
+			this.loadGMLConstants();
 			this.loadGMLScripts();
 			this.loadGMLTimelines();
 			this.loadGMLObjects();
@@ -133,6 +134,19 @@ export default class ProjectLoader {
 				await this.game.showError(e);
 			}
 		}
+	}
+
+	// Compile and execute all GML of constants.
+	loadGMLConstants() {
+		this.project.constants.forEach(({name, value}) => {
+			// TODO check if name is valid
+			const result = this.game.gml.compile(value, "Expression");
+			if (result.succeeded) {
+				this.game.constants[name] = result.ast;
+			} else {
+				// TODO what happens?
+			}
+		});
 	}
 
 	// Compile all GML inside of scripts.

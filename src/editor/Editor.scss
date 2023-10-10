@@ -676,6 +676,22 @@ input[type="text"], input[type="number"], select {
 	flex: 1;
 }
 
+.constants-editor-window {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+
+	> .table {
+		flex: 1;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		overflow-y: scroll;
+		align-content: start;
+		min-height: 250px;
+	}
+}
+
 .h-window-manager {
 	> .windows, > .modal {
 		> .h-window > .contents > .client:has(> .game) {

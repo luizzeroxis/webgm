@@ -1,8 +1,13 @@
 import Dispatcher from "~/common/Dispatcher.js";
 import Serializer from "~/common/Serializer.js";
 
-import {ProjectGameInformation, ProjectGlobalGameSettings, ProjectExtensionPackages} from "./ProjectProperties.js";
+import {ProjectConstant} from "./ProjectConstant.js";
+import {ProjectExtensionPackages} from "./ProjectExtensionPackages.js";
+import {ProjectGameInformation} from "./ProjectGameInformation.js";
+import {ProjectGlobalGameSettings} from "./ProjectGlobalGameSettings.js";
 import {ProjectResources, ProjectCounters} from "./ProjectResourcesAndCounters.js";
+// import {ProjectTrigger} from "./ProjectTrigger.js";
+// import {ProjectIncludedFile} from "./ProjectIncludedFile.js";
 
 export default class Project {
 	static resourceTypes = ProjectResources.types;
@@ -15,6 +20,10 @@ export default class Project {
 			gameInformation: ProjectGameInformation,
 			globalGameSettings: ProjectGlobalGameSettings,
 			extensionPackages: ProjectExtensionPackages,
+
+			constants: {array: ProjectConstant},
+			// triggers: {array: ProjectTrigger},
+			// includedFiles: {array: ProjectIncludedFile},
 
 			lastId: 100000,
 		});

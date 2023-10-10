@@ -1,5 +1,6 @@
 import HWindowManager from "~/common/components/HWindowManager/HWindowManager.js";
 import {parent, endparent, add, HElement} from "~/common/h";
+import HConstantsEditorWindow from "~/editor/windows/HConstantsEditorWindow.js";
 import HGameInformationEditorWindow from "~/editor/windows/HGameInformationEditorWindow.js";
 import HGlobalGameSettingsEditorWindow from "~/editor/windows/HGlobalGameSettingsEditorWindow.js";
 import HPreferencesWindow from "~/editor/windows/HPreferencesWindow.js";
@@ -69,6 +70,10 @@ export default class HAreaWindows extends HElement {
 	// Open or focus on the global game settings window.
 	openGlobalGameSettings() {
 		return this.manager.open(HGlobalGameSettingsEditorWindow, null, this.editor, this.editor.project.globalGameSettings);
+	}
+
+	openConstants() {
+		return this.manager.open(HConstantsEditorWindow, null, this.editor, this.editor.project.constants);
 	}
 
 	// Open or focus on the preferences window.

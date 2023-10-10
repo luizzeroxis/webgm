@@ -31,6 +31,7 @@ export default class HAreaMenuBar extends HElement {
 
 				{text: "Change Game Information", onClick: () => this.editor.windowsArea.openGameInformation()},
 				{text: "Change Global Game Settings", onClick: () => this.editor.windowsArea.openGlobalGameSettings()},
+				{text: "Define Constants...", onClick: () => this.editor.windowsArea.openConstants()},
 
 			]},
 			{text: "Script", items: [

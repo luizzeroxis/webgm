@@ -22,9 +22,11 @@ export default class GML {
 
 		this.grammar = ohm.grammar(GMLGrammar.getText());
 
+		/* I'm not directly calling addOperation so I can allow async functions. I syncronously convert it into an AST using ohmExtras.toAST and this.mapping (this basically stores just the arguments), then look at it manually. When encountering a nonterminal I run the proper function asyncronously in this.astActions. If ohm adds support for async functions this will no longer be necessary. */
+
 		this.mapping = {
 			Start: {_code: 0},
-			// Block: 1,
+			Block: 1,
 			StatementWithSemicolon: 0, // Statement
 			If: {_conditionExpression: 1, _code: 2, _elseStatement: 3,
 				_conditionExpressionNode: c => c[1]},
@@ -37,6 +39,9 @@ export default class GML {
 				_conditionExpressionNode: c => c[4]},
 			For: {_initStatement: 2, _conditionExpression: 3, _iterationStatement: 5, _code: 7,
 				_conditionExpressionNode: c => c[3]},
+			Switch: {_switchExpression: 1, _code: 2},
+			Case: {_caseExpression: 1},
+			// Default: {},
 			With: {_objectExpression: 1, _code: 2,
 				_objectExpressionNode: c => c[1]},
 			// Exit: {},
@@ -211,6 +216,38 @@ export default class GML {
 					}
 					await this.interpretASTNode(_iterationStatement);
 				}
+			},
+			Switch: async ({_switchExpression, _code}) => {
+				const switchValue = await this.interpretASTNode(_switchExpression);
+
+				let caseIsTrue = false;
+				for (const statement of _code) {
+					if (statement.type == "Case") {
+						if (caseIsTrue) continue;
+
+						const caseValue = await this.interpretASTNode(statement);
+						if (switchValue == caseValue) {
+							caseIsTrue = true;
+						}
+					} else if (statement.type == "Default") {
+						caseIsTrue = true;
+					} else {
+						if (caseIsTrue) {
+							try {
+								await this.interpretASTNode(statement);
+							} catch (e) {
+								if (e instanceof BreakException || e instanceof ContinueException) {
+									break;
+								} else {
+									throw e;
+								}
+							}
+						}
+					}
+				}
+			},
+			Case: async ({_caseExpression}) => {
+				return await this.interpretASTNode(_caseExpression);
 			},
 			With: async ({_objectExpression, _objectExpressionNode, _code}) => {
 				const object = await this.interpretASTNode(_objectExpression);

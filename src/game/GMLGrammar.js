@@ -21,8 +21,11 @@ GameMakerLanguage {
 		= Block
 		| ListOfStatements
 
+	BeginSymbol = "{" | #("begin" ~namePart)
+	EndSymbol = "}" | #("end" ~namePart)
+
 	Block
-		= "{" ListOfStatements "}"
+		= BeginSymbol ListOfStatements EndSymbol
 
 	ListOfStatements
 		= StatementWithSemicolon*
@@ -30,12 +33,19 @@ GameMakerLanguage {
 	StatementWithSemicolon
 		= Statement ";"*
 
+	BlockOrStatement
+		= Block
+		| StatementWithSemicolon
+
 	Statement
 		= If
 		| Repeat
 		| While
 		| DoUntil
 		| For
+		| Switch
+		| Case
+		| Default
 		| With
 		| Exit
 		| Return
@@ -49,10 +59,6 @@ GameMakerLanguage {
 		| AssignmentSubtract
 		| AssignmentMultiply
 		| AssignmentDivide
-
-	BlockOrStatement
-		= Block
-		| StatementWithSemicolon
 
 	If
 		= #("if" ~namePart) Expression BlockOrStatement Else?
@@ -70,6 +76,13 @@ GameMakerLanguage {
 
 	For
 		= #("for" ~namePart) "(" BlockOrStatement Expression ";"? BlockOrStatement ")" BlockOrStatement
+
+	Switch
+		= #("switch" ~namePart) Expression Block
+	Case
+		= #("case" ~namePart) Expression ":"
+	Default
+		= #("default" ~namePart) ":"
 
 	With
 		= #("with" ~namePart) Expression BlockOrStatement
@@ -120,12 +133,16 @@ GameMakerLanguage {
 		| Xor
 		| ExpressionComparison
 
+	AndSymbol = "&&" | #("and" ~namePart)
+	OrSymbol = "||" | #("or" ~namePart)
+	XorSymbol = "^^" | #("xor" ~namePart)
+
 	And
-		= ExpressionBooleanComparison "&&" ExpressionComparison
+		= ExpressionBooleanComparison AndSymbol ExpressionComparison
 	Or
-		= ExpressionBooleanComparison "||" ExpressionComparison	
+		= ExpressionBooleanComparison OrSymbol ExpressionComparison
 	Xor
-		= ExpressionBooleanComparison "^^" ExpressionComparison
+		= ExpressionBooleanComparison XorSymbol ExpressionComparison
 
 	ExpressionComparison
 		= Less
@@ -206,8 +223,10 @@ GameMakerLanguage {
 		| NegateBitwise
 		| OtherExpression
 
+	NotSymbol = "!" | #("not" ~namePart)
+
 	Not
-		= "!" OtherExpression
+		= NotSymbol OtherExpression
 	Negate
 		= "-" OtherExpression
 	NegateBitwise

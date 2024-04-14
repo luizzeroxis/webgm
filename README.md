@@ -2,7 +2,7 @@
 
 Web based version of Game Maker 8.
 
-Live version: https://luizeldorado.github.io/webgm/index.html
+Live version: https://luizzeroxis.github.io/webgm/index.html
 
 ## What is this
 

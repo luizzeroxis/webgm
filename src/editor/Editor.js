@@ -287,7 +287,7 @@ export default class Editor {
 			+ "\nVersion: 0.0.0"
 			+ "\nCommit hash: " + CONSTANTS.COMMITHASH
 			+ "\nCommit time: " + CONSTANTS.LASTCOMMITDATETIME
-			+ "\nGitHub: https://github.com/luizeldorado/webgm",
+			+ "\nGitHub: https://github.com/luizzeroxis/webgm",
 		);
 	}
 

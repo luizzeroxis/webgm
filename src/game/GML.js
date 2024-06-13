@@ -22,9 +22,11 @@ export default class GML {
 
 		this.grammar = ohm.grammar(GMLGrammar.getText());
 
+		/* I'm not directly calling addOperation so I can allow async functions. I syncronously convert it into an AST using ohmExtras.toAST and this.mapping (this basically stores just the arguments), then look at it manually. When encountering a nonterminal I run the proper function asyncronously in this.astActions. If ohm adds support for async functions this will no longer be necessary. */
+
 		this.mapping = {
 			Start: {_code: 0},
-			// Block: 1,
+			Block: 1,
 			StatementWithSemicolon: 0, // Statement
 			If: {_conditionExpression: 1, _code: 2, _elseStatement: 3,
 				_conditionExpressionNode: c => c[1]},
@@ -37,6 +39,10 @@ export default class GML {
 				_conditionExpressionNode: c => c[4]},
 			For: {_initStatement: 2, _conditionExpression: 3, _iterationStatement: 5, _code: 7,
 				_conditionExpressionNode: c => c[3]},
+			Switch: {_switchExpression: 1, _code: 2},
+			Case: {_caseExpression: 1,
+				_caseExpressionNode: c => c[1]},
+			Default: function(_0, _1) { return {type: this._node.ruleName, _node: this}; },
 			With: {_objectExpression: 1, _code: 2,
 				_objectExpressionNode: c => c[1]},
 			// Exit: {},
@@ -121,7 +127,7 @@ export default class GML {
 			},
 			If: async ({_conditionExpression, _conditionExpressionNode, _code, _elseStatement}) => {
 				const condition = await this.interpretASTNode(_conditionExpression);
-				this.checkIsNumber(condition, "Expression expected (condition \"" + condition.toString() + "\" is not a number)", _conditionExpressionNode);
+				this.checkIsNumber(condition, `Expression expected (condition "${condition}" is not a number)`, _conditionExpressionNode);
 
 				if (this.toBool(condition)) {
 					await this.interpretASTNode(_code);
@@ -131,7 +137,7 @@ export default class GML {
 			},
 			Repeat: async ({_timesExpression, _timesExpressionNode, _code}) => {
 				let times = await this.interpretASTNode(_timesExpression);
-				this.checkIsNumber(times, "Repeat count must be a number (\"" + times.toString() + "\")", _timesExpressionNode);
+				this.checkIsNumber(times, `Repeat count must be a number ("${times}")`, _timesExpressionNode);
 
 				times = toInteger(times);
 
@@ -152,7 +158,7 @@ export default class GML {
 			While: async ({_conditionExpression, _conditionExpressionNode, _code}) => {
 				while (true) {
 					const condition = await this.interpretASTNode(_conditionExpression);
-					this.checkIsNumber(condition, "Expression expected (condition \"" + condition.toString() + "\" is not a number)", _conditionExpressionNode);
+					this.checkIsNumber(condition, `Expression expected (condition "${condition}" is not a number)`, _conditionExpressionNode);
 
 					if (!(this.toBool(condition))) break;
 
@@ -184,7 +190,7 @@ export default class GML {
 					}
 
 					const condition = await this.interpretASTNode(_conditionExpression);
-					this.checkIsNumber(condition, "Expression expected (condition \"" + condition.toString() + "\" is not a number)", _conditionExpressionNode);
+					this.checkIsNumber(condition, `Expression expected (condition "${condition}" is not a number)`, _conditionExpressionNode);
 
 					if (this.toBool(condition)) break;
 				}
@@ -194,7 +200,7 @@ export default class GML {
 
 				while (true) {
 					const condition = await this.interpretASTNode(_conditionExpression);
-					this.checkIsNumber(condition, "Expression expected (condition \"" + condition.toString() + "\" is not a number)", _conditionExpressionNode);
+					this.checkIsNumber(condition, `Expression expected (condition "${condition}" is not a number)`, _conditionExpressionNode);
 
 					if (!this.toBool(condition)) break;
 
@@ -212,9 +218,47 @@ export default class GML {
 					await this.interpretASTNode(_iterationStatement);
 				}
 			},
+			Switch: async ({_switchExpression, _code}) => {
+				const switchValue = await this.interpretASTNode(_switchExpression);
+
+				let caseIsTrue = false;
+				for (const statement of _code) {
+					if (statement.type == "Case") {
+						if (caseIsTrue) continue;
+
+						const caseValue = await this.interpretASTNode(statement, {inSwitch: true});
+						if (switchValue == caseValue) {
+							caseIsTrue = true;
+						}
+					} else if (statement.type == "Default") {
+						caseIsTrue = true;
+					} else {
+						if (caseIsTrue) {
+							try {
+								await this.interpretASTNode(statement);
+							} catch (e) {
+								if (e instanceof BreakException || e instanceof ContinueException) {
+									break;
+								} else {
+									throw e;
+								}
+							}
+						}
+					}
+				}
+			},
+			Case: async ({_caseExpression, _caseExpressionNode}, context) => {
+				if (!context?.inSwitch) {
+					throw this.makeErrorInGMLNode("Case statement only allowed inside switch statement.", _caseExpressionNode);
+				}
+				return await this.interpretASTNode(_caseExpression);
+			},
+			Default: async ({_node}, context) => {
+				throw this.makeErrorInGMLNode("Default statement only allowed inside switch statement.", _node);
+			},
 			With: async ({_objectExpression, _objectExpressionNode, _code}) => {
 				const object = await this.interpretASTNode(_objectExpression);
-				this.checkIsNumber(object, "Object id expected (\"" + object.toString() + "\" is not a number)", _objectExpressionNode);
+				this.checkIsNumber(object, `Object id expected ("${object}" is not a number)`, _objectExpressionNode);
 
 				const instances = this.objectReferenceToInstances(object);
 
@@ -808,12 +852,12 @@ export default class GML {
 		}
 	}
 
-	async interpretASTNode(node) {
+	async interpretASTNode(node, context) {
 		// _iter
 		if (Array.isArray(node)) {
 			const results = [];
 			for (const child of node) {
-				results.push(await this.interpretASTNode(child));
+				results.push(await this.interpretASTNode(child, context));
 			}
 			return results;
 		}
@@ -826,7 +870,7 @@ export default class GML {
 		// _nonterminal
 		const astAction = this.astActions[node.type];
 		if (astAction) {
-			return await astAction(node);
+			return await astAction(node, context);
 		}
 
 		throw new Error("No possible action to interpret this node! ("+node.type+")");

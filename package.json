@@ -15,31 +15,33 @@
 		"clean:windows": "rmdir dist-dev /s /q && rmdir dist /s /q"
 	},
 	"dependencies": {
+		"@tonejs/midi": "^2.0.28",
 		"jszip": "^3.10.1",
 		"ohm-js": "^17.1.0",
-		"seedrandom": "^3.0.5"
+		"seedrandom": "^3.0.5",
+		"tone": "^15.0.4"
 	},
 	"devDependencies": {
-		"css-loader": "^7.1.1",
-		"eslint": "^8.57.0",
+		"css-loader": "^7.1.2",
+		"eslint": "^8",
 		"eslint-import-resolver-alias": "^1.1.2",
 		"eslint-plugin-import": "^2.29.1",
-		"eslint-webpack-plugin": "^4.1.0",
+		"eslint-webpack-plugin": "^4.2.0",
 		"git-revision-webpack-plugin": "^5.0.0",
 		"html-webpack-plugin": "^5.6.0",
-		"mini-css-extract-plugin": "^2.8.1",
+		"mini-css-extract-plugin": "^2.9.0",
 		"run-script-os": "^1.1.6",
-		"sass": "^1.75.0",
-		"sass-loader": "^14.2.0",
+		"sass": "^1.77.5",
+		"sass-loader": "^14.2.1",
 		"style-loader": "^4.0.0",
-		"stylelint": "^16.3.1",
+		"stylelint": "^16.6.1",
 		"stylelint-config-idiomatic-order": "^10.0.0",
 		"stylelint-config-standard-scss": "^13.1.0",
 		"url-loader": "^4.1.1",
-		"webpack": "^5.91.0",
+		"webpack": "^5.92.0",
 		"webpack-cli": "^5.1.4",
 		"webpack-dev-server": "^5.0.4",
 		"webpack-merge": "^5.10.0",
-		"workbox-webpack-plugin": "^7.0.0"
+		"workbox-webpack-plugin": "^7.1.0"
 	}
 }

@@ -132,6 +132,8 @@ export default class ProjectLoader {
 		} catch (e) {
 			if (e instanceof ProjectErrorException) {
 				await this.game.showError(e);
+			} else {
+				throw e;
 			}
 		}
 	}

@@ -1,53 +1,75 @@
 :root {
 	color-scheme: light dark;
 
-	--area-border: #444;
-	--background-selected: #666;
-	--background: #ddd;
-	--menu-background: #fff;
-	--menu-bar-background: #fff;
+	--text: #000;
+	--text-unfocused: #666;
+
+	--background: #eee;
+	--border: #444;
+
+	--window-border: #000;
+	--window-border-unfocused: #666;
+	--window-client-horizontal-border: #ccc;
+
+	--title-bar-background: #fff;
+
 	--menu-bar-button-selected: #eee;
+
+	--menu-background: #fff;
 	--menu-border: #ddd;
 	--menu-item-background-selected: #eee;
 	--menu-text-disabled: #666;
 	--menu-text: #222;
-	--resources-area-background: #fff;
-	--text-selected: #fff;
-	--text-unfocused: #666;
-	--text: #000;
-	--title-bar-background: #fff;
-	--warning-background: #fb0;
-	--window-border-unfocused: #666;
-	--window-border: #000;
-	--window-client-background: #eee;
-	--window-client-horizontal-border: #ccc;
+
+	--button-background: #eee;
+	--button-background-hover: #ddd;
+	--button-background-active: #fff;
+	--button-border: #888;
+
+	--input-background: #fff;
+	--input-item-selected: #666;
+	--input-item-text-selected: #fff;
+
 	--windows-area-background: #ddd;
+
+	--warning-background: #fb0;
 }
 
 :root.dark {
 	color-scheme: dark;
 
-	--area-border: #bbb;
-	--background-selected: #444;
+	--text: #fff;
+	--text-unfocused: #999;
+
 	--background: #111;
-	--menu-background: #222;
-	--menu-bar-background: #111;
+	--border: #bbb;
+
+	--window-border: #aaa;
+	--window-border-unfocused: #999;	
+	--window-client-horizontal-border: #333;
+
+	--title-bar-background: #111;
+
 	--menu-bar-button-selected: #444;
+
+	--menu-background: #222;
 	--menu-border: #444;
 	--menu-item-background-selected: #444;
 	--menu-text-disabled: #888;
 	--menu-text: #eee;
-	--resources-area-background: #000;
-	--text-selected: #fff;
-	--text-unfocused: #999;
-	--text: #fff;
-	--title-bar-background: #555;
-	--warning-background: #740;
-	--window-border-unfocused: #999;
-	--window-border: #aaa;
-	--window-client-background: #000;
-	--window-client-horizontal-border: #333;
+
+	--button-background: #666;
+	--button-background-hover: #777;
+	--button-background-active: #555;
+	--button-border: #888;
+
+	--input-background: #000;
+	--input-item-selected: #444;
+	--input-item-text-selected: #fff; // ???
+
 	--windows-area-background: #000;
+	
+	--warning-background: #740;
 }
 
 :root.light {
@@ -70,7 +92,7 @@
 				}
 
 				> .client {
-					background-color: var(--window-client-background);
+					background-color: var(--background);
 				}
 			}
 
@@ -132,7 +154,7 @@
 }
 
 .h-menu-bar {
-	background-color: var(--menu-bar-background);
+	background-color: var(--title-bar-background);
 
 	> .h-menu-bar-button {
 		&:hover, &:focus, &.selected {
@@ -144,7 +166,7 @@
 .h-image-list {
 	> .item {
 		&.selected {
-			background: var(--background-selected);
+			background: var(--input-item-selected);
 			color: var(--text-selected);
 		}
 	}
@@ -156,7 +178,7 @@
 			&.selected {
 				> .icon-and-name {
 					> .name {
-						background-color: var(--background-selected);
+						background-color: var(--input-item-selected);
 						color: var(--text-selected);
 					}
 				}
@@ -187,6 +209,32 @@ body, button, input, select {
 
 input[type="text"], input[type="number"], select {
 	width: 96px;
+}
+
+button {
+	border: 1px solid var(--button-border);
+	border-radius: 4px;
+	background: var(--button-background);
+	padding: 2px 8px;
+
+	&:hover {
+		background: var(--button-background-hover);
+	}
+
+	&:active {
+		background: var(--button-background-active);
+	}
+}
+
+:is(.tool-bar-area, .title-bar) button {
+	&:not(:hover) {
+		border: 1px solid transparent;
+		background: none;
+	}
+
+	&:hover {
+		border: 1px solid var(--button-border);
+	}
 }
 
 .editor {
@@ -225,8 +273,8 @@ input[type="text"], input[type="number"], select {
 	min-width: 32px;
 	box-sizing: border-box;
 	padding: 4px;
-	border: 1px solid var(--area-border);
-	background-color: var(--resources-area-background);
+	border: 1px solid var(--border);
+	background-color: var(--input-background);
 	overflow-y: scroll;
 }
 
@@ -236,7 +284,7 @@ input[type="text"], input[type="number"], select {
 	min-width: 32px;
 	flex: 1;
 	flex-direction: column;
-	border: 1px solid var(--area-border);
+	border: 1px solid var(--border);
 	background-color: var(--windows-area-background);
 	gap: 4px;
 

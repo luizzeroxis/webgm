@@ -6905,7 +6905,7 @@ export default class BuiltInFunctions {
 
 	static ds_list_write = {
 		args: [{type: "int"}],
-		func: function([id]) {
+		func: function([_]) {
 			throw new EngineException("Function ds_list_write is not implemented");
 			// return 0;
 		},
@@ -6913,7 +6913,7 @@ export default class BuiltInFunctions {
 
 	static ds_list_read = {
 		args: [{type: "int"}, {type: "string"}],
-		func: function([id, str]) {
+		func: function([_]) {
 			throw new EngineException("Function ds_list_read is not implemented");
 			// return 0;
 		},

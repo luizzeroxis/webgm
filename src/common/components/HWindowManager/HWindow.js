@@ -259,7 +259,7 @@ export default class HWindow extends HElement {
 			this.setSize(this.manager.minimizedSize, this.h);
 
 			const pos = this.getNextMinimizePosition();
-			this.setPosition(pos.x, pos.y );
+			this.setPosition(pos.x, pos.y);
 
 			this.minimizeButton.html.textContent = "🗗";
 			this.minimizeButton.html.title = "Restore";

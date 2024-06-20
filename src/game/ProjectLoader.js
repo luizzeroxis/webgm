@@ -61,16 +61,18 @@ export default class ProjectLoader {
 
 	// Returns a list of promises of loading sounds.
 	loadSounds() {
-		const promises = [];
-		this.project.resources.ProjectSound.forEach(sound => {
-			if (!sound.sound) return;
-			if (!sound.preload) return;
-			// promises.push(sound.load()
-			// 	.catch(() => {
-			// 		throw new EngineException("Could not load audio in sound " + sound.name);
-			// 	}));
-		});
-		return Promise.all(promises);
+		// TODO look into actually loading sounds beforehand somehow?
+		// const promises = [];
+		// this.project.resources.ProjectSound.forEach(sound => {
+		// 	if (!sound.sound) return;
+		// 	if (!sound.preload) return;
+		// 	// promises.push(sound.load()
+		// 	// 	.catch(() => {
+		// 	// 		throw new EngineException("Could not load audio in sound " + sound.name);
+		// 	// 	}));
+		// });
+		// return Promise.all(promises);
+		return Promise.resolve();
 	}
 
 	// Returns a list of promises of loading background images.

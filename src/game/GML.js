@@ -42,7 +42,7 @@ export default class GML {
 			Switch: {_switchExpression: 1, _code: 2},
 			Case: {_caseExpression: 1,
 				_caseExpressionNode: c => c[1]},
-			Default: function(_0, _1) { return {type: this._node.ruleName, _node: this}; },
+			Default: function(_0, _1) { return {type: this._node.ruleName, _node: this}; }, // eslint-disable-line no-unused-vars
 			With: {_objectExpression: 1, _code: 2,
 				_objectExpressionNode: c => c[1]},
 			// Exit: {},
@@ -233,15 +233,15 @@ export default class GML {
 					} else if (statement.type == "Default") {
 						caseIsTrue = true;
 					} else {
-						if (caseIsTrue) {
-							try {
-								await this.interpretASTNode(statement);
-							} catch (e) {
-								if (e instanceof BreakException || e instanceof ContinueException) {
-									break;
-								} else {
-									throw e;
-								}
+						if (!caseIsTrue) continue;
+						
+						try {
+							await this.interpretASTNode(statement);
+						} catch (e) {
+							if (e instanceof BreakException || e instanceof ContinueException) {
+								break;
+							} else {
+								throw e;
 							}
 						}
 					}
@@ -253,7 +253,7 @@ export default class GML {
 				}
 				return await this.interpretASTNode(_caseExpression);
 			},
-			Default: async ({_node}, context) => {
+			Default: ({_node}) => {
 				throw this.makeErrorInGMLNode("Default statement only allowed inside switch statement.", _node);
 			},
 			With: async ({_objectExpression, _objectExpressionNode, _code}) => {

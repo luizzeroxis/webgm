@@ -260,7 +260,7 @@ export default class BuiltInFunctions {
 		args: [{type: "real", infinite: true}],
 		func: function([...vals]) {
 			if (vals.length == 0) return 0;
-			vals.sort();
+			vals.sort((a, b) => a - b);
 			if (vals.length % 2 != 0) {
 				return vals[(vals.length-1) / 2];
 			} else {
